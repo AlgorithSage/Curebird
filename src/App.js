@@ -25,13 +25,12 @@ import CureAnalyzer from './components/CureAnalyzer';
 import LandingPage from './components/LandingPage';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC5HGK72mr-AfkMPZqYtIQe0UhIH4FbaMA",
-  authDomain: "my-medical-portfolio-df1d9.firebaseapp.com",
-  projectId: "my-medical-portfolio-df1d9",
-  storageBucket: "my-medical-portfolio-df1d9.firebasestorage.app",
-  messagingSenderId: "614986646190",
-  appId: "1:614986646190:web:8f145884c24e34890da33f",
-  measurementId: "G-WNKGLGC5DD"
+  apiKey: "AIzaSyB6phfALFUYNvEhF3BkVwuHK4OeocV-IEo",
+  authDomain: "curebird-535e5.firebaseapp.com",
+  projectId: "curebird-535e5",
+  storageBucket: "curebird-535e5.firebasestorage.app",
+  messagingSenderId: "325018733204",
+  appId: "1:325018733204:web:8b10b21d92afe506e1c281"
 };
 
 const app = initializeApp(firebaseConfig);
