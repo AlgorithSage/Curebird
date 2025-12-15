@@ -1,0 +1,7 @@
+flask
+flask-cors
+python-dotenv
+google-generativeai
+google-cloud-vision
+pillow
+gunicorn
