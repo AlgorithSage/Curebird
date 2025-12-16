@@ -362,11 +362,19 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                         <div className="h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
-                                    <Pie data={filteredTrends.slice(0, 5)} cx="50%" cy="50%" innerRadius={80} outerRadius={120} paddingAngle={4} dataKey="outbreaks" nameKey="disease" stroke="none">
+                                    <Pie data={filteredTrends.slice(0, 5)} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={4} dataKey="outbreaks" nameKey="disease" stroke="none">
                                         {filteredTrends.slice(0, 5).map((entry, index) => (<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />))}
                                     </Pie>
                                     <Tooltip content={<CustomTooltip />} />
-                                    <Legend verticalAlign="bottom" height={36} iconType="circle" formatter={(value) => <span className="text-slate-300 text-sm ml-2 font-medium">{value}</span>} />
+                                    <Legend
+                                        verticalAlign="bottom"
+                                        height={undefined}
+                                        iconType="circle"
+                                        layout="vertical"
+                                        align="center"
+                                        wrapperStyle={{ paddingTop: '20px' }}
+                                        formatter={(value) => <span className="text-slate-300 text-sm ml-2 font-medium">{value}</span>}
+                                    />
                                 </PieChart>
                             </ResponsiveContainer>
                         </div>
@@ -424,11 +432,11 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
 
                 <AnimatePresence>
                     {selectedDisease && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50" onClick={() => setSelectedDisease(null)}>
-                            <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} onClick={(e) => e.stopPropagation()} className="glass w-full max-w-6xl max-h-[95vh] overflow-y-auto rounded-3xl border border-white/10 shadow-2xl relative">
-                                <div className="p-8 border-b border-white/10 sticky top-0 bg-slate-900/80 backdrop-blur-xl z-20 flex justify-between items-start shadow-sm">
-                                    <div>
-                                        <motion.h2 initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{selectedDisease.disease}</motion.h2>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 z-50" onClick={() => setSelectedDisease(null)}>
+                            <motion.div initial={{ scale: 0.9, opacity: 0, y: 100 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 100 }} onClick={(e) => e.stopPropagation()} className="glass w-full sm:w-[95%] max-w-6xl h-[90vh] sm:max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/10 shadow-2xl relative">
+                                <div className="p-6 sm:p-8 border-b border-white/10 sticky top-0 bg-slate-900/80 backdrop-blur-xl z-20 flex flex-col-reverse sm:flex-row justify-between items-start gap-4 shadow-sm">
+                                    <div className="w-full sm:w-auto">
+                                        <motion.h2 initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{selectedDisease.disease}</motion.h2>
                                         <div className="flex items-center gap-4 mt-2">
                                             <p className="text-sky-400 text-lg font-medium flex items-center gap-2"><Activity size={18} /> {selectedDisease.outbreaks.toLocaleString()} reported cases</p>
                                             {(() => {
@@ -532,8 +540,8 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

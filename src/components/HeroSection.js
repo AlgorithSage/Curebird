@@ -44,7 +44,7 @@ const HeroSection = ({ onOverviewClick }) => {
     };
 
     return (
-        <div className="w-full flex justify-center py-6 px-0 perspective-2000">
+        <div className="w-full flex justify-center py-4 px-2 sm:px-6 perspective-2000">
             <motion.div
                 style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
                 onMouseMove={handleMouseMove}
@@ -52,15 +52,15 @@ const HeroSection = ({ onOverviewClick }) => {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative w-full  bg-gradient-to-br from-slate-900/80 to-slate-800/90 backdrop-blur-2xl border border-white/5 rounded-3xl p-8 sm:p-12 lg:p-16 overflow-hidden shadow-2xl group"
+                className="relative w-full bg-gradient-to-br from-slate-900/80 to-slate-800/90 backdrop-blur-2xl border border-white/5 rounded-2xl sm:rounded-3xl p-6 sm:p-12 lg:p-16 overflow-hidden shadow-2xl group"
             >
                 {/* Background Grid Pattern */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px] opacity-30 z-0 pointer-events-none"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] sm:bg-[size:60px_60px] opacity-30 z-0 pointer-events-none"></div>
 
-                {/* Glossy sheen effect */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent skew-x-12 translate-x-[-150%] group-hover:animate-shine z-10 pointer-events-none transition-all duration-1000"></div>
+                {/* Glossy sheen effect - Hidden on mobile to save performance */}
+                <div className="hidden sm:block absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent skew-x-12 translate-x-[-150%] group-hover:animate-shine z-10 pointer-events-none transition-all duration-1000"></div>
 
-                <div className="relative z-20 flex flex-col lg:flex-row items-center justify-between gap-10 transform-gpu" style={{ transform: "translateZ(30px)" }}>
+                <div className="relative z-20 flex flex-col-reverse lg:flex-row items-center justify-between gap-8 lg:gap-10 transform-gpu" style={{ transform: "translateZ(30px)" }}>
 
                     {/* Left Side: Text Content */}
                     <div className="text-center lg:text-left space-y-6 max-w-3xl flex-1">
@@ -73,11 +73,11 @@ const HeroSection = ({ onOverviewClick }) => {
                             <Sparkles size={14} /> AI-Powered Medical Intelligence
                         </motion.div>
 
-                        <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-200 to-indigo-200 drop-shadow-2xl">
+                        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[1.1] sm:leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-200 to-indigo-200 drop-shadow-2xl py-2">
                             CureBird
                         </h1>
 
-                        <p className="text-slate-400 text-lg sm:text-2xl leading-relaxed font-light max-w-2xl mx-auto lg:mx-0">
+                        <p className="text-slate-400 text-base sm:text-2xl leading-relaxed font-light max-w-2xl mx-auto lg:mx-0">
                             The future of personal healthcare. Analyze trends, predict outcomes, and visualize your health journey with <span className="text-sky-400 font-medium">Precision AI</span>.
                         </p>
 
