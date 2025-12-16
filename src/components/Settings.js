@@ -31,31 +31,31 @@ const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
 
     if (!user) {
         return (
-             <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-                <Header 
+            <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
+                <Header
                     title="Settings"
                     description="Log in to manage your account."
                     user={null}
                     onLoginClick={onLoginClick}
                     onToggleSidebar={onToggleSidebar}
                 />
-                 <div className="text-center py-20">
+                <div className="text-center py-20">
                     <p className="text-slate-400">Please log in to view your settings.</p>
-                 </div>
+                </div>
             </div>
         )
     }
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-            <Header 
+            <Header
                 title="Settings"
                 description="Manage your account details and preferences."
                 user={user}
                 onLogout={onLogout}
                 onToggleSidebar={onToggleSidebar}
             />
-            
+
             <main className="mt-8 max-w-4xl mx-auto space-y-12">
                 {/* Profile Information Section */}
                 <div className="bg-slate-900 border border-slate-800 rounded-lg p-6">
@@ -63,7 +63,7 @@ const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                     <form onSubmit={handleProfileUpdate} className="space-y-4">
                         <div className="flex items-center">
                             <label htmlFor="displayName" className="w-1/4 text-slate-400">Display Name</label>
-                            <input 
+                            <input
                                 id="displayName"
                                 type="text"
                                 value={displayName}
@@ -75,12 +75,12 @@ const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                             <label className="w-1/4 text-slate-400">Email Address</label>
                             <p className="flex-grow text-slate-300">{user.email}</p>
                         </div>
-                         <div className="flex items-center">
+                        <div className="flex items-center">
                             <label className="w-1/4 text-slate-400">User ID</label>
                             <p className="flex-grow text-slate-500 text-xs font-mono">{user.uid}</p>
                         </div>
                         <div className="flex justify-end pt-4">
-                            <button type="submit" disabled={isSaving} className="flex items-center justify-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 font-semibold transition-colors disabled:bg-slate-600">
+                            <button type="submit" disabled={isSaving} className="flex items-center justify-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-lg hover:bg-amber-400 font-semibold transition-colors disabled:bg-slate-600">
                                 {isSaving ? 'Saving...' : <><Save size={16} /> Save Changes</>}
                             </button>
                         </div>
@@ -89,7 +89,7 @@ const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                 </div>
 
                 {/* Account Deletion Section */}
-                 <div className="bg-rose-900/50 border border-rose-500/30 rounded-lg p-6">
+                <div className="bg-rose-900/50 border border-rose-500/30 rounded-lg p-6">
                     <h2 className="text-2xl font-bold text-rose-300 mb-4">Danger Zone</h2>
                     <div className="flex items-center justify-between">
                         <div>

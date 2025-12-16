@@ -75,7 +75,7 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                         </label>
                     </div>
                     {selectedFile && <p className="text-center mt-4 text-slate-300">Selected file: {selectedFile.name}</p>}
-                    <button onClick={handleAnalysis} disabled={isLoading || !selectedFile} className="mt-6 w-full bg-sky-500 text-white py-3 rounded-lg hover:bg-sky-600 font-semibold transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed">
+                    <button onClick={handleAnalysis} disabled={isLoading || !selectedFile} className="mt-6 w-full bg-amber-500 text-black py-3 rounded-lg hover:bg-amber-400 font-semibold transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed">
                         {isLoading ? <Loader className="mx-auto animate-spin" /> : 'Analyze Document'}
                     </button>
                 </div>

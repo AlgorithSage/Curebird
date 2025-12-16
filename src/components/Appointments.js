@@ -11,7 +11,7 @@ const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     const statusStyles = {
-        upcoming: { border: 'border-sky-500', bg: 'bg-sky-500/20', text: 'text-sky-400' },
+        upcoming: { border: 'border-amber-500', bg: 'bg-amber-500/20', text: 'text-amber-400' },
         completed: { border: 'border-emerald-500', bg: 'bg-emerald-500/20', text: 'text-emerald-400' },
         cancelled: { border: 'border-rose-500', bg: 'bg-rose-500/20', text: 'text-rose-400' }
     };
@@ -142,7 +142,7 @@ const Appointments = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar
             <main className="mt-8">
                 <button
                     onClick={() => { setEditingAppointment(null); setIsFormModalOpen(true); }}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-sky-600 transition-colors text-sm font-semibold mb-8"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-lg shadow-sm hover:bg-amber-400 transition-colors text-sm font-semibold mb-8"
                 >
                     <Plus size={16} />
                     Add New Appointment

@@ -112,10 +112,10 @@ const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, o
                 {isLoading ? <SkeletonDashboard /> : (
                     <>
                         <div ref={dashboardRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 scroll-mt-24">
-                            <StatCard icon={<Hash size={24} className="text-white" />} label="Total Records" value={records.length} color="bg-sky-500" />
-                            <StatCard icon={<Pill size={24} className="text-white" />} label="Prescriptions" value={totalPrescriptions} color="bg-rose-500" />
-                            <StatCard icon={<Calendar size={24} className="text-white" />} label="Last Visit" value={lastVisit} color="bg-amber-500" />
-                            <StatCard icon={<ShieldCheck size={24} className="text-white" />} label="Status" value="Verified" color="bg-emerald-500" />
+                            <StatCard icon={<Hash size={24} className="text-black" />} label="Total Records" value={records.length} color="bg-yellow-500" />
+                            <StatCard icon={<Pill size={24} className="text-black" />} label="Prescriptions" value={totalPrescriptions} color="bg-amber-500" />
+                            <StatCard icon={<Calendar size={24} className="text-black" />} label="Last Visit" value={lastVisit} color="bg-yellow-600" />
+                            <StatCard icon={<ShieldCheck size={24} className="text-black" />} label="Status" value="Verified" color="bg-amber-400" />
                         </div>
                         <div className="mt-8">
                             <RecordsChart data={dashboardData} />
@@ -151,7 +151,7 @@ const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, o
                             <p className="text-slate-400 mt-2 max-w-sm mx-auto">Your health journey starts here. Add your first record to begin tracking your medical history.</p>
                             <button
                                 onClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
-                                className="mt-6 px-6 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg font-medium transition-colors"
+                                className="mt-6 px-6 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg font-semibold transition-colors"
                             >
                                 Add First Record
                             </button>

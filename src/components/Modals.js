@@ -72,7 +72,7 @@ export const AppointmentFormModal = ({ onClose, appointment, userId, appId, db }
                 <textarea name="reason" placeholder="Reason for visit..." value={formData.reason || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white h-24 resize-none"></textarea>
                 <div className="flex justify-end pt-4 border-t border-slate-700">
                     <button type="button" onClick={onClose} className="bg-slate-700 border border-slate-600 text-slate-200 px-4 py-2 rounded-lg mr-2 hover:bg-slate-600">Cancel</button>
-                    <button type="submit" className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600">
+                    <button type="submit" className="bg-amber-500 text-black px-4 py-2 rounded-lg hover:bg-amber-400 font-semibold transition-colors">
                         {appointment ? 'Update' : 'Save'} Appointment
                     </button>
                 </div>
@@ -272,7 +272,7 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db }) => {
                 {/* Save/Cancel Buttons */}
                 <div className="flex justify-end pt-4 border-t border-slate-700">
                     <button type="button" onClick={onClose} className="bg-slate-700 text-slate-200 px-4 py-2 rounded-lg mr-2 hover:bg-slate-600">Cancel</button>
-                    <button type="submit" className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600" disabled={isSaving || isAnalyzing}>Save</button>
+                    <button type="submit" className="bg-amber-500 text-black px-4 py-2 rounded-lg hover:bg-amber-400 font-semibold transition-colors" disabled={isSaving || isAnalyzing}>Save</button>
                 </div>
             </form>
         </ModalWrapper>
@@ -295,7 +295,7 @@ export const ShareModal = ({ onClose, userId }) => {
                 <p className="text-slate-400 text-center mt-2 mb-4">Share this secure, read-only link with your doctor.</p>
                 <div className="flex items-center space-x-2 bg-slate-700 p-3 rounded-lg">
                     <input type="text" value={shareableLink} readOnly className="flex-grow bg-transparent focus:outline-none text-sm font-mono text-slate-300" />
-                    <button onClick={copyToClipboard} className="bg-sky-500 text-white px-3 py-1 rounded-md text-sm hover:bg-sky-600 flex items-center">
+                    <button onClick={copyToClipboard} className="bg-amber-500 text-black px-3 py-1 rounded-md text-sm hover:bg-amber-400 font-semibold flex items-center transition-colors">
                         <Copy size={14} className="mr-1" />{isCopied ? 'Copied!' : 'Copy'}
                     </button>
                 </div>

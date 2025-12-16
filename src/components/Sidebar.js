@@ -35,16 +35,16 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose }) => {
 
             {/* Sidebar with universal slide-in behavior and premium glass look */}
             <aside
-                className={`w-72 flex-shrink-0 bg-slate-900/80 backdrop-blur-2xl border-r border-white/10 h-screen fixed top-0 left-0 z-40 
-                           transition-transform duration-300 ease-in-out shadow-2xl
+                className={`w-72 flex-shrink-0 bg-black/95 backdrop-blur-2xl border-r border-yellow-500/20 h-screen fixed top-0 left-0 z-40 
+                           transition-transform duration-300 ease-in-out
                            ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 <div className="p-6 flex items-center justify-between gap-3 border-b border-white/10">
                     <div className='flex items-center gap-3'>
-                        <div className="bg-gradient-to-tr from-sky-500 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-sky-500/20">
-                            <HeartPulse size={24} className="text-white" />
+                        <div className="bg-gradient-to-tr from-amber-500 to-yellow-600 p-2.5 rounded-xl shadow-lg">
+                            <HeartPulse size={24} className="text-black" />
                         </div>
-                        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Curebird</h1>
+                        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-200">Curebird</h1>
                     </div>
                     {/* Mobile Close Button */}
                     <button onClick={onClose} className="lg:hidden p-2 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
@@ -61,16 +61,16 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose }) => {
                                         onClose(); // Close sidebar on mobile after navigation
                                     }}
                                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 group ${activeView === item.name
-                                        ? 'bg-gradient-to-r from-sky-500/20 to-indigo-500/20 text-sky-400 border border-sky-500/20 shadow-lg shadow-sky-500/5'
-                                        : 'text-slate-400 hover:bg-white/5 hover:text-slate-100 hover:translate-x-1'
+                                        ? 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 text-amber-500 border border-amber-500/30'
+                                        : 'text-slate-400 hover:bg-white/5 hover:text-amber-200 hover:translate-x-1'
                                         }`}
                                 >
-                                    <span className={`transition-colors duration-200 ${activeView === item.name ? 'text-sky-400' : 'text-slate-500 group-hover:text-sky-400'}`}>
+                                    <span className={`transition-colors duration-200 ${activeView === item.name ? 'text-amber-500' : 'text-slate-500 group-hover:text-amber-500'}`}>
                                         {getIcon(item.name)}
                                     </span>
                                     <span className="font-semibold">{item.name}</span>
                                     {activeView === item.name && (
-                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]"></div>
+                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500"></div>
                                     )}
                                 </button>
                             </li>

@@ -228,8 +228,8 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
         applyFilters();
     }, [applyFilters]);
 
-    const COLORS = ['#38bdf8', '#818cf8', '#c084fc', '#f472b6', '#fb7185', '#2dd4bf'];
-    const GENDER_COLORS = ['#38bdf8', '#f472b6'];
+    const COLORS = ['#f59e0b', '#fbbf24', '#d97706', '#fcd34d', '#b45309', '#78350f'];
+    const GENDER_COLORS = ['#f59e0b', '#fbbf24'];
 
     const getRegionalData = (disease) => {
         const seed = disease.disease ? disease.disease.length : 10;
@@ -276,9 +276,9 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-slate-900/90 backdrop-blur-md border border-slate-700 p-4 rounded-xl shadow-2xl">
+                <div className="bg-black/90 backdrop-blur-md border border-yellow-500/30 p-4 rounded-xl">
                     <p className="text-slate-200 font-semibold mb-1">{label}</p>
-                    <p className="text-sky-400 text-sm">{payload[0].name}: <span className="font-bold">{payload[0].value}</span></p>
+                    <p className="text-amber-500 text-sm">{payload[0].name}: <span className="font-bold">{payload[0].value}</span></p>
                 </div>
             );
         }
@@ -286,8 +286,8 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
     };
 
     if (loading) return (
-        <div className="h-screen flex flex-col items-center justify-center bg-slate-950 text-white">
-            <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}><Loader size={64} className="text-sky-500" /></motion.div>
+        <div className="h-screen flex flex-col items-center justify-center bg-black text-white">
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}><Loader size={64} className="text-amber-500" /></motion.div>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-6 text-xl font-light tracking-wide text-slate-400">Analyzing Health Data...</motion.p>
         </div>
     );

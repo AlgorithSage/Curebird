@@ -42,7 +42,7 @@ const RecordCard = ({ record, onEdit, onDelete }) => {
                 </div>
             </div>
             <div className="mt-4 pl-16 border-t border-white/5 pt-4 text-sm grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-sky-500"></span><strong className="font-medium text-slate-300">Doctor:</strong> <span className="text-slate-200">{record.doctorName}</span></p>
+                <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span><strong className="font-medium text-slate-300">Doctor:</strong> <span className="text-slate-200">{record.doctorName}</span></p>
                 <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><strong className="font-medium text-slate-300">Facility:</strong> <span className="text-slate-200">{record.hospitalName}</span></p>
             </div>
         </motion.div>

@@ -102,13 +102,12 @@ export default function App() {
     }
 
     return (
-        <div className="min-h-screen font-sans text-slate-200 relative isolate overflow-hidden bg-slate-900">
-            {/* Dynamic Background */}
+        <div className="min-h-screen font-sans text-slate-200 relative isolate overflow-hidden bg-black">
+            {/* Professional Tech Background */}
             <div className="fixed inset-0 z-[-1]">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 animate-gradient-xy opacity-80"></div>
-                <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-sky-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+                <div className="absolute inset-0 bg-zinc-950"></div>
+                {/* Subtle grid pattern */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(234,179,8,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(234,179,8,0.03)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
             </div>
 
             {user ? (
