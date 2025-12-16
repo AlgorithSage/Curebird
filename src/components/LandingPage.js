@@ -2,14 +2,19 @@ import React from 'react';
 import { HeartPulse, LogIn, Dna, Pill, Stethoscope, Syringe, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// --- Gradient Background Component ---
-const GradientBackground = () => (
-    <div className="absolute inset-0 z-0 overflow-hidden bg-slate-900">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 animate-gradient-xy opacity-80"></div>
-        <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-sky-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
+// --- Video Background Component ---
+const VideoBackground = () => (
+    <div className="absolute inset-0 overflow-hidden z-0">
+        <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover opacity-60"
+        >
+            <source src="/medical-bg.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
     </div>
 );
 
@@ -43,8 +48,8 @@ const LandingPage = ({ onLoginClick }) => {
 
     return (
         <div className="relative min-h-screen w-full flex flex-col items-center justify-center text-white overflow-hidden font-sans">
-            {/* Background Gradient */}
-            <GradientBackground />
+            {/* Background Video */}
+            <VideoBackground />
 
             {/* Decorative Floating Icons */}
             <FloatingIcon icon={<Dna size={120} />} className="top-16 left-16" duration={12} delay={0} />
