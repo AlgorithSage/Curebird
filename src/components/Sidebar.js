@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, FileText, Calendar, Pill, Settings, HeartPulse, Bot, Activity, X } from 'lucide-react';
+import { LayoutDashboard, FileText, Calendar, Pill, Settings, HeartPulse, Bot, Activity, X, MessageSquare } from 'lucide-react';
 
 const Sidebar = ({ activeView, onNavigate, isOpen, onClose }) => {
     const navItems = [
@@ -9,6 +9,7 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose }) => {
         { name: 'Medications' },
         { name: 'Cure Analyzer' },
         { name: 'Cure Stat' },
+        { name: 'Health Assistant' },
         { name: 'Settings' },
     ];
 
@@ -20,6 +21,7 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose }) => {
             case 'Medications': return <Pill size={20} />;
             case 'Cure Analyzer': return <Bot size={20} />;
             case 'Cure Stat': return <Activity size={20} />;
+            case 'Health Assistant': return <MessageSquare size={20} />;
             case 'Settings': return <Settings size={20} />;
             default: return null;
         }

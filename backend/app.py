@@ -1,8 +1,9 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import requests
 import pandas as pd
 from flask_cors import CORS
 import traceback
+from gemini_service import get_health_assistant
 
 app = Flask(__name__)
 CORS(app)
@@ -42,6 +43,6 @@ def get_disease_trends():
         traceback.print_exc()
         return jsonify({"error": f"An error occurred: {e}"}), 500
 
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
-

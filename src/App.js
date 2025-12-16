@@ -23,6 +23,7 @@ import Medications from './components/Medications';
 import Settings from './components/Settings';
 import CureStat from './components/CureStat';
 import CureAnalyzer from './components/CureAnalyzer';
+import HealthAssistant from './components/HealthAssistant';
 import LandingPage from './components/LandingPage';
 
 const firebaseConfig = {
@@ -93,6 +94,7 @@ export default function App() {
             case 'Medications': return <Medications {...pageProps} />;
             case 'Cure Analyzer': return <CureAnalyzer {...pageProps} />;
             case 'Cure Stat': return <CureStat {...pageProps} />;
+            case 'Health Assistant': return <HealthAssistant {...pageProps} />;
             case 'Settings': return <Settings {...pageProps} />;
             default: return <MedicalPortfolio {...pageProps} />;
         }
