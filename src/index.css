@@ -53,15 +53,24 @@ body {
   }
 
   .glass {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl;
+    @apply bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl;
   }
 
   .glass-card {
-    @apply bg-slate-900/40 backdrop-blur-md border border-white/10 shadow-lg hover:border-white/20 transition-all duration-300;
+    @apply bg-zinc-950/80 backdrop-blur-md border border-yellow-500/20 hover:border-yellow-500/50 transition-all duration-300;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(234, 179, 8, 0.1);
+  }
+
+  .glass-card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(234, 179, 8, 0.2);
   }
 
   .text-glow {
-    text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    text-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+  }
+
+  .border-glow {
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.15);
   }
 }
 
