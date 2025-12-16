@@ -27,17 +27,17 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose }) => {
 
     return (
         <>
-            {/* Mobile Overlay: Appears behind the drawer and closes it when clicked */}
-            <div 
-                className={`fixed inset-0 bg-black/60 z-30 lg:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            {/* Overlay: Appears behind the drawer and closes it when clicked. Visible on ALL screens when isOpen is true. */}
+            <div
+                className={`fixed inset-0 bg-black/60 z-30 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={onClose}
             ></div>
 
-            {/* Sidebar with responsive classes */}
-            <aside 
+            {/* Sidebar with universal slide-in behavior */}
+            <aside
                 className={`w-64 flex-shrink-0 bg-slate-900 border-r border-slate-800 h-screen fixed top-0 left-0 z-40 
-                           lg:sticky lg:translate-x-0 transition-transform duration-300 ease-in-out
-                           ${isOpen ? 'translate-x-0' : '-translate-x-full'}`} // Slides in and out on mobile
+                           transition-transform duration-300 ease-in-out shadow-2xl
+                           ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 <div className="p-6 flex items-center justify-between gap-3 border-b border-slate-800">
                     <div className='flex items-center gap-3'>
@@ -55,16 +55,15 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose }) => {
                     <ul>
                         {navItems.map(item => (
                             <li key={item.name}>
-                                <button 
+                                <button
                                     onClick={() => {
                                         onNavigate(item.name);
                                         onClose(); // Close sidebar on mobile after navigation
-                                    }} 
-                                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-left transition-colors ${
-                                        activeView === item.name 
-                                            ? 'bg-slate-800 text-white' 
+                                    }}
+                                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-left transition-colors ${activeView === item.name
+                                            ? 'bg-slate-800 text-white'
                                             : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                                    }`}
+                                        }`}
                                 >
                                     {getIcon(item.name)}
                                     <span className="font-medium">{item.name}</span>

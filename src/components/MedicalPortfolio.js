@@ -10,7 +10,7 @@ import RecordCard from './RecordCard';
 import { RecordFormModal, ShareModal, DeleteConfirmModal } from './Modals';
 import { SkeletonDashboard, SkeletonCard } from './SkeletonLoaders';
 
-const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, onLoginClick }) => {
+const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar }) => {
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -45,7 +45,7 @@ const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, o
             setRecords([]);
         }
     }, [recordsCollectionRef]);
-    
+
     const handleDeleteRecord = async () => {
         if (!recordToDelete || !userId) return;
         try {
@@ -65,7 +65,7 @@ const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, o
             return acc;
         }, {});
         return Object.entries(counts).map(([name, count]) => ({ name, count }));
-    }, [records]);
+    }, [records, capitalize]);
 
     const lastVisit = records.length > 0 ? formatDate(records[0].date) : 'N/A';
     const totalPrescriptions = records.filter(r => r.type === 'prescription').length;
@@ -73,44 +73,45 @@ const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, o
     if (!user) {
         return (
             <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto">
-                 <Header onLoginClick={onLoginClick} user={null} />
-                 <div className="flex flex-col items-center justify-center h-4/5 text-center">
+                <Header onLoginClick={onLoginClick} user={null} />
+                <div className="flex flex-col items-center justify-center h-4/5 text-center">
                     <UserPlus size={64} className="text-slate-500" />
                     <h1 className="text-3xl font-bold text-white mt-6">Welcome to Your Medical Portfolio</h1>
                     <p className="text-slate-400 mt-2 max-w-md">Please log in or create an account to securely access and manage your health records.</p>
                     <button onClick={onLoginClick} className="mt-8 bg-amber-500 text-slate-900 py-3 px-8 rounded-lg hover:bg-amber-400 font-semibold transition-colors">
                         Login / Sign Up
                     </button>
-                 </div>
+                </div>
             </div>
         );
     }
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto">
-            <Header 
+            <Header
                 user={user} // --- THIS LINE WAS ADDED ---
-                onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }} 
+                onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
                 onShareClick={() => setIsShareModalOpen(true)}
-                onLogout={onLogout} 
+                onLogout={onLogout}
                 onLoginClick={onLoginClick}
+                onToggleSidebar={onToggleSidebar}
             />
-            
+
             <main className="mt-8">
                 {isLoading ? <SkeletonDashboard /> : (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <StatCard icon={<Hash size={24} className="text-white"/>} label="Total Records" value={records.length} color="bg-sky-500" />
-                            <StatCard icon={<Pill size={24} className="text-white"/>} label="Prescriptions" value={totalPrescriptions} color="bg-rose-500" />
-                            <StatCard icon={<Calendar size={24} className="text-white"/>} label="Last Visit" value={lastVisit} color="bg-amber-500" />
-                            <StatCard icon={<ShieldCheck size={24} className="text-white"/>} label="Status" value="Verified" color="bg-emerald-500" />
+                            <StatCard icon={<Hash size={24} className="text-white" />} label="Total Records" value={records.length} color="bg-sky-500" />
+                            <StatCard icon={<Pill size={24} className="text-white" />} label="Prescriptions" value={totalPrescriptions} color="bg-rose-500" />
+                            <StatCard icon={<Calendar size={24} className="text-white" />} label="Last Visit" value={lastVisit} color="bg-amber-500" />
+                            <StatCard icon={<ShieldCheck size={24} className="text-white" />} label="Status" value="Verified" color="bg-emerald-500" />
                         </div>
                         <div className="mt-8">
                             <RecordsChart data={dashboardData} />
                         </div>
                     </>
                 )}
-                
+
                 <h2 className="text-2xl font-bold mt-12 mb-6 text-white">Medical History</h2>
                 {isLoading ? (
                     <div className="space-y-4">
@@ -118,13 +119,13 @@ const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, o
                     </div>
                 ) : (
                     records.length > 0 ? (
-                         <div className="space-y-4">
+                        <div className="space-y-4">
                             <AnimatePresence>
                                 {records.map(record => (
-                                    <RecordCard 
-                                        key={record.id} 
-                                        record={record} 
-                                        onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }} 
+                                    <RecordCard
+                                        key={record.id}
+                                        record={record}
+                                        onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }}
                                         onDelete={() => { setRecordToDelete(record.id); setIsDeleteModalOpen(true); }}
                                     />
                                 ))}

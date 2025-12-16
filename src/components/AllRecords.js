@@ -54,7 +54,7 @@ const AllRecords = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar }
         }
     };
 
-    const filteredRecords = records.filter(record => 
+    const filteredRecords = records.filter(record =>
         record.doctorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.hospitalName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.type?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -63,24 +63,24 @@ const AllRecords = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar }
     if (!user) {
         // This view is shown if the user is logged out
         return (
-             <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-                <Header 
+            <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
+                <Header
                     title="All Records"
                     description="Log in to view your records."
                     user={null}
                     onLoginClick={onLoginClick}
                     onToggleSidebar={onToggleSidebar}
                 />
-                 <div className="text-center py-20">
+                <div className="text-center py-20">
                     <p className="text-slate-400">Please log in to view your medical records.</p>
-                 </div>
+                </div>
             </div>
         )
     }
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-            <Header 
+            <Header
                 title="All Records"
                 description="View and manage all your historical medical records."
                 user={user}
@@ -92,9 +92,9 @@ const AllRecords = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar }
             <main className="mt-8">
                 <div className="relative mb-6">
                     <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input 
-                        type="text" 
-                        placeholder="Search by doctor, hospital, or type..." 
+                    <input
+                        type="text"
+                        placeholder="Search by doctor, hospital, or type..."
                         className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 text-white"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -110,10 +110,10 @@ const AllRecords = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar }
                         <div className="space-y-4">
                             <AnimatePresence>
                                 {filteredRecords.map(record => (
-                                    <RecordCard 
-                                        key={record.id} 
-                                        record={record} 
-                                        onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }} 
+                                    <RecordCard
+                                        key={record.id}
+                                        record={record}
+                                        onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }}
                                         onDelete={() => { setRecordToDelete(record.id); setIsDeleteModalOpen(true); }}
                                     />
                                 ))}

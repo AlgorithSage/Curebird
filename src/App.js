@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
-import { 
-    getAuth, 
-    onAuthStateChanged, 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
+import {
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
     signOut,
     GoogleAuthProvider,
     signInWithPopup
@@ -25,12 +25,12 @@ import CureAnalyzer from './components/CureAnalyzer';
 import LandingPage from './components/LandingPage';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB6phfALFUYNvEhF3BkVwuHK4OeocV-IEo",
-  authDomain: "curebird-535e5.firebaseapp.com",
-  projectId: "curebird-535e5",
-  storageBucket: "curebird-535e5.firebasestorage.app",
-  messagingSenderId: "325018733204",
-  appId: "1:325018733204:web:8b10b21d92afe506e1c281"
+    apiKey: "AIzaSyB6phfALFUYNvEhF3BkVwuHK4OeocV-IEo",
+    authDomain: "curebird-535e5.firebaseapp.com",
+    projectId: "curebird-535e5",
+    storageBucket: "curebird-535e5.firebasestorage.app",
+    messagingSenderId: "325018733204",
+    appId: "1:325018733204:web:8b10b21d92afe506e1c281"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -60,17 +60,17 @@ export default function App() {
 
     const handleLogin = async (email, password) => {
         setAuthError(null);
-        try { await signInWithEmailAndPassword(auth, email, password); } 
+        try { await signInWithEmailAndPassword(auth, email, password); }
         catch (error) { setAuthError(error.message); }
     };
     const handleSignUp = async (email, password) => {
         setAuthError(null);
-        try { await createUserWithEmailAndPassword(auth, email, password); } 
+        try { await createUserWithEmailAndPassword(auth, email, password); }
         catch (error) { setAuthError(error.message); }
     };
     const handleGoogleSignIn = async () => {
         setAuthError(null);
-        try { await signInWithPopup(auth, googleProvider); } 
+        try { await signInWithPopup(auth, googleProvider); }
         catch (error) { setAuthError(error.message); }
     };
     const handleLogout = () => {
@@ -79,7 +79,7 @@ export default function App() {
 
     const renderActiveView = () => {
         const pageProps = {
-            user, db, appId, formatDate, capitalize, 
+            user, db, appId, formatDate, capitalize,
             onLogout: handleLogout, // --- THIS LINE HAS BEEN CORRECTED ---
             onLoginClick: () => setIsAuthModalOpen(true),
             onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen)
@@ -104,14 +104,14 @@ export default function App() {
     return (
         <div className="min-h-screen font-sans text-slate-200 relative isolate bg-slate-900">
             {user ? (
-                <div className="flex">
-                    <Sidebar 
-                        activeView={activeView} 
+                <div className="relative min-h-screen bg-slate-900">
+                    <Sidebar
+                        activeView={activeView}
                         onNavigate={setActiveView}
                         isOpen={isSidebarOpen}
                         onClose={() => setIsSidebarOpen(false)}
                     />
-                    <main className="flex-1 bg-slate-950 w-full min-w-0">
+                    <main className="w-full bg-slate-950 min-h-screen transition-all duration-300">
                         {renderActiveView()}
                     </main>
                 </div>

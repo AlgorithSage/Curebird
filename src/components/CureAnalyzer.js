@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { UploadCloud, Loader, AlertTriangle, Pill, Stethoscope, Bot } from 'lucide-react';
+import Header from './Header';
 
-const CureAnalyzer = () => {
+const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -50,10 +51,14 @@ const CureAnalyzer = () => {
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-            <header className="pb-6 border-b border-slate-800">
-                <h1 className="text-3xl font-bold text-white">Cure Analyzer</h1>
-                <p className="text-slate-400 mt-1">Upload an image of a medical document to automatically identify key information.</p>
-            </header>
+            <Header
+                title="Cure Analyzer"
+                description="Upload an image of a medical document to automatically identify key information."
+                user={user}
+                onLogout={onLogout}
+                onLoginClick={onLoginClick}
+                onToggleSidebar={onToggleSidebar}
+            />
 
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Upload Section */}

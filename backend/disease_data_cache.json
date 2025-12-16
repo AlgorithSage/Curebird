@@ -5,6 +5,12 @@
         "year": "2023",
         "source": "NCVBDC / NHM",
         "description": "A parasitic disease caused by microscopic, thread-like worms. The adult worms live in the human lymph system.",
+        "top_medicines": [
+            "Diethylcarbamazine (DEC)",
+            "Albendazole",
+            "Ivermectin",
+            "Doxycycline"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -34,6 +40,12 @@
         "year": "2023",
         "source": "NCVBDC / NHM",
         "description": "A condition caused by the accumulation of fluid in the scrotum, often a complication of filariasis.",
+        "top_medicines": [
+            "Diethylcarbamazine",
+            "Albendazole",
+            "Paracetamol",
+            "Ibuprofen"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -63,6 +75,12 @@
         "year": "2023",
         "source": "NCVBDC",
         "description": "A life-threatening disease caused by parasites that are transmitted to people through the bites of infected female Anopheles mosquitoes.",
+        "top_medicines": [
+            "Chloroquine",
+            "Artemisinin-based combination therapy (ACT)",
+            "Primaquine",
+            "Quinine"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -92,6 +110,12 @@
         "year": "2023",
         "source": "NCVBDC (Est.)",
         "description": "A viral infection transmitted to humans through the bite of infected mosquitoes. The primary vectors that transmit the disease are Aedes aegypti mosquitoes.",
+        "top_medicines": [
+            "Paracetamol",
+            "Oral Rehydration Salts (ORS)",
+            "IV Fluids",
+            "Papaya Leaf Extract (Supplement)"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -121,6 +145,12 @@
         "year": "2023",
         "source": "IDSP",
         "description": "Characterized by the passage of three or more loose or liquid stools per day.",
+        "top_medicines": [
+            "Oral Rehydration Salts (ORS)",
+            "Zinc Supplements",
+            "Loperamide",
+            "Probiotics"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -150,6 +180,12 @@
         "year": "2023",
         "source": "NCVBDC",
         "description": "A viral disease transmitted to humans by infected mosquitoes.",
+        "top_medicines": [
+            "Paracetamol",
+            "Ibuprofen",
+            "Naproxen",
+            "Diclofenac"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -179,6 +215,12 @@
         "year": "2023",
         "source": "IDSP (Est.)",
         "description": "Inflammation of the liver caused by a viral infection.",
+        "top_medicines": [
+            "Entecavir",
+            "Tenofovir",
+            "Pegylated interferon-alpha",
+            "Ribavirin"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -208,6 +250,12 @@
         "year": "2023",
         "source": "IDSP",
         "description": "A bacterial infection that can lead to a high fever, diarrhea, and vomiting.",
+        "top_medicines": [
+            "Ciprofloxacin",
+            "Azithromycin",
+            "Ceftriaxone",
+            "Paracetamol"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -237,6 +285,12 @@
         "year": "2024",
         "source": "NCVBDC (AES)",
         "description": "A viral brain infection that's spread through mosquito bites.",
+        "top_medicines": [
+            "Supportive Care (Fluids)",
+            "Mannitol",
+            "Anticonvulsants",
+            "Paracetamol"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -266,6 +320,12 @@
         "year": "2023",
         "source": "NCVBDC",
         "description": "A slow-progressing indigenous disease caused by a protozoan parasite of the Leishmania genus.",
+        "top_medicines": [
+            "Liposomal Amphotericin B",
+            "Miltefosine",
+            "Paromomycin",
+            "Sodium Stibogluconate"
+        ],
         "history": [
             {
                 "year": "2019",
@@ -295,6 +355,12 @@
         "year": "2023",
         "source": "IDSP",
         "description": "A subtype of influenza A virus.",
+        "top_medicines": [
+            "Oseltamivir (Tamiflu)",
+            "Zanamivir",
+            "Paracetamol",
+            "Ibuprofen"
+        ],
         "history": [
             {
                 "year": "2019",

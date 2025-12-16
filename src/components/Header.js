@@ -59,8 +59,8 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     return (
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-800">
             <div className="flex items-center gap-4">
-                 {/* Mobile Hamburger Menu Button (visible on screens smaller than lg) */}
-                <button onClick={onToggleSidebar} className="lg:hidden p-2.5 -ml-2.5 rounded-lg hover:bg-slate-800 transition-colors">
+                {/* Mobile Hamburger Menu Button (visible on screens smaller than lg) */}
+                <button onClick={onToggleSidebar} className="p-2.5 -ml-2.5 rounded-lg hover:bg-slate-800 transition-colors">
                     <Menu size={20} className="text-slate-400" />
                 </button>
                 <div>
@@ -81,8 +81,8 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         <button className="hidden sm:block p-2.5 rounded-lg hover:bg-slate-800 border border-slate-700 transition-colors">
                             <Bell size={20} className="text-slate-400" />
                         </button>
-                         <button 
-                            onClick={onAddClick} 
+                        <button
+                            onClick={onAddClick}
                             className="hidden sm:flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-sky-600 transition-colors text-sm font-semibold"
                         >
                             <Plus size={16} />
@@ -90,12 +90,12 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         </button>
                     </>
                 )}
-                
+
                 {user ? (
                     <UserProfile user={user} onLogout={onLogout} />
                 ) : (
-                    <button 
-                        onClick={onLoginClick} 
+                    <button
+                        onClick={onLoginClick}
                         className="flex items-center gap-2 bg-amber-500 text-slate-900 px-4 py-2 rounded-lg shadow-sm hover:bg-amber-400 transition-colors text-sm font-semibold"
                     >
                         <LogIn size={16} />
