@@ -1,0 +1,276 @@
+{
+    "last_updated_surveillance_week": "2025-W51",
+    "data_status": "Simulated Intelligence (Aligned with MoHFW/IDSP 2024-25 Trends)",
+    "disclaimer": "This data is for public health intelligence and dashboard visualization purposes only. It does not constitute real-time clinical diagnostics or official government statistics. Surveillance data is typically reported weekly and subject to verification.",
+    "diseases": [
+        {
+            "id": "ari_001",
+            "name": "Acute Respiratory Infections (ARI)",
+            "category": "Respiratory",
+            "metrics": {
+                "weekly_reported_cases": 45600,
+                "annual_confirmed_cases": 24500000,
+                "estimated_national_burden": "High (>35M cases annually)"
+            },
+            "risk_level": "High Risk",
+            "trends": "Seasonal peak observed in winter and high-pollution zones.",
+            "about": "ARI, including pneumonia and bronchitis, remains the leading cause of morbidity in India. Surveillance data from NHP indicates massive seasonal volume.",
+            "age_demographics": {
+                "0-14": 40,
+                "15-64": 45,
+                "65+": 15
+            },
+            "recovery_metrics": {
+                "rate": "95%",
+                "avg_time": "7-10 days"
+            },
+            "sources": [
+                "IDSP",
+                "National Health Profile",
+                "ICMR"
+            ]
+        },
+        {
+            "id": "add_002",
+            "name": "Acute Diarrheal Disease (ADD)",
+            "category": "Water/Food Borne",
+            "metrics": {
+                "weekly_reported_cases": 32800,
+                "annual_confirmed_cases": 12800000,
+                "estimated_national_burden": "High (>20M cases annually)"
+            },
+            "risk_level": "High Risk",
+            "trends": "Correlates strongly with monsoon flooding and sanitation gaps.",
+            "about": "A major contributor to child mortality. Linked to water quality and food hygiene standards as reported by CBHI.",
+            "age_demographics": {
+                "0-5": 55,
+                "6-18": 25,
+                "19+": 20
+            },
+            "recovery_metrics": {
+                "rate": "97%",
+                "avg_time": "3-5 days"
+            },
+            "sources": [
+                "IDSP",
+                "CBHI",
+                "WHO-India"
+            ]
+        },
+        {
+            "id": "den_003",
+            "name": "Dengue",
+            "category": "Vector-Borne",
+            "metrics": {
+                "weekly_reported_cases": 5400,
+                "annual_confirmed_cases": 185000,
+                "estimated_national_burden": "Moderate-High (Cyclical Outbreaks)"
+            },
+            "risk_level": "Moderate Risk",
+            "trends": "Post-monsoon urban sprawl remains the primary risk driver.",
+            "about": "Vector-borne disease spreading rapidly in urban and semi-urban clusters. Data managed by NCVBDC.",
+            "age_demographics": {
+                "0-14": 15,
+                "15-44": 65,
+                "45+": 20
+            },
+            "recovery_metrics": {
+                "rate": "99%",
+                "avg_time": "10-14 days"
+            },
+            "sources": [
+                "NCVBDC",
+                "NCDC",
+                "NVBDCP"
+            ]
+        },
+        {
+            "id": "tb_004",
+            "name": "Tuberculosis (TB)",
+            "category": "Chronic Infectious",
+            "metrics": {
+                "weekly_reported_cases": 48200,
+                "annual_confirmed_cases": 2500000,
+                "estimated_national_burden": "Critical (Highest Global Burden)"
+            },
+            "risk_level": "Critical",
+            "trends": "Consistent reporting through Nikshay portal shows high active case detection.",
+            "about": "India carries approximately 27% of the world's TB burden. National TB Elimination Programme (NTEP) monitors long-term trends.",
+            "age_demographics": {
+                "0-14": 5,
+                "15-44": 70,
+                "45+": 25
+            },
+            "recovery_metrics": {
+                "rate": "82%",
+                "avg_time": "180 days"
+            },
+            "sources": [
+                "NTEP",
+                "MoHFW",
+                "WHO Global TB Report"
+            ]
+        },
+        {
+            "id": "fp_005",
+            "name": "Food Poisoning",
+            "category": "Food-Borne",
+            "metrics": {
+                "weekly_reported_cases": 1200,
+                "annual_confirmed_cases": 450000,
+                "estimated_national_burden": "Under-reported (Outbreak-based)"
+            },
+            "risk_level": "Medium Risk",
+            "trends": "Clustered outbreaks often linked to mass catering and summer spikes.",
+            "about": "Estimated burden is likely much higher than reported due to the self-limiting nature of mild cases.",
+            "age_demographics": {
+                "all": 100
+            },
+            "recovery_metrics": {
+                "rate": "99%",
+                "avg_time": "2-3 days"
+            },
+            "sources": [
+                "IDSP Outbreak Reports",
+                "FSSAI"
+            ]
+        },
+        {
+            "id": "mal_006",
+            "name": "Malaria",
+            "category": "Vector-Borne",
+            "metrics": {
+                "weekly_reported_cases": 8500,
+                "annual_confirmed_cases": 420000,
+                "estimated_national_burden": "Declining but Significant"
+            },
+            "risk_level": "Low-Medium Risk",
+            "trends": "Concentrated in tribal and forested belts of Odisha, Chhattisgarh, and NE states.",
+            "about": "India has made significant progress in reduction, targeting elimination by 2030.",
+            "age_demographics": {
+                "all": 100
+            },
+            "recovery_metrics": {
+                "rate": "98%",
+                "avg_time": "7 days"
+            },
+            "sources": [
+                "NCVBDC",
+                "WHO Malaria Report"
+            ]
+        },
+        {
+            "id": "ck_007",
+            "name": "Chikungunya",
+            "category": "Vector-Borne",
+            "metrics": {
+                "weekly_reported_cases": 650,
+                "annual_confirmed_cases": 120000,
+                "estimated_national_burden": "Morbidity Focused"
+            },
+            "risk_level": "Low Risk",
+            "trends": "Seasonal outbreaks characterized by high joint-pain morbidity.",
+            "about": "Vector-borne viral fever often co-circulating with Dengue in monsoon periods.",
+            "age_demographics": {
+                "all": 100
+            },
+            "recovery_metrics": {
+                "rate": "100%",
+                "avg_time": "2-4 weeks (morbidity)"
+            },
+            "sources": [
+                "NCVBDC",
+                "IDSP"
+            ]
+        },
+        {
+            "id": "vf_008",
+            "name": "Viral Fever / Fever with Rash",
+            "category": "Syndromic",
+            "metrics": {
+                "weekly_reported_cases": 65000,
+                "annual_confirmed_cases": 45000000,
+                "estimated_national_burden": "Extremely High (Syndromic)"
+            },
+            "risk_level": "Low Risk",
+            "trends": "Syndromic surveillance shows ubiquitous presence across all states.",
+            "about": "Catch-all category for undifferentiated febrile illnesses. High volume in primary care.",
+            "age_demographics": {
+                "all": 100
+            },
+            "recovery_metrics": {
+                "rate": "99%",
+                "avg_time": "3-5 days"
+            },
+            "sources": [
+                "IDSP Syndromic Reports"
+            ]
+        },
+        {
+            "id": "cp_009",
+            "name": "Chickenpox",
+            "category": "Vaccine-Preventable",
+            "metrics": {
+                "weekly_reported_cases": 450,
+                "annual_confirmed_cases": 210000,
+                "estimated_national_burden": "Steady (Seasonal Spikes)"
+            },
+            "risk_level": "Low Risk",
+            "trends": "Common in spring and early summer among student populations.",
+            "about": "Highly contagious viral infection. Managed through school-based surveillance and IDSP reporting.",
+            "age_demographics": {
+                "0-18": 80,
+                "19+": 20
+            },
+            "recovery_metrics": {
+                "rate": "100%",
+                "avg_time": "10-14 days"
+            },
+            "sources": [
+                "IDSP",
+                "NCDC"
+            ]
+        },
+        {
+            "id": "ms_010",
+            "name": "Measles",
+            "category": "Vaccine-Preventable",
+            "metrics": {
+                "weekly_reported_cases": 180,
+                "annual_confirmed_cases": 45000,
+                "estimated_national_burden": "Outbreak Responsive"
+            },
+            "risk_level": "Moderate Risk",
+            "trends": "Outbreaks observed in areas with low child immunization coverage.",
+            "about": "Targeted for elimination. Surveillance is high-priority for the MoHFW.",
+            "age_demographics": {
+                "0-5": 90,
+                "6+": 10
+            },
+            "recovery_metrics": {
+                "rate": "95%",
+                "avg_time": "14 days"
+            },
+            "sources": [
+                "IDSP",
+                "MoHFW",
+                "WHO-India"
+            ]
+        }
+    ],
+    "context_ncd": {
+        "about": "Non-Communicable Diseases (NCDs) like Diabetes and Hypertension have massive prevalence but are not suitable for live weekly case counters.",
+        "top_prev": [
+            {
+                "name": "Hypertension",
+                "prevalence": "28.5%",
+                "source": "NFHS-5"
+            },
+            {
+                "name": "Diabetes",
+                "prevalence": "11.4%",
+                "source": "ICMR-INDIAB"
+            }
+        ]
+    }
+}
