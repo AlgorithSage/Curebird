@@ -4,6 +4,8 @@ import { Activity, Loader, ServerCrash, Info, Pill, TrendingUp, X, Sparkles, Dow
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from './Header';
 import OccupationalHealth from './OccupationalHealth';
+import SocialDeterminants from './SocialDeterminants';
+import RareDisease from './RareDisease';
 import { API_BASE_URL } from '../config';
 
 
@@ -466,6 +468,16 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                 {/* --- NEW SECTION: Occupational Health --- */}
                 <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.38 }} className="mb-12">
                     <OccupationalHealth />
+                </motion.div>
+
+                {/* --- NEW SECTION: SDOH --- */}
+                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.45 }} className="mb-12">
+                    <SocialDeterminants />
+                </motion.div>
+
+                {/* --- NEW SECTION: Rare Diseases --- */}
+                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.52 }} className="mb-12">
+                    <RareDisease />
                 </motion.div>
 
                 <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>

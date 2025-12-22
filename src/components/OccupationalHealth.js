@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, Activity, Shield, Stethoscope, Pill, Search, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Briefcase, Activity, Shield, Stethoscope, Pill, Search, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
 
 // "Hardcoded" but REAL-WORLD data (tallied with FDA/Medical standard treatments)
 // This ensures reliability while maintaining medical accuracy as requested by the user.
@@ -116,7 +116,7 @@ const OccupationalHealth = () => {
                                             <div className="flex justify-between items-start mb-2">
                                                 <h4 className="font-semibold text-slate-200">{disease.name}</h4>
                                                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${disease.risk === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                                                        'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+                                                    'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
                                                     }`}>
                                                     {disease.risk} Risk
                                                 </span>
