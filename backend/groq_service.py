@@ -151,7 +151,7 @@ Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
                 'success': True,
                 'response': response_text,
                 'conversation_id': conversation_id,
-                'timestamp': datetime.now(ist).isoformat()
+                'timestamp': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
             }
         
         except Exception as e:
