@@ -1,6 +1,8 @@
 import os
 import json
-from groq import Groq
+import time
+import random
+from groq import Groq, RateLimitError, APIError
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 
@@ -15,18 +17,27 @@ class GroqHealthAssistant:
             raise ValueError("GROQ_API_KEY not found in environment variables")
         
         self.client = Groq(api_key=api_key)
-        self.model = "llama-3.3-70b-versatile"
+        
+        # Models
+        self.MODEL_70B = "llama-3.3-70b-versatile"
+        self.MODEL_8B = "llama-3.1-8b-instant"
         
         # Initialize conversation history
         self.conversations = {}
-    
-    def load_disease_context(self):
-        """Load current disease trends from cache."""
+        
+        # Cache disease context
+        self.disease_context_cache = None
+        self.context_last_loaded = None
+        self._load_disease_context_cache()
+
+    def _load_disease_context_cache(self):
+        """Load and cache disease context to reduce I/O."""
         try:
             cache_file = os.path.join(os.path.dirname(__file__), 'disease_data_cache.json')
             if not os.path.exists(cache_file):
-                 return "Disease trend data temporarily unavailable."
-                 
+                 self.disease_context_cache = "Disease trend data temporarily unavailable."
+                 return
+
             with open(cache_file, 'r') as f:
                 data = json.load(f)
             
@@ -40,19 +51,22 @@ class GroqHealthAssistant:
                 year = disease.get('year', 'N/A')
                 context += f"{i}. {name}: {cases:,} cases ({year})\n"
             
-            return context
+            self.disease_context_cache = context
+            self.context_last_loaded = datetime.now()
         except Exception as e:
             print(f"Error loading disease context: {e}")
-            return "Disease trend data temporarily unavailable."
+            self.disease_context_cache = "Disease trend data temporarily unavailable."
     
     def create_system_prompt(self):
-        """Create system prompt with user-provided clinical persona and disease context."""
-        disease_context = self.load_disease_context()
-        
+        """Create system prompt with cached disease context."""
+        # Refresh cache if older than 24 hours (optional, but good practice)
+        if not self.disease_context_cache:
+            self._load_disease_context_cache()
+            
         ist = timezone(timedelta(hours=5, minutes=30))
         return f"""You are a highly professional, reliable, and empathetic AI assistant for Curebird, known as Cure AI.
 
-{disease_context}
+{self.disease_context_cache}
 
 ────────────────────────
 GREETING BEHAVIOR (CRITICAL BRAND RULE)
@@ -115,54 +129,105 @@ MEDICAL SAFETY RULES
 Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
 """
 
-    def generate_response(self, user_message, conversation_id=None):
-        """Generate response using Groq."""
-        try:
-            ist = timezone(timedelta(hours=5, minutes=30))
-            # Create or get conversation
-            if conversation_id is None:
-                conversation_id = f"conv_{datetime.now(ist).timestamp()}"
-            
-            if conversation_id not in self.conversations:
-                # Start new conversation history
-                self.conversations[conversation_id] = [
-                    {"role": "system", "content": self.create_system_prompt()}
-                ]
-            
-            # Add user message to history
-            self.conversations[conversation_id].append({"role": "user", "content": user_message})
-            
-            # Generate response
-            completion = self.client.chat.completions.create(
-                model=self.model,
-                messages=self.conversations[conversation_id],
-                temperature=0.7,
-                max_tokens=2048,
-                top_p=1,
-                stream=False,
-            )
-            
-            response_text = completion.choices[0].message.content
-            
-            # Add AI response to history
-            self.conversations[conversation_id].append({"role": "assistant", "content": response_text})
-            
-            return {
-                'success': True,
-                'response': response_text,
-                'conversation_id': conversation_id,
-                'timestamp': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
-            }
+    def _determine_model(self, user_message):
+        """
+        Intent-based routing:
+        - Greetings / Short follow-ups -> 8B
+        - Clinical summaries -> 70B
+        """
+        msg_lower = user_message.lower().strip()
+        words = msg_lower.split()
         
-        except Exception as e:
-            print(f"Error generating response: {e}")
-            return {
-                'success': False,
-                'error': str(e),
-                'response': f"System Error: {str(e)}",
-                'conversation_id': conversation_id
-            }
-    
+        # Simple greetings or very short messages
+        greetings = {'hi', 'hello', 'hey', 'greetings', 'sup', 'yo', 'thanks', 'thank you', 'ok', 'okay'}
+        if len(words) < 5 or msg_lower in greetings:
+            return self.MODEL_8B
+            
+        # If it's a follow-up (brief) without specific medical keywords, likely safe for 8B
+        # But if it contains medical terms, upgrade to 70B
+        medical_keywords = {'symptom', 'pain', 'dose', 'medicine', 'doctor', 'treatment', 'disease', 'fever', 'blood', 'report', 'diagnosis'}
+        if any(keyword in msg_lower for keyword in medical_keywords):
+            return self.MODEL_70B
+            
+        # Default to 70B for everything else to be safe with clinical queries
+        return self.MODEL_70B
+
+    def generate_response(self, user_message, conversation_id=None):
+        """Generate response with retry logic and model fallback."""
+        ist = timezone(timedelta(hours=5, minutes=30))
+        
+        # Create or get conversation
+        if conversation_id is None:
+            conversation_id = f"conv_{datetime.now(ist).timestamp()}"
+        
+        if conversation_id not in self.conversations:
+            self.conversations[conversation_id] = [
+                {"role": "system", "content": self.create_system_prompt()}
+            ]
+        
+        # Add user message to history
+        self.conversations[conversation_id].append({"role": "user", "content": user_message})
+        
+        # Determine initial model
+        target_model = self._determine_model(user_message)
+        
+        # Retry logic parameters
+        max_retries = 3
+        base_delay = 1 # seconds
+        
+        for attempt in range(max_retries + 1):
+            try:
+                completion = self.client.chat.completions.create(
+                    model=target_model,
+                    messages=self.conversations[conversation_id],
+                    temperature=0.7,
+                    max_tokens=400, # Reduced limit
+                    top_p=1,
+                    stream=False,
+                )
+                
+                response_text = completion.choices[0].message.content
+                
+                # Add AI response to history
+                self.conversations[conversation_id].append({"role": "assistant", "content": response_text})
+                
+                return {
+                    'success': True,
+                    'response': response_text,
+                    'conversation_id': conversation_id,
+                    'timestamp': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+                }
+            
+            except (RateLimitError, APIError) as e:
+                print(f"[Attempt {attempt+1}] Error with model {target_model}: {e}")
+                
+                # If we hit a rate limit or error on 70B, switch to 8B for the next attempt
+                if target_model == self.MODEL_70B:
+                    print("Switching to fallback model (8B)...")
+                    target_model = self.MODEL_8B
+                
+                if attempt < max_retries:
+                    sleep_time = base_delay * (2 ** attempt) + random.uniform(0, 1)
+                    time.sleep(sleep_time)
+                else:
+                    # Final failure
+                    print("Max retries reached.")
+                    return {
+                        'success': False,
+                        # Return user-friendly message, log the real error above
+                        'error': str(e), 
+                        'response': "Curebird is thinking 🐦 Please try again.",
+                        'conversation_id': conversation_id
+                    }
+            except Exception as e:
+                print(f"Unexpected error: {e}")
+                return {
+                    'success': False,
+                    'error': str(e),
+                    'response': "Curebird is thinking 🐦 Please try again.",
+                    'conversation_id': conversation_id
+                }
+
     def get_disease_context(self):
         """Get formatted disease context for frontend display."""
         try:
