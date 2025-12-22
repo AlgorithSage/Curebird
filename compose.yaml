@@ -1,6 +1,0 @@
-services:
-  curebird:
-    image: curebird
-    build:
-      context: .
-      dockerfile: ./Dockerfile
