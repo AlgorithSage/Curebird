@@ -140,3 +140,40 @@ body {
 .animate-pulse-slow {
   animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Fundamental Markdown Styling for Chat */
+.prose {
+  line-height: 1.6;
+}
+
+.prose h3 {
+  @apply text-amber-400 font-bold mt-4 mb-2 text-base uppercase tracking-wider;
+}
+
+.prose p {
+  @apply mb-3 text-slate-200;
+}
+
+.prose ul,
+.prose ol {
+  @apply my-3 pl-4 space-y-2;
+  list-style-type: none;
+  /* We will use the AI's bullets or force them here */
+}
+
+.prose li {
+  @apply relative pl-4 text-slate-300;
+}
+
+.prose li::before {
+  content: "•";
+  @apply absolute left-0 text-amber-500 font-bold;
+}
+
+.prose strong {
+  @apply text-white font-semibold;
+}
+
+.prose em {
+  @apply text-slate-400 italic text-xs;
+}

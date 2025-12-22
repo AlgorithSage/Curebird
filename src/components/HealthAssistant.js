@@ -86,7 +86,7 @@ const HealthAssistant = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
 
         // Add welcome message
         setMessages([{
-            text: "Hello! I'm your Health Assistant AI powered by Gemini 2.0 Flash. I can help you understand disease trends, symptoms, treatments, and provide health guidance based on current data from India. How can I assist you today?",
+            text: "Welcome to the Curebird Health Assistant. I am powered by Llama 3.3 and expert medical intelligence. How can I assist your health inquiry today?",
             isUser: false,
             timestamp: new Date().toISOString()
         }]);
