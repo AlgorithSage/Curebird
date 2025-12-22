@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import { Activity, Loader, ServerCrash, Info, Pill, TrendingUp, X, Sparkles, Download, Users, Brain, Search, MapPin, AlertTriangle, Map } from 'lucide-react';
+import { Activity, Loader, ServerCrash, Info, Pill, TrendingUp, X, Sparkles, Download, Users, Brain, Search, MapPin, AlertTriangle, Map, Calendar, ShieldCheck, Clock, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from './Header';
 import OccupationalHealth from './OccupationalHealth';
@@ -180,6 +180,79 @@ const HeatmapModal = ({ isOpen, onClose, regionalData }) => {
     );
 };
 
+const DiseaseCard = ({ disease, onClick, getRiskLevel }) => {
+    const risk = getRiskLevel(disease);
+    const isChronic = disease.segment === 'Chronic';
+
+    return (
+        <motion.div
+            whileHover={{ scale: 1.02, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onClick}
+            className="glass-card p-6 rounded-2xl group cursor-pointer border-l-4 border-l-transparent hover:border-l-sky-500 relative overflow-hidden flex flex-col h-full"
+        >
+            <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Activity size={80} />
+            </div>
+
+            <div className="flex justify-between items-start mb-4 relative z-10">
+                <div className="flex flex-col gap-1">
+                    <h3 className="font-bold text-lg text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-sky-400 group-hover:to-emerald-400 transition-all duration-300 leading-tight">
+                        {disease.disease}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${risk.bg} ${risk.color} border ${risk.border}`}>
+                            {disease.severity || 'Moderate Severity'}
+                        </span>
+                    </div>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                    <span className="text-[10px] font-medium text-slate-500 flex items-center gap-1">
+                        <ShieldCheck size={10} className={disease.confidence === 'High' ? 'text-emerald-400' : 'text-orange-400'} />
+                        {disease.confidence} Confidence
+                    </span>
+                </div>
+            </div>
+
+            <div className="mb-4 relative z-10">
+                <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-bold text-white tracking-tight">
+                        {isChronic ? (disease.outbreaks) : disease.outbreaks.toLocaleString()}
+                    </span>
+                    <span className="text-slate-400 text-xs font-medium uppercase tracking-wider">
+                        {isChronic ? 'National Prevalence' : 'Reported Cases'}
+                    </span>
+                </div>
+                <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-500 font-medium">
+                    <Calendar size={10} /> {disease.timeframe}
+                </div>
+            </div>
+
+            <p className="text-slate-400 text-sm line-clamp-2 mb-6 leading-relaxed relative z-10 group-hover:text-slate-200 transition-colors">
+                {disease.description}
+            </p>
+
+            <div className="mt-auto pt-4 border-t border-white/5 flex flex-col gap-3 relative z-10">
+                <div className="flex items-center justify-between text-[10px]">
+                    <span className="flex items-center gap-1.5 text-slate-400">
+                        <Clock size={12} className="text-sky-400" />
+                        {disease.seasonality}
+                    </span>
+                    <span className="text-slate-500 bg-white/5 px-2 py-0.5 rounded border border-white/5 truncate max-w-[120px]">
+                        {disease.sources && disease.sources[0]}
+                    </span>
+                </div>
+
+                {disease.segment === 'Seasonal' && (
+                    <div className="flex items-center gap-1.5 text-[10px] text-orange-400 font-bold bg-orange-400/5 p-1.5 rounded border border-orange-400/10">
+                        <TrendingUp size={12} /> Seasonal Surveillance Active
+                    </div>
+                )}
+            </div>
+        </motion.div>
+    );
+};
+
 const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
     const [resourceData, setResourceData] = useState([]);
     const [trends, setTrends] = useState([]);
@@ -219,19 +292,28 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
         fetchDiseaseTrends();
     }, []);
 
-    const getRiskLevel = (count) => {
-        if (count > 300) return { level: 'High', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' };
-        if (count > 100) return { level: 'Medium', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' };
-        return { level: 'Low', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20' };
+    const getRiskLevel = (item) => {
+        // If it's a chronic disease with prevalence, use a different logic or just return the severity
+        if (item.segment === 'Chronic') {
+            return { level: item.severity || 'Moderate', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' };
+        }
+
+        const count = typeof item.outbreaks === 'number' ? item.outbreaks : 0;
+        if (count > 500000) return { level: 'Massive', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' };
+        if (count > 50000) return { level: 'High', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' };
+        return { level: 'Moderate', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20' };
     };
 
     const applyFilters = useCallback(() => {
         let result = [...trends];
         if (searchTerm.trim()) {
-            result = result.filter(item => item.disease.toLowerCase().includes(searchTerm.toLowerCase()) || item.description.toLowerCase().includes(searchTerm.toLowerCase()));
+            result = result.filter(item =>
+                item.disease.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.description.toLowerCase().includes(searchTerm.toLowerCase())
+            );
         }
         if (riskFilter !== 'all') {
-            result = result.filter(item => getRiskLevel(item.outbreaks).level.toLowerCase() === riskFilter);
+            result = result.filter(item => getRiskLevel(item).level.toLowerCase().includes(riskFilter));
         }
         setFilteredTrends(result);
     }, [trends, searchTerm, riskFilter]);
@@ -254,23 +336,6 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
         ].sort((a, b) => b.value - a.value);
     };
 
-    const getResearchData = (disease) => {
-        const seed = disease.disease.length;
-        return {
-            demographics: [
-                { name: '0-18', value: 15 + (seed % 10) },
-                { name: '19-35', value: 30 + (seed % 5) },
-                { name: '36-50', value: 25 - (seed % 5) },
-                { name: '51+', value: 30 - (seed % 10) },
-            ],
-            gender: [
-                { name: 'Male', value: 50 + (seed % 10) },
-                { name: 'Female', value: 50 - (seed % 10) },
-            ],
-            recoveryRate: 85 + (seed % 10),
-            avgRecoveryDays: 5 + (seed % 7)
-        };
-    };
 
     const downloadCSV = (data) => {
         const headers = ["Year", "Cases"];
@@ -517,33 +582,59 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                             <button onClick={() => { setSearchTerm(''); setRiskFilter('all'); }} className="mt-4 px-6 py-2 bg-sky-500/20 hover:bg-sky-500/30 text-sky-400 rounded-xl transition-colors font-medium border border-sky-500/20">Clear Filters</button>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredTrends.map((disease, index) => {
-                                const risk = getRiskLevel(disease.outbreaks);
-                                return (
-                                    <motion.div key={index} whileHover={{ scale: 1.02, y: -5 }} whileTap={{ scale: 0.98 }} onClick={() => setSelectedDisease(disease)} className="glass-card p-6 rounded-2xl group cursor-pointer border-l-4 border-l-transparent hover:border-l-sky-500 relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                                            <Activity size={80} />
-                                        </div>
-                                        <div className="flex justify-between items-start mb-3 relative z-10">
-                                            <h3 className="font-bold text-lg text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-sky-400 group-hover:to-emerald-400 transition-all duration-300">{disease.disease}</h3>
-                                            <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${risk.bg} ${risk.color} ${risk.border} flex items-center gap-1 shadow-sm`}>
-                                                {risk.level === 'High' && <AlertTriangle size={10} />}
-                                                {risk.level} Risk
-                                            </span>
-                                        </div>
-                                        <div className="mb-4 relative z-10">
-                                            <span className="text-3xl font-bold text-white tracking-tight">{disease.outbreaks.toLocaleString()}</span>
-                                            <span className="text-slate-400 text-sm ml-2 font-medium">cases reported</span>
-                                        </div>
-                                        <p className="text-slate-400 text-sm line-clamp-2 mb-4 leading-relaxed relative z-10 group-hover:text-slate-300 transition-colors">{disease.description}</p>
-                                        <div className="flex items-center justify-between text-xs font-medium text-slate-500 group-hover:text-sky-400 transition-colors mt-auto pt-4 border-t border-white/5 relative z-10">
-                                            <div className="flex items-center gap-2"><Info size={14} /> <span>Tap to explore details</span></div>
-                                            {disease.source && <span className="text-[10px] bg-white/5 px-2 py-1 rounded border border-white/5 text-slate-400">{disease.source}</span>}
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
+                        <div className="space-y-16">
+
+                            {/* 1. High-Burden Everyday Diseases */}
+                            <section>
+                                <div className="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
+                                    <h3 className="text-lg font-bold text-slate-300 uppercase tracking-widest">A. High-Burden Everyday Diseases</h3>
+                                    <span className="text-xs text-slate-500">(Highest national case volumes)</span>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {filteredTrends.filter(d => d.segment === 'High-Burden').map((disease, index) => (
+                                        <DiseaseCard key={index} disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                    ))}
+                                </div>
+                            </section>
+
+                            {/* 2. Seasonal & Outbreak-Prone */}
+                            <section>
+                                <div className="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
+                                    <h3 className="text-lg font-bold text-slate-300 uppercase tracking-widest text-orange-400/80">B. Seasonal & Outbreak-Prone</h3>
+                                    <span className="text-xs text-slate-500">(Post-Monsoon / Winter Peaks)</span>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {filteredTrends.filter(d => d.segment === 'Seasonal').map((disease, index) => (
+                                        <DiseaseCard key={index} disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                    ))}
+                                </div>
+                            </section>
+
+                            {/* 3. Vaccine-Preventable Diseases */}
+                            <section>
+                                <div className="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
+                                    <h3 className="text-lg font-bold text-slate-300 uppercase tracking-widest text-emerald-400/80">C. Vaccine-Preventable</h3>
+                                    <span className="text-xs text-slate-500">(Coverage Dependent Reporting)</span>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {filteredTrends.filter(d => d.segment === 'Vaccine-Preventable').map((disease, index) => (
+                                        <DiseaseCard key={index} disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                    ))}
+                                </div>
+                            </section>
+
+                            {/* 4. Chronic High-Burden Diseases (Context Only) */}
+                            <section>
+                                <div className="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
+                                    <h3 className="text-lg font-bold text-slate-300 uppercase tracking-widest text-blue-400/80">D. Chronic High-Burden</h3>
+                                    <span className="text-xs text-slate-500">(Long-term Prevalence / Non-Live)</span>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {filteredTrends.filter(d => d.segment === 'Chronic').map((disease, index) => (
+                                        <DiseaseCard key={index} disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                    ))}
+                                </div>
+                            </section>
                         </div>
                     )}
                 </motion.div>
@@ -559,12 +650,21 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                                 <div className="p-6 sm:p-8 border-b border-white/10 sticky top-0 bg-slate-900/80 backdrop-blur-xl z-20 flex flex-col-reverse sm:flex-row justify-between items-start gap-4 shadow-sm">
                                     <div className="w-full sm:w-auto">
                                         <motion.h2 initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{selectedDisease.disease}</motion.h2>
-                                        <div className="flex items-center gap-4 mt-2">
-                                            <p className="text-sky-400 text-lg font-medium flex items-center gap-2"><Activity size={18} /> {selectedDisease.outbreaks.toLocaleString()} reported cases</p>
-                                            {(() => {
-                                                const risk = getRiskLevel(selectedDisease.outbreaks);
-                                                return (<span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${risk.bg} ${risk.color} ${risk.border} flex items-center gap-1`}>{risk.level} Risk</span>);
-                                            })()}
+                                        <div className="flex flex-wrap items-center gap-3 mt-3">
+                                            <p className="text-sky-400 text-lg font-medium flex items-center gap-2">
+                                                <Activity size={18} />
+                                                {selectedDisease.segment === 'Chronic' ? selectedDisease.outbreaks : selectedDisease.outbreaks.toLocaleString()}
+                                                <span className="text-slate-500 text-sm font-normal">
+                                                    {selectedDisease.segment === 'Chronic' ? ' National Prevalence' : ' reported cases (weekly)'}
+                                                </span>
+                                            </p>
+                                            <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${getRiskLevel(selectedDisease).bg} ${getRiskLevel(selectedDisease).color} ${getRiskLevel(selectedDisease).border} flex items-center gap-1 shadow-sm uppercase tracking-wider`}>
+                                                {selectedDisease.severity}
+                                            </span>
+                                            <span className="text-[10px] font-medium text-slate-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
+                                                <ShieldCheck size={12} className={selectedDisease.confidence === 'High' ? 'text-emerald-400' : 'text-orange-400'} />
+                                                {selectedDisease.confidence} Confidence
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -578,28 +678,65 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                                 <div className="p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
                                     <div className="lg:col-span-5 space-y-8">
                                         <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
-                                            <h3 className="text-lg font-semibold flex items-center gap-2 mb-3 text-slate-200"><Info size={20} className="text-sky-400" /> About</h3>
-                                            <p className="text-slate-400 leading-relaxed text-base">{selectedDisease.description}</p>
+                                            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Info size={20} className="text-sky-400" /> Public Health Intelligence</h3>
+                                            <div className="space-y-4">
+                                                <p className="text-slate-400 leading-relaxed text-base">{selectedDisease.description}</p>
+
+                                                <div className="grid grid-cols-1 gap-3 pt-2">
+                                                    <div className="flex items-center gap-3 bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                                                        <Calendar size={18} className="text-slate-500" />
+                                                        <div>
+                                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Timeframe</p>
+                                                            <p className="text-sm text-slate-300 font-medium">{selectedDisease.timeframe}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3 bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                                                        <Clock size={18} className="text-slate-500" />
+                                                        <div>
+                                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Seasonality</p>
+                                                            <p className="text-sm text-slate-300 font-medium">{selectedDisease.seasonality}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3 bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                                                        <Layers size={18} className="text-slate-500" />
+                                                        <div>
+                                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Surveillance Sources</p>
+                                                            <div className="flex flex-wrap gap-1.5 mt-1">
+                                                                {selectedDisease.sources && selectedDisease.sources.map((src, i) => (
+                                                                    <span key={i} className="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20">{src}</span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+
                                         <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
                                             <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Brain size={20} className="text-pink-400" /> Research Metrics</h3>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
                                                     <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Recovery Rate</p>
-                                                    <p className="text-2xl font-bold text-green-400">{getResearchData(selectedDisease).recoveryRate}%</p>
+                                                    <p className="text-2xl font-bold text-green-400">{selectedDisease.recovery_rate}</p>
                                                 </div>
                                                 <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
                                                     <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Avg. Recovery</p>
-                                                    <p className="text-2xl font-bold text-sky-400">{getResearchData(selectedDisease).avgRecoveryDays} days</p>
+                                                    <p className="text-2xl font-bold text-sky-400">{selectedDisease.avg_recovery}</p>
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
                                             <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Pill size={20} className="text-green-400" /> Top Medicines</h3>
-                                            <div className="flex flex-wrap gap-2">
-                                                {selectedDisease.top_medicines && selectedDisease.top_medicines.map((med, i) => (
-                                                    <span key={i} className="bg-green-500/10 text-green-400 px-4 py-2 rounded-lg text-sm font-medium border border-green-500/20 hover:bg-green-500/20 transition-colors cursor-default">{med}</span>
-                                                ))}
+                                            <div className="space-y-3">
+                                                <div className="flex flex-wrap gap-2">
+                                                    {selectedDisease.top_medicines && selectedDisease.top_medicines.map((med, i) => (
+                                                        <span key={i} className="bg-green-500/10 text-green-400 px-4 py-2 rounded-lg text-sm font-medium border border-green-500/20 hover:bg-green-500/20 transition-colors cursor-default">{med}</span>
+                                                    ))}
+                                                </div>
+                                                <div className="pt-2 flex items-center gap-2 text-[10px] text-slate-500 italic border-t border-white/5">
+                                                    <Info size={12} /> Source: {selectedDisease.med_source}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -631,7 +768,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                                                 <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Users size={20} className="text-blue-400" /> Age Groups</h3>
                                                 <div className="h-[200px]">
                                                     <ResponsiveContainer width="100%" height="100%">
-                                                        <BarChart data={getResearchData(selectedDisease).demographics}>
+                                                        <BarChart data={selectedDisease.age_groups}>
                                                             <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
                                                             <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
                                                             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
@@ -646,8 +783,8 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                                                 <div className="h-[200px]">
                                                     <ResponsiveContainer width="100%" height="100%">
                                                         <PieChart>
-                                                            <Pie data={getResearchData(selectedDisease).gender} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value">
-                                                                {getResearchData(selectedDisease).gender.map((entry, index) => (<Cell key={`cell-${index}`} fill={GENDER_COLORS[index % GENDER_COLORS.length]} />))}
+                                                            <Pie data={selectedDisease.gender_split} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value">
+                                                                {selectedDisease.gender_split && selectedDisease.gender_split.map((entry, index) => (<Cell key={`cell-${index}`} fill={GENDER_COLORS[index % GENDER_COLORS.length]} />))}
                                                             </Pie>
                                                             <Tooltip content={<CustomTooltip />} />
                                                             <Legend verticalAlign="bottom" height={36} iconType="circle" formatter={(value) => <span className="text-slate-400 text-xs ml-1">{value}</span>} />
