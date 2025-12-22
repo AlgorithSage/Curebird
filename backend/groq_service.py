@@ -1,7 +1,7 @@
 import os
 import json
 from groq import Groq
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 
 # Load environment variables explicitly
@@ -49,6 +49,7 @@ class GroqHealthAssistant:
         """Create system prompt with user-provided clinical persona and disease context."""
         disease_context = self.load_disease_context()
         
+        ist = timezone(timedelta(hours=5, minutes=30))
         return f"""You are a highly professional, reliable, and empathetic AI assistant for Curebird, known as Cure AI.
 
 {disease_context}
@@ -111,15 +112,16 @@ MEDICAL SAFETY RULES
 - Do NOT diagnose or prescribe.
 - Always include the one-line italicized disclaimer at the end (medical queries only).
 
-Current Date: {datetime.now().strftime('%B %d, %Y')}
+Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
 """
 
     def generate_response(self, user_message, conversation_id=None):
         """Generate response using Groq."""
         try:
+            ist = timezone(timedelta(hours=5, minutes=30))
             # Create or get conversation
             if conversation_id is None:
-                conversation_id = f"conv_{datetime.now().timestamp()}"
+                conversation_id = f"conv_{datetime.now(ist).timestamp()}"
             
             if conversation_id not in self.conversations:
                 # Start new conversation history
@@ -149,7 +151,7 @@ Current Date: {datetime.now().strftime('%B %d, %Y')}
                 'success': True,
                 'response': response_text,
                 'conversation_id': conversation_id,
-                'timestamp': datetime.now().isoformat()
+                'timestamp': datetime.now(ist).isoformat()
             }
         
         except Exception as e:
