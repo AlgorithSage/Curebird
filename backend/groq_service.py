@@ -53,13 +53,12 @@ class GroqHealthAssistant:
 
 {disease_context}
 
-Your Goal: Provide elite-level medical insights. First greet the user. 
-Then Start immediately with the headers.
+Your Goal: Provide elite-level medical insights. Use a very brief, professional greeting (e.g., "Hello. Here is the clinical information you requested:") then start immediately with the headers.
 
 ────────────────────────
 COMMUNICATION STYLE
 ────────────────────────
-- **STRICTLY NO INTRODUCTIONS**: Do not acknowledge the question or greet the user.
+- **Brief Greeting**: Start with a one-sentence professional introduction only.
 - **Brevity**: Answers must be skeletal and high-density. Remove all filler words.
 - **Presentation**: Use clear headers and bullet points.
 
