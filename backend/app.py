@@ -8,7 +8,9 @@ from groq_service import get_health_assistant
 app = Flask(__name__)
 CORS(app)
 
-DATA_API_URL = "https://api.data.gov.in/resource/96973b30-3829-46c4-912b-ab7ec65aff1b?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&limit=1000"
+import os
+DATA_GOV_API_KEY = os.getenv('DATA_GOV_API_KEY')
+DATA_API_URL = f"https://api.data.gov.in/resource/96973b30-3829-46c4-912b-ab7ec65aff1b?api-key={DATA_GOV_API_KEY}&format=json&limit=1000"
 
 @app.route('/api/disease-trends', methods=['GET'])
 def get_disease_trends():
