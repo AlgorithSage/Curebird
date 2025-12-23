@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Share2, Bell, Search, LogIn, LogOut, Settings, Menu, LayoutDashboard, FileText, Calendar, Pill, HeartPulse, Bot, Activity, Mail, ScrollText, Shield, MessageSquare } from 'lucide-react';
+import { Plus, Share2, Bell, LogIn, LogOut, Settings, Menu, LayoutDashboard, FileText, Calendar, Pill, HeartPulse, Bot, Activity, Mail, ScrollText, Shield, MessageSquare } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CurebirdLogo from '../curebird_logo.png';
 
@@ -87,9 +87,11 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     };
 
     return (
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-white/10 relative z-20">
-            <div className="flex items-center gap-4">
-                {/* Mobile Hamburger Menu Button - Decorated & Lively */}
+        <header className="flex flex-wrap items-center justify-between gap-y-4 gap-x-2 sm:gap-4 pb-6 border-b border-white/10 relative z-20">
+
+            {/* Left Group: Menu, Logo, Nav */}
+            <div className="flex items-center gap-1.5 sm:gap-4 order-1 flex-1">
+                {/* Mobile Hamburger Menu Button */}
                 <motion.button
                     onClick={onToggleSidebar}
                     whileHover={{ scale: 1.1 }}
@@ -98,17 +100,25 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         borderColor: ["rgba(255,255,255,0.1)", "rgba(245,158,11,0.4)", "rgba(255,255,255,0.1)"],
                         backgroundColor: ["rgba(245, 158, 11, 0)", "rgba(245, 158, 11, 0.15)", "rgba(245, 158, 11, 0)"],
                         boxShadow: ["0 0 0px rgba(0,0,0,0)", "0 0 10px rgba(245,158,11,0.2)", "0 0 0px rgba(0,0,0,0)"],
-                        color: ["#cbd5e1", "#fbbf24", "#cbd5e1"] // slate-300 to amber-400
+                        color: ["#cbd5e1", "#fbbf24", "#cbd5e1"]
                     }}
                     transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    className="p-3 rounded-full border border-white/10 text-slate-300 group shadow-lg shadow-black/20"
+                    className="p-3 sm:p-3 rounded-full border border-white/10 text-slate-300 group shadow-lg shadow-black/20 shrink-0"
                 >
-                    <Menu size={20} />
+                    <Menu size={22} className="w-[22px] h-[22px]" />
                 </motion.button>
 
-                {/* Quick Navigation Chain of Icons - Animated & Glowy */}
-                <div className='bg-slate-900/50 p-1.5 rounded-full border border-white/5 backdrop-blur-sm shadow-inner mr-3 sm:mr-0 shrink-0 overflow-hidden'>
-                    <div className='flex items-center gap-2 overflow-x-auto max-w-[140px] sm:max-w-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'>
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/40 p-2 flex items-center justify-center transition-transform duration-500 hover:scale-105 shrink-0">
+                    <img
+                        src={CurebirdLogo}
+                        alt="Logo"
+                        className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-[pulse_3s_ease-in-out_infinite] hover:drop-shadow-[0_0_20px_rgba(245,158,11,1)] transition-all duration-300"
+                    />
+                </div>
+
+                {/* Quick Navigation Chain */}
+                <div className='bg-slate-900/50 p-1.5 sm:p-1.5 rounded-full border border-white/5 backdrop-blur-sm shadow-inner shrink-0 overflow-hidden ml-1'>
+                    <div className='flex items-center gap-1.5 sm:gap-2 overflow-x-auto max-w-[140px] sm:max-w-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'>
                         {navItems.map((item) => {
                             const isActive = title === item.name;
                             return (
@@ -126,20 +136,19 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                     } : {
                                         scale: 1,
                                         borderColor: ["rgba(255,255,255,0)", "rgba(245,158,11,0.3)", "rgba(255,255,255,0)"],
-                                        color: ["#64748b", "#fbbf24", "#64748b"], // slate-500 to amber-400
+                                        color: ["#64748b", "#fbbf24", "#64748b"],
                                     }}
                                     transition={isActive ? { type: "spring", stiffness: 300 } : { duration: 4, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
-                                    className={`p-2 rounded-full relative z-10 shrink-0 ${isActive
+                                    className={`p-2 sm:p-2 rounded-full relative z-10 shrink-0 ${isActive
                                         ? 'bg-gradient-to-tr from-amber-500 to-yellow-600 text-black font-bold'
                                         : 'border border-transparent bg-transparent'
                                         }`}
                                     title={item.name}
                                 >
-                                    {/* Icon */}
                                     <span className="block">
                                         {React.cloneElement(item.icon, {
-                                            size: 18,
-                                            className: isActive ? "text-black animate-[spin_3s_linear_infinite_paused] hover:animate-[spin_1s_ease_in_out]" : "currentColor"
+                                            size: 20,
+                                            className: isActive ? "text-black animate-[spin_3s_linear_infinite_paused] hover:animate-[spin_1s_ease_in_out] w-5 h-5 sm:w-[20px] sm:h-[20px]" : "currentColor w-5 h-5 sm:w-[20px] sm:h-[20px]"
                                         })}
                                     </span>
                                 </motion.button>
@@ -147,40 +156,13 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         })}
                     </div>
                 </div>
-
-                <div className="hidden sm:block w-px h-10 bg-white/10 mx-2 self-center"></div>
-
-                <img
-                    src={CurebirdLogo}
-                    alt="Logo"
-                    className="w-16 h-16 object-contain hidden sm:block filter drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-[pulse_3s_ease-in-out_infinite] hover:drop-shadow-[0_0_20px_rgba(245,158,11,1)] transition-all duration-300"
-                />
-
-                <div className="flex flex-col justify-center min-w-0 flex-1">
-                    <h1 className="text-base sm:text-3xl font-extrabold tracking-tight leading-tight mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                        <span className="sm:hidden">
-                            <span className="text-white">Welcome, </span>
-                            <span className="text-white">Bird</span><span className="text-white">!</span>
-                        </span>
-                        <span className="hidden sm:inline">
-                            <span className="text-white">Welcome bird | </span>
-                            <span className="text-white">Cure</span><span className="text-amber-200">bird</span>
-                            <span className="text-white"> is at your service!</span>
-                        </span>
-                    </h1>
-                    <div className="flex items-center gap-2 text-slate-400 text-[10px] sm:text-sm font-medium">
-                        <span className="text-amber-500/90 uppercase tracking-wider font-bold truncate">{title}</span>
-                        <span className="hidden md:inline truncate max-w-xl text-slate-400/80">{description}</span>
-                    </div>
-                </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto mt-4 sm:mt-0">
-                <div className="relative flex-grow sm:flex-grow-0 sm:w-auto group">
-                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-400 transition-colors" />
-                    <input type="text" placeholder="Search..." className="w-full bg-slate-900/50 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 text-white placeholder:text-slate-500 transition-all shadow-sm" />
-                </div>
+
+            {/* Right Group: Actions (Add, Profile) */}
+            <div className="flex items-center gap-1.5 sm:gap-4 order-2 sm:order-3 shrink-0">
                 {user && onAddClick && (
                     <>
+                        {/* Hidden on mobile to save space, shown on large screens */}
                         <button onClick={onShareClick} className="hidden lg:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
                             <Share2 size={20} />
                         </button>
@@ -189,9 +171,9 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         </button>
                         <button
                             onClick={onAddClick}
-                            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black p-2.5 sm:px-5 sm:py-2.5 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-sm font-bold border border-white/10"
+                            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black p-3 sm:px-5 sm:py-2.5 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-sm font-bold border border-white/10"
                         >
-                            <Plus size={20} className="sm:w-[18px] sm:h-[18px]" />
+                            <Plus size={22} className="w-[22px] h-[22px] sm:w-[18px] sm:h-[18px]" />
                             <span className="hidden sm:inline">Add Record</span>
                         </button>
                     </>
@@ -202,12 +184,31 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 ) : (
                     <button
                         onClick={onLoginClick}
-                        className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-105 transition-all text-sm font-bold"
+                        className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-4 py-3 sm:px-5 sm:py-2.5 rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-105 transition-all text-sm font-bold"
                     >
-                        <LogIn size={18} />
+                        <LogIn size={20} className="w-5 h-5 sm:w-[18px] sm:h-[18px]" />
                         Login
                     </button>
                 )}
+            </div>
+
+            {/* Center/Bottom Group: Text */}
+            <div className="w-full sm:w-auto sm:flex-1 sm:ml-4 sm:border-l sm:border-white/10 sm:pl-4 order-3 sm:order-2 text-center sm:text-left mt-3 sm:mt-0">
+                <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight leading-tight mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
+                    <span className="sm:hidden">
+                        <span className="text-white">Welcome, </span>
+                        <span className="text-white">Bird</span><span className="text-white">!</span>
+                    </span>
+                    <span className="hidden sm:inline">
+                        <span className="text-white">Welcome bird | </span>
+                        <span className="text-white">Cure</span><span className="text-amber-200">bird</span>
+                        <span className="text-white"> is at your service!</span>
+                    </span>
+                </h1>
+                <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-400 text-xs sm:text-sm font-medium">
+                    <span className="text-amber-500/90 uppercase tracking-wider font-bold truncate">{title}</span>
+                    <span className="hidden md:inline truncate max-w-xl text-slate-400/80">{description}</span>
+                </div>
             </div>
         </header>
     );
