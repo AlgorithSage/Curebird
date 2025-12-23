@@ -197,45 +197,32 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                 onToggleSidebar={onToggleSidebar}
             />
 
-            {/* Premium Hero Section */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-8 text-center mt-6 flex-shrink-0">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/20 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
+            {/* Premium Hero Section - Compacted for better chat space */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent border border-amber-500/10 p-6 mb-4 text-center mt-4 flex-shrink-0">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
 
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-bold mb-6 animate-pulse">
-                    <Bot size={16} /> AI POWERED ASSISTANT
+                <div className="flex items-center justify-center gap-2 mb-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold animate-pulse">
+                        <Bot size={14} /> AI ASSISTANT
+                    </div>
                 </div>
 
-                <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+                <h1 className="text-2xl md:text-3xl font-black text-white mb-2 tracking-tight drop-shadow-lg">
                     Cure Personal <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">AI</span>
                 </h1>
 
-                <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                    Your 24/7 medical companion. Ask about symptoms, get second opinions, and decode complex health queries with expert-level precision.
+                <p className="text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed hidden sm:block">
+                    Your 24/7 medical companion. Expert-level precision for health queries.
                 </p>
-
-                <div className="flex justify-center gap-8 mt-8 opacity-70">
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><MessageSquare /></div>
-                        <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Inquire</span>
-                    </div>
-                    <div className="w-16 h-px bg-slate-700 self-center"></div>
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-orange-400"><Brain /></div>
-                        <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Reason</span>
-                    </div>
-                    <div className="w-16 h-px bg-slate-700 self-center"></div>
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><ShieldCheck /></div>
-                        <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Resolve</span>
-                    </div>
-                </div>
             </div>
 
-            <div className="flex-1 flex gap-6 mt-6 overflow-hidden">
+            <div className="flex-1 flex gap-6 mt-2 overflow-hidden min-h-0">
                 {/* Main Chat Area */}
-                <div className="flex-1 flex flex-col glass-card rounded-2xl overflow-hidden">
+                <div className="flex-1 flex flex-col bg-slate-900/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 overflow-hidden shadow-2xl relative group">
+                    <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 to-transparent pointer-events-none"></div>
+
                     {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
                         <AnimatePresence>
                             {messages.map((message, index) => (
                                 <ChatMessage key={index} message={message} isUser={message.isUser} />
@@ -248,28 +235,32 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                     </div>
 
                     {/* Input Area */}
-                    <div className="border-t border-yellow-500/20 p-4 bg-black/20">
-                        <div className="flex gap-3">
-                            <input
-                                type="text"
-                                value={inputMessage}
-                                onChange={(e) => setInputMessage(e.target.value)}
-                                onKeyPress={handleKeyPress}
-                                placeholder="Ask me about health, diseases, or symptoms..."
-                                className="flex-1 bg-black/30 border border-yellow-500/30 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all"
-                                disabled={isLoading}
-                            />
+                    <div className="p-4 bg-slate-900/80 border-t border-slate-800 backdrop-blur-md">
+                        <div className="flex gap-3 items-end">
+                            <div className="flex-1 relative">
+                                <textarea
+                                    value={inputMessage}
+                                    onChange={(e) => setInputMessage(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder="Type your health query here..."
+                                    rows={1}
+                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all resize-none shadow-inner"
+                                    disabled={isLoading}
+                                    style={{ minHeight: '52px', maxHeight: '120px' }}
+                                />
+                                <div className="absolute right-3 bottom-3 text-[10px] text-slate-600 font-mono">AI-POWERED</div>
+                            </div>
+
                             <button
                                 onClick={sendMessage}
                                 disabled={isLoading || !inputMessage.trim()}
-                                className="px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-600 text-black rounded-xl hover:shadow-lg hover:shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold flex items-center gap-2"
+                                className="px-6 py-3 h-[52px] bg-gradient-to-r from-amber-500 to-orange-600 text-black rounded-xl hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-bold flex items-center justify-center gap-2 uppercase tracking-wide text-xs"
                             >
                                 <Send size={18} />
-                                Send
                             </button>
                             <button
                                 onClick={clearChat}
-                                className="px-4 py-3 glass-card rounded-xl hover:bg-white/10 transition-all text-slate-300 hover:text-amber-400"
+                                className="px-4 py-3 h-[52px] bg-slate-800/50 border border-slate-700 rounded-xl hover:bg-red-500/10 hover:border-red-500/50 hover:text-red-400 transition-all text-slate-400"
                                 title="Clear conversation"
                             >
                                 <Trash2 size={18} />
@@ -279,7 +270,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                 </div>
 
                 {/* Disease Trends Sidebar */}
-                <div className="hidden lg:block w-80 glass-card rounded-2xl p-6 overflow-y-auto">
+                <div className="hidden lg:block w-80 bg-slate-900/50 backdrop-blur-xl rounded-2xl p-6 overflow-y-auto border border-slate-700/50 shadow-xl">
                     <div className="flex items-center gap-2 mb-4">
                         <TrendingUp className="text-amber-400" size={20} />
                         <h3 className="text-lg font-semibold text-white">Current Trends</h3>

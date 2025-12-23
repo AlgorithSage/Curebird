@@ -98,126 +98,175 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
 
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Upload Section */}
-                <div className="relative group p-1 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 shadow-2xl">
-                    <div className="absolute inset-0 bg-amber-500/5 blur-xl group-hover:bg-amber-500/10 transition-all duration-700 rounded-2xl"></div>
-                    <div className="relative bg-slate-900/90 backdrop-blur-xl p-6 rounded-xl h-full flex flex-col">
-                        <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-white">
-                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 text-sm border border-amber-500/30">1</span>
-                            Upload Document
+                {/* Upload Section - Futuristic Engine Border */}
+                {/* Upload Section - Professional High-Fidelity Border */}
+                <div className="relative group rounded-3xl p-[1px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_100px_-20px_rgba(245,158,11,0.3)]">
+                    {/* Animated Gradient Border */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 group-hover:from-amber-600 group-hover:via-amber-500/20 group-hover:to-orange-900 transition-colors duration-700"></div>
+                    <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_120deg,rgba(245,158,11,0.5)_180deg,transparent_360deg)] opacity-0 group-hover:opacity-100 animate-[spin_4s_linear_infinite] transition-opacity duration-700"></div>
+
+                    {/* Inner Content Container */}
+                    <div className="relative bg-[#090e1a] rounded-[23px] h-full flex flex-col p-8 overflow-hidden z-10 backdrop-blur-xl">
+                        {/* Subtle Grid - Professional */}
+                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
+
+                        {/* Premium Glow effect */}
+                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-amber-500/20 transition-all duration-700"></div>
+
+                        <div className="absolute top-6 right-6 opacity-30 flex gap-2">
+                            <div className="w-1 h-1 rounded-full bg-slate-400"></div>
+                            <div className="w-1 h-1 rounded-full bg-slate-400"></div>
+                        </div>
+
+                        <h2 className="text-2xl font-bold mb-8 flex items-center gap-4 text-white z-10 tracking-tight">
+                            <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 text-lg border border-amber-500/20 group-hover:border-amber-500/50 group-hover:bg-amber-500/20 transition-all shadow-[0_0_20px_-5px_rgba(245,158,11,0.3)]">1</span>
+                            Upload any Medical Document
                         </h2>
 
-                        <div className="flex-grow flex items-center justify-center w-full">
-                            <label htmlFor="dropzone-file" className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-slate-700 rounded-2xl cursor-pointer hover:border-amber-500/50 eth-card-bg transition-all duration-300 group/drop">
-                                <div className="absolute inset-0 bg-amber-500/0 group-hover/drop:bg-amber-500/5 transition-all duration-300 rounded-2xl"></div>
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6 z-10 transition-transform duration-300 group-hover/drop:scale-105">
-                                    <div className="p-4 rounded-full bg-slate-800/50 mb-3 group-hover/drop:bg-amber-500/20 transition-colors">
-                                        <UploadCloud className="w-10 h-10 text-slate-400 group-hover/drop:text-amber-400 transition-colors" />
+                        <div className="flex-grow flex items-center justify-center w-full z-10">
+                            <label htmlFor="dropzone-file" className="relative flex flex-col items-center justify-center w-full h-72 border border-dashed border-slate-700 bg-slate-800/20 rounded-2xl cursor-pointer hover:border-amber-500/60 hover:bg-slate-800/40 transition-all duration-500 group/drop overflow-hidden">
+
+                                {/* Scanning Line Animation */}
+                                <div className="absolute inset-0 w-full h-1 bg-amber-500/30 blur-sm top-0 group-hover/drop:animate-[scan_2s_ease-in-out_infinite]"></div>
+
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6 transition-transform duration-300 group-hover/drop:scale-105">
+                                    <div className="p-5 rounded-2xl bg-slate-900 border border-slate-700 mb-4 group-hover/drop:border-amber-500/50 group-hover/drop:shadow-[0_0_30px_rgba(245,158,11,0.2)] transition-all">
+                                        <UploadCloud className="w-12 h-12 text-slate-400 group-hover/drop:text-amber-400 transition-colors" />
                                     </div>
-                                    <p className="mb-2 text-sm text-slate-400"><span className="font-bold text-amber-400">Click to upload</span> or drag and drop</p>
-                                    <p className="text-xs text-slate-500">PNG, JPG, or GIF (Max 10MB)</p>
+                                    <p className="mb-2 text-base text-slate-300 font-medium"><span className="text-amber-400 font-bold underline decoration-amber-500/30 underline-offset-4">Click to upload</span> or drag file</p>
+                                    <p className="text-xs text-slate-500 font-mono">SUPPORTED: PNG, JPG, GIF (MAX 10MB)</p>
                                 </div>
                                 <input id="dropzone-file" type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                             </label>
                         </div>
 
                         {selectedFile && (
-                            <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                                <p className="text-sm text-emerald-300 truncate font-medium">{selectedFile.name}</p>
+                            <div className="mt-6 p-4 bg-slate-900 border border-emerald-500/30 rounded-xl flex items-center gap-3 shadow-lg z-10 relative overflow-hidden group/file">
+                                <div className="absolute inset-0 bg-emerald-500/5 group-hover/file:bg-emerald-500/10 transition-colors"></div>
+                                <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399] animate-pulse"></div>
+                                <p className="text-sm text-emerald-200 truncate font-mono tracking-wide">{selectedFile.name}</p>
                             </div>
                         )}
 
-                        <button onClick={handleAnalysis} disabled={isLoading || !selectedFile} className="mt-6 w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 disabled:shadow-none disabled:cursor-not-allowed">
-                            {isLoading ? <div className="flex items-center justify-center gap-2"><Loader className="animate-spin" size={20} /> Processing...</div> : 'Analyze Document'}
+                        <button
+                            onClick={handleAnalysis}
+                            disabled={isLoading || !selectedFile}
+                            className="mt-8 w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm"
+                        >
+                            {isLoading ? <><Loader className="animate-spin" size={18} /> INITIALIZING SCAN...</> : 'INITIATE ANALYSIS'}
                         </button>
                     </div>
                 </div>
 
                 {/* Result Section */}
-                <div className="relative group p-1 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 shadow-2xl">
-                    <div className="absolute inset-0 bg-sky-500/5 blur-xl group-hover:bg-sky-500/10 transition-all duration-700 rounded-2xl"></div>
-                    <div className="relative bg-slate-900/90 backdrop-blur-xl p-6 rounded-xl h-full flex flex-col">
-                        <h2 className="text-xl font-bold mb-6 flex items-center gap-3 text-white">
-                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 text-sm border border-sky-500/30">2</span>
-                            AI Insights
+                {/* Result Section - Futuristic Engine Border */}
+                {/* Result Section - Professional High-Fidelity Border */}
+                <div className="relative group rounded-3xl p-[1px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_100px_-20px_rgba(14,165,233,0.3)]">
+                    {/* Animated Gradient Border */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 group-hover:from-sky-600 group-hover:via-sky-500/20 group-hover:to-blue-900 transition-colors duration-700"></div>
+                    <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_120deg,rgba(14,165,233,0.5)_180deg,transparent_360deg)] opacity-0 group-hover:opacity-100 animate-[spin_4s_linear_infinite] transition-opacity duration-700"></div>
+
+                    {/* Inner Content Container */}
+                    <div className="relative bg-[#090e1a] rounded-[23px] h-full flex flex-col p-8 z-10 backdrop-blur-xl">
+                        {/* Subtle Grid - Professional */}
+                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
+
+                        {/* Premium Glow effect */}
+                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-sky-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-sky-500/20 transition-all duration-700"></div>
+
+                        <h2 className="text-2xl font-bold mb-8 flex items-center gap-4 text-white z-10 tracking-tight">
+                            <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-500/10 text-sky-500 text-lg border border-sky-500/20 group-hover:border-sky-500/50 group-hover:bg-sky-500/20 transition-all shadow-[0_0_20px_-5px_rgba(14,165,233,0.3)]">2</span>
+                            Analysis of Document
                         </h2>
 
-                        <div className="w-full flex-grow bg-black/40 rounded-2xl p-6 overflow-y-auto border border-slate-800 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent min-h-[400px]">
+                        <div className="w-full flex-grow bg-slate-900/80 rounded-2xl p-6 overflow-y-auto border border-slate-700 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent min-h-[400px] relative z-10 shadow-inner">
                             {isLoading && (
-                                <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
+                                <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
                                     <div className="relative">
-                                        <div className="w-16 h-16 border-4 border-slate-700 border-t-amber-500 rounded-full animate-spin"></div>
+                                        <div className="w-20 h-20 border-4 border-slate-800 border-t-amber-500 border-r-amber-500 rounded-full animate-spin"></div>
+                                        <div className="w-16 h-16 border-4 border-slate-800 border-b-sky-500 border-l-sky-500 rounded-full animate-spin absolute top-2 left-2 reverse-spin"></div>
                                         <div className="absolute inset-0 flex items-center justify-center">
-                                            <Bot className="text-slate-600" size={24} />
+                                            <Bot className="text-white animate-pulse" size={24} />
                                         </div>
                                     </div>
-                                    <p className="text-slate-400 font-medium animate-pulse">Consulting medical intelligence...</p>
+                                    <div className="space-y-1">
+                                        <p className="text-amber-400 font-bold tracking-widest text-sm animate-pulse">PROCESSING DATA...</p>
+                                        <p className="text-slate-500 text-xs font-mono">Running VLM Sequence v2.2</p>
+                                    </div>
                                 </div>
                             )}
 
                             {error && (
-                                <div className="h-full flex flex-col items-center justify-center text-center p-6 text-rose-400 bg-rose-500/5 rounded-xl border border-rose-500/10">
-                                    <AlertTriangle size={48} className="mb-4 opacity-80" />
-                                    <p className="font-semibold">{error}</p>
+                                <div className="h-full flex flex-col items-center justify-center text-center p-8 text-rose-400 bg-rose-500/5 rounded-2xl border border-rose-500/20">
+                                    <AlertTriangle size={48} className="mb-4 text-rose-500 drop-shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
+                                    <h3 className="font-bold text-lg mb-2 text-white">Analysis Interrupted</h3>
+                                    <p className="font-medium opacity-80">{error}</p>
                                 </div>
                             )}
 
                             {analysisResult && (
-                                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
                                     {/* Comprehensive Summary Section */}
                                     {analysisResult.summary && (
-                                        <div className="bg-gradient-to-br from-sky-900/20 to-blue-900/10 border border-sky-500/20 p-5 rounded-xl relative overflow-hidden">
-                                            <div className="absolute top-0 right-0 p-3 opacity-10"><Bot size={48} /></div>
-                                            <h4 className="flex items-center gap-2 text-sm font-bold text-sky-400 mb-3 uppercase tracking-wider">
-                                                <Bot size={18} /> Cure Intelligence Summary
+                                        <div className="bg-slate-800/50 border border-sky-500/30 p-6 rounded-2xl relative overflow-hidden group/summary">
+                                            <div className="absolute top-0 right-0 p-4 opacity-5"><Bot size={80} /></div>
+                                            <div className="absolute inset-0 bg-sky-500/5 group-hover/summary:bg-sky-500/10 transition-all"></div>
+
+                                            <h4 className="flex items-center gap-2 text-xs font-black text-sky-400 mb-4 uppercase tracking-[0.2em]">
+                                                <Bot size={16} /> Cure Executive Summary
                                             </h4>
-                                            <div className="text-slate-200 text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                                            <div className="text-slate-200 text-base leading-relaxed whitespace-pre-wrap font-medium relative z-10">
                                                 {analysisResult.summary}
                                             </div>
                                         </div>
                                     )}
 
-                                    <div className="grid grid-cols-1 gap-4">
+                                    <div className="grid grid-cols-1 gap-6">
                                         <div>
-                                            <h4 className="flex items-center gap-2 text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 opacity-80">
-                                                <Stethoscope size={14} /> Clinical Findings
+                                            <h4 className="flex items-center gap-2 text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] mb-4 opacity-70">
+                                                <Stethoscope size={12} /> Detected Conditions
                                             </h4>
                                             {(analysisResult.analysis?.diseases || []).length > 0 ? (
                                                 <div className="flex flex-wrap gap-2">
                                                     {analysisResult.analysis.diseases.map(d => (
-                                                        <span key={d} className="bg-slate-800 text-slate-200 border border-slate-700 hover:border-amber-500/50 hover:text-amber-400 transition-colors text-xs font-semibold px-3 py-1.5 rounded-lg">{d}</span>
+                                                        <span key={d} className="bg-slate-800 text-slate-100 border border-slate-700 hover:border-amber-500 hover:bg-amber-500/10 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all duration-300 text-xs font-bold px-4 py-2 rounded-lg cursor-default">{d}</span>
                                                     ))}
                                                 </div>
-                                            ) : <p className="text-slate-600 text-xs italic">No specific conditions detected.</p>}
+                                            ) : <p className="text-slate-600 text-xs italic font-mono pl-2">-- No specific conditions detected --</p>}
                                         </div>
 
-                                        <div>
-                                            <h4 className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-widest mb-3 opacity-80 mt-2">
-                                                <Pill size={14} /> Prescribed Meds
+                                        <div className="relative">
+                                            <h4 className="flex items-center gap-2 text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-4 opacity-70">
+                                                <Pill size={12} /> Pharmacy Data extract
                                             </h4>
                                             {(analysisResult.analysis?.medications || []).length > 0 ? (
-                                                <div className="space-y-2">
+                                                <div className="space-y-3">
                                                     {analysisResult.analysis.medications.map((med, i) => (
-                                                        <div key={i} className="flex items-center justify-between text-slate-300 text-xs bg-slate-800/50 border border-slate-700/50 p-3 rounded-lg hover:bg-slate-800 transition-colors group/med">
-                                                            <div className="font-bold text-emerald-400 group-hover/med:text-emerald-300">{med.name}</div>
-                                                            <div className="flex gap-2 text-slate-500 font-mono text-[10px]">
-                                                                <span>{med.dosage}</span>
-                                                                <span className="w-px h-3 bg-slate-700"></span>
-                                                                <span>{med.frequency}</span>
+                                                        <div key={i} className="flex items-center justify-between text-slate-300 text-sm bg-slate-900 border border-slate-700 p-4 rounded-xl hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)] transition-all group/med">
+                                                            <div className="font-bold text-emerald-400 group-hover/med:text-emerald-300 flex items-center gap-2">
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                                                                {med.name}
+                                                            </div>
+                                                            <div className="flex gap-4 text-slate-500 font-mono text-xs">
+                                                                <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">DSG: {med.dosage}</span>
+                                                                <span className="w-px h-full bg-slate-800"></span>
+                                                                <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">FRQ: {med.frequency}</span>
                                                             </div>
                                                         </div>
                                                     ))}
                                                 </div>
-                                            ) : <p className="text-slate-600 text-xs italic">No specific medications detected.</p>}
+                                            ) : <p className="text-slate-600 text-xs italic font-mono pl-2">-- No medications detected --</p>}
                                         </div>
                                     </div>
                                 </div>
                             )}
 
                             {!isLoading && !error && !analysisResult && (
-                                <div className="h-full flex flex-col items-center justify-center text-center opacity-40 space-y-4">
-                                    <Bot size={64} className="text-slate-600" />
-                                    <p className="text-slate-500 font-medium max-w-[200px]">AI is ready to analyze your report. Upload a document to begin.</p>
+                                <div className="h-full flex flex-col items-center justify-center text-center opacity-30 space-y-6">
+                                    <div className="w-24 h-24 rounded-full border border-dashed border-slate-500 flex items-center justify-center">
+                                        <Bot size={40} className="text-slate-500" />
+                                    </div>
+                                    <p className="text-slate-400 font-mono text-xs tracking-widest uppercase">System Standby // Awaiting Input</p>
                                 </div>
                             )}
                         </div>
