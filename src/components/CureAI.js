@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Trash2, TrendingUp } from 'lucide-react';
+import { Send, Bot, User, Trash2, TrendingUp, MessageSquare, Brain, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import Header from './Header';
@@ -196,6 +196,40 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                 onLoginClick={onLoginClick}
                 onToggleSidebar={onToggleSidebar}
             />
+
+            {/* Premium Hero Section */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-8 text-center mt-6 flex-shrink-0">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/20 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
+
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-bold mb-6 animate-pulse">
+                    <Bot size={16} /> AI POWERED ASSISTANT
+                </div>
+
+                <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+                    Cure Personal <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">AI</span>
+                </h1>
+
+                <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                    Your 24/7 medical companion. Ask about symptoms, get second opinions, and decode complex health queries with expert-level precision.
+                </p>
+
+                <div className="flex justify-center gap-8 mt-8 opacity-70">
+                    <div className="flex flex-col items-center gap-2">
+                        <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><MessageSquare /></div>
+                        <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Inquire</span>
+                    </div>
+                    <div className="w-16 h-px bg-slate-700 self-center"></div>
+                    <div className="flex flex-col items-center gap-2">
+                        <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-orange-400"><Brain /></div>
+                        <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Reason</span>
+                    </div>
+                    <div className="w-16 h-px bg-slate-700 self-center"></div>
+                    <div className="flex flex-col items-center gap-2">
+                        <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><ShieldCheck /></div>
+                        <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Resolve</span>
+                    </div>
+                </div>
+            </div>
 
             <div className="flex-1 flex gap-6 mt-6 overflow-hidden">
                 {/* Main Chat Area */}

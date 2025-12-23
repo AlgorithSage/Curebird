@@ -398,6 +398,40 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
             <div className="relative z-10 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
                 <Header title="Cure Stat" description="Real-time disease intelligence, medication insights, and predictive analytics for a healthier India." user={user} onLogout={onLogout} onLoginClick={onLoginClick} onToggleSidebar={onToggleSidebar} />
 
+                {/* Premium Hero Section */}
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-8 text-center mt-6">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-sky-500/20 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
+
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-sm font-bold mb-6 animate-pulse">
+                        <Activity size={16} /> REAL-TIME MONITOR
+                    </div>
+
+                    <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+                        Medical Intelligence <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500">Hub</span>
+                    </h1>
+
+                    <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                        Track disease outbreaks, analyze national health trends, and access real-time predictive analytics to stay ahead of public health challenges.
+                    </p>
+
+                    <div className="flex justify-center gap-8 mt-8 opacity-70">
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><Activity /></div>
+                            <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Monitor</span>
+                        </div>
+                        <div className="w-16 h-px bg-slate-700 self-center"></div>
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-orange-400"><Map /></div>
+                            <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Track</span>
+                        </div>
+                        <div className="w-16 h-px bg-slate-700 self-center"></div>
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><TrendingUp /></div>
+                            <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Predict</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between glass p-4 rounded-2xl">
                     <div className="relative w-full md:w-96 group">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-400 transition-colors" size={20} />
