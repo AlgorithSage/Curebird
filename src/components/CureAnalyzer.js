@@ -3,7 +3,7 @@ import { UploadCloud, Loader, AlertTriangle, Pill, Stethoscope, Bot } from 'luci
 import { API_BASE_URL } from '../config';
 import Header from './Header';
 
-const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
+const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +59,7 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                 onLogout={onLogout}
                 onLoginClick={onLoginClick}
                 onToggleSidebar={onToggleSidebar}
+                onNavigate={onNavigate}
             />
 
             {/* Premium Feature Hero Section */}

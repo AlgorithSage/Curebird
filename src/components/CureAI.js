@@ -60,7 +60,7 @@ const TypingIndicator = () => (
     </motion.div>
 );
 
-const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
+const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -195,6 +195,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                 onLogout={onLogout}
                 onLoginClick={onLoginClick}
                 onToggleSidebar={onToggleSidebar}
+                onNavigate={onNavigate}
             />
 
             {/* Premium Hero Section - Compact AI Console Look */}

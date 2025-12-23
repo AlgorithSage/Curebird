@@ -90,7 +90,8 @@ export default function App() {
             user, db, storage, appId, formatDate, capitalize,
             onLogout: handleLogout,
             onLoginClick: () => setIsAuthModalOpen(true),
-            onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen)
+            onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen),
+            onNavigate: setActiveView
         };
 
         switch (activeView) {

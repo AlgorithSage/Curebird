@@ -253,7 +253,7 @@ const DiseaseCard = ({ disease, onClick, getRiskLevel }) => {
     );
 };
 
-const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
+const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [resourceData, setResourceData] = useState([]);
     const [trends, setTrends] = useState([]);
     const [filteredTrends, setFilteredTrends] = useState([]);
@@ -396,7 +396,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
     return (
         <div className="min-h-screen text-white overflow-y-auto relative selection:bg-sky-500/30">
             <div className="relative z-10 p-4 sm:p-6 lg:p-8">
-                <Header title="Cure Stat" description="Real-time disease intelligence, medication insights, and predictive analytics for a healthier India." user={user} onLogout={onLogout} onLoginClick={onLoginClick} onToggleSidebar={onToggleSidebar} />
+                <Header title="Cure Stat" description="Real-time disease intelligence, medication insights, and predictive analytics for a healthier India." user={user} onLogout={onLogout} onLoginClick={onLoginClick} onToggleSidebar={onToggleSidebar} onNavigate={onNavigate} />
 
                 {/* Premium Hero Section */}
                 <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-8 text-center mt-6">

@@ -12,7 +12,7 @@ import { RecordFormModal, ShareModal, DeleteConfirmModal } from './Modals';
 import { SkeletonDashboard, SkeletonCard } from './SkeletonLoaders';
 import HeroSection from './HeroSection';
 
-const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar }) => {
+const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -107,6 +107,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                 onLogout={onLogout}
                 onLoginClick={onLoginClick}
                 onToggleSidebar={onToggleSidebar}
+                onNavigate={onNavigate}
             />
 
             <main className="mt-8">
