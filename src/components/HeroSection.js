@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { HeartPulse, Sparkles, Activity, ShieldPlus } from 'lucide-react';
+import { HeartPulse, Sparkles, Activity, ShieldPlus, FileText, Pill, Calendar } from 'lucide-react';
 
-const HeroSection = ({ onOverviewClick }) => {
+const HeroSection = ({ onOverviewClick, onAddClick }) => {
     const [isMobile, setIsMobile] = React.useState(false);
 
     React.useEffect(() => {
@@ -93,13 +93,80 @@ const HeroSection = ({ onOverviewClick }) => {
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-6">
                             <motion.button
                                 onClick={onOverviewClick}
-                                whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(14, 165, 233, 0.4)" }}
+                                whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(245, 158, 11, 0.3)" }}
                                 whileTap={{ scale: 0.95 }}
                                 className="px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 rounded-2xl font-bold text-black shadow-xl border-t border-white/20 hover:border-white/40 transition-all text-lg"
                             >
                                 Dashboard Overview
                             </motion.button>
+                            <motion.button
+                                onClick={onAddClick}
+                                whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+                                whileTap={{ scale: 0.95 }}
+                                className="px-8 py-4 bg-white/5 backdrop-blur-md rounded-2xl font-bold text-white shadow-xl border border-white/10 hover:border-white/30 transition-all text-lg flex items-center justify-center gap-2"
+                            >
+                                <HeartPulse size={20} className="text-amber-400" />
+                                Add Clinical Record
+                            </motion.button>
                         </div>
+
+                        {/* Professional Feature Guide Text */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="pt-10 border-t border-white/5 space-y-6"
+                        >
+                            <div className="space-y-2">
+                                <h2 className="text-xl sm:text-3xl font-bold text-slate-100 tracking-tight leading-snug">
+                                    Welcome, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-400">Bird</span>.
+                                </h2>
+                                <p className="text-slate-400 text-sm sm:text-lg font-medium">
+                                    Your Personalized Clinical Intelligence Dashboard is ready.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+                                <div className="flex flex-col items-center lg:items-start p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group">
+                                    <div className="p-2 bg-sky-500/20 rounded-lg mb-3 group-hover:scale-110 transition-transform">
+                                        <FileText size={20} className="text-sky-400" />
+                                    </div>
+                                    <h4 className="text-white font-bold text-sm sm:text-base mb-1">Medical Portfolio</h4>
+                                    <p className="text-slate-400 text-xs sm:text-sm leading-tight text-center lg:text-left">
+                                        Centrally manage diagnostics & clinical records.
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-col items-center lg:items-start p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group">
+                                    <div className="p-2 bg-amber-500/20 rounded-lg mb-3 group-hover:scale-110 transition-transform">
+                                        <Pill size={20} className="text-amber-400" />
+                                    </div>
+                                    <h4 className="text-white font-bold text-sm sm:text-base mb-1">Therapeutic Tracking</h4>
+                                    <p className="text-slate-400 text-xs sm:text-sm leading-tight text-center lg:text-left">
+                                        Monitor prescriptions & therapeutic protocols.
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-col items-center lg:items-start p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group">
+                                    <div className="p-2 bg-emerald-500/20 rounded-lg mb-3 group-hover:scale-110 transition-transform">
+                                        <Calendar size={20} className="text-emerald-400" />
+                                    </div>
+                                    <h4 className="text-white font-bold text-sm sm:text-base mb-1">Care Coordination</h4>
+                                    <p className="text-slate-400 text-xs sm:text-sm leading-tight text-center lg:text-left">
+                                        Precisely schedule & sync clinical consultations.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-center lg:justify-start gap-6 pt-2">
+                                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                                    <ShieldPlus size={12} className="text-emerald-500" /> Secure HIPAA Analytics
+                                </div>
+                                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                                    <Activity size={12} className="text-sky-500" /> Real-time Synthesis
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
 
                     {/* Right Side: Enhanced 3D Animated Symbol */}

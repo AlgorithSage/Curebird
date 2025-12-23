@@ -594,11 +594,17 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                     ) : (
                         <div className="space-y-16">
 
-                            {/* 1. High-Burden Everyday Diseases */}
+                            {/* 1. Acute Morbidity & General Clinical Burden */}
                             <section>
-                                <div className="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
-                                    <h3 className="text-lg font-bold text-slate-300 uppercase tracking-widest">A. High-Burden Everyday Diseases</h3>
-                                    <span className="text-xs text-slate-500">(Highest national case volumes)</span>
+                                <div className="flex flex-col items-center text-center mb-10">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="p-2 bg-sky-500/10 rounded-lg border border-sky-500/20">
+                                            <Activity size={20} className="text-sky-400" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white tracking-wide">Acute Morbidity & General Clinical Burden</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-400 font-medium">(Highest national case volumes & primary care diagnostics)</p>
+                                    <div className="w-48 h-1 bg-gradient-to-r from-transparent via-sky-500/30 to-transparent mt-4"></div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {filteredTrends.filter(d => d.segment === 'High-Burden').map((disease, index) => (
@@ -607,11 +613,17 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                                 </div>
                             </section>
 
-                            {/* 2. Seasonal & Outbreak-Prone */}
+                            {/* 2. Epidemic-Prone & Outbreak Surveillance */}
                             <section>
-                                <div className="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
-                                    <h3 className="text-lg font-bold text-slate-300 uppercase tracking-widest text-orange-400/80">B. Seasonal & Outbreak-Prone</h3>
-                                    <span className="text-xs text-slate-500">(Post-Monsoon / Winter Peaks)</span>
+                                <div className="flex flex-col items-center text-center mb-10">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="p-2 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                                            <TrendingUp size={20} className="text-orange-400" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white tracking-wide">Epidemic-Prone & Outbreak Surveillance</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-400 font-medium">(Post-Monsoon / Winter Peaks & Seasonal Transmission)</p>
+                                    <div className="w-48 h-1 bg-gradient-to-r from-transparent via-orange-500/30 to-transparent mt-4"></div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {filteredTrends.filter(d => d.segment === 'Seasonal').map((disease, index) => (
@@ -620,11 +632,17 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                                 </div>
                             </section>
 
-                            {/* 3. Vaccine-Preventable Diseases */}
+                            {/* 3. Vaccine-Preventable Diseases (VPDs) */}
                             <section>
-                                <div className="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
-                                    <h3 className="text-lg font-bold text-slate-300 uppercase tracking-widest text-emerald-400/80">C. Vaccine-Preventable</h3>
-                                    <span className="text-xs text-slate-500">(Coverage Dependent Reporting)</span>
+                                <div className="flex flex-col items-center text-center mb-10">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+                                            <ShieldCheck size={20} className="text-emerald-400" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white tracking-wide">Vaccine-Preventable Diseases (VPDs)</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-400 font-medium">(Coverage Dependent Reporting & Immunization Targets)</p>
+                                    <div className="w-48 h-1 bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent mt-4"></div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {filteredTrends.filter(d => d.segment === 'Vaccine-Preventable').map((disease, index) => (
@@ -633,11 +651,17 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                                 </div>
                             </section>
 
-                            {/* 4. Chronic High-Burden Diseases (Context Only) */}
+                            {/* 4. Chronic & Non-Communicable Primary Indicators */}
                             <section>
-                                <div className="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
-                                    <h3 className="text-lg font-bold text-slate-300 uppercase tracking-widest text-blue-400/80">D. Chronic High-Burden</h3>
-                                    <span className="text-xs text-slate-500">(Long-term Prevalence / Non-Live)</span>
+                                <div className="flex flex-col items-center text-center mb-10">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                                            <Layers size={20} className="text-blue-400" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white tracking-wide">Chronic & Non-Communicable Primary Indicators</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-400 font-medium">(Long-term Prevalence, Surveillance Notification & NCD Metrics)</p>
+                                    <div className="w-48 h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent mt-4"></div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {filteredTrends.filter(d => d.segment === 'Chronic').map((disease, index) => (

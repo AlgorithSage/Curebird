@@ -81,18 +81,18 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 </div>
                 {user && onAddClick && (
                     <>
-                        <button onClick={onShareClick} className="hidden sm:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
+                        <button onClick={onShareClick} className="hidden lg:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
                             <Share2 size={20} />
                         </button>
-                        <button className="hidden sm:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
+                        <button className="hidden lg:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
                             <Bell size={20} />
                         </button>
                         <button
                             onClick={onAddClick}
-                            className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-5 py-2.5 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-sm font-bold border border-white/10"
+                            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black p-2.5 sm:px-5 sm:py-2.5 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-sm font-bold border border-white/10"
                         >
-                            <Plus size={18} />
-                            <span>Add Record</span>
+                            <Plus size={20} className="sm:w-[18px] sm:h-[18px]" />
+                            <span className="hidden sm:inline">Add Record</span>
                         </button>
                     </>
                 )}

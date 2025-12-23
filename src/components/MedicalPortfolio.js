@@ -106,7 +106,10 @@ const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, o
             <main className="mt-8">
                 {/* Flashy Hero Section - Always visible */}
                 <div className="mb-10">
-                    <HeroSection onOverviewClick={scrollToDashboard} />
+                    <HeroSection
+                        onOverviewClick={scrollToDashboard}
+                        onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
+                    />
                 </div>
 
                 {isLoading ? <SkeletonDashboard /> : (
