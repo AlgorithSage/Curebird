@@ -10,6 +10,7 @@ import {
     signInWithPopup
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import { AnimatePresence } from 'framer-motion';
 
 // Import all components
@@ -41,6 +42,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 const appId = firebaseConfig.appId;
 const googleProvider = new GoogleAuthProvider();
 
@@ -85,7 +87,7 @@ export default function App() {
 
     const renderActiveView = () => {
         const pageProps = {
-            user, db, appId, formatDate, capitalize,
+            user, db, storage, appId, formatDate, capitalize,
             onLogout: handleLogout,
             onLoginClick: () => setIsAuthModalOpen(true),
             onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen)

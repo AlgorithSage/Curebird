@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, AlertTriangle, Trash2, UploadCloud, Pill, Stethoscope, Loader } from 'lucide-react';
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { deleteUser } from "firebase/auth";
 import { API_BASE_URL } from '../config';
 
@@ -112,23 +113,16 @@ const AnalysisResult = ({ result, onApply }) => (
     </div>
 );
 
-export const RecordFormModal = ({ onClose, record, userId, appId, db }) => {
+export const RecordFormModal = ({ onClose, record, userId, appId, db, storage }) => {
     const [type, setType] = useState(record?.type || 'prescription');
     const [formData, setFormData] = useState({});
     const [medications, setMedications] = useState([{ name: '', dosage: '', frequency: '' }]);
     const [file, setFile] = useState(null);
-    const [fileBase64, setFileBase64] = useState(record?.fileData || null);
+    const [uploadProgress, setUploadProgress] = useState(0);
     const [isSaving, setIsSaving] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisResult, setAnalysisResult] = useState(null);
     const [analysisError, setAnalysisError] = useState('');
-
-    const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
 
     useEffect(() => {
         if (record) {
@@ -143,35 +137,41 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db }) => {
     const handleFileChange = async (e) => {
         const selectedFile = e.target.files[0];
         if (!selectedFile) return;
-        if (selectedFile.size > 750 * 1024) {
-            setAnalysisError("File is too large. Please select an image under 750KB.");
-            setFile(null);
-            setFileBase64(null);
+
+        // PDFs don't need AI analysis usually, but images do.
+        // For now, let's allow up to 10MB on Storage (Spark Plan limit is 5GB total)
+        if (selectedFile.size > 10 * 1024 * 1024) {
+            setAnalysisError("File is too large. Please select a file under 10MB.");
             return;
         }
+
         setFile(selectedFile);
         setAnalysisResult(null);
         setAnalysisError('');
-        setIsAnalyzing(true);
-        const fileData = new FormData();
-        fileData.append('file', selectedFile);
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/analyze-report`, {
-                method: 'POST',
-                body: fileData,
-            });
-            if (!response.ok) {
-                const errData = await response.json();
-                throw new Error(errData.error || 'Server responded with an error.');
+        // Only analyze images for medical data extraction
+        if (selectedFile.type.startsWith('image/')) {
+            setIsAnalyzing(true);
+            const fileData = new FormData();
+            fileData.append('file', selectedFile);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/analyze-report`, {
+                    method: 'POST',
+                    body: fileData,
+                });
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || 'Server responded with an error.');
+                }
+                const result = await response.json();
+                setAnalysisResult(result.analysis);
+            } catch (err) {
+                console.error("Analysis failed:", err);
+                setAnalysisError(err.message);
+            } finally {
+                setIsAnalyzing(false);
             }
-            const result = await response.json();
-            setAnalysisResult(result.analysis);
-        } catch (err) {
-            console.error("Analysis failed:", err);
-            setAnalysisError(err.message);
-        } finally {
-            setIsAnalyzing(false);
         }
     };
 
@@ -183,18 +183,49 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db }) => {
     };
     const addMedication = () => setMedications([...medications, { name: '', dosage: '', frequency: '' }]);
     const removeMedication = (index) => setMedications(medications.filter((_, i) => i !== index));
-
     const handleSave = async (e) => {
         e.preventDefault();
         setIsSaving(true);
         const recordToSave = { ...formData, type };
-        if (fileBase64) {
-            recordToSave.fileData = fileBase64;
-            recordToSave.fileName = file.name;
-        }
         recordToSave.date = new Date(recordToSave.date);
         if (type === 'prescription') recordToSave.details.medications = medications;
+
         try {
+            // 1. If there's a new file, upload it to Firebase Storage
+            if (file) {
+                const storageRef = ref(storage, `users/${userId}/medical_records/${Date.now()}_${file.name}`);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+
+                await new Promise((resolve, reject) => {
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            setUploadProgress(progress);
+                        },
+                        (error) => {
+                            console.error("Storage upload error:", error);
+                            if (error.code === 'storage/unauthorized') {
+                                reject(new Error("Firebase Storage: Permission denied. Please check your security rules."));
+                            } else {
+                                reject(new Error(`Storage Error: ${error.message}`));
+                            }
+                        },
+                        async () => {
+                            try {
+                                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                                recordToSave.fileUrl = downloadURL;
+                                recordToSave.fileName = file.name;
+                                recordToSave.fileType = file.type;
+                                resolve();
+                            } catch (e) {
+                                reject(new Error("Failed to get download URL after upload."));
+                            }
+                        }
+                    );
+                });
+            }
+
+            // 2. Save to Firestore
             const recordsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/medical_records`);
             if (recordToSave.id) {
                 const { id, ...dataToUpdate } = recordToSave;
@@ -205,9 +236,10 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db }) => {
             onClose();
         } catch (error) {
             console.error("Failed to save record:", error);
-            setAnalysisError("Could not save the record to the database.");
+            setAnalysisError(error.message || "Could not save the record to the database.");
         } finally {
             setIsSaving(false);
+            setUploadProgress(0);
         }
     };
 
@@ -218,7 +250,6 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db }) => {
                 <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={24} /></button>
             </div>
             <form onSubmit={handleSave} className="p-6 space-y-4 overflow-y-auto">
-                {/* Form Fields... */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white" required />
                     <select name="type" value={type} onChange={(e) => setType(e.target.value)} className="w-full p-2 border bg-slate-800 border-slate-600 rounded-md text-white">
@@ -230,49 +261,59 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db }) => {
                     <input type="text" name="doctorName" placeholder="Doctor's Name" value={formData.doctorName || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white" required />
                     <input type="text" name="hospitalName" placeholder="Hospital/Clinic Name" value={formData.hospitalName || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white" required />
                 </div>
-                {/* File Upload & AI Analysis Section */}
+
                 <div className="pt-4 border-t border-slate-700 space-y-4">
-                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-600 border-dashed rounded-md">
+                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-600 border-dashed rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
                         <div className="space-y-1 text-center">
-                            <UploadCloud className="mx-auto h-12 w-12 text-slate-400" />
+                            <UploadCloud className="mx-auto h-12 w-12 text-sky-400 mb-2" />
                             <div className="flex text-sm text-slate-400">
-                                <label htmlFor="file-upload" className="relative cursor-pointer bg-slate-800 rounded-md font-medium text-sky-400 hover:text-sky-300">
-                                    <span>Upload a file</span>
-                                    <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="image/*" />
+                                <label htmlFor="file-upload" className="relative cursor-pointer bg-sky-500/10 px-4 py-2 rounded-lg font-bold text-sky-400 hover:bg-sky-500/20 border border-sky-500/30 transition-all">
+                                    <span>{file ? 'Change File' : 'Upload PDF or Image'}</span>
+                                    <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="application/pdf,image/*" />
                                 </label>
                             </div>
-                            <p className="text-xs text-slate-500">{file ? file.name : 'No file selected'}</p>
+                            <p className="text-xs text-slate-500 pt-2">{file ? file.name : (record?.fileUrl ? 'Existing document attached' : 'No file selected')}</p>
                         </div>
                     </div>
-                    {isAnalyzing && <div className="flex items-center justify-center gap-2 text-slate-300"><Loader className="animate-spin" size={20} /> <p>AI is analyzing your document...</p></div>}
-                    {analysisError && <div className="text-red-400 text-center text-sm p-2 bg-red-900/50 rounded-md">{analysisError}</div>}
+
+                    {uploadProgress > 0 && (
+                        <div className="w-full bg-slate-800 rounded-full h-2.5 mt-2 overflow-hidden border border-white/5">
+                            <motion.div initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} className="bg-gradient-to-r from-sky-500 to-amber-500 h-full rounded-full transition-all duration-300" />
+                            <p className="text-[10px] text-slate-400 mt-1 text-center font-bold uppercase tracking-widest">{Math.round(uploadProgress)}% Uploaded</p>
+                        </div>
+                    )}
+
+                    {isAnalyzing && <div className="flex items-center justify-center gap-2 text-slate-300 py-4 bg-white/5 rounded-xl"><Loader className="animate-spin text-sky-400" size={20} /> <p className="text-sm font-medium">AI is analyzing medical data...</p></div>}
+                    {analysisError && <div className="text-red-400 text-center text-sm p-3 bg-red-900/20 border border-red-900/50 rounded-xl">{analysisError}</div>}
                     {analysisResult && <AnalysisResult result={analysisResult} onApply={() => setMedications(analysisResult.medications)} />}
                 </div>
-                {/* Medications Section */}
+
                 <AnimatePresence>
                     {type === 'prescription' && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
                             <div className="space-y-3 pt-4 border-t border-slate-700">
-                                <h4 className="font-medium text-white">Medications</h4>
+                                <h4 className="font-bold text-white flex items-center gap-2"><Pill size={18} className="text-rose-400" />Medications</h4>
                                 {medications.map((med, index) => (
-                                    <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2 items-center">
-                                        <input type="text" name="name" placeholder="Medication Name" value={med.name} onChange={e => handleMedicationChange(index, e)} className="p-2 border bg-transparent border-slate-600 rounded-md md:col-span-2 text-white" required />
-                                        <input type="text" name="dosage" placeholder="Dosage" value={med.dosage} onChange={e => handleMedicationChange(index, e)} className="p-2 border bg-transparent border-slate-600 rounded-md text-white" />
+                                    <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2 items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                                        <input type="text" name="name" placeholder="Medication Name" value={med.name} onChange={e => handleMedicationChange(index, e)} className="p-2 bg-slate-800 border border-slate-700 rounded-lg md:col-span-2 text-white text-sm focus:border-sky-500 outline-none transition-colors" required />
+                                        <input type="text" name="dosage" placeholder="Dosage" value={med.dosage} onChange={e => handleMedicationChange(index, e)} className="p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:border-sky-500 outline-none transition-colors" />
                                         <div className="flex items-center">
-                                            <input type="text" name="frequency" placeholder="Frequency" value={med.frequency} onChange={e => handleMedicationChange(index, e)} className="p-2 border bg-transparent border-slate-600 rounded-md w-full text-white" />
-                                            <button type="button" onClick={() => removeMedication(index)} className="ml-2 text-rose-500 hover:text-rose-700 p-1"><Trash2 size={16} /></button>
+                                            <input type="text" name="frequency" placeholder="Frequency" value={med.frequency} onChange={e => handleMedicationChange(index, e)} className="p-2 bg-slate-800 border border-slate-700 rounded-lg w-full text-white text-sm focus:border-sky-500 outline-none transition-colors" />
+                                            <button type="button" onClick={() => removeMedication(index)} className="ml-2 text-rose-500 hover:text-rose-700 p-2 hover:bg-rose-500/10 rounded-lg transition-colors"><Trash2 size={16} /></button>
                                         </div>
                                     </div>
                                 ))}
-                                <button type="button" onClick={addMedication} className="text-sm text-sky-500 hover:text-sky-400 font-semibold">+ Add Medication</button>
+                                <button type="button" onClick={addMedication} className="text-sm text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1 transition-colors">+ Add Medication</button>
                             </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
-                {/* Save/Cancel Buttons */}
-                <div className="flex justify-end pt-4 border-t border-slate-700">
-                    <button type="button" onClick={onClose} className="bg-slate-700 text-slate-200 px-4 py-2 rounded-lg mr-2 hover:bg-slate-600">Cancel</button>
-                    <button type="submit" className="bg-amber-500 text-black px-4 py-2 rounded-lg hover:bg-amber-400 font-semibold transition-colors" disabled={isSaving || isAnalyzing}>Save</button>
+
+                <div className="flex justify-end pt-6 border-t border-slate-700 gap-3">
+                    <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-white/5 transition-colors font-bold">Cancel</button>
+                    <button type="submit" className="px-8 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:hover:shadow-none" disabled={isSaving || isAnalyzing}>
+                        {isSaving ? 'Cloud Syncing...' : 'Save Record'}
+                    </button>
                 </div>
             </form>
         </ModalWrapper>

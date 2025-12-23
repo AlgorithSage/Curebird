@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Stethoscope, Hospital, Pill, HeartPulse, Trash2, Edit } from 'lucide-react';
+import { FileText, Stethoscope, Hospital, Pill, HeartPulse, Trash2, Edit, ExternalLink } from 'lucide-react';
 
 const RecordCard = ({ record, onEdit, onDelete }) => {
     const ICONS = {
@@ -32,7 +32,14 @@ const RecordCard = ({ record, onEdit, onDelete }) => {
                 <div className="flex items-center space-x-4">
                     <div className="bg-white/5 p-3 rounded-xl shadow-inner group-hover:scale-110 transition-transform duration-300">{ICONS[record.type] || ICONS.default}</div>
                     <div>
-                        <h3 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{capitalize(record.type)}</h3>
+                        <div className="flex items-center gap-2">
+                            <h3 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{capitalize(record.type)}</h3>
+                            {record.fileUrl && (
+                                <a href={record.fileUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 px-2 py-0.5 bg-sky-500/10 text-sky-400 rounded-md border border-sky-500/20 hover:bg-sky-500/20 transition-all text-[10px] uppercase font-black">
+                                    <ExternalLink size={10} /> View
+                                </a>
+                            )}
+                        </div>
                         <p className="text-sm text-slate-400 font-medium">On {formatDate(record.date)}</p>
                     </div>
                 </div>

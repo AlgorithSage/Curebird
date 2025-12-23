@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { ref, deleteObject } from 'firebase/storage';
 import { AnimatePresence } from 'framer-motion';
 import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus } from 'lucide-react';
 
@@ -11,7 +12,7 @@ import { RecordFormModal, ShareModal, DeleteConfirmModal } from './Modals';
 import { SkeletonDashboard, SkeletonCard } from './SkeletonLoaders';
 import HeroSection from './HeroSection';
 
-const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar }) => {
+const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar }) => {
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -55,6 +56,11 @@ const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, o
     const handleDeleteRecord = async () => {
         if (!recordToDelete || !userId) return;
         try {
+            const record = records.find(r => r.id === recordToDelete);
+            if (record?.fileUrl) {
+                const storageRef = ref(storage, record.fileUrl);
+                await deleteObject(storageRef).catch(e => console.error("Error deleting storage object: ", e));
+            }
             await deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/medical_records`, recordToDelete));
         } catch (error) {
             console.error("Error deleting record: ", error);
@@ -164,7 +170,7 @@ const MedicalPortfolio = ({ user, db, appId, formatDate, capitalize, onLogout, o
             </main>
 
             <AnimatePresence>
-                {isFormModalOpen && <RecordFormModal onClose={() => setIsFormModalOpen(false)} record={editingRecord} userId={userId} appId={appId} db={db} />}
+                {isFormModalOpen && <RecordFormModal onClose={() => setIsFormModalOpen(false)} record={editingRecord} userId={user?.uid} appId={appId} db={db} storage={storage} />}
                 {isShareModalOpen && <ShareModal onClose={() => setIsShareModalOpen(false)} userId={userId} />}
                 {isDeleteModalOpen && <DeleteConfirmModal onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDeleteRecord} />}
             </AnimatePresence>

@@ -132,6 +132,22 @@ def get_trends_data():
         print(f"ERROR: Mapping failed: {e}")
         return []
 
+# --- OCR Configuration ---
+TESSERACT_PATH = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+if os.path.exists(TESSERACT_PATH):
+    pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
+
 def perform_ocr(file_stream):
-    image = Image.open(file_stream)
-    return pytesseract.image_to_string(image)
+    try:
+        image = Image.open(file_stream)
+        # Ensure image is in RGB for best OCR results
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+        
+        extracted_text = pytesseract.image_to_string(image)
+        if not extracted_text.strip():
+            print("OCR WARNING: No text extracted from image.")
+        return extracted_text
+    except Exception as e:
+        print(f"OCR ERROR: Failed to perform extraction: {e}")
+        return ""
