@@ -92,7 +92,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
         <header className="flex flex-wrap items-center gap-y-4 gap-x-2 sm:gap-4 pb-6 border-b border-white/10 relative z-20">
 
             {/* Left Group: Menu, Logo, Nav */}
-            <div className="flex items-center gap-1.5 sm:gap-4 order-1">
+            <div className="flex items-center gap-1 sm:gap-4 order-1">
                 {/* Mobile Hamburger Menu Button */}
                 <motion.button
                     onClick={onToggleSidebar}
@@ -105,12 +105,12 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         color: ["#cbd5e1", "#fbbf24", "#cbd5e1"]
                     }}
                     transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    className="p-3 sm:p-3 rounded-full border border-white/10 text-slate-300 group shadow-lg shadow-black/20 shrink-0"
+                    className="p-2 sm:p-3 rounded-full border border-white/10 text-slate-300 group shadow-lg shadow-black/20 shrink-0"
                 >
-                    <Menu size={22} className="w-[22px] h-[22px]" />
+                    <Menu size={20} className="w-[20px] h-[20px] sm:w-[22px] sm:h-[22px]" />
                 </motion.button>
 
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/40 p-2 flex items-center justify-center transition-transform duration-500 hover:scale-105 shrink-0">
+                <div className="relative w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-black/40 p-1.5 sm:p-2 flex items-center justify-center transition-transform duration-500 hover:scale-105 shrink-0">
                     <img
                         src={CurebirdLogo}
                         alt="Logo"
@@ -119,9 +119,9 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 </div>
 
                 {/* Quick Navigation Chain */}
-                <div className='bg-slate-900/50 p-1.5 sm:p-1.5 rounded-full border border-white/5 backdrop-blur-sm shadow-inner shrink-0 overflow-hidden'>
-                    <div className='flex items-center gap-1.5 sm:gap-2 overflow-x-auto max-w-[140px] sm:max-w-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'>
-                        {navItems.map((item) => {
+                <div className='bg-slate-900/50 p-1 sm:p-1.5 rounded-full border border-white/5 backdrop-blur-sm shadow-inner shrink-0 overflow-hidden'>
+                    <div className='flex items-center gap-1 sm:gap-2 overflow-x-auto max-w-[120px] sm:max-w-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'>
+                        {navItems.map((item, i) => {
                             const isActive = title === item.name;
                             return (
                                 <motion.button
@@ -139,9 +139,11 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                         scale: 1,
                                         borderColor: ["rgba(255,255,255,0)", "rgba(245,158,11,0.3)", "rgba(255,255,255,0)"],
                                         color: ["#64748b", "#fbbf24", "#64748b"],
+                                        boxShadow: ["0 0 0px rgba(0,0,0,0)", "0 0 10px rgba(245,158,11,0.2)", "0 0 0px rgba(0,0,0,0)"],
+                                        backgroundColor: ["rgba(245, 158, 11, 0)", "rgba(245, 158, 11, 0.05)", "rgba(245, 158, 11, 0)"]
                                     }}
-                                    transition={isActive ? { type: "spring", stiffness: 300 } : { duration: 4, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
-                                    className={`p-2 sm:p-2 rounded-full relative z-10 shrink-0 ${isActive
+                                    transition={isActive ? { type: "spring", stiffness: 300 } : { duration: 3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
+                                    className={`p-1.5 sm:p-2 rounded-full relative z-10 shrink-0 ${isActive
                                         ? 'bg-gradient-to-tr from-amber-500 to-yellow-600 text-black font-bold'
                                         : 'border border-transparent bg-transparent'
                                         }`}
@@ -149,8 +151,8 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                 >
                                     <span className="block">
                                         {React.cloneElement(item.icon, {
-                                            size: 20,
-                                            className: isActive ? "text-black animate-[spin_3s_linear_infinite_paused] hover:animate-[spin_1s_ease_in_out] w-5 h-5 sm:w-[20px] sm:h-[20px]" : "currentColor w-5 h-5 sm:w-[20px] sm:h-[20px]"
+                                            size: 18,
+                                            className: isActive ? "text-black animate-[spin_3s_linear_infinite_paused] hover:animate-[spin_1s_ease_in_out] w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]" : "currentColor w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]"
                                         })}
                                     </span>
                                 </motion.button>
