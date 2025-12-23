@@ -2,6 +2,8 @@ import React from 'react';
 import { HeartPulse, LogIn, Dna, Pill, Stethoscope, Syringe, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import CurebirdLogo from '../curebird_logo.png';
+
 // --- Video Background Component ---
 const VideoBackground = () => (
     <div className="absolute inset-0 overflow-hidden z-0">
@@ -84,20 +86,43 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
             <motion.div
                 initial="hidden"
                 animate="visible"
-                className="text-center z-10 flex flex-col items-center glass p-8 sm:p-14 rounded-3xl shadow-[0_0_60px_rgba(56,189,248,0.2)] max-w-[90%] sm:max-w-3xl border border-white/10"
+                className="text-center z-10 flex flex-col items-center glass px-6 py-12 sm:p-20 rounded-[2.5rem] shadow-[0_0_80px_rgba(56,189,248,0.15)] w-[95%] sm:w-full sm:max-w-4xl border border-white/10"
             >
                 {/* Logo & Title */}
-                <motion.div custom={0} variants={textVariants} className="flex justify-center items-center gap-5 mb-8">
-                    <div className="bg-amber-500 p-4 rounded-2xl shadow-lg shadow-amber-500/50 animate-pulse">
-                        <HeartPulse size={50} className="text-slate-900" />
+                <motion.div custom={0} variants={textVariants} className="flex justify-center items-center gap-8 sm:gap-14 mb-10 text-center sm:text-left">
+                    <div className="relative w-20 h-20 sm:w-48 sm:h-48 flex items-center justify-center group shrink-0">
+
+                        {/* 1. Massive Outer Orbital (Heavy Mechanical Ring) */}
+                        <div className="absolute inset-[-15px] rounded-full border-[5px] border-slate-800 border-t-amber-500 border-r-amber-500/50 animate-[spin_3s_linear_infinite]"></div>
+                        <div className="absolute inset-[-15px] rounded-full border-[5px] border-transparent border-l-slate-700 animate-[spin_3s_linear_infinite] mix-blend-overlay"></div>
+
+                        {/* 2. The Kinetic Accelerator (Counter-Rotating Heavy Dashes) */}
+                        <div className="absolute inset-[-4px] rounded-full border-4 border-dashed border-amber-400/80 animate-[spin_8s_linear_infinite_reverse] shadow-[0_0_20px_rgba(245,158,11,0.2)]"></div>
+
+                        {/* 3. High-Velocity Sharp Trails (Solid Matter, No Blur) */}
+                        <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,#b45309_180deg,#fbbf24_360deg)] animate-[spin_1s_linear_infinite] opacity-30"></div>
+                        <div className="absolute inset-[3px] rounded-full bg-slate-900 z-0"></div> {/* Mask for trail ring */}
+
+                        {/* 4. Inner Reactor Housing (Structural Core) */}
+                        <div className="absolute inset-2 rounded-full border-2 border-amber-500/30"></div>
+
+                        {/* Logo Container (The Protected Core) */}
+                        <div className="relative w-full h-full rounded-full bg-slate-950 p-3 sm:p-6 flex items-center justify-center border-4 sm:border-6 border-amber-500/20 z-10 shadow-[inset_0_0_30px_rgba(0,0,0,0.8)] group-hover:scale-95 transition-transform duration-300">
+                            <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.15)_0%,transparent_70%)] animate-pulse"></div>
+                            <img
+                                src={CurebirdLogo}
+                                alt="Curebird Logo"
+                                className="w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] relative z-20"
+                            />
+                        </div>
                     </div>
-                    <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight">
+                    <h1 className="text-5xl sm:text-9xl font-extrabold tracking-tight">
                         Cure<span className="text-amber-400">bird</span>
                     </h1>
                 </motion.div>
 
                 {/* Tagline */}
-                <motion.p custom={1} variants={textVariants} className="text-xl sm:text-3xl text-slate-200 font-medium mt-2">
+                <motion.p custom={1} variants={textVariants} className="text-xl sm:text-4xl text-slate-200 font-medium mt-2">
                     Your Personal, Intelligent Medical Portfolio
                 </motion.p>
 
