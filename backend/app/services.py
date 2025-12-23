@@ -84,9 +84,9 @@ def get_trends_data():
             else:
                 meds = ['Supportive Care', 'Fluids']
 
-            # 3. Demographic Extraction (Forcing defaults if missing)
-            age_data = disease.get('age_demographics')
-            if not age_data:
+            # 3. Demographic Extraction (Forcing defaults if missing or non-specific)
+            age_data = disease.get('age_demographics', {})
+            if not age_data or 'all' in age_data or len(age_data) == 0:
                 age_data = DEFAULT_AGE_GROUPS
             
             item = {
@@ -111,7 +111,7 @@ def get_trends_data():
                 'source_label': 'IDSP + MoHFW Surveillance Metrics',
                 'sources': disease.get('sources', []),
                 'top_medicines': meds,
-                'med_source': 'Clinical Protocols & Intelligence',
+                'med_source': 'Clinical Protocols & Intelligence. Disclaimer: Always consult a healthcare professional before starting any medication or treatment.',
                 'v2_fingerprint': 'AUTH_PIPELINE_22'
             }
 

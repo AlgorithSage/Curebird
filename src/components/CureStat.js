@@ -760,8 +760,13 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                                                         <span key={i} className="bg-green-500/10 text-green-400 px-4 py-2 rounded-lg text-sm font-medium border border-green-500/20 hover:bg-green-500/20 transition-colors cursor-default">{med}</span>
                                                     ))}
                                                 </div>
-                                                <div className="pt-2 flex items-center gap-2 text-[10px] text-slate-500 italic border-t border-white/5">
-                                                    <Info size={12} /> Source: {selectedDisease.med_source}
+                                                <div className="pt-2 border-t border-white/5 space-y-1">
+                                                    <div className="flex items-center gap-2 text-[10px] text-slate-500 italic">
+                                                        <Info size={12} /> Source: {selectedDisease.med_source.split('. Disclaimer:')[0]}
+                                                    </div>
+                                                    <div className="text-[10px] text-amber-500/80 font-medium">
+                                                        Disclaimer: Always consult a healthcare professional before starting any medication or treatment.
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
