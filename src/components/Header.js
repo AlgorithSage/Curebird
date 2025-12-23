@@ -106,55 +106,65 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 </motion.button>
 
                 {/* Quick Navigation Chain of Icons - Animated & Glowy */}
-                <div className='flex items-center gap-2 mr-4 sm:mr-0 bg-slate-900/50 p-1.5 rounded-full border border-white/5 backdrop-blur-sm shadow-inner overflow-hidden'>
-                    {navItems.map((item) => {
-                        const isActive = title === item.name;
-                        return (
-                            <motion.button
-                                key={item.name}
-                                onClick={() => onNavigate && onNavigate(item.name)}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                initial={false}
-                                animate={isActive ? {
-                                    scale: 1.1,
-                                    borderColor: "rgba(251, 191, 36, 0.5)",
-                                    boxShadow: "0 0 20px rgba(245,158,11,0.6)",
-                                    backgroundColor: "rgba(245, 158, 11, 0.1)"
-                                } : {
-                                    scale: 1,
-                                    borderColor: ["rgba(255,255,255,0)", "rgba(245,158,11,0.3)", "rgba(255,255,255,0)"],
-                                    color: ["#64748b", "#fbbf24", "#64748b"], // slate-500 to amber-400
-                                }}
-                                transition={isActive ? { type: "spring", stiffness: 300 } : { duration: 4, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
-                                className={`p-2.5 rounded-full relative z-10 ${isActive
-                                    ? 'bg-gradient-to-tr from-amber-500 to-yellow-600 text-black font-bold'
-                                    : 'border border-transparent bg-transparent'
-                                    }`}
-                                title={item.name}
-                            >
-                                {/* Icon */}
-                                <span className="block">
-                                    {React.cloneElement(item.icon, {
-                                        size: 20,
-                                        className: isActive ? "text-black animate-[spin_3s_linear_infinite_paused] hover:animate-[spin_1s_ease_in_out]" : "currentColor"
-                                    })}
-                                </span>
-                            </motion.button>
-                        );
-                    })}
+                <div className='bg-slate-900/50 p-1.5 rounded-full border border-white/5 backdrop-blur-sm shadow-inner mr-3 sm:mr-0 shrink-0 overflow-hidden'>
+                    <div className='flex items-center gap-2 overflow-x-auto max-w-[140px] sm:max-w-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'>
+                        {navItems.map((item) => {
+                            const isActive = title === item.name;
+                            return (
+                                <motion.button
+                                    key={item.name}
+                                    onClick={() => onNavigate && onNavigate(item.name)}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    initial={false}
+                                    animate={isActive ? {
+                                        scale: 1.1,
+                                        borderColor: "rgba(251, 191, 36, 0.5)",
+                                        boxShadow: "0 0 20px rgba(245,158,11,0.6)",
+                                        backgroundColor: "rgba(245, 158, 11, 0.1)"
+                                    } : {
+                                        scale: 1,
+                                        borderColor: ["rgba(255,255,255,0)", "rgba(245,158,11,0.3)", "rgba(255,255,255,0)"],
+                                        color: ["#64748b", "#fbbf24", "#64748b"], // slate-500 to amber-400
+                                    }}
+                                    transition={isActive ? { type: "spring", stiffness: 300 } : { duration: 4, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
+                                    className={`p-2 rounded-full relative z-10 shrink-0 ${isActive
+                                        ? 'bg-gradient-to-tr from-amber-500 to-yellow-600 text-black font-bold'
+                                        : 'border border-transparent bg-transparent'
+                                        }`}
+                                    title={item.name}
+                                >
+                                    {/* Icon */}
+                                    <span className="block">
+                                        {React.cloneElement(item.icon, {
+                                            size: 18,
+                                            className: isActive ? "text-black animate-[spin_3s_linear_infinite_paused] hover:animate-[spin_1s_ease_in_out]" : "currentColor"
+                                        })}
+                                    </span>
+                                </motion.button>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 <div className="hidden sm:block w-px h-10 bg-white/10 mx-2 self-center"></div>
 
-                <div className="pl-4 flex flex-col justify-center">
-                    <h1 className="text-xl md:text-3xl font-extrabold tracking-tight leading-none mb-0.5">
-                        <span className="text-white">Welcome bird    |    </span>
-                        <span className="text-white"> Cure</span><span className="text-amber-200">bird</span>
-                        <span className="text-white"> is at your service !</span>
+                <div className="flex flex-col justify-center min-w-0 flex-1">
+                    <h1 className="text-base sm:text-3xl font-extrabold tracking-tight leading-none mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
+                        <span className="sm:hidden">
+                            <span className="text-white">Welcome, </span>
+                            <span className="text-white">Cure</span><span className="text-amber-200">bird</span>
+                            <span className="text-white">!</span>
+                        </span>
+                        <span className="hidden sm:inline">
+                            <span className="text-white">Welcome bird | </span>
+                            <span className="text-white">Cure</span><span className="text-amber-200">bird</span>
+                            <span className="text-white"> is at your service!</span>
+                        </span>
                     </h1>
-                    <div className="flex items-center gap-2 text-slate-400 text-xs md:text-sm font-medium">
-                        <span className="text-amber-500/90 uppercase tracking-wider font-bold">{title}</span>
+                    <div className="flex items-center gap-2 text-slate-400 text-[10px] sm:text-sm font-medium">
+                        <span className="text-amber-500/90 uppercase tracking-wider font-bold truncate max-w-[80px] sm:max-w-none">{title}</span>
+                        <span className="hidden sm:inline text-slate-600">|</span>
                         <span className="hidden md:inline truncate max-w-xl text-slate-400/80">{description}</span>
                     </div>
                 </div>
