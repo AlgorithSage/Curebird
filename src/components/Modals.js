@@ -188,6 +188,11 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
         setIsSaving(true);
         const recordToSave = { ...formData, type };
         recordToSave.date = new Date(recordToSave.date);
+        // Important: Add createdAt timestamp for precise "Latest Uploaded" sorting
+        if (!recordToSave.createdAt) {
+            recordToSave.createdAt = new Date(); // Current timestamp
+        }
+
         if (type === 'prescription') recordToSave.details.medications = medications;
 
         try {

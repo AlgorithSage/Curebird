@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { collection, onSnapshot, doc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, doc, deleteDoc, query } from 'firebase/firestore';
 import { AnimatePresence } from 'framer-motion';
 import { FileText, Search } from 'lucide-react';
 
@@ -16,6 +16,7 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
     const [recordToDelete, setRecordToDelete] = useState(null);
     const [editingRecord, setEditingRecord] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [typeFilter, setTypeFilter] = useState('All'); // New state for dropdown filter
 
     const userId = user ? user.uid : null;
 
@@ -24,11 +25,18 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
         return null;
     }, [userId, db, appId]);
 
+    // ... (useEffect remains the same) ...
+
     useEffect(() => {
         if (recordsCollectionRef) {
-            const q = query(recordsCollectionRef, orderBy('date', 'desc'));
+            const q = query(recordsCollectionRef);
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 const recordsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                recordsData.sort((a, b) => {
+                    const timeA = a.createdAt?.seconds ? a.createdAt.seconds : (a.date?.seconds || 0);
+                    const timeB = b.createdAt?.seconds ? b.createdAt.seconds : (b.date?.seconds || 0);
+                    return timeB - timeA;
+                });
                 setRecords(recordsData);
                 setIsLoading(false);
             }, (error) => {
@@ -54,11 +62,15 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
         }
     };
 
-    const filteredRecords = records.filter(record =>
-        record.doctorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.hospitalName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.type?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredRecords = records.filter(record => {
+        const matchesSearch = record.doctorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            record.hospitalName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            record.type?.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesType = typeFilter === 'All' || record.type === typeFilter.toLowerCase().replace(' ', '_');
+
+        return matchesSearch && matchesType;
+    });
 
     if (!user) {
         // This view is shown if the user is logged out
@@ -92,15 +104,29 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
                 onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
             />
             <main className="mt-8">
-                <div className="relative mb-6">
-                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                        type="text"
-                        placeholder="Search by doctor, hospital, or type..."
-                        className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 text-white"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                    <div className="relative flex-grow">
+                        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                            type="text"
+                            placeholder="Search by doctor, hospital, or type..."
+                            className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 text-white"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <select
+                        value={typeFilter}
+                        onChange={(e) => setTypeFilter(e.target.value)}
+                        className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer min-w-[150px]"
+                    >
+                        <option value="All">All Records</option>
+                        <option value="prescription">Prescription</option>
+                        <option value="test_report">Test Report</option>
+                        <option value="diagnosis">Diagnosis</option>
+                        <option value="admission">Hospital Admission</option>
+                        <option value="ecg">ECG</option>
+                    </select>
                 </div>
 
                 {isLoading ? (
