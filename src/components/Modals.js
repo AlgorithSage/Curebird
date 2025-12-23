@@ -90,17 +90,17 @@ const AnalysisResult = ({ result, onApply }) => (
         <div className="space-y-4">
             <div>
                 <h4 className="flex items-center gap-2 text-sm font-medium text-amber-400"><Stethoscope size={16} />Detected Conditions / Diseases</h4>
-                {result.diseases.length > 0 ? (
+                {(result?.diseases || []).length > 0 ? (
                     <div className="flex flex-wrap gap-2 mt-2">
-                        {result.diseases.map(d => <span key={d} className="bg-slate-700 text-slate-200 text-xs font-medium px-2.5 py-1 rounded-full">{d}</span>)}
+                        {(result?.diseases || []).map(d => <span key={d} className="bg-slate-700 text-slate-200 text-xs font-medium px-2.5 py-1 rounded-full">{d}</span>)}
                     </div>
                 ) : <p className="text-slate-400 text-sm mt-1">No specific conditions detected.</p>}
             </div>
             <div>
                 <h4 className="flex items-center gap-2 text-sm font-medium text-sky-400"><Pill size={16} />Detected Medications</h4>
-                {result.medications.length > 0 ? (
+                {(result?.medications || []).length > 0 ? (
                     <div className="space-y-2 mt-2">
-                        {result.medications.map((med, i) => (
+                        {(result?.medications || []).map((med, i) => (
                             <p key={i} className="text-slate-300 text-sm font-mono bg-slate-700/50 p-1 rounded">
                                 &gt; {med.name} - {med.dosage} - {med.frequency}
                             </p>

@@ -29,7 +29,7 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
         formData.append('file', selectedFile);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/analyze-report`, {
+            const response = await fetch(`${API_BASE_URL}/api/analyzer/process`, {
                 method: 'POST',
                 body: formData,
             });
@@ -40,7 +40,7 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
             }
 
             const data = await response.json();
-            setAnalysisResult(data.analysis);
+            setAnalysisResult(data);
 
         } catch (err) {
             console.error('AI Analysis Error:', err);
@@ -88,26 +88,47 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                         {isLoading && <p className="text-slate-400">Processing image...</p>}
                         {error && <div className="text-red-400 flex items-center gap-2"><AlertTriangle /> {error}</div>}
                         {analysisResult && (
-                            <div className="space-y-4">
-                                <div>
-                                    <h4 className="flex items-center gap-2 text-sm font-medium text-amber-400"><Stethoscope size={16} />Detected Conditions / Diseases</h4>
-                                    {analysisResult.diseases.length > 0 ? (
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {analysisResult.diseases.map(d => <span key={d} className="bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-medium px-2.5 py-1 rounded-full">{d}</span>)}
+                            <div className="space-y-6">
+                                {/* Comprehensive Summary Section */}
+                                {analysisResult.summary && (
+                                    <div className="bg-sky-500/10 border border-sky-500/20 p-4 rounded-xl">
+                                        <h4 className="flex items-center gap-2 text-sm font-bold text-sky-400 mb-2 uppercase tracking-wider">
+                                            <Bot size={18} /> Cure Intelligence Summary
+                                        </h4>
+                                        <div className="text-slate-200 text-sm leading-relaxed whitespace-pre-wrap">
+                                            {analysisResult.summary}
                                         </div>
-                                    ) : <p className="text-slate-400 text-sm mt-1">No specific conditions detected.</p>}
-                                </div>
-                                <div>
-                                    <h4 className="flex items-center gap-2 text-sm font-medium text-amber-400"><Pill size={16} />Detected Medications</h4>
-                                    {analysisResult.medications.length > 0 ? (
-                                        <div className="space-y-2 mt-2">
-                                            {analysisResult.medications.map((med, i) => (
-                                                <p key={i} className="text-slate-300 text-sm font-mono bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg">
-                                                    &gt; {med.name} - {med.dosage} - {med.frequency}
-                                                </p>
-                                            ))}
-                                        </div>
-                                    ) : <p className="text-slate-400 text-sm mt-1">No specific medications detected.</p>}
+                                    </div>
+                                )}
+
+                                <div className="grid grid-cols-1 gap-6">
+                                    <div>
+                                        <h4 className="flex items-center gap-2 text-sm font-bold text-amber-400 uppercase tracking-wider mb-2">
+                                            <Stethoscope size={16} /> Detected Conditions
+                                        </h4>
+                                        {(analysisResult.analysis?.diseases || []).length > 0 ? (
+                                            <div className="flex flex-wrap gap-2">
+                                                {analysisResult.analysis.diseases.map(d => (
+                                                    <span key={d} className="bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-medium px-2.5 py-1 rounded-full">{d}</span>
+                                                ))}
+                                            </div>
+                                        ) : <p className="text-slate-500 text-xs">No specific conditions detected.</p>}
+                                    </div>
+
+                                    <div>
+                                        <h4 className="flex items-center gap-2 text-sm font-bold text-amber-400 uppercase tracking-wider mb-2">
+                                            <Pill size={16} /> Detected Medications
+                                        </h4>
+                                        {(analysisResult.analysis?.medications || []).length > 0 ? (
+                                            <div className="space-y-2">
+                                                {analysisResult.analysis.medications.map((med, i) => (
+                                                    <p key={i} className="text-slate-300 text-xs font-mono bg-white/5 border border-white/10 p-2 rounded-lg">
+                                                        &gt; {med.name} - {med.dosage} - {med.frequency}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        ) : <p className="text-slate-500 text-xs">No specific medications detected.</p>}
+                                    </div>
                                 </div>
                             </div>
                         )}

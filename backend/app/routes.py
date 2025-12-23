@@ -47,6 +47,27 @@ def analyze_report():
         traceback.print_exc()
         return jsonify({"error": f"An error occurred during analysis: {e}"}), 500
 
+@app.route('/api/analyzer/process', methods=['POST'])
+def process_analyzer_report():
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part in the request"}), 400
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            return jsonify({"error": "No file selected for uploading"}), 400
+
+        if file:
+            # Step: Comprehensive Analysis (Extraction + Summary)
+            results = services.analyze_comprehensive(file.stream)
+            
+            return jsonify(results)
+            
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": f"An error occurred during comprehensive analysis: {e}"}), 500
+
 @app.route('/api/resource-distribution', methods=['GET'])
 def get_resource_distribution():
     try:
