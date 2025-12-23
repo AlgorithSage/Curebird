@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Share2, Bell, Search, LogIn, LogOut, Settings, Menu, LayoutDashboard, FileText, Calendar, Pill, HeartPulse, Bot, Activity, Mail, ScrollText, Shield, MessageSquare } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const UserProfile = ({ user, onLogout }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -88,33 +88,61 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     return (
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-white/10 relative z-20">
             <div className="flex items-center gap-4">
-                {/* Mobile Hamburger Menu Button */}
-                <button onClick={onToggleSidebar} className="p-2.5 -ml-2.5 rounded-xl hover:bg-white/10 transition-colors">
-                    <Menu size={20} className="text-slate-200" />
-                </button>
+                {/* Mobile Hamburger Menu Button - Decorated & Lively */}
+                <motion.button
+                    onClick={onToggleSidebar}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    animate={{
+                        borderColor: ["rgba(255,255,255,0.1)", "rgba(245,158,11,0.4)", "rgba(255,255,255,0.1)"],
+                        backgroundColor: ["rgba(245, 158, 11, 0)", "rgba(245, 158, 11, 0.15)", "rgba(245, 158, 11, 0)"],
+                        boxShadow: ["0 0 0px rgba(0,0,0,0)", "0 0 10px rgba(245,158,11,0.2)", "0 0 0px rgba(0,0,0,0)"],
+                        color: ["#cbd5e1", "#fbbf24", "#cbd5e1"] // slate-300 to amber-400
+                    }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    className="p-3 rounded-full border border-white/10 text-slate-300 group shadow-lg shadow-black/20"
+                >
+                    <Menu size={20} />
+                </motion.button>
 
-                {/* Quick Navigation Chain of Icons */}
-                <div className='flex items-center gap-2 mr-4 sm:mr-0 bg-slate-900/50 p-1.5 rounded-xl border border-white/5'>
-                    {navItems.map((item) => (
-                        <button
-                            key={item.name}
-                            onClick={() => onNavigate && onNavigate(item.name)}
-                            className={`p-2 rounded-lg transition-all duration-300 ${title === item.name
-                                    ? 'bg-gradient-to-tr from-amber-500 to-yellow-600 shadow-lg text-black scale-105'
-                                    : 'text-slate-500 hover:text-amber-400 hover:bg-white/5'
-                                }`}
-                            title={item.name}
-                        >
-                            {/* If icon needs specific styling for active state, clone it, otherwise just render */}
-                            {React.cloneElement(item.icon, {
-                                size: 20,
-                                className: title === item.name ? "text-black" : "currentColor"
-                            })}
-                        </button>
-                    ))}
-
-                    {/* If current page is NOT in the main nav items (e.g. Settings), show it as active separately or handle gracefully.
-                        For now, the main 4 are the requested "parser". */}
+                {/* Quick Navigation Chain of Icons - Animated & Glowy */}
+                <div className='flex items-center gap-2 mr-4 sm:mr-0 bg-slate-900/50 p-1.5 rounded-full border border-white/5 backdrop-blur-sm shadow-inner overflow-hidden'>
+                    {navItems.map((item) => {
+                        const isActive = title === item.name;
+                        return (
+                            <motion.button
+                                key={item.name}
+                                onClick={() => onNavigate && onNavigate(item.name)}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                initial={false}
+                                animate={isActive ? {
+                                    scale: 1.1,
+                                    borderColor: "rgba(251, 191, 36, 0.5)",
+                                    boxShadow: "0 0 20px rgba(245,158,11,0.6)",
+                                    backgroundColor: "rgba(245, 158, 11, 0.1)"
+                                } : {
+                                    scale: 1,
+                                    borderColor: ["rgba(255,255,255,0)", "rgba(245,158,11,0.3)", "rgba(255,255,255,0)"],
+                                    color: ["#64748b", "#fbbf24", "#64748b"], // slate-500 to amber-400
+                                }}
+                                transition={isActive ? { type: "spring", stiffness: 300 } : { duration: 4, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
+                                className={`p-2.5 rounded-full relative z-10 ${isActive
+                                    ? 'bg-gradient-to-tr from-amber-500 to-yellow-600 text-black font-bold'
+                                    : 'border border-transparent bg-transparent'
+                                    }`}
+                                title={item.name}
+                            >
+                                {/* Icon */}
+                                <span className="block">
+                                    {React.cloneElement(item.icon, {
+                                        size: 20,
+                                        className: isActive ? "text-black animate-[spin_3s_linear_infinite_paused] hover:animate-[spin_1s_ease_in_out]" : "currentColor"
+                                    })}
+                                </span>
+                            </motion.button>
+                        );
+                    })}
                 </div>
 
                 <div className="hidden sm:block w-px h-8 bg-white/10 mx-2"></div>
