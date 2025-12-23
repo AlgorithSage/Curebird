@@ -214,6 +214,7 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
                             try {
                                 const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
                                 recordToSave.fileUrl = downloadURL;
+                                recordToSave.storagePath = storageRef.fullPath; // Save path for secure access
                                 recordToSave.fileName = file.name;
                                 recordToSave.fileType = file.type;
                                 resolve();

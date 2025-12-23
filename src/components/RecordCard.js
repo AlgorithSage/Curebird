@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ref, getDownloadURL } from 'firebase/storage';
 import { motion } from 'framer-motion';
 import { FileText, Stethoscope, Hospital, Pill, HeartPulse, Trash2, Edit, ExternalLink } from 'lucide-react';
 
-const RecordCard = ({ record, onEdit, onDelete }) => {
+const RecordCard = ({ record, storage, onEdit, onDelete }) => {
     const ICONS = {
         prescription: <Pill className="text-rose-400" />,
         test_report: <FileText className="text-fuchsia-400" />,
@@ -25,6 +26,32 @@ const RecordCard = ({ record, onEdit, onDelete }) => {
         }
     };
 
+
+
+    const [isLoadingFile, setIsLoadingFile] = useState(false);
+
+    const handleViewFile = async () => {
+        // Option 1: Try secure Fetch via Storage SDK
+        if (record.storagePath && storage) {
+            setIsLoadingFile(true);
+            try {
+                const storageRef = ref(storage, record.storagePath);
+                const url = await getDownloadURL(storageRef);
+                window.open(url, '_blank');
+            } catch (error) {
+                console.error("Secure fetch failed, falling back to public URL", error);
+                // Fallback to stored URL if SDK fails
+                if (record.fileUrl) window.open(record.fileUrl, '_blank');
+            } finally {
+                setIsLoadingFile(false);
+            }
+        }
+        // Option 2: Fallback to tokenized URL
+        else if (record.fileUrl) {
+            window.open(record.fileUrl, '_blank');
+        }
+    };
+
     return (
         <motion.div layout initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
             className="glass-card p-5 rounded-2xl group border-l-4 border-l-transparent hover:border-l-amber-500">
@@ -35,9 +62,13 @@ const RecordCard = ({ record, onEdit, onDelete }) => {
                         <div className="flex items-center gap-2">
                             <h3 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{capitalize(record.type)}</h3>
                             {record.fileUrl && (
-                                <a href={record.fileUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 px-2 py-0.5 bg-sky-500/10 text-sky-400 rounded-md border border-sky-500/20 hover:bg-sky-500/20 transition-all text-[10px] uppercase font-black">
-                                    <ExternalLink size={10} /> View
-                                </a>
+                                <button
+                                    onClick={handleViewFile}
+                                    disabled={isLoadingFile}
+                                    className="flex items-center gap-1 px-2 py-0.5 bg-sky-500/10 text-sky-400 rounded-md border border-sky-500/20 hover:bg-sky-500/20 transition-all text-[10px] uppercase font-black disabled:opacity-50"
+                                >
+                                    {isLoadingFile ? <span className="animate-spin">⌛</span> : <ExternalLink size={10} />} View
+                                </button>
                             )}
                         </div>
                         <p className="text-sm text-slate-400 font-medium">On {formatDate(record.date)}</p>

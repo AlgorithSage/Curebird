@@ -8,7 +8,7 @@ import RecordCard from './RecordCard';
 import { RecordFormModal, DeleteConfirmModal } from './Modals';
 import { SkeletonCard } from './SkeletonLoaders';
 
-const AllRecords = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -115,6 +115,7 @@ const AllRecords = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar, 
                                     <RecordCard
                                         key={record.id}
                                         record={record}
+                                        storage={storage}
                                         onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }}
                                         onDelete={() => { setRecordToDelete(record.id); setIsDeleteModalOpen(true); }}
                                     />
@@ -132,7 +133,7 @@ const AllRecords = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar, 
             </main>
 
             <AnimatePresence>
-                {isFormModalOpen && <RecordFormModal onClose={() => setIsFormModalOpen(false)} record={editingRecord} userId={userId} appId={appId} db={db} />}
+                {isFormModalOpen && <RecordFormModal onClose={() => setIsFormModalOpen(false)} record={editingRecord} userId={userId} appId={appId} db={db} storage={storage} />}
                 {isDeleteModalOpen && <DeleteConfirmModal onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDeleteRecord} />}
             </AnimatePresence>
         </div>
