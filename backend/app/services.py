@@ -179,7 +179,7 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
                     "content": [
                         {
                             "type": "text", 
-                            "text": "Analyze this medical report image. Extract all detected medications (name, dosage, frequency) and any detected clinical conditions or diseases. Return ONLY a valid JSON object with the following structure: {'medications': [{'name': '...', 'dosage': '...', 'frequency': '...'}], 'diseases': ['...', '...']}"
+                            "text": "Analyze this image. First, determine if it is a valid medical document (prescription, lab report, clinical notes, discharge summary) or medication packaging. If it is NOT a medical image, return strict JSON: {\"is_medical\": false}. If it IS a medical image, extract all detected medications (name, dosage, frequency) and any detected clinical conditions or diseases. Return JSON: {\"is_medical\": true, \"medications\": [{\"name\": \"...\", \"dosage\": \"...\", \"frequency\": \"...\"}], \"diseases\": [\"...\", \"...\"]}"
                         },
                         {
                             "type": "image_url",
@@ -199,12 +199,13 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
         structured_data = json.loads(raw_response)
         
         return {
+            "is_medical": structured_data.get("is_medical", True), # Default to true if missing to be safe, but prompt should catch it
             "medications": structured_data.get("medications", []),
             "diseases": structured_data.get("diseases", []) or structured_data.get("conditions", [])
         }
     except Exception as e:
         print(f"VLM ERROR: {e}")
-        return {"medications": [], "diseases": []}
+        return {"is_medical": False, "medications": [], "diseases": []}
 
 def analyze_comprehensive(file_stream):
     """
@@ -217,6 +218,13 @@ def analyze_comprehensive(file_stream):
         
         # Phase 1: Structured Extraction
         extracted_data = analyze_with_vlm(file_stream, custom_api_key=analyzer_key)
+        
+        # Guardrail: Check if it's medical
+        if not extracted_data.get('is_medical', True):
+             return {
+                "analysis": {"medications": [], "diseases": []},
+                "summary": "Please upload a valid medical document (e.g., prescription, lab report, or doctor's notes). I am programmed to only analyze medical records and cannot process non-medical images."
+            }
         
         # Phase 2: User-friendly Summary
         client = Groq(api_key=analyzer_key)
