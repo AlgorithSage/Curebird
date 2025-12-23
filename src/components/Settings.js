@@ -6,7 +6,7 @@ import { Settings as SettingsIcon, User, Mail, Shield, AlertTriangle, Save } fro
 import Header from './Header';
 import { DeleteAccountModal } from './Modals'; // We will add this modal next
 
-const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
+const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [displayName, setDisplayName] = useState(user?.displayName || '');
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
@@ -38,6 +38,7 @@ const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                     user={null}
                     onLoginClick={onLoginClick}
                     onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
                 />
                 <div className="text-center py-20">
                     <p className="text-slate-400">Please log in to view your settings.</p>
@@ -54,6 +55,7 @@ const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar }) => {
                 user={user}
                 onLogout={onLogout}
                 onToggleSidebar={onToggleSidebar}
+                onNavigate={onNavigate}
             />
 
             <main className="mt-8 max-w-4xl mx-auto space-y-12">

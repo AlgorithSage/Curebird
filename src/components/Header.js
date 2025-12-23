@@ -69,7 +69,9 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
         { name: 'Dashboard', icon: <LayoutDashboard size={20} /> },
         { name: 'Cure Analyzer', icon: <Bot size={20} /> },
         { name: 'Cure Stat', icon: <Activity size={20} /> },
-        { name: 'Cure AI', icon: <MessageSquare size={20} /> }
+        { name: 'Cure AI', icon: <MessageSquare size={20} /> },
+        { name: 'Settings', icon: <Settings size={20} /> },
+        { name: 'Contact', icon: <Mail size={20} /> }
     ];
 
     const getPageIcon = (pageTitle) => {

@@ -74,13 +74,13 @@ const Contact = ({ onBack, db }) => {
                             <p className="text-amber-100 mb-8">We'd love to hear from you. Our team is always here to chat.</p>
 
                             <div className="space-y-6">
-                                <div className="flex items-start gap-4">
+                                <a href="mailto:carchisman2@gmail.com" className="flex items-start gap-4 hover:opacity-80 transition-opacity">
                                     <Mail className="mt-1 opacity-80" />
                                     <div>
                                         <h4 className="font-semibold text-lg">Chat to us</h4>
                                         <p className="text-amber-100 text-sm">carchisman2@gmail.com</p>
                                     </div>
-                                </div>
+                                </a>
                                 <div className="flex items-start gap-4">
                                     <Phone className="mt-1 opacity-80" />
                                     <div>
