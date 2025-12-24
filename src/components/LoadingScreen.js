@@ -27,17 +27,24 @@ const LoadingScreen = () => {
 
     return (
         <div className="fixed inset-0 z-50 overflow-hidden font-sans text-white">
-            {/* Dynamic Living Gradient Background */}
+            {/* Dynamic Living Gradient Background - Deep Slate & Rich Amber/Gold */}
             <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-slate-900 via-teal-950 to-amber-950/40"
+                className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#0f172a] to-black"
                 animate={{
-                    backgroundSize: ['100% 100%', '120% 120%', '100% 100%'],
-                    backgroundPosition: ['0% 0%', '50% 50%', '0% 0%'],
+                    background: [
+                        "radial-gradient(circle at 30% 30%, #1e1b4b 0%, #020617 100%)", // Deep Indigo/Slate
+                        "radial-gradient(circle at 70% 70%, #451a03 0%, #020617 100%)", // Deep Amber/Slate
+                        "radial-gradient(circle at 30% 30%, #1e1b4b 0%, #020617 100%)"
+                    ]
                 }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            />
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            >
+                {/* Golden Glow Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-amber-900/10 via-transparent to-amber-500/5 mix-blend-overlay" />
+            </motion.div>
+
             {/* Overlay for depth */}
-            <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"></div>
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
 
             <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
 
@@ -53,7 +60,11 @@ const LoadingScreen = () => {
                             y: [0, -40, 0, 20, 0],
                             scale: [1, 1.1, 1],
                             rotate: [0, 5, 0, -5, 0],
-                            filter: ["brightness(1) drop-shadow(0 0 0px rgba(245,158,11,0))", "brightness(1.2) drop-shadow(0 0 20px rgba(245,158,11,0.6))", "brightness(1) drop-shadow(0 0 0px rgba(245,158,11,0))"]
+                            filter: [
+                                "brightness(1) drop-shadow(0 0 0px rgba(245,158,11,0))",
+                                "brightness(1.3) drop-shadow(0 0 35px rgba(251,191,36,0.6))",
+                                "brightness(1) drop-shadow(0 0 0px rgba(245,158,11,0))"
+                            ]
                         }}
                         transition={{
                             duration: 8,
@@ -65,7 +76,7 @@ const LoadingScreen = () => {
                         <img
                             src={GoldenBird}
                             alt="Curebird Loading"
-                            className="w-full h-full object-contain drop-shadow-2xl"
+                            className="w-full h-full object-contain"
                         />
                     </motion.div>
 
@@ -73,7 +84,7 @@ const LoadingScreen = () => {
                     {[...Array(3)].map((_, i) => (
                         <motion.div
                             key={i}
-                            className="absolute w-2 h-2 rounded-full bg-amber-400/60"
+                            className="absolute w-1.5 h-1.5 rounded-full bg-amber-300 blur-[1px]"
                             animate={{
                                 opacity: [0, 1, 0],
                                 scale: [0, 1.5, 0],
@@ -94,8 +105,8 @@ const LoadingScreen = () => {
                 <div className="h-24 flex flex-col items-center justify-between mt-8">
                     {/* Static Breathe Instruction */}
                     <motion.h2
-                        className="text-2xl sm:text-3xl font-light tracking-widest text-amber-200"
-                        animate={{ opacity: [0.6, 1, 0.6] }}
+                        className="text-2xl sm:text-3xl font-light tracking-widest text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"
+                        animate={{ opacity: [0.7, 1, 0.7] }}
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     >
                         Breathe in, breathe out...
@@ -105,7 +116,7 @@ const LoadingScreen = () => {
                     <AnimatePresence mode='wait'>
                         <motion.p
                             key={messageIndex}
-                            className="text-sm sm:text-base text-slate-400 font-mono mt-2"
+                            className="text-sm sm:text-base text-slate-300 font-mono mt-2"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
@@ -117,9 +128,9 @@ const LoadingScreen = () => {
                 </div>
 
                 {/* Loading Bar */}
-                <div className="w-64 h-1 bg-slate-800 rounded-full mt-8 overflow-hidden">
+                <div className="w-64 h-1 bg-slate-800/50 rounded-full mt-8 overflow-hidden border border-white/5">
                     <motion.div
-                        className="h-full bg-gradient-to-r from-amber-600 to-amber-300"
+                        className="h-full bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600"
                         animate={{ x: ["-100%", "100%"] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                     />
