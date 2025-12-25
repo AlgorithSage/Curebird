@@ -13,6 +13,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShieldAlert, Phone, CheckCircle, Loader2, ArrowRight, User, Camera, Mail, Upload } from 'lucide-react';
+import CurebirdLogo from '../curebird_logo.png';
 
 // --- Initialize Providers ---
 const googleProvider = new GoogleAuthProvider();
@@ -22,20 +23,31 @@ const ModalWrapper = ({ onClose, children }) => (
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-50 p-4"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md flex justify-center items-center z-50 p-4"
         onClick={onClose}
     >
         <motion.div
-            initial={{ y: 20, opacity: 0, scale: 0.95 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 20, opacity: 0, scale: 0.95 }}
-            className="w-full max-w-md bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl relative overflow-hidden"
+            initial={{ scale: 0.9, y: 20, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.9, y: 20, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="w-full max-w-md relative group"
             onClick={(e) => e.stopPropagation()}
         >
-            {/* Ambient Background Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-amber-500/10 rounded-full blur-[50px] pointer-events-none" />
+            {/* Animated Gradient Border Glow */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl opacity-75 group-hover:opacity-100 blur transition duration-1000 group-hover:duration-200 animate-pulse-slow"></div>
 
-            {children}
+            <div className="relative w-full bg-[#0F172A] rounded-2xl p-1 overflow-hidden">
+                {/* Internal Glassy Texture */}
+                <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-xl"></div>
+                <div className="relative bg-[#0F172A]/80 rounded-xl overflow-hidden">
+                    {/* Decorative Background Elements */}
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+
+                    {children}
+                </div>
+            </div>
         </motion.div>
     </motion.div>
 );
@@ -259,7 +271,7 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
             // A page refresh might be needed to show the new name immediately if the listener doesn't fire on doc change.
             // But usually, modifying the doc won't trigger auth state change.
             // We can rely on a reload or just let the user in.
-            window.location.reload(); // Simple way to ensure App.js fetches new profile
+            window.location.reload();
 
         } catch (err) {
             console.error("Profile Save Error:", err);
@@ -270,114 +282,126 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
 
     return (
         <ModalWrapper onClose={onClose}>
-            <div className="p-8 relative">
+            <div className="p-8 relative z-10">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors"
+                    className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors bg-white/5 p-1 rounded-full hover:bg-white/10"
                 >
-                    <X size={24} />
+                    <X size={20} />
                 </button>
 
-                {/* Header */}
+                {/* Header with Logo Area - Enhanced */}
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-white mb-2">
-                        {authStep === 'login' ? 'Welcome to Curebird' : 'Complete Profile'}
+                    <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-slate-900 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-4 p-3 relative group">
+                        <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
+                        <img
+                            src={CurebirdLogo}
+                            alt="Curebird Logo"
+                            className="w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+                        />
+                    </div>
+                    <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
+                        {authStep === 'login' ? (
+                            <>Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Curebird</span></>
+                        ) : 'Complete Profile'}
                     </h1>
-                    <p className="text-slate-400 text-sm">
-                        {authStep === 'login' ? 'Your intelligent health companion.' : 'Tell us a bit about yourself.'}
+                    <p className="text-slate-400 text-sm font-medium">
+                        {authStep === 'login' ? 'Your advanced AI health companion.' : 'Let us personalize your experience.'}
                     </p>
                 </div>
 
                 {authStep === 'login' ? (
                     // --- STEP 1: LOGIN ---
-                    <>
+                    <div className="space-y-6">
                         <button
                             onClick={handleGoogleSignIn}
-                            className="w-full flex items-center justify-center gap-3 bg-white text-slate-900 py-3.5 rounded-xl font-bold hover:bg-slate-100 transition-colors shadow-lg shadow-white/5"
+                            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 py-3.5 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-lg shadow-white/5 border border-slate-200"
                         >
                             <svg className="w-5 h-5" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,36.218,44,30.668,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
-                            Continue with Google
+                            <span>Continue with Google</span>
                         </button>
 
-                        <div className="flex items-center my-6">
-                            <div className="flex-grow border-t border-slate-700"></div>
-                            <span className="flex-shrink mx-4 text-slate-500 text-xs font-medium uppercase tracking-wider">Or Login using Phone</span>
-                            <div className="flex-grow border-t border-slate-700"></div>
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-slate-700/50"></div>
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-[#0f172a] px-3 text-slate-500 font-semibold tracking-wider">Or Login using Phone</span>
+                            </div>
                         </div>
 
                         <div className="space-y-4">
                             <div id="recaptcha-container"></div>
 
                             {!isOtpSent ? (
-                                <form onSubmit={handleSendOtp} className="space-y-3">
-                                    <div>
-                                        <label className="text-xs text-slate-400 ml-1">Phone Number</label>
-                                        <div className="relative">
-                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                                            <input
-                                                type="tel"
-                                                value={phoneNumber}
-                                                onChange={handlePhoneChange}
-                                                placeholder="+91 99999 99999"
-                                                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 pl-10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
-                                            />
+                                <form onSubmit={handleSendOtp} className="space-y-4">
+                                    <div className="group relative">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-500 transition-colors">
+                                            <Phone size={18} />
                                         </div>
+                                        <input
+                                            type="tel"
+                                            value={phoneNumber}
+                                            onChange={handlePhoneChange}
+                                            placeholder="+91 99999 99999"
+                                            className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3.5 pl-10 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-medium"
+                                        />
                                     </div>
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/20 py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                                        className="w-full bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-amber-500 border border-slate-600/50 py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 group disabled:opacity-50 hover:shadow-lg shadow-black/20"
                                     >
                                         {loading ? <Loader2 size={20} className="animate-spin" /> : (
-                                            <>Get OTP <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>
+                                            <>Get Verification Code <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>
                                         )}
                                     </button>
-                                    <p className="text-[10px] text-slate-500 text-center">
-                                        Standard message rates may apply.
-                                    </p>
                                 </form>
                             ) : (
-                                <form onSubmit={handleVerifyOtp} className="space-y-3">
-                                    <div className="text-center mb-2">
-                                        <p className="text-slate-400 text-sm">OTP sent to <span className="text-white font-mono">{phoneNumber}</span></p>
-                                        <button type="button" onClick={() => setIsOtpSent(false)} className="text-amber-500 text-xs hover:underline mt-1">Change Number</button>
+                                <form onSubmit={handleVerifyOtp} className="space-y-4">
+                                    <div className="text-center mb-2 p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                                        <p className="text-slate-300 text-sm">Code sent to <span className="text-amber-400 font-mono font-bold">{phoneNumber}</span></p>
+                                        <button type="button" onClick={() => setIsOtpSent(false)} className="text-xs text-slate-500 hover:text-white mt-1 underline decoration-dashed">Change Number</button>
                                     </div>
                                     <input
                                         type="text"
                                         value={otp}
                                         onChange={(e) => setOtp(e.target.value)}
-                                        placeholder="Enter 6-digit OTP"
+                                        placeholder="000000"
                                         maxLength={6}
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-center text-xl tracking-[0.5em] text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all font-mono"
+                                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-mono font-bold"
                                     />
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                                        className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white py-3.5 rounded-xl font-bold transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-50"
                                     >
                                         {loading ? <Loader2 size={20} className="animate-spin" /> : "Verify & Login"}
                                     </button>
                                 </form>
                             )}
                         </div>
-                    </>
+                    </div>
                 ) : (
                     // --- STEP 2: COMPLETE PROFILE ---
-                    <form onSubmit={handleProfileSubmit} className="space-y-5">
-                        {/* Avatar Uploader */}
-                        <div className="flex justify-center">
+                    <form onSubmit={handleProfileSubmit} className="space-y-6">
+                        {/* Avatar Uploader - Premium Look */}
+                        <div className="flex justify-center -mt-2">
                             <div
-                                className="relative w-24 h-24 rounded-full bg-slate-800 border-2 border-dashed border-slate-600 flex items-center justify-center cursor-pointer group hover:border-amber-500 transition-colors overflow-hidden"
+                                className="relative w-28 h-28 rounded-full bg-slate-800 border-2 border-dashed border-slate-600 flex items-center justify-center cursor-pointer group hover:border-amber-500 transition-all hover:shadow-[0_0_25px_rgba(245,158,11,0.2)]"
                                 onClick={() => fileInputRef.current?.click()}
                             >
                                 {profilePreview ? (
-                                    <img src={profilePreview} alt="Profile" className="w-full h-full object-cover" />
+                                    <img src={profilePreview} alt="Profile" className="w-full h-full rounded-full object-cover" />
                                 ) : (
-                                    <User size={32} className="text-slate-500 group-hover:text-amber-500 transition-colors" />
+                                    <div className="flex flex-col items-center gap-1">
+                                        <User size={32} className="text-slate-500 group-hover:text-amber-500 transition-colors" />
+                                        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider group-hover:text-amber-500/80">Upload</span>
+                                    </div>
                                 )}
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    <Camera size={20} className="text-white" />
+                                <div className="absolute bottom-1 right-1 bg-amber-500 text-slate-900 p-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:scale-110">
+                                    <Camera size={14} />
                                 </div>
                             </div>
                             <input
@@ -390,37 +414,37 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="text-xs text-slate-400 ml-1">First Name <span className="text-amber-500">*</span></label>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">First Name</label>
                                 <input
                                     type="text"
                                     value={firstName}
                                     onChange={(e) => setFirstName(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-medium"
                                     placeholder="John"
                                 />
                             </div>
-                            <div>
-                                <label className="text-xs text-slate-400 ml-1">Last Name <span className="text-amber-500">*</span></label>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">Last Name</label>
                                 <input
                                     type="text"
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-medium"
                                     placeholder="Doe"
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="text-xs text-slate-400 ml-1">Email <span className="text-slate-500">(Optional)</span></label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">Email (Optional)</label>
+                            <div className="relative group">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-500 transition-colors" size={18} />
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 pl-10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 pl-10 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-medium"
                                     placeholder="john@example.com"
                                 />
                             </div>
@@ -429,9 +453,9 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-50 mt-4"
+                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white py-3.5 rounded-xl font-bold transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-50 mt-2"
                         >
-                            {loading ? <Loader2 size={20} className="animate-spin" /> : "Complete Signup"}
+                            {loading ? <Loader2 size={20} className="animate-spin" /> : "Complete & Enter"}
                         </button>
                     </form>
                 )}
@@ -440,13 +464,13 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
                 <AnimatePresence>
                     {error && (
                         <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="mt-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-3 text-red-200 text-sm"
+                            initial={{ opacity: 0, y: 10, height: 0 }}
+                            animate={{ opacity: 1, y: 0, height: 'auto' }}
+                            exit={{ opacity: 0, y: 10, height: 0 }}
+                            className="mt-6 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-3 text-rose-300 text-sm overflow-hidden"
                         >
-                            <ShieldAlert size={18} className="shrink-0 text-red-500" />
-                            <span>{error}</span>
+                            <ShieldAlert size={18} className="shrink-0 text-rose-500" />
+                            <span className="font-medium">{error}</span>
                         </motion.div>
                     )}
                 </AnimatePresence>
