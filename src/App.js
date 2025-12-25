@@ -62,7 +62,10 @@ export default function App() {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
             setUser(currentUser);
-            setLoading(false);
+            // Artificial delay for testing the loading screen (4 seconds)
+            setTimeout(() => {
+                setLoading(false);
+            }, 4000);
         });
         return () => unsubscribe();
     }, []);
