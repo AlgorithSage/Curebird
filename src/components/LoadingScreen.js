@@ -39,7 +39,7 @@ const LoadingScreen = () => {
             />
 
             {/* Soft glass darkening */}
-            <div className="absolute inset-0 bg-black/55 backdrop-blur-[1px]" />
+            <div className="absolute inset-0 bg-black/55 backdrop-blur-[50px]" />
 
             {/* 🌟 CENTER CONTAINER */}
             <div className="relative z-110 flex h-full w-full flex-col items-center justify-center">
@@ -49,7 +49,7 @@ const LoadingScreen = () => {
 
                     {/* Subtle rotating ring */}
                     <motion.div
-                        className="absolute inset-0 rounded-full border border-amber-400/100"
+                        className="absolute inset-0 rounded-full border-[4px] border-amber-400"
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                     />
@@ -77,7 +77,7 @@ const LoadingScreen = () => {
 
                 {/* 🌬️ TEXT */}
                 <motion.h2
-                    className="mt-5 text-3xl tracking-widest font-bold text-amber-500 "
+                    className="mt-5 text-2xl tracking-widest font-bold text-amber-200 "
                     animate={{ opacity: [0.7, 1, 0.7] }}
                     transition={{ duration: 7, repeat: Infinity }}
                 >
@@ -87,7 +87,7 @@ const LoadingScreen = () => {
                 <AnimatePresence mode="wait">
                     <motion.p
                         key={messageIndex}
-                        className="mt-4 text-sm text-slate-300 font-mono"
+                        className="mt-4 text-sm text-slate-300"
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -6 }}
