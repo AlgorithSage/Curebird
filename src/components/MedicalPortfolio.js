@@ -10,9 +10,12 @@ import RecordsChart from './RecordsChart';
 import RecordCard from './RecordCard';
 import { RecordFormModal, ShareModal, DeleteConfirmModal } from './Modals';
 import { SkeletonDashboard, SkeletonCard } from './SkeletonLoaders';
+import DashboardOverview from './DashboardOverview';
+
 import HeroSection from './HeroSection';
 
 const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -139,6 +142,11 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                         onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
                         onNavigate={onNavigate}
                     />
+                </div>
+
+                {/* Dashboard Overview Banner */}
+                <div className="mb-12">
+                    <DashboardOverview user={user} />
                 </div>
 
                 {isLoading ? <SkeletonDashboard /> : (
