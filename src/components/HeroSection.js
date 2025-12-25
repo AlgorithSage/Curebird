@@ -69,236 +69,174 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate }) => {
                 {/* Glossy sheen effect - Hidden on mobile to save performance */}
                 <div className="hidden sm:block absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent skew-x-12 translate-x-[-150%] group-hover:animate-shine z-10 pointer-events-none transition-all duration-1000"></div>
 
-                <div className="relative z-20 flex flex-col-reverse lg:flex-row items-center justify-between gap-8 lg:gap-10 transform-gpu" style={{ transform: "translateZ(30px)" }}>
+                <div className="relative z-20 flex flex-col gap-16 transform-gpu" style={{ transform: "translateZ(30px)" }}>
 
-                    {/* Left Side: Text Content */}
-                    <div className="text-center lg:text-left space-y-6 max-w-3xl flex-1">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-semibold tracking-wide uppercase"
-                        >
-                            AI-Powered Medical Intelligence
-                        </motion.div>
-
-                        <h1 className="text-3xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[1.1] sm:leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 to-yellow-200 drop-shadow-2xl py-2">
-                            CureBird
-                        </h1>
-
-                        <h2 className="text-xl sm:text-2xl font-semibold tracking-wide mt-2 mb-8">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">Revolutionizing</span> and <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">Digitizing</span> Healthcare with <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">Clinical Precision</span>
-                        </h2>
-
-                        {/* Feature Overview Glass Card - Enhanced Visuals */}
-                        <div className="bg-gradient-to-br from-slate-900/60 to-slate-800/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 mb-10 max-w-2xl transform-gpu hover:border-white/20 transition-all shadow-2xl">
-                            <ul className="space-y-5">
-                                {[
-                                    "Instant Clinical Report Analysis",
-                                    "24/7 AI Health Consultation",
-                                    "Real-time Epidemic Tracking",
-                                    "Secure Digital Health Archives",
-                                    "Predictive Wellness Analytics"
-                                ].map((feature, index) => (
-                                    <motion.li
-                                        key={index}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.5 + (index * 0.1) }}
-                                        className="flex items-center gap-4"
-                                    >
-                                        <div className="p-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 shadow-[0_0_12px_-3px_rgba(16,185,129,0.3)]">
-                                            <CheckCircle2 size={20} className="text-emerald-400" />
-                                        </div>
-                                        <span className="text-slate-100 text-lg sm:text-xl font-medium tracking-wide leading-snug drop-shadow-sm">
-                                            {feature}
-                                        </span>
-                                    </motion.li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-6">
-                            <motion.button
-                                onClick={onOverviewClick}
-                                whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(245, 158, 11, 0.3)" }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 rounded-2xl font-bold text-black shadow-xl border-t border-white/20 hover:border-white/40 transition-all text-lg"
+                    {/* Top Section: Split Layout (Left Content | Right Video) */}
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
+                        {/* Left Side: Text & Features */}
+                        <div className="w-full lg:w-1/2 flex flex-col items-start text-left space-y-8">
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3 }}
+                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-semibold tracking-wide uppercase"
                             >
-                                Dashboard Overview
-                            </motion.button>
-                            <motion.button
-                                onClick={onAddClick}
-                                whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-8 py-4 bg-white/5 backdrop-blur-md rounded-2xl font-bold text-white shadow-xl border border-white/10 hover:border-white/30 transition-all text-lg flex items-center justify-center gap-2"
-                            >
-                                <HeartPulse size={20} className="text-amber-400" />
-                                Add Clinical Record
-                            </motion.button>
-                        </div>
+                                AI-Powered Medical Intelligence
+                            </motion.div>
 
-                        {/* Professional Feature Guide Text */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5 }}
-                            className="pt-10 border-t border-white/5 space-y-6"
-                        >
-                            <div className="space-y-4">
-                                <h2 className="text-xl sm:text-3xl font-bold text-slate-100 tracking-tight leading-snug">
-                                    Welcome, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-400">Bird</span>.
+                            <div className="space-y-6">
+                                <h1 className="text-6xl sm:text-8xl lg:text-[11rem] font-black tracking-tighter leading-[0.85] text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 via-yellow-300 via-amber-200 to-white animate-text-flow drop-shadow-[0_0_30px_rgba(245,158,11,0.5)] pb-4">
+                                    CureBird
+                                </h1>
+                                <h2 className="text-xl sm:text-3xl font-semibold tracking-wide text-slate-200 max-w-2xl">
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">Revolutionizing</span> and <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">Digitizing</span> Healthcare with <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">Clinical Precision</span>
                                 </h2>
-                                <p className="text-slate-400 text-base leading-relaxed max-w-2xl">
-                                    Your command center for total health mastery is now active. Explore our core features to <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200 font-semibold">unlock advanced insights</span> from your health data, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200 font-semibold">predict potential risks</span>, and <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200 font-semibold">experience the future</span> of personalized healthcare:
+                            </div>
+
+                            {/* Feature Overview Glass Card */}
+                            <div className="bg-gradient-to-br from-slate-900/60 to-slate-800/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 w-full max-w-2xl transform-gpu hover:border-white/20 transition-all shadow-2xl">
+                                <ul className="space-y-5">
+                                    {[
+                                        "Instant Clinical Report Analysis",
+                                        "24/7 AI Health Consultation",
+                                        "Real-time Epidemic Tracking",
+                                        "Secure Digital Health Archives",
+                                        "Predictive Wellness Analytics"
+                                    ].map((feature, index) => (
+                                        <motion.li
+                                            key={index}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.5 + (index * 0.1) }}
+                                            className="flex items-center gap-4 text-left"
+                                        >
+                                            <div className="p-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 shadow-[0_0_12px_-3px_rgba(16,185,129,0.3)] shrink-0">
+                                                <CheckCircle2 size={20} className="text-emerald-400" />
+                                            </div>
+                                            <span className="text-slate-100 text-lg font-medium tracking-wide leading-snug drop-shadow-sm">
+                                                {feature}
+                                            </span>
+                                        </motion.li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-5 pt-2 w-full max-w-2xl">
+                                <motion.button
+                                    onClick={onOverviewClick}
+                                    whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(245, 158, 11, 0.3)" }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 rounded-2xl font-bold text-black shadow-xl border-t border-white/20 hover:border-white/40 transition-all text-lg flex-1 text-center"
+                                >
+                                    Dashboard Overview
+                                </motion.button>
+                                <motion.button
+                                    onClick={onAddClick}
+                                    whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="px-8 py-4 bg-white/5 backdrop-blur-md rounded-2xl font-bold text-white shadow-xl border border-white/10 hover:border-white/30 transition-all text-lg flex items-center justify-center gap-2 flex-1 text-center"
+                                >
+                                    <HeartPulse size={20} className="text-amber-400" />
+                                    Add Clinical Record
+                                </motion.button>
+                            </div>
+                        </div>
+
+                        {/* Right Side: Video Placeholder with Enhanced Frame */}
+                        <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
+                            <div className="p-3 bg-white/5 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 shadow-[0_0_80px_-20px_rgba(0,0,0,0.6)] w-full">
+                                <div className="relative w-full aspect-video rounded-[2rem] overflow-hidden border border-white/5 bg-slate-900/80 group">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-purple-500/5 z-10 pointer-events-none"></div>
+                                    <video
+                                        autoPlay
+                                        loop
+                                        muted
+                                        playsInline
+                                        className="w-full h-full object-cover opacity-90 mix-blend-screen group-hover:opacity-100 transition-opacity duration-500"
+                                    >
+                                        <source src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-human-heart-9964-large.mp4" type="video/mp4" />
+                                    </video>
+                                    <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+                                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                        <span className="text-xs font-medium text-white/80">LIVE DEMO</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Bottom Section: Welcome Cards & Badges */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6 }}
+                        className="w-full border-t border-white/5 pt-12"
+                    >
+                        <div className="text-center mb-10">
+                            <h2 className="text-2xl sm:text-4xl font-bold text-slate-100 tracking-tight leading-snug mb-4">
+                                Welcome, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-400">Bird</span>.
+                            </h2>
+                            <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
+                                Your command center for total health mastery is now active. Explore our core features to <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200 font-semibold">unlock advanced insights</span> from your health data <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200 font-semibold">predict potential risks</span>, and <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200 font-semibold">experience the future</span> of personalized healthcare:
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div
+                                onClick={() => onNavigate && onNavigate('Cure AI')}
+                                className="flex flex-col items-center p-6 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group backdrop-blur-sm cursor-pointer text-center h-full"
+                            >
+                                <div className="mb-4 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_15px_-3px_rgba(245,158,11,0.2)]">
+                                    <Bot size={28} className="text-amber-400" />
+                                </div>
+                                <h3 className="text-slate-200 font-bold text-xl leading-tight mb-2 group-hover:text-amber-400 transition-colors">Cure AI</h3>
+                                <p className="text-slate-400 text-sm leading-relaxed">
+                                    Your dedicated 24/7 health consultant. Ask anything, anytime, and get intelligent answers based on your medical history.
                                 </p>
-
-                                <div className="space-y-4 mt-6">
-                                    <div
-                                        onClick={() => onNavigate && onNavigate('Cure AI')}
-                                        className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group backdrop-blur-sm cursor-pointer"
-                                    >
-                                        <div className="mt-1 p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_15px_-3px_rgba(245,158,11,0.2)]">
-                                            <Bot size={24} className="text-amber-400" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-slate-200 font-bold text-lg leading-tight mb-1 group-hover:text-amber-400 transition-colors">Cure AI</h3>
-                                            <p className="text-slate-400 text-sm leading-relaxed">
-                                                Your dedicated 24/7 health consultant. Ask anything, anytime, and get intelligent answers based on your medical history.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        onClick={() => onNavigate && onNavigate('Cure Analyzer')}
-                                        className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group backdrop-blur-sm cursor-pointer"
-                                    >
-                                        <div className="mt-1 p-2 rounded-xl bg-sky-500/10 border border-sky-500/20 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_15px_-3px_rgba(14,165,233,0.2)]">
-                                            <Activity size={24} className="text-sky-400" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-slate-200 font-bold text-lg leading-tight mb-1 group-hover:text-sky-400 transition-colors">Cure Analyzer</h3>
-                                            <p className="text-slate-400 text-sm leading-relaxed">
-                                                Instantly decodes complex lab reports into clear, actionable insights, highlighting critical values and trends.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        onClick={() => onNavigate && onNavigate('Cure Stat')}
-                                        className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group backdrop-blur-sm cursor-pointer"
-                                    >
-                                        <div className="mt-1 p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)]">
-                                            <BarChart2 size={24} className="text-emerald-400" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-slate-200 font-bold text-lg leading-tight mb-1 group-hover:text-emerald-400 transition-colors">Cure Stat</h3>
-                                            <p className="text-slate-400 text-sm leading-relaxed">
-                                                Visualizes real-time disease trends and epidemic data globally, keeping you informed about public health risks.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
-                            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
-                                    <ShieldPlus size={12} className="text-emerald-500" /> Secure HIPAA Analytics
+                            <div
+                                onClick={() => onNavigate && onNavigate('Cure Analyzer')}
+                                className="flex flex-col items-center p-6 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group backdrop-blur-sm cursor-pointer text-center h-full"
+                            >
+                                <div className="mb-4 p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_15px_-3px_rgba(14,165,233,0.2)]">
+                                    <Activity size={28} className="text-sky-400" />
                                 </div>
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
-                                    <Activity size={12} className="text-sky-500" /> Real-time Synthesis
-                                </div>
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
-                                    <FileText size={12} className="text-amber-500" /> Multi-Format Support
-                                </div>
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
-                                    <Sparkles size={12} className="text-purple-500" /> Predictive Modeling
-                                </div>
+                                <h3 className="text-slate-200 font-bold text-xl leading-tight mb-2 group-hover:text-sky-400 transition-colors">Cure Analyzer</h3>
+                                <p className="text-slate-400 text-sm leading-relaxed">
+                                    Instantly decodes complex lab reports into clear, actionable insights, highlighting critical values and trends.
+                                </p>
                             </div>
-                        </motion.div>
-                    </div>
 
-                    {/* Right Side: Enhanced 3D Animated Symbol */}
-                    <div className="relative w-full max-w-md aspect-square flex items-center justify-center transform-gpu flex-1" style={{ transform: "translateZ(60px)" }}>
-                        {/* Glowing orb background */}
-                        <div className="absolute inset-0 bg-gradient-radial from-amber-500/20 via-yellow-500/5 to-transparent rounded-full blur-[80px] animate-pulse-slow"></div>
+                            <div
+                                onClick={() => onNavigate && onNavigate('Cure Stat')}
+                                className="flex flex-col items-center p-6 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group backdrop-blur-sm cursor-pointer text-center h-full"
+                            >
+                                <div className="mb-4 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)]">
+                                    <BarChart2 size={28} className="text-emerald-400" />
+                                </div>
+                                <h3 className="text-slate-200 font-bold text-xl leading-tight mb-2 group-hover:text-emerald-400 transition-colors">Cure Stat</h3>
+                                <p className="text-slate-400 text-sm leading-relaxed">
+                                    Visualizes real-time disease trends and epidemic data globally, keeping you informed about public health risks.
+                                </p>
+                            </div>
+                        </div>
 
-                        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-[0_0_40px_rgba(56,189,248,0.4)]">
-                            {/* Rotating Outer Ring */}
-                            <motion.circle
-                                cx="100" cy="100" r="70"
-                                fill="none"
-                                stroke="url(#amber-gradient)"
-                                strokeWidth="0.5"
-                                strokeDasharray="10 5"
-                                opacity="0.5"
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                            />
-
-                            {/* Abstract Bird Wing / Medical Cross Fusion */}
-                            <motion.path
-                                d="M40,100 C40,60 80,40 100,40 C120,40 160,60 160,100 C160,140 120,160 100,160 C80,160 40,140 40,100 Z"
-                                fill="none"
-                                stroke="url(#amber-gradient)"
-                                strokeWidth="2"
-                                variants={pathVariants}
-                                initial="hidden"
-                                animate="visible"
-                            />
-
-                            {/* Central Pulse Line - Enhanced */}
-                            <motion.path
-                                d="M60,100 L85,100 L95,70 L105,130 L115,100 L140,100"
-                                fill="none"
-                                stroke="#f59e0b"
-                                strokeWidth="4"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                initial={{ pathLength: 0, opacity: 0 }}
-                                animate={{
-                                    pathLength: 1,
-                                    opacity: 1,
-                                    transition: {
-                                        duration: 2,
-                                        ease: "easeInOut",
-                                        repeat: Infinity,
-                                        repeatDelay: 0.2
-                                    }
-                                }}
-                            />
-
-                            <defs>
-                                <linearGradient id="amber-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stopColor="#f59e0b" />
-                                    <stop offset="100%" stopColor="#fbbf24" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-
-                        {/* Floating elements */}
-                        <motion.div
-                            animate={{ y: [-20, 20, -20], x: [0, 5, 0] }}
-                            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute top-0 right-0 text-amber-400 bg-slate-900/60 p-4 rounded-2xl backdrop-blur-md border border-white/10 shadow-lg"
-                        >
-                            <HeartPulse size={32} />
-                        </motion.div>
-                        <motion.div
-                            animate={{ y: [20, -20, 20], x: [0, -5, 0] }}
-                            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                            className="absolute bottom-10 left-0 text-amber-400 bg-slate-900/60 p-3 rounded-2xl backdrop-blur-md border border-white/10 shadow-lg"
-                        >
-                            <Activity size={28} />
-                        </motion.div>
-                        <motion.div
-                            animate={{ scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }}
-                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute top-1/2 -left-8 text-emerald-400 opacity-70"
-                        >
-                            <ShieldPlus size={24} />
-                        </motion.div>
-                    </div>
+                        <div className="flex flex-wrap items-center justify-center gap-4 pt-8">
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
+                                <ShieldPlus size={12} className="text-emerald-500" /> Secure HIPAA Analytics
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
+                                <Activity size={12} className="text-sky-500" /> Real-time Synthesis
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
+                                <FileText size={12} className="text-amber-500" /> Multi-Format Support
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
+                                <Sparkles size={12} className="text-purple-500" /> Predictive Modeling
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </motion.div>
         </div>

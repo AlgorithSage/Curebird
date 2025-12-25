@@ -154,6 +154,21 @@ body {
   animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+  /* Fast text gradient flow */
+  @keyframes text-flow {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 200% 50%;
+    }
+  }
+
+  .animate-text-flow {
+    background-size: 200% auto;
+    animation: text-flow 4s linear infinite;
+  }
+
 /* Fundamental Markdown Styling for Chat */
 .prose {
   line-height: 1.6;
