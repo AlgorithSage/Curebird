@@ -17,7 +17,6 @@ const StatCard = ({ icon, label, value, color, change }) => (
                 </div>
             </div>
             <button className="flex items-center gap-1 text-xs text-slate-400 hover:text-sky-400 transition-colors bg-white/5 px-2 py-1 rounded-lg border border-white/5 hover:bg-white/10 hover:border-white/20">
-                <Sparkles size={12} />
                 Ask AI
             </button>
         </div>

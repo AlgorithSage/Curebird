@@ -79,7 +79,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate }) => {
                             transition={{ delay: 0.3 }}
                             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-semibold tracking-wide uppercase"
                         >
-                            <Sparkles size={14} /> AI-Powered Medical Intelligence
+                            AI-Powered Medical Intelligence
                         </motion.div>
 
                         <h1 className="text-3xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[1.1] sm:leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 to-yellow-200 drop-shadow-2xl py-2">

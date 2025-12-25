@@ -21,7 +21,7 @@ const DashboardOverview = ({ user }) => {
 
                 {/* Top Badge */}
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold tracking-widest uppercase mb-6">
-                    <Sparkles size={12} /> Overview
+                    Overview
                 </div>
 
                 {/* Main Title - Personalized */}
