@@ -256,7 +256,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) =
                     </div>
 
                     {/* Input Area - Integrated Control Panel */}
-                    <div className="p-3 sm:p-6 bg-[#090e1a]/95 border-t border-slate-800 backdrop-blur-xl relative z-20">
+                    <div className="p-3 sm:p-6 bg-[#090e1a]/95 border-t border-slate-800 backdrop-blur-xl relative z-20 rounded-b-[23px]">
                         <div className="flex gap-2 sm:gap-4 items-end max-w-5xl mx-auto">
                             <div className="flex-1 relative group/input">
                                 <div className="absolute inset-0 bg-sky-500/5 blur-lg rounded-xl opacity-0 group-focus-within/input:opacity-100 transition-opacity duration-500"></div>
