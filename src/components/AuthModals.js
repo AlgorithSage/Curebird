@@ -12,7 +12,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShieldAlert, Phone, CheckCircle, Loader2, ArrowRight, User, Camera, Mail, Upload } from 'lucide-react';
+import { X, ShieldAlert, Phone, CheckCircle, Loader2, ArrowRight, User, Camera, Mail, Upload, Stethoscope } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 
 // --- Initialize Providers ---
@@ -54,7 +54,7 @@ const ModalWrapper = ({ onClose, children }) => (
 
 const AuthModals = ({ onClose, db, storage, auth }) => {
     // Auth State
-    const [authStep, setAuthStep] = useState('login'); // 'login' | 'profile'
+    const [authStep, setAuthStep] = useState('selection'); // 'selection' | 'login' | 'profile'
     const [currentUser, setCurrentUser] = useState(null);
 
     // Login Form State
@@ -302,87 +302,136 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
                         />
                     </div>
                     <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
-                        {authStep === 'login' ? (
+                        {authStep === 'selection' ? (
+                            <>Are you a <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Patient</span> or <span className="text-slate-200">Doctor</span>?</>
+                        ) : authStep === 'login' ? (
                             <>Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Curebird</span></>
                         ) : 'Complete Profile'}
                     </h1>
                     <p className="text-slate-400 text-sm font-medium">
-                        {authStep === 'login' ? 'Your advanced AI health companion.' : 'Let us personalize your experience.'}
+                        {authStep === 'selection' ? 'Select your role to continue.' : authStep === 'login' ? 'Your advanced AI health companion.' : 'Let us personalize your experience.'}
                     </p>
                 </div>
 
-                {authStep === 'login' ? (
-                    // --- STEP 1: LOGIN ---
-                    <div className="space-y-6">
+                {authStep === 'selection' ? (
+                    // --- STEP 0: SELECTION ---
+                    <div className="grid gap-4 py-2">
+                        {/* Patient Card */}
                         <button
-                            onClick={handleGoogleSignIn}
-                            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 py-3.5 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-lg shadow-white/5 border border-slate-200"
+                            onClick={() => setAuthStep('login')}
+                            className="group relative flex items-center p-4 rounded-2xl border border-slate-700/50 bg-slate-800/20 hover:bg-slate-800/60 transition-all duration-300 hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(245,158,11,0.1)]"
                         >
-                            <svg className="w-5 h-5" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,36.218,44,30.668,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
-                            <span>Continue with Google</span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+
+                            <div className="h-14 w-14 rounded-full bg-slate-900 border border-slate-700/80 group-hover:border-amber-500/30 flex items-center justify-center mr-5 relative z-10 shadow-lg group-hover:shadow-amber-500/20 transition-all">
+                                <User className="text-slate-400 group-hover:text-amber-400 transition-colors" size={24} />
+                            </div>
+
+                            <div className="text-left flex-1 relative z-10">
+                                <h3 className="text-lg font-bold text-slate-200 group-hover:text-white transition-colors">Patient Portal</h3>
+                                <p className="text-xs font-medium text-slate-500 group-hover:text-amber-500/80 transition-colors">Personal Health Companion</p>
+                            </div>
+
+                            <div className="h-10 w-10 rounded-full bg-slate-900/50 flex items-center justify-center text-slate-500 group-hover:text-amber-500 group-hover:bg-amber-500/10 transition-all border border-transparent group-hover:border-amber-500/20">
+                                <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
+                            </div>
                         </button>
 
-                        <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-slate-700/50"></div>
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-[#0f172a] px-3 text-slate-500 font-semibold tracking-wider">Or Login using Phone</span>
-                            </div>
-                        </div>
+                        {/* Doctor Card */}
+                        <button
+                            onClick={() => window.location.href = '/doctor/login'}
+                            className="group relative flex items-center p-4 rounded-2xl border border-slate-700/50 bg-slate-800/20 hover:bg-slate-800/60 transition-all duration-300 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
 
-                        <div className="space-y-4">
-                            <div id="recaptcha-container"></div>
+                            <div className="h-14 w-14 rounded-full bg-slate-900 border border-slate-700/80 group-hover:border-blue-500/30 flex items-center justify-center mr-5 relative z-10 shadow-lg group-hover:shadow-blue-500/20 transition-all">
+                                <Stethoscope className="text-slate-400 group-hover:text-blue-400 transition-colors" size={24} />
+                            </div>
 
-                            {!isOtpSent ? (
-                                <form onSubmit={handleSendOtp} className="space-y-4">
-                                    <div className="group relative">
-                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-500 transition-colors">
-                                            <Phone size={18} />
+                            <div className="text-left flex-1 relative z-10">
+                                <h3 className="text-lg font-bold text-slate-200 group-hover:text-white transition-colors">Doctor Portal</h3>
+                                <p className="text-xs font-medium text-slate-500 group-hover:text-blue-500/80 transition-colors">Clinical Professional Access</p>
+                            </div>
+
+                            <div className="h-10 w-10 rounded-full bg-slate-900/50 flex items-center justify-center text-slate-500 group-hover:text-blue-500 group-hover:bg-blue-500/10 transition-all border border-transparent group-hover:border-blue-500/20">
+                                <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
+                            </div>
+                        </button>
+                    </div>
+                ) : authStep === 'login' ? (
+                    // --- STEP 1: LOGIN ---
+                    <>
+                        <div className="space-y-6">
+                            <button
+                                onClick={handleGoogleSignIn}
+                                className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 py-3.5 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-lg shadow-white/5 border border-slate-200"
+                            >
+                                <svg className="w-5 h-5" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,36.218,44,30.668,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+                                <span>Continue with Google</span>
+                            </button>
+
+                            <div className="relative">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-slate-700/50"></div>
+                                </div>
+                                <div className="relative flex justify-center text-xs uppercase">
+                                    <span className="bg-[#0f172a] px-3 text-slate-500 font-semibold tracking-wider">Or Login using Phone</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div id="recaptcha-container"></div>
+
+                                {!isOtpSent ? (
+                                    <form onSubmit={handleSendOtp} className="space-y-4">
+                                        <div className="group relative">
+                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-500 transition-colors">
+                                                <Phone size={18} />
+                                            </div>
+                                            <input
+                                                type="tel"
+                                                value={phoneNumber}
+                                                onChange={handlePhoneChange}
+                                                placeholder="+91 99999 99999"
+                                                className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3.5 pl-10 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-medium"
+                                            />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            disabled={loading}
+                                            className="w-full bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-amber-500 border border-slate-600/50 py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 group disabled:opacity-50 hover:shadow-lg shadow-black/20"
+                                        >
+                                            {loading ? <Loader2 size={20} className="animate-spin" /> : (
+                                                <>Get Verification Code <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>
+                                            )}
+                                        </button>
+                                    </form>
+                                ) : (
+                                    <form onSubmit={handleVerifyOtp} className="space-y-4">
+                                        <div className="text-center mb-2 p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                                            <p className="text-slate-300 text-sm">Code sent to <span className="text-amber-400 font-mono font-bold">{phoneNumber}</span></p>
+                                            <button type="button" onClick={() => setIsOtpSent(false)} className="text-xs text-slate-500 hover:text-white mt-1 underline decoration-dashed">Change Number</button>
                                         </div>
                                         <input
-                                            type="tel"
-                                            value={phoneNumber}
-                                            onChange={handlePhoneChange}
-                                            placeholder="+91 99999 99999"
-                                            className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3.5 pl-10 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-medium"
+                                            type="text"
+                                            value={otp}
+                                            onChange={(e) => setOtp(e.target.value)}
+                                            placeholder="000000"
+                                            maxLength={6}
+                                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-mono font-bold"
                                         />
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="w-full bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-amber-500 border border-slate-600/50 py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 group disabled:opacity-50 hover:shadow-lg shadow-black/20"
-                                    >
-                                        {loading ? <Loader2 size={20} className="animate-spin" /> : (
-                                            <>Get Verification Code <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>
-                                        )}
-                                    </button>
-                                </form>
-                            ) : (
-                                <form onSubmit={handleVerifyOtp} className="space-y-4">
-                                    <div className="text-center mb-2 p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
-                                        <p className="text-slate-300 text-sm">Code sent to <span className="text-amber-400 font-mono font-bold">{phoneNumber}</span></p>
-                                        <button type="button" onClick={() => setIsOtpSent(false)} className="text-xs text-slate-500 hover:text-white mt-1 underline decoration-dashed">Change Number</button>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value)}
-                                        placeholder="000000"
-                                        maxLength={6}
-                                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-mono font-bold"
-                                    />
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white py-3.5 rounded-xl font-bold transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-50"
-                                    >
-                                        {loading ? <Loader2 size={20} className="animate-spin" /> : "Verify & Login"}
-                                    </button>
-                                </form>
-                            )}
+                                        <button
+                                            type="submit"
+                                            disabled={loading}
+                                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white py-3.5 rounded-xl font-bold transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                                        >
+                                            {loading ? <Loader2 size={20} className="animate-spin" /> : "Verify & Login"}
+                                        </button>
+                                    </form>
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    </>
                 ) : (
                     // --- STEP 2: COMPLETE PROFILE ---
                     <form onSubmit={handleProfileSubmit} className="space-y-6">
