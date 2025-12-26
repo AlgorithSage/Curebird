@@ -3,36 +3,40 @@ import { LayoutDashboard, FileText, Calendar, Pill, Settings, HeartPulse, Bot, A
 import CurebirdLogo from '../curebird_logo.png';
 
 const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user }) => {
-    const navItems = [
-        { name: 'Dashboard' },
-        { name: 'All Records' },
-        { name: 'Appointments' },
-        { name: 'Medications' },
-        { name: 'Cure Analyzer' },
-        { name: 'Cure Stat' },
-        { name: 'Cure AI' },
-        { name: 'Settings' },
-        { name: 'Contact' },
-        { name: 'Terms' },
-        { name: 'Privacy' },
-    ];
 
-    const getIcon = (name) => {
-        switch (name) {
-            case 'Dashboard': return <LayoutDashboard size={20} />;
-            case 'All Records': return <FileText size={20} />;
-            case 'Appointments': return <Calendar size={20} />;
-            case 'Medications': return <Pill size={20} />;
-            case 'Cure Analyzer': return <Bot size={20} />;
-            case 'Cure Stat': return <Activity size={20} />;
-            case 'Cure AI': return <MessageSquare size={20} />;
-            case 'Settings': return <Settings size={20} />;
-            case 'Contact': return <Mail size={20} />;
-            case 'Terms': return <ScrollText size={20} />;
-            case 'Privacy': return <Shield size={20} />;
-            default: return null;
+    const menuGroups = [
+        {
+            title: "Overview",
+            items: [
+                { name: 'Dashboard', icon: LayoutDashboard },
+                { name: 'All Records', icon: FileText },
+            ]
+        },
+        {
+            title: "Health Management",
+            items: [
+                { name: 'Appointments', icon: Calendar },
+                { name: 'Medications', icon: Pill },
+            ]
+        },
+        {
+            title: "Core Features",
+            items: [
+                { name: 'Cure Analyzer', icon: Bot },
+                { name: 'Cure Stat', icon: Activity },
+                { name: 'Cure AI', icon: MessageSquare },
+            ]
+        },
+        {
+            title: "Account",
+            items: [
+                { name: 'Settings', icon: Settings },
+                { name: 'Contact', icon: Mail },
+                { name: 'Terms', icon: ScrollText },
+                { name: 'Privacy', icon: Shield },
+            ]
         }
-    };
+    ];
 
     return (
         <>
@@ -48,12 +52,14 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user }) => {
                            transition-transform duration-300 ease-in-out
                            ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
-                <div className="p-6 flex items-center justify-between gap-3 border-b border-white/10">
-                    <div className="flex items-center gap-3">
+                <div className="p-6 border-b border-white/10 relative">
+                    {/* Glass Card for Branding */}
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-center gap-3 shadow-lg backdrop-blur-md transition-all duration-300 hover:bg-white/10 group/card">
+
                         <div className="relative group shrink-0">
-                            {/* Logo Container - Clean, dark, barely visible border to let the logo shine */}
-                            <div className="relative w-16 h-16 rounded-full bg-black/40 p-2 flex items-center justify-center transition-transform duration-500 hover:scale-105">
-                                {/* The Logo Itself - Glowing and Lively */}
+                            {/* Logo Container */}
+                            <div className="relative w-12 h-12 rounded-full bg-black/40 p-2 flex items-center justify-center transition-transform duration-500 group-hover/card:scale-110">
+                                {/* The Logo Itself */}
                                 <img
                                     src={CurebirdLogo}
                                     alt="Curebird Logo"
@@ -61,39 +67,57 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user }) => {
                                 />
                             </div>
                         </div>
-                        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-200">Curebird</h1>
+
+                        <div>
+                            <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-200">Curebird</h1>
+                            <p className="text-[10px] text-amber-500/80 font-bold uppercase tracking-wider">Patient Portal</p>
+                        </div>
                     </div>
-                    {/* Mobile Close Button */}
-                    <button onClick={onClose} className="lg:hidden p-2 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
-                        <X size={24} />
+
+                    {/* Mobile Close Button - Absolute Position */}
+                    <button onClick={onClose} className="lg:hidden absolute top-2 right-2 p-2 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
+                        <X size={20} />
                     </button>
                 </div>
-                <nav className="p-4 mt-2">
-                    <ul className="space-y-1">
-                        {navItems.map(item => (
-                            <li key={item.name}>
-                                <button
-                                    onClick={() => {
-                                        onNavigate(item.name);
-                                        onClose(); // Close sidebar on mobile after navigation
-                                    }}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 group ${activeView === item.name
-                                        ? 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 text-amber-500 border border-amber-500/30'
-                                        : 'text-slate-400 hover:bg-white/5 hover:text-amber-200 hover:translate-x-1'
-                                        }`}
-                                >
-                                    <span className={`transition-colors duration-200 ${activeView === item.name ? 'text-amber-500' : 'text-slate-500 group-hover:text-amber-500'}`}>
-                                        {getIcon(item.name)}
-                                    </span>
-                                    <span className="font-semibold">{item.name}</span>
-                                    {activeView === item.name && (
-                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500"></div>
-                                    )}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
+
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 pb-32 space-y-8 h-[calc(100vh-180px)]">
+                    {menuGroups.map((group, idx) => (
+                        <div key={idx}>
+                            <div className="flex justify-center w-full mb-4">
+                                <h3 className="inline-block px-4 py-1.5 rounded-xl bg-white/10 border border-white/10 [box-shadow:0_0_15px_rgba(255,255,255,0.05)] backdrop-blur-md text-[10px] font-bold text-slate-300 uppercase tracking-widest shadow-lg">
+                                    {group.title}
+                                </h3>
+                            </div>
+                            <ul className="space-y-1">
+                                {group.items.map((item) => {
+                                    const Icon = item.icon;
+                                    return (
+                                        <li key={item.name}>
+                                            <button
+                                                onClick={() => {
+                                                    onNavigate(item.name);
+                                                    onClose(); // Close sidebar on mobile after navigation
+                                                }}
+                                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 group ${activeView === item.name
+                                                    ? 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 text-amber-500 border border-amber-500/30'
+                                                    : 'text-slate-100 hover:bg-white/5 hover:text-amber-200 hover:translate-x-1'
+                                                    }`}
+                                            >
+                                                <span className={`transition-colors duration-200 ${activeView === item.name ? 'text-amber-500' : 'text-slate-400 group-hover:text-amber-500'}`}>
+                                                    <Icon size={20} />
+                                                </span>
+                                                <span className="font-bold tracking-wide text-sm">{item.name}</span>
+                                                {activeView === item.name && (
+                                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                                                )}
+                                            </button>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
 
                 {/* User Profile Section */}
                 {user && (
