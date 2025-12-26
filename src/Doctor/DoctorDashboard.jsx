@@ -18,6 +18,8 @@ import DoctorProfile from './DoctorProfile';
 import PatientWorkspace from './PatientWorkspace';
 import AppointmentManager from './AppointmentManager';
 import MedicalRecordManager from './MedicalRecordManager';
+import DoctorAnalytics from './DoctorAnalytics';
+import DoctorChat from './chat/DoctorChat';
 
 // --- Background Components (Top Level) ---
 const InteractiveHexGrid = () => {
@@ -255,6 +257,7 @@ const DoctorDashboard = ({ user }) => {
     const [activeView, setActiveView] = useState('dashboard');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [workspacePatient, setWorkspacePatient] = useState(null);
+    const [targetChatPatientId, setTargetChatPatientId] = useState(null); // For Profile -> Chat Nav
 
     const handleLogout = () => {
         auth.signOut();
@@ -277,6 +280,11 @@ const DoctorDashboard = ({ user }) => {
                     <PatientWorkspace
                         patient={workspacePatient}
                         onBack={() => setWorkspacePatient(null)}
+                        onOpenChat={(patientId) => {
+                            console.log('Dashboard: Switching to Chat for ID:', patientId);
+                            setTargetChatPatientId(patientId);
+                            setActiveView('messages');
+                        }}
                     />
                 );
             }
@@ -296,7 +304,11 @@ const DoctorDashboard = ({ user }) => {
             case 'appointments_group': return <AppointmentManager view="overview" />;
             case 'consultations': return <ConsultationWorkflow />;
             case 'medical_records': return <MedicalRecordManager />;
-            case 'analytics': return <PlaceholderView title="Analytics" icon={BarChart2} />;
+            case 'analytics': return <DoctorAnalytics onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }} />;
+            case 'messages': return <DoctorChat
+                initialPatientId={targetChatPatientId} // Pass target ID
+                onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
+            />;
             case 'notifications': return <PlaceholderView title="Notifications" icon={Bell} />;
             case 'profile': return <DoctorProfile user={user} />;
             case 'security': return <PlaceholderView title="Security" icon={Shield} />;

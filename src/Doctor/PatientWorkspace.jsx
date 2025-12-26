@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Activity, Calendar, FileText, Pill, Microscope,
-    AlertCircle, CheckCircle, Clock, File, Download, Search, X
+    AlertCircle, CheckCircle, Clock, File, Download, Search, X, MessageSquare
 } from 'lucide-react';
 
-// --- Sub-Components (Internal for now) ---
+// --- Sub-Components ---
 
-const ClinicalHeader = ({ patient, onBack }) => (
-    <div className="glass-card mb-8 relative overflow-hidden group">
+const ClinicalHeader = ({ patient, onBack, onOpenChat }) => (
+    <div className="glass-card mb-8 relative group"> {/* Removed overflow-hidden to prevent clipping interaction */}
         {/* Decorative Background Elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
@@ -16,7 +16,7 @@ const ClinicalHeader = ({ patient, onBack }) => (
             <div className="flex items-center gap-4">
                 <button
                     onClick={onBack}
-                    className="p-2 rounded-xl bg-slate-800/50 border border-white/5 hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors"
+                    className="p-2 rounded-xl bg-slate-800/50 border border-white/5 hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors cursor-pointer"
                 >
                     <ArrowLeft size={20} />
                 </button>
@@ -37,15 +37,40 @@ const ClinicalHeader = ({ patient, onBack }) => (
                 </div>
             </div>
 
-            {/* Critical Alerts */}
-            <div className="flex gap-3">
-                <div className="px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold flex items-center gap-2">
-                    <AlertCircle size={16} />
-                    Allergy: Penicillin
-                </div>
-                <div className="px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold flex items-center gap-2">
-                    <Activity size={16} />
-                    Diabetic (Type 2)
+            {/* Actions & Alerts */}
+            <div className="flex gap-3 items-center relative z-20">
+                {/* Open Chat Button - Explicitly styled for interaction */}
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // alert("DEBUG: Open Chat Clicked " + patient.id); // Uncomment for hard debug
+                        console.log("Attempting to open chat for:", patient.id);
+                        if (onOpenChat) {
+                            onOpenChat();
+                        } else {
+                            console.error("onOpenChat prop is missing!");
+                            alert("Error: Chat function not connected.");
+                        }
+                    }}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all hover:scale-105 active:scale-95 cursor-pointer select-none relative z-50"
+                    style={{ pointerEvents: 'auto' }}
+                >
+                    <MessageSquare size={18} /> Open Chat
+                </button>
+
+                <div className="h-8 w-px bg-white/10 mx-2 hidden md:block"></div>
+
+                <div className="hidden md:flex gap-3">
+                    <div className="px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold flex items-center gap-2">
+                        <AlertCircle size={16} />
+                        Allergy: Penicillin
+                    </div>
+                    <div className="px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold flex items-center gap-2">
+                        <Activity size={16} />
+                        Diabetic (Type 2)
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,7 +132,7 @@ const DocumentGrid = () => (
     </div>
 );
 
-const PatientWorkspace = ({ patient, onBack }) => {
+const PatientWorkspace = ({ patient, onBack, onOpenChat }) => {
     const [activeTab, setActiveTab] = useState('overview');
 
     const tabs = [
@@ -120,7 +145,13 @@ const PatientWorkspace = ({ patient, onBack }) => {
     return (
         <div className="min-h-full pb-12 animate-in fade-in zoom-in-95 duration-300">
             {/* Header */}
-            <ClinicalHeader patient={patient} onBack={onBack} />
+            <ClinicalHeader
+                patient={patient}
+                onBack={onBack}
+                onOpenChat={() => {
+                    if (onOpenChat) onOpenChat(patient?.id);
+                }}
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 

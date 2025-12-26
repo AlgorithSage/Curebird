@@ -139,6 +139,45 @@ body {
     /* Make it less harsh */
   }
 
+  /* Independent Animated Border Class (For Custom Backgrounds) */
+  .animated-border {
+    position: relative;
+  }
+
+  .animated-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 2rem;
+    padding: 1.5px;
+    /* Border width */
+
+    /* The Rotating Gold Gradient */
+    background: conic-gradient(from var(--border-angle),
+        transparent 20%,
+        #854d0e 40%,
+        #eab308 50%,
+        #fef08a 60%,
+        #854d0e 70%,
+        transparent 80%);
+
+    /* Masking to create border stroke */
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    /* Animation Logic */
+    animation: border-rotate 4s linear infinite;
+    pointer-events: none;
+    filter: blur(0.5px);
+    opacity: 0.8;
+  }
+
   .glass-card:hover {
     transform: translateY(-4px);
     background: linear-gradient(145deg, rgba(250, 204, 21, 0.15) 0%, rgba(10, 10, 10, 0.8) 100%) !important;

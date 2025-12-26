@@ -4,7 +4,7 @@ import {
     LayoutDashboard, Users, Calendar, ClipboardList, FileText,
     BarChart2, Bell, Settings, Shield, HelpCircle, LogOut, X,
     Activity, Stethoscope, ChevronDown, List, Clock, CheckCircle,
-    AlertCircle
+    AlertCircle, Siren
 } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 
@@ -27,8 +27,8 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
                 transition={{ delay }}
                 onClick={handleMainClick}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden ${active
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-emerald-500/10 shadow-lg'
-                        : (subItems && expanded ? 'bg-white/5 text-slate-200' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200 border border-transparent')
+                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-emerald-500/10 shadow-lg'
+                    : (subItems && expanded ? 'bg-white/5 text-slate-200' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200 border border-transparent')
                     }`}
             >
                 <div className="flex items-center gap-4">
@@ -63,8 +63,8 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
                                 key={sub.id}
                                 onClick={() => onClick(sub.id)}
                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${active === sub.id // Check if sub-item ID matches active view (need to pass full ID logic)
-                                        ? 'text-emerald-400 bg-emerald-500/5'
-                                        : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                                    ? 'text-emerald-400 bg-emerald-500/5'
+                                    : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                                     }`}
                             >
                                 <div className={`w-1.5 h-1.5 rounded-full ${active === sub.id ? 'bg-emerald-500' : 'bg-slate-700'}`} />
@@ -107,6 +107,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
             title: "Clinical & Patients",
             items: [
                 { id: 'patient_workspace', label: 'Patient Workspace', icon: ClipboardList },
+                { id: 'messages', label: 'Messages', icon: Siren },
                 { id: 'patients', label: 'My Patients', icon: Users },
                 // Appointments Group
                 {
