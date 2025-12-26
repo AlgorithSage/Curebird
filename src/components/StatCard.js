@@ -4,43 +4,52 @@ import { ArrowUpRight, Sparkles } from 'lucide-react';
 
 const StatCard = ({ icon, label, value, color, change }) => (
     <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="glass-card flex flex-col justify-between group h-full relative overflow-hidden"
+        className="glass-card flex flex-col items-center justify-center text-center group h-full relative overflow-hidden py-8"
+        whileHover={{ translateY: -5 }}
     >
-        {/* Glow Effect - Stronger */}
-        <div className="absolute top-0 right-0 w-40 h-40 bg-yellow-500/15 blur-[60px] rounded-full pointer-events-none group-hover:bg-yellow-400/25 transition-colors duration-500"></div>
+        {/* Glow Effect - Stronger & Centered */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-yellow-500/10 blur-[60px] rounded-full pointer-events-none group-hover:bg-yellow-400/20 transition-colors duration-500"></div>
 
-        <div className="flex justify-between items-start relative z-10">
-            {/* Icon Box - Explicit Yellow Style */}
-            <div className="p-4 rounded-2xl bg-yellow-400 text-black shadow-lg shadow-yellow-400/30 group-hover:scale-110 group-hover:shadow-yellow-400/50 transition-all duration-300 border-2 border-yellow-300">
-                {React.cloneElement(icon, { size: 26, strokeWidth: 2.5 })}
+        <div className="relative z-10 flex flex-col items-center gap-6 w-full">
+
+            {/* Header: Icon & Ask AI */}
+            <div className="relative w-full flex justify-center">
+                <div className="absolute right-0 top-0">
+                    <button className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:bg-yellow-400 hover:text-black hover:border-yellow-400 text-slate-400 transition-all shadow-lg" title="Ask AI">
+                        <Sparkles size={14} strokeWidth={2.5} />
+                    </button>
+                </div>
+
+                {/* Centered Icon Box */}
+                <div className="p-5 rounded-3xl bg-yellow-400 text-black shadow-xl shadow-yellow-400/25 group-hover:scale-110 group-hover:shadow-yellow-400/50 transition-all duration-300 border-[3px] border-yellow-300 ring-4 ring-yellow-400/20">
+                    {React.cloneElement(icon, { size: 32, strokeWidth: 2 })}
+                </div>
             </div>
 
-            <button className="flex items-center gap-1 text-[11px] font-bold tracking-wider uppercase text-yellow-100 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full border border-white/10 shadow-sm">
-                Ask AI
-            </button>
-        </div>
+            {/* Main Content */}
+            <div className="space-y-2">
+                <p className="text-6xl sm:text-7xl font-black text-white tracking-tighter drop-shadow-2xl">{value}</p>
+                <p className="text-base font-black text-yellow-100 uppercase tracking-widest opacity-90 group-hover:opacity-100 transition-opacity">{label}</p>
+            </div>
 
-        <div className="mt-8 relative z-10">
-            <p className="text-5xl font-black text-white tracking-tight leading-none mb-2 drop-shadow-lg">{value}</p>
-            <p className="text-sm font-bold text-yellow-100/80 group-hover:text-yellow-300 transition-colors uppercase tracking-wide">{label}</p>
-        </div>
+            {/* Footer: Details & Change */}
+            <div className="flex flex-col items-center gap-3 w-full mt-2">
+                {change ? (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-black/40 border border-white/10 backdrop-blur-md">
+                        <ArrowUpRight size={14} className="text-emerald-400" />
+                        <span className="text-xs font-bold text-emerald-400">{change}</span>
+                        <span className="text-[10px] font-medium text-slate-500 uppercase">vs last month</span>
+                    </div>
+                ) : <div className="h-7" />}
 
-        <div className="mt-6 flex justify-between items-end relative z-10">
-            {change ? (
-                <div className="text-xs font-bold text-slate-400 bg-black/40 px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/5">
-                    <span className="text-emerald-400">{change}</span> vs last month
-                </div>
-            ) : (
-                <div className="h-4"></div>
-            )}
-
-            <a href="#" className="text-xs font-black text-yellow-400 hover:text-yellow-200 transition-colors flex items-center gap-1 group/link bg-yellow-400/10 px-3 py-1.5 rounded-lg border border-yellow-400/20 hover:bg-yellow-400/20">
-                View Details
-                <ArrowUpRight size={14} className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
-            </a>
+                <a href="#" className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-yellow-400 hover:text-black border border-white/5 hover:border-yellow-400 text-xs font-bold text-slate-300 transition-all uppercase tracking-wide flex items-center justify-center gap-2 group/btn">
+                    View Full Details
+                    <ArrowUpRight size={14} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                </a>
+            </div>
         </div>
     </motion.div>
 );

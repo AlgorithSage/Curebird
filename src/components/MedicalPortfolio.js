@@ -153,7 +153,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                     <>
                         {/* Standard Stat Cards for Dashboard Overview */}
                         <div ref={dashboardRef} className="grid grid-cols-1 sm:grid-cols-3 gap-6 scroll-mt-24">
-                            <StatCard icon={<Hash size={24} className="text-black" />} label="Total Records" value={records.length} color="bg-yellow-500" />
+                            <StatCard icon={<FileText size={24} className="text-black" />} label="Total Records" value={records.length} color="bg-yellow-500" />
                             <StatCard icon={<ShieldCheck size={24} className="text-black" />} label="Identity Verified" value="Active" color="bg-amber-400" />
                             <StatCard icon={<Calendar size={24} className="text-black" />} label="Last Visit" value={lastVisit} color="bg-yellow-600" />
                         </div>
@@ -184,61 +184,50 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                         {/* Opaque Amber & High Visibility Category Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
                             {[
-                                { id: 'prescription', label: 'Prescriptions', icon: <Pill size={40} />, count: records.filter(r => r.type === 'prescription').length },
-                                { id: 'test_report', label: 'Test Reports', icon: <FileText size={40} />, count: records.filter(r => r.type === 'test_report').length },
-                                { id: 'diagnosis', label: 'Diagnoses', icon: <Stethoscope size={40} />, count: records.filter(r => r.type === 'diagnosis').length },
-                                { id: 'admission', label: 'Admissions', icon: <Hospital size={40} />, count: records.filter(r => r.type === 'admission').length },
-                                { id: 'ecg', label: 'ECG Records', icon: <HeartPulse size={40} />, count: records.filter(r => r.type === 'ecg').length },
+                                { id: 'prescription', label: 'Prescriptions', icon: <Pill size={32} />, count: records.filter(r => r.type === 'prescription').length },
+                                { id: 'test_report', label: 'Test Reports', icon: <FileText size={32} />, count: records.filter(r => r.type === 'test_report').length },
+                                { id: 'diagnosis', label: 'Diagnoses', icon: <Stethoscope size={32} />, count: records.filter(r => r.type === 'diagnosis').length },
+                                { id: 'admission', label: 'Admissions', icon: <Hospital size={32} />, count: records.filter(r => r.type === 'admission').length },
+                                { id: 'ecg', label: 'ECG Records', icon: <HeartPulse size={32} />, count: records.filter(r => r.type === 'ecg').length },
                             ].map((cat) => (
                                 <motion.div
                                     key={cat.id}
-                                    whileHover={{ scale: 1.05, y: -4 }}
-                                    whileTap={{ scale: 0.95 }}
+                                    whileHover={{ scale: 1.02, translateY: -5 }}
+                                    whileTap={{ scale: 0.98 }}
                                     onClick={() => handleCategoryClick(cat.id)}
-                                    // REVISED STYLES: 
-                                    // Gradient Amber + Vignette Blur (Shadow)
-                                    // Blending with UI via shadow and slight opacity
-                                    className={`relative aspect-square flex flex-col items-center justify-center p-4 rounded-3xl cursor-pointer transition-all duration-300 border-2 group ${activeTypeFilter === cat.id
-                                        ? `bg-gradient-to-br from-amber-400 to-amber-600 border-white/50 shadow-[0_0_60px_-10px_rgba(251,191,36,0.5)] scale-105 z-10`
-                                        : `bg-gradient-to-br from-amber-500 to-amber-600/90 shadow-[0_0_30px_-10px_rgba(245,158,11,0.3)] border-amber-500/30 hover:shadow-[0_0_40px_-5px_rgba(245,158,11,0.4)] hover:scale-[1.02]`
+                                    // Solid Amber/Orange Gradient Style to match reference
+                                    className={`relative aspect-[4/5] sm:aspect-square flex flex-col items-center justify-center p-6 rounded-3xl cursor-pointer transition-all duration-300 group overflow-hidden ${activeTypeFilter === cat.id
+                                        ? `bg-gradient-to-kb from-amber-500 to-amber-700 ring-4 ring-amber-400/50 scale-105 z-10 shadow-2xl`
+                                        : `bg-gradient-to-br from-amber-500 to-amber-700 shadow-xl hover:shadow-amber-500/40 border border-white/10`
                                         }`}
                                 >
+                                    {/* Icon Container - Darkened Squircle */}
+                                    <div className={`mb-6 p-4 rounded-2xl ${activeTypeFilter === cat.id
+                                        ? 'bg-black/40 text-white'
+                                        : 'bg-black/20 text-black/80 group-hover:bg-black/30 group-hover:text-black'
+                                        } transition-all duration-300 backdrop-blur-sm border border-black/5 shadow-inner`}>
+                                        {React.cloneElement(cat.icon, { strokeWidth: 2 })}
+                                    </div>
 
-                                    <motion.div
-                                        animate={{ y: [0, -4, 0] }}
-                                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                                        className={`mb-4 p-4 rounded-2xl ${activeTypeFilter === cat.id
-                                            ? 'bg-white/20 text-white backdrop-blur-sm shadow-inner'
-                                            : 'bg-black/20 text-black/80 group-hover:bg-black/30 border border-black/5'
-                                            } transition-all duration-300`}
-                                    >
-                                        {React.cloneElement(cat.icon, { className: "stroke-[2.5]" })}
-                                    </motion.div>
-
+                                    {/* Typography - Centered & Bold */}
                                     <div className="text-center z-10 flex flex-col items-center">
-                                        <h3 className={`text-5xl font-black mb-1 leading-none ${activeTypeFilter === cat.id
+                                        <h3 className={`text-4xl sm:text-5xl font-black mb-2 leading-none tracking-tighter ${activeTypeFilter === cat.id
                                             ? 'text-white drop-shadow-md'
                                             : 'text-black/90 group-hover:text-black'
                                             } transition-colors`}>
                                             {cat.count}
                                         </h3>
 
-                                        <p className={`text-xs font-bold uppercase tracking-wider ${activeTypeFilter === cat.id
-                                            ? 'text-white/90 drop-shadow-sm'
-                                            : 'text-black/70 group-hover:text-black/90'
+                                        <p className={`text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] ${activeTypeFilter === cat.id
+                                            ? 'text-white/90'
+                                            : 'text-black/60 group-hover:text-black/80'
                                             } transition-colors`}>
                                             {cat.label}
                                         </p>
                                     </div>
 
-                                    {/* Vignette / Edge Blur Effect Overlay */}
-                                    <div className={`absolute inset-0 rounded-3xl pointer-events-none transition-opacity duration-300 ${activeTypeFilter === cat.id ? 'opacity-0' : 'opacity-100 bg-gradient-to-b from-transparent via-transparent to-black/10'}`} />
-
-                                    {activeTypeFilter === cat.id && (
-                                        <div className="absolute top-3 right-3 text-white animate-pulse">
-                                            <Sparkles size={20} fill="currentColor" />
-                                        </div>
-                                    )}
+                                    {/* Subtle sheen effect */}
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                 </motion.div>
                             ))}
                         </div>
