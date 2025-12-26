@@ -20,7 +20,7 @@ const ChatMessage = ({ message, isUser }) => {
             <div className={`max-w-[90%] sm:max-w-[70%] ${isUser ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
                 <div className={`px-3 py-2 sm:px-4 sm:py-3 rounded-2xl ${isUser
                     ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-black'
-                    : 'glass-card text-slate-100'
+                    : 'bg-slate-900/50 border border-slate-700/50 shadow-none text-slate-100'
                     }`}>
                     {isUser ? (
                         <p className="text-xs sm:text-sm font-medium">{message.text}</p>
@@ -30,7 +30,7 @@ const ChatMessage = ({ message, isUser }) => {
                         </div>
                     )}
                 </div>
-                <span className="text-[10px] sm:text-xs text-slate-500 px-2">
+                <span className="text-[10px] sm:text-xs text-white px-2">
                     {new Date(message.timestamp).toLocaleTimeString('en-US', {
                         hour: '2-digit',
                         minute: '2-digit'
@@ -235,7 +235,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) =
 
             <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 mt-2 min-h-0 relative z-10 pb-2">
                 {/* Main Chat Area - Premium Glass Console */}
-                <div className="flex-1 flex flex-col bg-[#090e1a] backdrop-blur-xl rounded-[23px] border border-slate-700 shadow-[0_0_50px_-10px_rgba(0,0,0,0.5)] relative h-[600px] sm:h-[800px]">
+                <div className="flex-1 flex flex-col glass-card p-0 h-[600px] sm:h-[800px]">
                     {/* Subtle Grid - Professional */}
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
 
@@ -255,79 +255,84 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) =
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Input Area - Integrated Control Panel */}
-                    <div className="p-3 sm:p-6 bg-[#090e1a]/95 border-t border-slate-800 backdrop-blur-xl relative z-20 rounded-b-[23px]">
-                        <div className="flex gap-2 sm:gap-4 items-end max-w-5xl mx-auto">
-                            <div className="flex-1 relative group/input">
-                                <div className="absolute inset-0 bg-sky-500/5 blur-lg rounded-xl opacity-0 group-focus-within/input:opacity-100 transition-opacity duration-500"></div>
+                    {/* Input Area - Responsive Control Panel */}
+                    <div className="p-3 sm:p-6 bg-[#090e1a]/95 border-t border-slate-800 backdrop-blur-xl relative z-20 rounded-b-[2rem]">
+                        <div className="flex items-center gap-2 sm:gap-3 max-w-5xl mx-auto">
+
+                            {/* Text Input */}
+                            <div className="flex-1 relative">
                                 <textarea
                                     value={inputMessage}
                                     onChange={(e) => setInputMessage(e.target.value)}
-                                    onKeyPress={handleKeyPress}
-                                    placeholder="Access Neural Health Database..."
+                                    onKeyDown={handleKeyPress}
+                                    placeholder="Speak your heart out..."
                                     rows={1}
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-3 sm:px-5 sm:py-4 text-xs sm:text-base text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-sky-500/30 focus:bg-slate-900/80 transition-all resize-none font-medium relative z-10 shadow-inner"
                                     disabled={isLoading}
-                                    style={{ minHeight: '45px', maxHeight: '120px' }}
+                                    className="
+                                        w-full
+                                        h-[52px] sm:h-[60px]
+                                        px-4 sm:px-5
+                                        py-3
+                                        bg-slate-900
+                                        border border-amber-500/30
+                                        rounded-xl
+                                        text-sm sm:text-base
+                                        text-slate-100
+                                        placeholder:text-slate-500
+                                        focus:outline-none
+                                        focus:border-amber-400
+                                        resize-none
+                                        flex items-center
+                                    "
                                 />
-                                <div className="hidden sm:flex absolute right-3 bottom-3 gap-2">
-                                    <div className="p-1.5 rounded-lg bg-slate-800 text-slate-500 border border-slate-700/50 text-[10px] font-mono">CMD+ENTER</div>
-                                </div>
                             </div>
 
+                            {/* Send Button */}
                             <button
                                 onClick={sendMessage}
                                 disabled={isLoading || !inputMessage.trim()}
-                                className="px-4 sm:px-6 h-[45px] sm:h-[60px] bg-sky-600 text-white rounded-xl hover:bg-sky-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-bold flex items-center justify-center shadow-lg"
+                                className="
+                                    h-[52px] sm:h-[60px]
+                                    w-[52px] sm:w-[60px]
+                                    flex items-center justify-center
+                                    bg-amber-400
+                                    text-slate-950
+                                    rounded-xl
+                                    hover:bg-amber-300
+                                    disabled:opacity-50
+                                    transition-all
+                                    font-bold
+                                    shadow-lg
+                                "
                             >
-                                <Send size={18} className="sm:w-5 sm:h-5" />
+                                <Send size={20} />
                             </button>
 
+                            {/* Clear Button */}
                             <button
                                 onClick={clearChat}
-                                className="px-3 sm:px-4 h-[45px] sm:h-[60px] bg-slate-800/50 border border-slate-700 rounded-xl hover:bg-rose-500/10 hover:border-rose-500/50 hover:text-rose-400 transition-all text-slate-500 flex items-center justify-center group/clear"
                                 title="Reset Session"
+                                className="
+                                    h-[52px] sm:h-[60px]
+                                    w-[52px] sm:w-[60px]
+                                    flex items-center justify-center
+                                    bg-slate-800
+                                    border border-amber-500
+                                    rounded-xl
+                                    text-amber-500
+                                    hover:bg-amber-500
+                                    hover:text-slate-950
+                                    transition-all
+                                "
                             >
-                                <Trash2 size={16} className="sm:w-[18px] sm:h-[18px] group-hover/clear:scale-110 transition-transform" />
+                                <Trash2 size={20} />
                             </button>
+
                         </div>
                     </div>
                 </div>
 
-                {/* Disease Trends Sidebar - Data Stream Style */}
-                <div className="hidden lg:block w-80 bg-[#090e1a] backdrop-blur-xl rounded-[23px] p-0 overflow-hidden border border-slate-700 shadow-2xl flex flex-col relative">
-                    {/* Subtle Grid - Professional */}
-                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
 
-                    <div className="p-6 border-b border-slate-800 bg-[#090e1a]/90 relative z-10">
-                        <div className="flex items-center gap-2">
-                            <TrendingUp className="text-amber-500" size={18} />
-                            <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider">Epidemic Data Stream</h3>
-                        </div>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-slate-800 relative z-10">
-                        {diseaseContext.slice(0, 10).map((disease, index) => (
-                            <div key={index} className="group relative bg-slate-900 border border-slate-800 hover:border-amber-500/30 rounded-xl p-3 transition-all hover:bg-slate-800/80">
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-slate-800 group-hover:bg-amber-500 transition-colors rounded-l-xl"></div>
-                                <div className="flex items-start justify-between gap-2 pl-2">
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold text-slate-300 group-hover:text-white truncate transition-colors">{disease.name}</p>
-                                        <p className="text-[10px] text-slate-500 font-mono mt-1 group-hover:text-amber-500/70 transition-colors">
-                                            DETECTED: {disease.cases?.toLocaleString()}
-                                        </p>
-                                    </div>
-                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${disease.risk_level === 'High' ? 'bg-rose-950/30 border-rose-500/20 text-rose-400' :
-                                        disease.risk_level === 'Medium' ? 'bg-amber-950/30 border-amber-500/20 text-amber-400' :
-                                            'bg-emerald-950/30 border-emerald-500/20 text-emerald-400'
-                                        }`}>
-                                        {disease.risk_level?.toUpperCase().slice(0, 3)}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
             </div>
         </div>
     );

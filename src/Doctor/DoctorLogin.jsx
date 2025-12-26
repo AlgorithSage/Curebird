@@ -76,6 +76,7 @@ export default function DoctorLogin({ onSwitchToSignup }) {
 
     return (
         <div className="bg-black/40 backdrop-blur-lg border border-amber-500/20 p-8 rounded-2xl shadow-2xl shadow-amber-500/10 max-w-md w-full mx-auto">
+            <img src="/assets/curebird_logo_gold.png" alt="CureBird Gold Logo" className="w-20 h-20 mx-auto mb-4 object-contain drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]" />
             <h2 className="text-3xl font-bold text-white mb-2 text-center">Doctor Portal Login</h2>
             <p className="text-center text-slate-400 mb-8">Secure access to clinical records.</p>
 

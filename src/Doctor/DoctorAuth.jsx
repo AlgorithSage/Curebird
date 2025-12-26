@@ -253,7 +253,7 @@ export default function DoctorAuth() {
                         <div className="text-center mb-8">
                             <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-slate-900 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-4 p-3 relative group">
                                 <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
-                                <img src={CurebirdLogo} alt="Logo" className="w-full h-full object-contain" />
+                                <img src="/assets/curebird_logo_gold.png" alt="Logo" className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
                             </div>
                             <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
                                 {authStep === 'login' ? 'Doctor Portal' : 'Doctor Profile'}
