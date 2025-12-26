@@ -71,46 +71,94 @@ body {
   }
 
   /* 
-     GLOBAL PROMINENT YELLOW THEME 
-     Replaced "Whisper of Amber" with "Real Yellow" (Yellow-400/500)
+     GLOBAL ADVANCED EXPERIMENTAL THEME
+     "Living Gold" Border Effect + Glassmorphism
+     Restored Glass Body with Animated Gradient Border using CSS Masks
   */
+
+  @property --border-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+
   .glass-card {
-    /* Base Glass Structure */
-    @apply backdrop-blur-2xl transition-all duration-300 rounded-[2rem] p-6 sm:p-10;
+    /* Base Glass Structure - Reverted to previous glass style */
+    @apply relative rounded-[2rem] p-6 sm:p-10 transition-all duration-300 backdrop-blur-2xl;
 
-    /* High Contrast Yellow Tint (20% Opacity) */
-    background: linear-gradient(145deg, rgba(250, 204, 21, 0.20) 0%, rgba(10, 10, 10, 0.9) 100%) !important;
+    /* Transparent Body with Yellow Tint */
+    background: linear-gradient(145deg, rgba(250, 204, 21, 0.20) 0%, rgba(10, 10, 10, 0.6) 100%) !important;
 
-    /* Bright, Solid Border (Yellow-400 at 60% opacity) */
-    border: 1px solid rgba(250, 204, 21, 0.6);
+    /* Remove standard border (handled by pseudo) */
+    border: none;
 
-    /* Deep Shadow with Yellow Glow */
+    /* Deep Shadow */
     box-shadow:
-      0 8px 30px rgb(0, 0, 0, 0.4),
+      0 12px 40px -10px rgba(0, 0, 0, 0.8),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    /* Inner gloss */
+  }
+
+  /* The Animated Gradient Border Layer */
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 2rem;
+    padding: 3px;
+    /* Defines Border Width */
+
+    /* The Rotating Gold Gradient */
+    background: conic-gradient(from var(--border-angle),
+        #854d0e 0%,
+        #eab308 25%,
+        #fef08a 50%,
+        #eab308 75%,
+        #854d0e 100%);
+
+    /* MASK: Cut out the center to reveal the glass card behind/inside */
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    /* Animation */
+    animation: border-rotate 4s linear infinite;
+    pointer-events: none;
+    /* Let clicks pass through border area */
   }
 
   .glass-card:hover {
     transform: translateY(-4px);
 
-    /* Brighter on Hover */
-    border-color: rgba(253, 224, 71, 1);
-    /* Yellow-300 */
+    background: linear-gradient(145deg, rgba(250, 204, 21, 0.25) 0%, rgba(10, 10, 10, 0.7) 100%) !important;
 
-    background: linear-gradient(145deg, rgba(250, 204, 21, 0.25) 0%, rgba(10, 10, 10, 0.95) 100%) !important;
-
-    /* Enhanced Yellow Glow */
     box-shadow:
-      0 20px 40px rgba(250, 204, 21, 0.2),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+      0 20px 50px -10px rgba(0, 0, 0, 0.9),
+      0 0 30px -5px rgba(234, 179, 8, 0.4);
+  }
+
+  /* Speed up border on hover */
+  .glass-card:hover::before {
+    animation: border-rotate 2s linear infinite;
+  }
+
+  @keyframes border-rotate {
+    from {
+      --border-angle: 0deg;
+    }
+
+    to {
+      --border-angle: 360deg;
+    }
   }
 
   .text-glow {
-    text-shadow: 0 0 15px rgba(250, 204, 21, 0.6);
-  }
-
-  .border-glow {
-    box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
+    text-shadow: 0 0 20px rgba(250, 204, 21, 0.5);
   }
 }
 
