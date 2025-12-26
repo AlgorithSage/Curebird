@@ -14,19 +14,19 @@ const DashboardOverview = ({ user }) => {
             className="relative w-full overflow-hidden rounded-[2rem] bg-[#0B1121] border border-white/5 shadow-2xl isolate"
         >
             {/* Ambient Background Glows */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-3/4 bg-amber-500/10 blur-[120px] rounded-full pointer-events-none"></div>
-            <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-blue-500/5 blur-[100px] rounded-full pointer-events-none"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-3/4 bg-yellow-400/10 blur-[120px] rounded-full pointer-events-none opacity-40"></div>
+            <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-blue-500/5 blur-[100px] rounded-full pointer-events-none opacity-30"></div>
 
             <div className="relative z-10 px-6 py-12 sm:px-12 sm:py-16 text-center">
 
                 {/* Top Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold tracking-widest uppercase mb-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/40 text-yellow-400 text-xs font-bold tracking-widest uppercase mb-6">
                     Overview
                 </div>
 
                 {/* Main Title - Personalized */}
                 <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-6">
-                    Your Personal <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Dashboard</span>
+                    Your Personal <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">Dashboard</span>
                 </h2>
 
                 {/* Description Text */}

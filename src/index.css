@@ -70,50 +70,47 @@ body {
     background: rgba(0, 0, 0, 0.6);
   }
 
+  /* 
+     GLOBAL PROMINENT YELLOW THEME 
+     Replaced "Whisper of Amber" with "Real Yellow" (Yellow-400/500)
+  */
   .glass-card {
     /* Base Glass Structure */
-    @apply backdrop-blur-2xl transition-all duration-500 rounded-[2rem] p-10;
+    @apply backdrop-blur-2xl transition-all duration-300 rounded-[2rem] p-6 sm:p-10;
 
-    /* 
-       Color & Contrast Strategy (Final Polish):
-       1. Non-Hover: "Whisper of Amber". 
-          Uses a high-luminosity amber (255, 200, 80) at very low opacity (0.03) blended with deep black.
-          This creates a "lighter shade" tint that is distinct but not muddy.
-    */
-    background: linear-gradient(160deg, rgba(255, 200, 80, 0.1) 0%, rgba(0, 0, 0, 0.85) 100%) !important;
+    /* High Contrast Yellow Tint (20% Opacity) */
+    background: linear-gradient(145deg, rgba(250, 204, 21, 0.20) 0%, rgba(10, 10, 10, 0.9) 100%) !important;
 
-    /* 
-       Border & Edge Definition:
-       1. Physical Border: Visible Amber/Gold edge (opacity 0.25) to act as a container.
-    */
-    border: 1px solid rgba(245, 158, 11, 0.25);
+    /* Bright, Solid Border (Yellow-400 at 60% opacity) */
+    border: 1px solid rgba(250, 204, 21, 0.6);
+
+    /* Deep Shadow with Yellow Glow */
     box-shadow:
-      0 15px 35px -5px rgba(0, 0, 0, 0.7),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
-      inset 0 0 40px rgba(245, 158, 11, 0.08);
+      0 8px 30px rgb(0, 0, 0, 0.4),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
   }
 
   .glass-card:hover {
-    transform: translateY(-6px);
-    border-color: rgba(245, 158, 11, 0.4);
-    /* Brighten border on hover */
-    background: linear-gradient(160deg, rgba(40, 35, 15, 0.7) 0%, rgba(5, 5, 5, 0.9) 100%) !important;
+    transform: translateY(-4px);
 
-    /* Enhanced Glow & Lift */
+    /* Brighter on Hover */
+    border-color: rgba(253, 224, 71, 1);
+    /* Yellow-300 */
+
+    background: linear-gradient(145deg, rgba(250, 204, 21, 0.25) 0%, rgba(10, 10, 10, 0.95) 100%) !important;
+
+    /* Enhanced Yellow Glow */
     box-shadow:
-      0 30px 60px -10px rgba(0, 0, 0, 0.9),
-      /* Deeper lift shadow */
-      0 0 20px rgba(245, 158, 11, 0.15),
-      /* Outer Halo */
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+      0 20px 40px rgba(250, 204, 21, 0.2),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
   }
 
   .text-glow {
-    text-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+    text-shadow: 0 0 15px rgba(250, 204, 21, 0.6);
   }
 
   .border-glow {
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
   }
 }
 
@@ -199,7 +196,7 @@ body {
 }
 
 .prose h3 {
-  @apply text-amber-400 font-bold mt-4 mb-2 text-base uppercase tracking-wider;
+  @apply text-yellow-400 font-bold mt-4 mb-2 text-base uppercase tracking-wider;
 }
 
 .prose p {
@@ -210,7 +207,6 @@ body {
 .prose ol {
   @apply my-3 pl-4 space-y-2;
   list-style-type: none;
-  /* We will use the AI's bullets or force them here */
 }
 
 .prose li {
@@ -219,7 +215,7 @@ body {
 
 .prose li::before {
   content: "•";
-  @apply absolute left-0 text-amber-500 font-bold;
+  @apply absolute left-0 text-yellow-500 font-bold;
 }
 
 .prose strong {

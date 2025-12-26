@@ -10,13 +10,14 @@ import { SkeletonCard } from './SkeletonLoaders';
 const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
     const [menuOpen, setMenuOpen] = useState(false);
 
-    const statusStyles = {
-        upcoming: { border: 'border-amber-500', bg: 'bg-amber-500/20', text: 'text-amber-400' },
-        completed: { border: 'border-emerald-500', bg: 'bg-emerald-500/20', text: 'text-emerald-400' },
-        cancelled: { border: 'border-rose-500', bg: 'bg-rose-500/20', text: 'text-rose-400' }
+    // Using thick left borders to indicate status against the yellow glass background
+    const statusConfig = {
+        upcoming: { border: 'border-l-yellow-400', badge: 'bg-yellow-400 text-black' },
+        completed: { border: 'border-l-emerald-500', badge: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' },
+        cancelled: { border: 'border-l-rose-500', badge: 'bg-rose-500/20 text-rose-400 border border-rose-500/50' }
     };
 
-    const currentStatus = statusStyles[appointment.status] || statusStyles['upcoming'];
+    const config = statusConfig[appointment.status] || statusConfig['upcoming'];
 
     return (
         <motion.div
@@ -24,26 +25,26 @@ const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`bg-slate-800/50 p-4 rounded-lg border-l-4 ${currentStatus.border}`}
+            className={`glass-card !p-5 !border-l-[6px] ${config.border} flex flex-col gap-4 group hover:-translate-y-1 relative`}
         >
             <div className="flex justify-between items-start">
                 <div>
-                    <p className="font-bold text-white">{appointment.reason || 'No Reason Provided'}</p>
-                    <p className="text-sm text-slate-400">with {appointment.doctorName}</p>
-                    <p className="text-xs text-slate-500">{appointment.hospitalName}</p>
+                    <p className="text-xl font-bold text-white mb-1">{appointment.reason || 'General Checkup'}</p>
+                    <p className="text-sm font-semibold text-yellow-100/80">Dr. {appointment.doctorName}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{appointment.hospitalName}</p>
                 </div>
                 <div className="relative">
-                    <button onClick={() => setMenuOpen(!menuOpen)} className="p-1 text-slate-400 hover:text-white">
+                    <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 -mr-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors">
                         <MoreVertical size={20} />
                     </button>
                     <AnimatePresence>
                         {menuOpen && (
                             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                                className="absolute right-0 mt-2 w-32 bg-slate-900 border border-slate-700 rounded-md shadow-lg z-10">
-                                <button onClick={() => { onEdit(); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:bg-slate-800">
+                                className="absolute right-0 mt-2 w-32 bg-[#0B1121] border border-white/20 rounded-xl shadow-xl z-20 overflow-hidden backdrop-blur-xl">
+                                <button onClick={() => { onEdit(); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-slate-200 hover:bg-white/10 hover:text-yellow-400 transition-colors">
                                     <Edit size={14} /> Edit
                                 </button>
-                                <button onClick={() => { onDelete(); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-rose-400 hover:bg-slate-800">
+                                <button onClick={() => { onDelete(); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-rose-400 hover:bg-rose-500/10 transition-colors">
                                     <Trash2 size={14} /> Delete
                                 </button>
                             </motion.div>
@@ -51,11 +52,12 @@ const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
                     </AnimatePresence>
                 </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-slate-700 flex justify-between items-center">
-                <p className="text-sm text-white font-semibold">
+
+            <div className="pt-4 border-t border-white/10 flex justify-between items-center">
+                <p className="text-sm text-white font-bold tracking-wide">
                     {formatDate(appointment.date)}
                 </p>
-                <span className={`text-xs font-bold px-2 py-1 rounded-full capitalize ${currentStatus.bg} ${currentStatus.text}`}>
+                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${config.badge}`}>
                     {appointment.status}
                 </span>
             </div>

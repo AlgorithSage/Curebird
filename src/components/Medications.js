@@ -12,24 +12,28 @@ const MedicationCard = ({ med, records }) => (
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-slate-800/50 p-4 rounded-lg"
+        className="glass-card flex flex-col justify-between h-full group hover:-translate-y-1"
     >
-        <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-white">{med.name}</h3>
-            <div className="text-sm text-slate-400 bg-slate-700 px-2 py-1 rounded">
+        <div className="flex items-start justify-between mb-4">
+            <div>
+                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-yellow-400 transition-colors">{med.name}</h3>
+                <p className="text-sm font-medium text-slate-300">{med.frequency}</p>
+            </div>
+            <div className="text-xs font-bold text-black bg-yellow-400 px-3 py-1 rounded-full shadow-lg shadow-yellow-400/20">
                 {med.dosage}
             </div>
         </div>
-        <p className="text-sm text-slate-300 mt-1">{med.frequency}</p>
 
-        <div className="mt-4 pt-4 border-t border-slate-700 space-y-2 text-sm">
-            <p className="text-slate-400">Last prescribed on: <span className="font-semibold text-slate-200">{med.lastPrescribed}</span></p>
-            <div className="flex items-center gap-2 text-slate-400">
-                <Stethoscope size={14} />
+        <div className="mt-auto pt-4 border-t border-white/10 space-y-3 text-sm">
+            <p className="text-slate-400 flex justify-between">
+                Last Prescribed: <span className="font-bold text-white">{med.lastPrescribed}</span>
+            </p>
+            <div className="flex items-center gap-2 text-slate-400 group-hover:text-slate-300 transition-colors">
+                <Stethoscope size={14} className="text-yellow-400" />
                 <span>Dr. {records[0].doctorName}</span>
             </div>
-            <div className="flex items-center gap-2 text-slate-400">
-                <Hospital size={14} />
+            <div className="flex items-center gap-2 text-slate-400 group-hover:text-slate-300 transition-colors">
+                <Hospital size={14} className="text-yellow-400" />
                 <span>{records[0].hospitalName}</span>
             </div>
         </div>
