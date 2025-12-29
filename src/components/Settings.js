@@ -6,7 +6,7 @@ import { Settings as SettingsIcon, User, Mail, Shield, AlertTriangle, Save, Came
 import Header from './Header';
 import { DeleteAccountModal } from './Modals';
 
-const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [displayName, setDisplayName] = useState(user?.displayName || '');
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
@@ -19,7 +19,25 @@ const Settings = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
         setIsSaving(true);
         setSaveSuccess(false);
         try {
+            // 1. Update Firebase Auth Profile
             await updateProfile(user, { displayName: displayName });
+
+            // 2. Update Firestore User Document
+            // Split name into First/Last for consistency
+            const nameParts = displayName.trim().split(' ');
+            const firstName = nameParts[0];
+            const lastName = nameParts.slice(1).join(' ') || '';
+
+            const { doc, updateDoc } = await import('firebase/firestore');
+            const userRef = doc(db, 'users', user.uid);
+
+            await updateDoc(userRef, {
+                displayName: displayName,
+                name: displayName,
+                firstName: firstName,
+                lastName: lastName
+            });
+
             setSaveSuccess(true);
             setTimeout(() => setSaveSuccess(false), 3000);
         } catch (error) {

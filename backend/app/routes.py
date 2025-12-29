@@ -143,7 +143,8 @@ def clear_conversation():
         return jsonify({'success': success})
     
     except Exception as e:
-        }), 500
+        print(f"Clear Conversation Error: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/chat/patient-reply', methods=['POST'])
 def patient_chat_reply():

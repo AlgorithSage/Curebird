@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UploadCloud, Loader, AlertTriangle, Pill, Stethoscope, Bot } from 'lucide-react';
+import { UploadCloud, Loader, AlertTriangle, Pill, Stethoscope, Bot, Save, Check } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import Header from './Header';
 
@@ -8,11 +8,20 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigat
     const [analysisResult, setAnalysisResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [showSavePrompt, setShowSavePrompt] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
         setAnalysisResult(null);
         setError('');
+        setIsSaved(false);
+        setShowSavePrompt(false);
+    };
+
+    const handleSave = () => {
+        setIsSaved(true);
+        setShowSavePrompt(false);
     };
 
     const handleAnalysis = async () => {
@@ -24,6 +33,8 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigat
         setIsLoading(true);
         setError('');
         setAnalysisResult(null);
+        setIsSaved(false);
+        setShowSavePrompt(false);
 
         const formData = new FormData();
         formData.append('file', selectedFile);
@@ -41,6 +52,7 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigat
 
             const data = await response.json();
             setAnalysisResult(data);
+            setShowSavePrompt(true);
 
         } catch (err) {
             console.error('AI Analysis Error:', err);
@@ -180,7 +192,7 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigat
                             Analysis of Document
                         </h2>
 
-                        <div className="w-full flex-grow bg-slate-900/80 rounded-2xl p-6 overflow-y-auto border border-slate-700 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent min-h-[400px] relative z-10 shadow-inner">
+                        <div className="w-full flex-grow bg-slate-900/80 rounded-2xl p-6 overflow-y-auto border border-slate-700 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent h-72 relative z-10 shadow-inner">
                             {isLoading && (
                                 <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
                                     <div className="relative">
@@ -271,6 +283,39 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigat
                                 </div>
                             )}
                         </div>
+
+                        {/* Save Prompt Dialog */}
+                        {showSavePrompt && analysisResult && (
+                            <div className="mt-4 mb-2 p-4 rounded-xl bg-slate-800/80 border border-sky-500/30 flex items-center justify-between gap-4 animate-in fade-in slide-in-from-top-2 shadow-lg backdrop-blur-md">
+                                <p className="text-sm font-semibold text-sky-100">Do you want to save the Analysis of Document?</p>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => setShowSavePrompt(false)}
+                                        className="px-3 py-1.5 rounded-lg border border-slate-600 text-xs font-bold text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                                    >
+                                        No
+                                    </button>
+                                    <button
+                                        onClick={handleSave}
+                                        className="px-3 py-1.5 rounded-lg bg-sky-500 text-white text-xs font-bold hover:bg-sky-400 transition-colors shadow-[0_0_10px_rgba(14,165,233,0.3)]"
+                                    >
+                                        Save Record
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        <button
+                            disabled={!analysisResult}
+                            onClick={handleSave}
+                            className={`mt-8 w-full py-4 rounded-xl font-bold text-white transition-all duration-500 shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_50px_rgba(14,165,233,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isSaved
+                                ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500'
+                                : 'bg-gradient-to-r from-sky-500 via-blue-600 to-sky-500 bg-[length:200%_auto] hover:bg-right'
+                                }`}
+                        >
+                            {isSaved ? <><Check size={18} /> RECORD SAVED</> : <><Save size={18} /> SAVE RECORD</>}
+                        </button>
+
                     </div>
                 </div>
             </div>

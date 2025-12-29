@@ -3,7 +3,7 @@ import { Plus, Share2, Bell, LogIn, LogOut, Settings, Menu, LayoutDashboard, Fil
 import { AnimatePresence, motion } from 'framer-motion';
 import CurebirdLogo from '../curebird_logo.png';
 
-const UserProfile = ({ user, onLogout }) => {
+const UserProfile = ({ user, onLogout, onNavigate }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -45,7 +45,14 @@ const UserProfile = ({ user, onLogout }) => {
                             </p>
                         </div>
                         <div className="space-y-1">
-                            <button onClick={() => setIsOpen(false)} className="w-full text-left flex items-center gap-3 px-3 py-2 text-slate-200 hover:bg-white/10 rounded-xl transition-colors text-sm font-medium">
+                            <button onClick={() => {
+                                setIsOpen(false);
+                                if (user.role === 'doctor') {
+                                    onNavigate && onNavigate('profile');
+                                } else {
+                                    onNavigate && onNavigate('Settings');
+                                }
+                            }} className="w-full text-left flex items-center gap-3 px-3 py-2 text-slate-200 hover:bg-white/10 rounded-xl transition-colors text-sm font-medium">
                                 <Settings size={16} />
                                 <span>Profile Settings</span>
                             </button>
@@ -193,7 +200,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 )}
 
                 {user ? (
-                    <UserProfile user={user} onLogout={onLogout} />
+                    <UserProfile user={user} onLogout={onLogout} onNavigate={onNavigate} />
                 ) : (
                     <button
                         onClick={onLoginClick}

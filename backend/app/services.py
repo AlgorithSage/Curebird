@@ -13,6 +13,12 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
+# --- Cache Configuration ---
+_TRENDS_CACHE = None
+_CACHE_TIMESTAMP = 0
+CACHE_DURATION = 3600  # 1 hour
+
+
 # --- Constants ---
 API_KEY = os.getenv('DATA_GOV_API_KEY')
 DATA_API_URL = f"https://api.data.gov.in/resource/96973b30-3829-46c4-912b-ab7ec65aff1b?api-key={API_KEY}&format=json&limit=1000"
@@ -39,6 +45,13 @@ def analyze_report_text(text):
 
 def get_trends_data():
     """Authoritative Intelligence Source with Hardened Mapping."""
+    global _TRENDS_CACHE, _CACHE_TIMESTAMP
+    
+    # Check cache
+    if _TRENDS_CACHE and (time.time() - _CACHE_TIMESTAMP < CACHE_DURATION):
+        # Optional: Print cache hit debug if needed, but keeping it clean
+        return _TRENDS_CACHE
+
     instance_id = int(time.time() % 1000)
     print(f"--- [SURVEILLANCE PIPELINE v2.2] Instance {instance_id} Active at {time.strftime('%H:%M:%S')} ---")
     EPIDEMIOLOGY_STORE = os.path.join(os.path.dirname(__file__), '..', 'india_epidemiology_data.json')
@@ -127,6 +140,11 @@ def get_trends_data():
             ]
             
             result.append(item)
+        
+        # Update cache
+        _TRENDS_CACHE = result
+        _CACHE_TIMESTAMP = time.time()
+        print(f"--- Cache Updated at {time.strftime('%H:%M:%S')} ---")
 
         return result
 

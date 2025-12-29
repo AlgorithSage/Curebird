@@ -61,46 +61,60 @@ export default function App() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
+        let profileUnsubscribe = null;
+
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
-                // Fetch user profile from Firestore to get custom fields (firstName, photoURL, etc.)
+                // Set initial user with Auth data to avoid delay
+                // setUser(currentUser); // Optional: Set basic user first
+
                 try {
-                    const { doc, getDoc } = await import('firebase/firestore');
+                    const { doc, onSnapshot } = await import('firebase/firestore');
                     const userDocRef = doc(db, 'users', currentUser.uid);
-                    const userDoc = await getDoc(userDocRef);
 
-                    if (userDoc.exists()) {
-                        // Merge Auth user with Firestore data
-                        const userData = userDoc.data();
-                        const fullUser = { ...currentUser, ...userData };
-                        setUser(fullUser);
+                    // Listen for real-time updates to the user profile
+                    profileUnsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                        if (docSnap.exists()) {
+                            const userData = docSnap.data();
+                            const fullUser = { ...currentUser, ...userData };
+                            // Important: If Auth displayName changes, it might not trigger this if only Firestore changes
+                            // But since we update both, Firestore update will trigger this.
+                            setUser(fullUser);
 
-                        // FORCE PROFILE SETUP: If profile exists but marked incomplete (or missing critical fields)
-                        // Note: We check 'isProfileComplete'. 
-                        // If it's undefined for old users, we might want to default to true or check fields.
-                        if (userData.isProfileComplete === false) {
+                            if (userData.isProfileComplete === false) {
+                                setIsAuthModalOpen(true);
+                            }
+                        } else {
+                            // No profile yet
+                            setUser(currentUser);
                             setIsAuthModalOpen(true);
                         }
-                    } else {
-                        // If no profile yet, just use Auth user
-                        // AND FORCE OPEN MODAL so they create a profile
-                        setUser(currentUser);
-                        setIsAuthModalOpen(true);
-                    }
+                    }, (error) => {
+                        console.error("Error listening to user profile:", error);
+                    });
+
                 } catch (error) {
-                    console.error("Error fetching user profile:", error);
+                    console.error("Error setting up profile listener:", error);
                     setUser(currentUser);
                 }
             } else {
                 setUser(null);
+                if (profileUnsubscribe) {
+                    profileUnsubscribe();
+                    profileUnsubscribe = null;
+                }
             }
 
             // Artificial delay for loading screen
             setTimeout(() => {
                 setLoading(false);
-            }, 4000);
+            }, 2000); // Reduced delay for snappier feel
         });
-        return () => unsubscribe();
+
+        return () => {
+            unsubscribe();
+            if (profileUnsubscribe) profileUnsubscribe();
+        };
     }, []);
 
     const handleLogin = async (email, password) => {
