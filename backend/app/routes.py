@@ -13,6 +13,7 @@ import os
 # Add parent directory to path to import groq_service
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from groq_service import get_health_assistant
+from patient_chat_service import get_patient_service
 
 @app.route('/api/disease-trends', methods=['GET'])
 def get_disease_trends():
@@ -142,7 +143,20 @@ def clear_conversation():
         return jsonify({'success': success})
     
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
         }), 500
+
+@app.route('/api/chat/patient-reply', methods=['POST'])
+def patient_chat_reply():
+    """Generate an AI reply for the patient persona."""
+    try:
+        data = request.get_json()
+        history = data.get('history', [])
+        patient_context = data.get('patientContext', {})
+        
+        service = get_patient_service()
+        reply = service.generate_patient_reply(history, patient_context)
+        
+        return jsonify({'reply': reply})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500

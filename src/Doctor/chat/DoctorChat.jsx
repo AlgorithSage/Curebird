@@ -104,16 +104,49 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         }
     };
 
-    const handleSendMessage = (e) => {
+    const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!messageInput.trim()) return;
-        setMessages([...messages, {
+
+        const newMsgRaw = {
             id: messages.length + 1,
             sender: 'doctor',
             text: messageInput,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }]);
+        };
+
+        const updatedMessages = [...messages, newMsgRaw];
+        setMessages(updatedMessages);
         setMessageInput('');
+
+        // Trigger AI Reply
+        try {
+            // Show typing indicator or just wait
+            // For now, let's just wait a bit purely for realism, then call API
+            // Ideally we'd have a 'typing' state
+
+            const response = await fetch('http://127.0.0.1:5001/api/chat/patient-reply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    history: updatedMessages,
+                    patientContext: activeChatData
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.reply) {
+                setMessages(prev => [...prev, {
+                    id: prev.length + 1,
+                    sender: 'patient',
+                    text: data.reply,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }]);
+            }
+        } catch (error) {
+            console.error("Failed to get patient reply:", error);
+        }
     };
 
     const openInsightReview = () => {
