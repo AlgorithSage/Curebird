@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Activity, Calendar, FileText, Pill, Microscope,
-    AlertCircle, CheckCircle, Clock, File, Download, Search, X, MessageSquare
+    AlertCircle, Clock, File, Download, Search, MessageSquare, Loader
 } from 'lucide-react';
+import { getFirestore, collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 // --- Sub-Components ---
 
@@ -134,6 +135,32 @@ const DocumentGrid = () => (
 
 const PatientWorkspace = ({ patient, onBack, onOpenChat }) => {
     const [activeTab, setActiveTab] = useState('overview');
+    const [records, setRecords] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const db = getFirestore();
+
+    useEffect(() => {
+        if (!patient?.id) return;
+        setLoading(true);
+
+        const recordsRef = collection(db, `users/${patient.id}/medical_records`);
+        const q = query(recordsRef, orderBy('date', 'desc'));
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const fetched = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setRecords(fetched);
+            setLoading(false);
+        }, (err) => {
+            console.error("Error fetching patient records:", err);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [patient?.id, db]);
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: Activity },
@@ -251,30 +278,31 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat }) => {
 
                             {activeTab === 'timeline' && (
                                 <div className="p-4">
-                                    <TimelineItem
-                                        delay={0.1}
-                                        date="24 Oct 2023"
-                                        title="Routine Checkup - Hypertension"
-                                        type="Diagnosis"
-                                        doctor="Strange"
-                                        details="Patient reported mild headaches. BP slightly elevated (140/90). Advised lifestyle changes and continued medication."
-                                    />
-                                    <TimelineItem
-                                        delay={0.2}
-                                        date="18 Oct 2023"
-                                        title="Lisinopril 10mg Prescribed"
-                                        type="Prescription"
-                                        doctor="Strange"
-                                        details="Prescribed for PB control. To be taken once daily after breakfast."
-                                    />
-                                    <TimelineItem
-                                        delay={0.3}
-                                        date="12 Oct 2023"
-                                        title="Full Blood Count (FBC)"
-                                        type="Lab"
-                                        doctor="House"
-                                        details="Routine screening. Results show normal hemoglobin and white cell count. Slight elevation in cholesterol."
-                                    />
+                                    {loading ? (
+                                        <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                                            <Loader size={40} className="animate-spin mb-4" />
+                                            <p>Loading clinical timeline...</p>
+                                        </div>
+                                    ) : records.length > 0 ? (
+                                        records.map((rec, i) => (
+                                            <TimelineItem
+                                                key={rec.id}
+                                                delay={i * 0.1}
+                                                date={rec.date}
+                                                title={rec.title}
+                                                type={rec.type === 'consultation_note' ? 'Diagnosis' :
+                                                    rec.type === 'prescription' ? 'Prescription' :
+                                                        rec.type === 'lab_report' ? 'Lab' : 'General'}
+                                                doctor={rec.doctorName || 'Doctor'}
+                                                details={rec.description}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                                            <FileText size={40} className="mb-4 opacity-20" />
+                                            <p>No clinical records found for this patient.</p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

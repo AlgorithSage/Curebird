@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Share2, Bell, LogIn, LogOut, Settings, Menu, LayoutDashboard, FileText, Calendar, Pill, HeartPulse, Bot, Activity, Mail, ScrollText, Shield, MessageSquare } from 'lucide-react';
+import { Plus, Share2, Bell, LogIn, LogOut, Settings, Menu, LayoutDashboard, Bot, Activity, Mail, MessageSquare } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CurebirdLogo from '../curebird_logo.png';
 
@@ -87,19 +87,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
         { name: 'Contact', icon: <Mail size={20} /> }
     ];
 
-    const getPageIcon = (pageTitle) => {
-        // Fallback for pages not in the navItems list
-        switch (pageTitle) {
-            case 'All Records': return <FileText size={20} />;
-            case 'Appointments': return <Calendar size={20} />;
-            case 'Medications': return <Pill size={20} />;
-            case 'Settings': return <Settings size={20} />;
-            case 'Contact': return <Mail size={20} />;
-            case 'Terms': return <ScrollText size={20} />;
-            case 'Privacy': return <Shield size={20} />;
-            default: return <HeartPulse size={20} />;
-        }
-    };
+
 
     return (
         <header className="sticky top-0 w-full bg-slate-900/90 backdrop-blur-xl flex flex-wrap items-center gap-y-4 gap-x-2 sm:gap-4 py-4 sm:pb-6 border-b border-white/10 z-50 transition-all duration-300 shadow-2xl shadow-black/20">

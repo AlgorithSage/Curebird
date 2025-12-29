@@ -1,15 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    FileText, Calendar, Download, Share2, Search,
-    Filter, Plus, Clock, AlertCircle, CheckCircle,
-    File, Image as ImageIcon, Pill, Clipboard, X,
-    ChevronDown, ChevronUp, Copy, Repeat, Edit2, Lock
+    FileText, Download, Share2, Search,
+    Filter, Plus, Clock,
+    Image as ImageIcon, Pill, Clipboard, X,
+    Copy, Repeat, Edit2, Lock, Loader, Activity
 } from 'lucide-react';
+import { getFirestore, collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { auth } from '../App';
 
 const MedicalRecordManager = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [records, setRecords] = useState([]);
+    const [error, setError] = useState(null);
+
+    const db = getFirestore();
+
+    // Fetch Records Live
+    useEffect(() => {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        setLoading(true);
+
+        // Use collectionGroup to find all 'medical_records' across all patients
+        // Query filters by doctorId to ensure privacy/relevance
+        const recordsQuery = query(
+            collectionGroup(db, 'medical_records'),
+            where('doctorId', '==', user.uid),
+            orderBy('date', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(recordsQuery,
+            (snapshot) => {
+                const fetchedRecords = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setRecords(fetchedRecords);
+                setLoading(false);
+            },
+            (err) => {
+                console.error("Firestore CollectionGroup Error:", err);
+                // This usually happens if index is missing
+                setError("Unable to load records. If this persists, a Firestore index might be needed.");
+                setLoading(false);
+
+                // FALLBACK: If collectionGroup fails (likely due to missing index), 
+                // we'll keep the empty state or mock data for now.
+            }
+        );
+
+        return () => unsubscribe();
+    }, [db]);
 
     // Prescription State
     const [selectedPrescription, setSelectedPrescription] = useState(null);
@@ -18,50 +63,6 @@ const MedicalRecordManager = () => {
     // Clinical Notes State
     const [selectedNote, setSelectedNote] = useState(null);
     const [isEditingNote, setIsEditingNote] = useState(false);
-
-    // Mock Data
-    const records = [
-        {
-            id: 'REC-001', type: 'report', date: '2023-10-24', title: 'Blood Work Results',
-            patient: 'Sarah Connor', doctor: 'Dr. Smith', status: 'Analysis Complete'
-        },
-        {
-            id: 'REC-002', type: 'prescription', date: '2023-10-24', title: 'Hypertension Management',
-            patient: 'Sarah Connor', doctor: 'Dr. Smith', status: 'Active',
-            diagnosis: 'Essential Hypertension (Primary)',
-            medicines: [
-                { name: 'Lisinopril', dosage: '10mg', frequency: 'Once daily', duration: '30 days', instructions: 'Take in the morning with food' },
-                { name: 'Amlodipine', dosage: '5mg', frequency: 'Once daily', duration: '30 days', instructions: 'Take at bedtime' },
-                { name: 'Atorvastatin', dosage: '20mg', frequency: 'Once daily', duration: '30 days', instructions: 'Take at bedtime' }
-            ],
-            notes: 'Patient blood pressure remains slightly elevated. Dosage adjustment may be needed next visit.',
-            instructions: 'Monitor BP daily at home. Reduce salt intake.'
-        },
-        {
-            id: 'REC-003', type: 'note', date: '2023-10-20', title: 'Follow-up Consultation',
-            patient: 'Sarah Connor', doctor: 'Dr. Smith', status: 'Locked',
-            diagnosis: 'mild headache',
-            complaints: 'Patient complains of persistent mild headache in the evenings.',
-            observations: 'BP 130/85. No other neurological symptoms.',
-            plan: 'Continue current medication. Hydration advice given.',
-            followup: 'Two weeks'
-        },
-        {
-            id: 'REC-004', type: 'image', date: '2023-10-15', title: 'Chest X-Ray',
-            patient: 'Sarah Connor', doctor: 'Dr. Strange', status: 'Reviewed'
-        },
-        {
-            id: 'REC-005', type: 'prescription', date: '2023-09-10', title: 'Acute Bronchitis',
-            patient: 'Sarah Connor', doctor: 'Dr. House', status: 'Completed',
-            diagnosis: 'Acute Bronchitis',
-            medicines: [
-                { name: 'Azithromycin', dosage: '500mg', frequency: 'Once daily', duration: '3 days', instructions: 'Take on empty stomach' },
-                { name: 'Benzonatate', dosage: '100mg', frequency: 'Three times daily', duration: '7 days', instructions: 'For cough' }
-            ],
-            notes: 'Patient presented with productive cough. Lungs clear on auscultation.',
-            instructions: 'Rest and hydration. Return if fever persists > 3 days.'
-        }
-    ];
 
     const tabs = [
         { id: 'overview', label: 'Timeline Overview', icon: Clock },
@@ -72,36 +73,51 @@ const MedicalRecordManager = () => {
 
     const renderTimeline = () => (
         <div className="space-y-6">
-            {records.map((rec, i) => (
-                <motion.div
-                    key={rec.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="glass-card flex items-center gap-6 p-6 relative group"
-                >
-                    <div className={`p-3 rounded-full ${rec.type === 'alert' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/10 text-amber-500'} border border-amber-500/20 relative z-10`}>
-                        {rec.type === 'report' && <FileText size={20} />}
-                        {rec.type === 'prescription' && <Pill size={20} />}
-                        {rec.type === 'note' && <Clipboard size={20} />}
-                        {rec.type === 'image' && <ImageIcon size={20} />}
-                    </div>
-
-                    <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h4 className="text-lg font-bold text-slate-200 group-hover:text-amber-400 transition-colors">{rec.title}</h4>
-                                <p className="text-sm text-slate-500">Patient: <span className="text-slate-400">{rec.patient}</span> • {rec.doctor}</p>
-                            </div>
-                            <span className="text-xs font-mono text-slate-500 border border-slate-700/50 px-2 py-1 rounded bg-slate-900/50">{rec.date}</span>
+            {loading ? (
+                <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                    <Loader size={40} className="animate-spin mb-4" />
+                    <p>Loading medical timeline...</p>
+                </div>
+            ) : records.length > 0 ? (
+                records.map((rec, i) => (
+                    <motion.div
+                        key={rec.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="glass-card flex items-center gap-6 p-6 relative group"
+                    >
+                        <div className={`p-3 rounded-full ${rec.priority === 'critical' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/10 text-amber-500'} border border-amber-500/20 relative z-10`}>
+                            {rec.type === 'lab_report' && <FileText size={20} />}
+                            {rec.type === 'prescription' && <Pill size={20} />}
+                            {rec.type === 'consultation_note' && <Clipboard size={20} />}
+                            {rec.type === 'vitals_log' && <Activity size={20} />}
+                            {(!rec.type || rec.type === 'referral') && <Share2 size={20} />}
                         </div>
-                    </div>
 
-                    <button className="p-2 hover:bg-amber-500/10 rounded-full text-slate-500 hover:text-amber-400 transition-colors">
-                        <Download size={18} />
-                    </button>
-                </motion.div>
-            ))}
+                        <div className="flex-1">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h4 className="text-lg font-bold text-slate-200 group-hover:text-amber-400 transition-colors uppercase tracking-tight">{rec.title}</h4>
+                                    <p className="text-sm text-slate-500">Patient: <span className="text-slate-400 font-bold">{rec.patientName}</span> • Dr. {rec.doctorName}</p>
+                                </div>
+                                <span className="text-xs font-mono text-slate-500 border border-slate-700/50 px-2 py-1 rounded bg-slate-900/50">{rec.date}</span>
+                            </div>
+                        </div>
+
+                        <button className="p-2 hover:bg-amber-500/10 rounded-full text-slate-500 hover:text-amber-400 transition-colors">
+                            <Download size={18} />
+                        </button>
+                    </motion.div>
+                ))
+            ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-slate-500 bg-slate-950/20 rounded-3xl border border-dashed border-slate-800">
+                    <FileText size={48} className="mb-4 opacity-20" />
+                    <p className="text-lg font-bold">No clinical records found.</p>
+                    <p className="text-sm opacity-50">Saved records will appear here as a live timeline.</p>
+                </div>
+            )}
+            {error && <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-sm text-center font-bold tracking-wide">{error}</div>}
         </div>
     );
 
