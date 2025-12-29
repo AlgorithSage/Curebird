@@ -90,7 +90,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
 
 
     return (
-        <header className="sticky top-0 w-full bg-slate-900/90 backdrop-blur-xl flex flex-wrap items-center gap-y-4 gap-x-2 sm:gap-4 py-4 sm:pb-6 border-b border-white/10 z-50 transition-all duration-300 shadow-2xl shadow-black/20">
+        <header className="sticky top-4 z-50 w-[98%] mx-auto rounded-full bg-slate-900/40 backdrop-blur-2xl border border-white/10 shadow-2xl flex flex-wrap items-center gap-y-4 gap-x-2 sm:gap-4 px-6 py-5 sm:px-8 sm:py-6 transition-all duration-300">
 
             {/* Left Group: Menu, Logo, Nav */}
             <div className="flex items-center gap-1 sm:gap-4 order-1">
