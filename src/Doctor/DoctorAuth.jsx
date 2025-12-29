@@ -167,7 +167,11 @@ export default function DoctorAuth({ initialUser }) {
             setLoading(false);
         } catch (error) {
             console.error("Doctor Auth OTP Error:", error);
-            setError(error.message);
+            if (error.code === 'auth/too-many-requests') {
+                setError("Too many OTP attempts. Please wait 15 minutes or use a Test Phone Number in Firebase Console.");
+            } else {
+                setError(error.message);
+            }
             setLoading(false);
         }
     };

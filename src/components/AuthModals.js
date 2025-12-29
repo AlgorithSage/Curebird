@@ -184,7 +184,11 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
             setLoading(false);
         } catch (error) {
             console.error("OTP Error Details:", error);
-            setError(error.message);
+            if (error.code === 'auth/too-many-requests') {
+                setError("Too many OTP attempts. Please wait 15 minutes or use a Test Phone Number in Firebase Console.");
+            } else {
+                setError(error.message);
+            }
             setLoading(false);
             // DO NOT clear verifier here; allows retry with same instance
         }
