@@ -68,7 +68,7 @@ const UserProfile = ({ user, onLogout }) => {
 };
 
 // This Header component is now fully responsive
-const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate }) => {
+const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate, onNotificationClick }) => {
 
     // Quick Navigation Items
     const navItems = [
@@ -179,7 +179,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         <button onClick={onShareClick} className="hidden lg:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
                             <Share2 size={20} />
                         </button>
-                        <button className="hidden lg:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
+                        <button onClick={onNotificationClick} className="hidden lg:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
                             <Bell size={20} />
                         </button>
                         <button

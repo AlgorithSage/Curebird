@@ -64,9 +64,8 @@ const DoctorProfile = ({ user }) => {
             </div>
 
             {/* Profile Grid - UPDATED OPACITY */}
-            {/* Profile Grid - UPDATED OPACITY */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-[#1c1917] border border-stone-800 shadow-[0_0_20px_-10px_rgba(245,158,11,0.1)] space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="animated-border p-8 rounded-[2rem] bg-[#1c1917] space-y-4">
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         <div className="w-1 h-6 bg-amber-500 rounded-full" />
                         Contact Information
@@ -87,7 +86,7 @@ const DoctorProfile = ({ user }) => {
                     </div>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-[#1c1917] border border-stone-800 shadow-[0_0_20px_-10px_rgba(245,158,11,0.1)] space-y-4">
+                <div className="animated-border p-8 rounded-[2rem] bg-[#1c1917] space-y-4">
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         <div className="w-1 h-6 bg-amber-500 rounded-full" />
                         Clinic Details

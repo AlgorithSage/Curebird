@@ -139,9 +139,9 @@ export default function DoctorNotifications({ onNavigate, onNavigateToPatient })
                     </button>
                     <button
                         onClick={handleMarkAllRead}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 hover:border-slate-600 rounded-xl text-stone-300 transition-all text-sm font-medium"
+                        className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-amber-500/10 border border-slate-700 hover:border-amber-500/50 rounded-xl text-stone-300 hover:text-amber-500 transition-all duration-300 text-sm font-medium active:scale-95 group"
                     >
-                        <CheckCircle2 size={16} /> Mark all read
+                        <CheckCircle2 size={16} className="group-hover:text-amber-500 transition-colors" /> Mark all read
                     </button>
                 </div>
             </div>

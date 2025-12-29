@@ -348,6 +348,7 @@ const DoctorDashboard = ({ user }) => {
                     onLogout={handleLogout}
                     onAddClick={() => { }}
                     onToggleSidebar={() => setSidebarOpen(true)}
+                    onNotificationClick={() => setActiveView('notifications')}
                     navItems={[]}
                 />
 
