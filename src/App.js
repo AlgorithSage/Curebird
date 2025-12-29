@@ -201,6 +201,7 @@ export default function App() {
                         storage={storage}
                         onLogout={handleLogout}
                         onClose={() => setIsAuthModalOpen(false)}
+                        allowClose={user ? user.isProfileComplete : true} // Only allow close if profile is complete (if user exists)
                         onLogin={handleLogin}
                         onSignUp={handleSignUp}
                         onGoogleSignIn={handleGoogleSignIn}

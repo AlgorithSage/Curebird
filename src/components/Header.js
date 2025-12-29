@@ -35,8 +35,14 @@ const UserProfile = ({ user, onLogout }) => {
                 {isOpen && (
                     <div className="absolute right-0 mt-3 w-64 glass rounded-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                         <div className="p-3 border-b border-white/10 mb-2">
-                            <p className="font-bold text-white truncate">{user.displayName || 'Anonymous User'}</p>
-                            <p className="text-xs text-slate-300 truncate">{user.email}</p>
+                            <p className="font-bold text-white truncate">
+                                {user.role === 'doctor' ? `Dr. ${user.name || user.displayName}` : (user.displayName || (user.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Anonymous User'))}
+                            </p>
+                            <p className="text-xs text-slate-300 truncate">
+                                {user.role === 'doctor' && user.degree
+                                    ? `${user.specialization || 'Doctor'} • ${user.degree}`
+                                    : user.email}
+                            </p>
                         </div>
                         <div className="space-y-1">
                             <button onClick={() => setIsOpen(false)} className="w-full text-left flex items-center gap-3 px-3 py-2 text-slate-200 hover:bg-white/10 rounded-xl transition-colors text-sm font-medium">

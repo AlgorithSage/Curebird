@@ -12,7 +12,6 @@ import { ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, ArrowLeft 
 
 // Use the central Firebase exports
 import { auth, db, storage } from '../App';
-import CurebirdLogo from '../curebird_loading_logo.png'; // Using the loading logo or main logo
 
 const googleProvider = new GoogleAuthProvider();
 

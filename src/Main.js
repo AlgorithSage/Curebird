@@ -37,9 +37,13 @@ export default function Main() {
                 try {
                     const doctorDoc = await getDoc(doc(db, 'doctors', currentUser.uid));
                     if (doctorDoc.exists() && doctorDoc.data().role === 'doctor') {
+                        // Merge Auth user with Firestore Doctor data (firstName, degree, etc.)
+                        const doctorData = doctorDoc.data();
+                        setUser({ ...currentUser, ...doctorData });
                         setDoctorRoleVerified(true);
                     } else {
                         // Correct flow: User authenticated but no doctor profile -> Send to onboarding
+                        setUser(currentUser);
                         setDoctorRoleVerified(false);
                     }
                 } catch (error) {

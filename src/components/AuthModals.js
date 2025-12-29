@@ -1,7 +1,5 @@
 // --- Firebase Imports ---
-import { initializeApp } from "firebase/app";
 import {
-    getAuth,
     GoogleAuthProvider,
     signInWithPopup,
     RecaptchaVerifier,
@@ -12,7 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShieldAlert, Phone, CheckCircle, Loader2, ArrowRight, User, Camera, Mail, Upload, Stethoscope } from 'lucide-react';
+import { X, ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, Stethoscope } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 
 // --- Initialize Providers ---
@@ -64,6 +62,7 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
         if (user) {
             checkAndRedirect(user);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [auth.currentUser]);
 
     // Login Form State

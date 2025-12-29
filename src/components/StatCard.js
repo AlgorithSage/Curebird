@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 const StatCard = ({ icon, label, value, color, change }) => (
     <motion.div
@@ -17,11 +17,7 @@ const StatCard = ({ icon, label, value, color, change }) => (
 
             {/* Header: Icon & Ask AI */}
             <div className="relative w-full flex justify-center">
-                <div className="absolute right-0 top-0">
-                    <button className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:bg-yellow-400 hover:text-black hover:border-yellow-400 text-slate-400 transition-all shadow-lg" title="Ask AI">
-                        <Sparkles size={14} strokeWidth={2.5} />
-                    </button>
-                </div>
+
 
                 {/* Centered Icon Box */}
                 <div className="p-5 rounded-3xl bg-yellow-400 text-black shadow-xl shadow-yellow-400/25 group-hover:scale-110 group-hover:shadow-yellow-400/50 transition-all duration-300 border-[3px] border-yellow-300 ring-4 ring-yellow-400/20">
