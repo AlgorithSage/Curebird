@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Activity, Calendar, FileText, Pill, Microscope,
-<<<<<<< HEAD
-    AlertCircle, Clock, File, Download, Search, MessageSquare
-=======
-    AlertCircle, CheckCircle, Clock, File, Download, Search, X, MessageSquare, Loader
->>>>>>> 4c7bd2d1fe0ddafac78f7a9e9f65ba361f072227
+    AlertCircle, Clock, File, Download, Search, MessageSquare, Loader
 } from 'lucide-react';
 import { getFirestore, collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 

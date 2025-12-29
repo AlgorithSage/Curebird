@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    FileText, Calendar, Download, Share2, Search,
-    Filter, Plus, Clock, AlertCircle, CheckCircle,
-    File, Image as ImageIcon, Pill, Clipboard, X,
-    ChevronDown, ChevronUp, Copy, Repeat, Edit2, Lock, Loader
+    FileText, Download, Share2, Search,
+    Filter, Plus, Clock,
+    Image as ImageIcon, Pill, Clipboard, X,
+    Copy, Repeat, Edit2, Lock, Loader, Activity
 } from 'lucide-react';
-import { getFirestore, collectionGroup, query, where, orderBy, onSnapshot, getDocs } from 'firebase/firestore';
+import { getFirestore, collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { auth } from '../App';
 
 const MedicalRecordManager = () => {
