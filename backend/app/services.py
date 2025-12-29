@@ -96,6 +96,12 @@ def get_trends_data():
                 meds = ['ORS', 'Zinc', 'Loperamide']
             elif 'fever' in d_lower:
                 meds = ['Paracetamol', 'Fluids', 'Supportive Care']
+            elif 'cardiac' in d_lower or 'ischemic' in d_lower:
+                meds = ['Aspirin', 'Atorvastatin', 'Clopidogrel']
+            elif 'renal' in d_lower or 'kidney' in d_lower:
+                meds = ['Furosemide', 'Erythropoietin', 'Calcium Supplements']
+            elif 'mental' in d_lower or 'anxiety' in d_lower:
+                meds = ['Sertraline', 'Escitalopram', 'CBT']
             else:
                 meds = ['Supportive Care', 'Fluids']
 
@@ -141,10 +147,10 @@ def get_trends_data():
             
             result.append(item)
         
-        # Update cache
+        # Update cache (Outside Loop)
         _TRENDS_CACHE = result
         _CACHE_TIMESTAMP = time.time()
-        print(f"--- Cache Updated at {time.strftime('%H:%M:%S')} ---")
+        print(f"--- Cache Updated with {len(result)} items at {time.strftime('%H:%M:%S')} ---")
 
         return result
 

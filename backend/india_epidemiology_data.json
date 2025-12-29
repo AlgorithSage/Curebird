@@ -338,6 +338,69 @@
                 "ICMR",
                 "NFHS-5"
             ]
+        },
+        {
+            "id": "cvd_013",
+            "name": "Ischemic Heart Disease",
+            "category": "Non-Communicable",
+            "segment": "Chronic",
+            "metrics": {
+                "prevalence": "15.2%",
+                "estimated_affected": "180 Million",
+                "estimated_national_burden": "Critical (Top Mortality Cause)",
+                "timeframe": "National Health Estimates",
+                "confidence": "Estimated (Global Burden of Disease)"
+            },
+            "severity": "Critical",
+            "seasonality": "Year-round",
+            "trends": "Leading cause of mortality in India, with rising incidence in younger adults.",
+            "about": "Includes heart attacks and angina. Strongly linked to hypertension, diabetes, and lifestyle factors.",
+            "sources": [
+                "Global Burden of Disease Study",
+                "Lancet India"
+            ]
+        },
+        {
+            "id": "ckd_014",
+            "name": "Chronic Kidney Disease",
+            "category": "Non-Communicable",
+            "segment": "Chronic",
+            "metrics": {
+                "prevalence": "10-14%",
+                "estimated_affected": "115 Million",
+                "estimated_national_burden": "High (Rising Dialysis Demand)",
+                "timeframe": "Nephrology Registry Estimates",
+                "confidence": "Estimated (Registry Data)"
+            },
+            "severity": "High (Irreversible)",
+            "seasonality": "Year-round",
+            "trends": "Rapidly increasing due to the dual burden of diabetes and hypertension.",
+            "about": "Progressive loss of kidney function. Early detection is key to preventing end-stage renal disease.",
+            "sources": [
+                "Indian Society of Nephrology",
+                "ISN Registry"
+            ]
+        },
+        {
+            "id": "mhd_015",
+            "name": "Anxiety & Depression Disorders",
+            "category": "Mental Health",
+            "segment": "Chronic",
+            "metrics": {
+                "prevalence": "10.6%",
+                "estimated_affected": "150 Million+",
+                "estimated_national_burden": "Severe (High DALYs)",
+                "timeframe": "NMHS Survey",
+                "confidence": "Estimated (NMHS)"
+            },
+            "severity": "Moderate-Severe (Disability Driver)",
+            "seasonality": "Year-round",
+            "trends": "Post-pandemic surge in anxiety disorders among young adults and adolescents.",
+            "about": "A major contributor to disability-adjusted life years (DALYs) lost. Distinct from neurological disorders.",
+            "sources": [
+                "National Mental Health Survey (NMHS)",
+                "NIMHANS"
+            ]
         }
     ],
     "context_ncd": {

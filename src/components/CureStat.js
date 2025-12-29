@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import { Activity, Loader, ServerCrash, Info, Pill, TrendingUp, X, Sparkles, Download, Users, Brain, Search, MapPin, AlertTriangle, Map, Calendar, ShieldCheck, Clock, Layers } from 'lucide-react';
+import { Activity, Loader, ServerCrash, Info, Pill, TrendingUp, X, Sparkles, Download, Users, Brain, Search, MapPin, AlertTriangle, Map, Calendar, ShieldCheck, Clock, Layers, HeartPulse, Wind, Droplets, Database } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import Header from './Header';
@@ -255,6 +255,55 @@ const DiseaseCard = ({ disease, onClick, getRiskLevel }) => {
     );
 };
 
+const HealthIndexCard = ({ title, value, status, trend, icon: Icon, color, source, description, utility }) => (
+    <div className="glass-card p-5 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+        <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity`}>
+            <Icon size={64} className={color} />
+        </div>
+        <div className="relative z-10">
+            <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg bg-white/5 border border-white/5 ${color}`}>
+                        <Icon size={20} />
+                    </div>
+                    <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wide">{title}</h3>
+                </div>
+
+                {/* Info Icon with Tooltip */}
+                <div className="relative group/info">
+                    <Info size={16} className="text-slate-500 hover:text-sky-400 cursor-help transition-colors" />
+                    <div className="absolute right-0 top-6 w-64 p-4 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/info:opacity-100 group-hover/info:visible transition-all z-50 translate-y-2 group-hover/info:translate-y-0 pointer-events-none group-hover/info:pointer-events-auto">
+                        <div className="mb-3">
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">What is this?</h4>
+                            <p className="text-xs text-slate-200 leading-relaxed font-medium">{description}</p>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Why it matters?</h4>
+                            <p className="text-xs text-slate-200 leading-relaxed font-medium">{utility}</p>
+                        </div>
+                        <div className="absolute -top-1.5 right-1 w-3 h-3 bg-slate-900 border-l border-t border-white/10 transform rotate-45"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-2xl font-black text-white">{value}</span>
+                <span className="text-xs text-slate-400 font-medium">Index</span>
+            </div>
+            <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold border ${status === 'Critical' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-orange-500/10 text-orange-400 border-orange-500/20'}`}>
+                <Activity size={10} /> {status} Risk
+            </div>
+            <p className="mt-3 text-xs text-slate-500 leading-relaxed font-medium">
+                {trend}
+            </p>
+            <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Source</span>
+                <span className="text-[10px] text-sky-400 bg-sky-400/10 px-2 py-0.5 rounded border border-sky-400/20">{source || 'MoHFW'}</span>
+            </div>
+        </div>
+    </div>
+);
+
 const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [resourceData, setResourceData] = useState([]);
     const [trends, setTrends] = useState([]);
@@ -274,8 +323,11 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
                 console.log("--- SURVEILLANCE DATA RECEIVED ---", data);
-                setTrends(data);
-                setFilteredTrends(data);
+
+                // Safety Check: Ensure data is an array
+                const safeData = Array.isArray(data) ? data : [];
+                setTrends(safeData);
+                setFilteredTrends(safeData);
 
                 // Fetch Resource Distribution
                 const resResponse = await fetch(`${API_BASE_URL}/api/resource-distribution`);
@@ -453,6 +505,76 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                         ))}
                     </div>
                 </div>
+
+                {/* --- NEW SECTION: National Health Indices --- */}
+                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }} className="mb-12">
+                    <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <Activity className="text-amber-400" size={24} />
+                        National Health Indices
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                        {/* 1. Diabetes Health Index */}
+                        <HealthIndexCard
+                            title="Diabetes Index"
+                            value="11.4%"
+                            status="Critical"
+                            trend="Rising prevalence in urban & rural sectors."
+                            icon={Database}
+                            color="text-rose-400"
+                            source="ICMR-INDIAB"
+                            description="Tracks the prevalence of high blood sugar levels across the population."
+                            utility="Vital for preventing long-term complications like kidney failure, nerve damage, and vision loss."
+                        />
+                        {/* 2. Cardiac Health Index */}
+                        <HealthIndexCard
+                            title="Cardiac Index"
+                            value="15.2%"
+                            status="Critical"
+                            trend="Leading cause of mortality nationwide."
+                            icon={HeartPulse}
+                            color="text-red-500"
+                            source="GBD Study"
+                            description="Monitors the rate of heart diseases, including heart attacks and hypertension."
+                            utility="Helps identify at-risk populations for early intervention to reduce sudden cardiac deaths."
+                        />
+                        {/* 3. Respiratory Health Index */}
+                        <HealthIndexCard
+                            title="Respiratory Index"
+                            value="High"
+                            status="Severe"
+                            trend="Seasonal spikes due to pollution & viral load."
+                            icon={Wind}
+                            color="text-sky-400"
+                            source="IDSP Network"
+                            description="Measures lung health trends, impacted by pollution, asthma, and infections."
+                            utility="Crucial for forecasting seasonal outbreaks (like flu) and managing air quality health risks."
+                        />
+                        {/* 4. Renal Health Index */}
+                        <HealthIndexCard
+                            title="Renal Index"
+                            value="13.0%"
+                            status="High"
+                            trend="Correlated with diabetes & hypertension trends."
+                            icon={Droplets}
+                            color="text-blue-400"
+                            source="ISN Registry"
+                            description="Tracks chronic kidney disease (CKD) rates and kidney function decline."
+                            utility="Essential for planning dialysis infrastructure and detecting early-stage renal failure."
+                        />
+                        {/* 5. Mental Health Index */}
+                        <HealthIndexCard
+                            title="Mental Health"
+                            value="10.6%"
+                            status="Moderate"
+                            trend="Increasing reported anxiety disorders."
+                            icon={Brain}
+                            color="text-purple-400"
+                            source="NMHS Survey"
+                            description="Assesses the prevalence of anxiety, depression, and other psychological conditions."
+                            utility="Guides the allocation of psychological support services and destigmatization efforts."
+                        />
+                    </div>
+                </motion.div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
                     <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card p-6">
