@@ -318,7 +318,7 @@ const DoctorDashboard = ({ user }) => {
             />;
             case 'profile': return <DoctorProfile user={user} />;
             case 'security': return <DoctorSecurity />;
-            case 'help': return <DoctorHelp />;
+            case 'help': return <DoctorHelp onNavigate={setActiveView} />;
             default: return <DashboardOverview />;
         }
     };
