@@ -1,28 +1,94 @@
 import React, { useState } from 'react';
-import { UploadCloud, Loader, AlertTriangle, Pill, Stethoscope, Bot, Save, Check } from 'lucide-react';
+import { UploadCloud, Loader, AlertTriangle, Pill, Stethoscope, Bot, Save, Check, FileCheck } from 'lucide-react';
+import { collection, addDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { API_BASE_URL } from '../config';
 import Header from './Header';
 
-const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+const CureAnalyzer = ({ user, db, storage, appId, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [showSavePrompt, setShowSavePrompt] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
+    const [isDocSaved, setIsDocSaved] = useState(false);
+    const [showTypeSelect, setShowTypeSelect] = useState(false);
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
         setAnalysisResult(null);
         setError('');
         setIsSaved(false);
+        setIsDocSaved(false);
         setShowSavePrompt(false);
+        setShowTypeSelect(false);
     };
 
     const handleSave = () => {
         setIsSaved(true);
         setShowSavePrompt(false);
     };
+
+    const performSave = async (recordType, details = {}) => {
+        try {
+            const storageRef = ref(storage, `users/${user.uid}/medical_records/${Date.now()}_${selectedFile.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+
+            await new Promise((resolve, reject) => {
+                uploadTask.on('state_changed', null, (error) => reject(error), async () => {
+                    try {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        const recordData = {
+                            type: recordType,
+                            date: new Date(),
+                            doctorName: 'Imported Document',
+                            hospitalName: 'Upload',
+                            details: details,
+                            fileUrl: downloadURL,
+                            fileName: selectedFile.name,
+                            fileType: selectedFile.type,
+                            storagePath: storageRef.fullPath,
+                            createdAt: new Date()
+                        };
+                        await addDoc(collection(db, `artifacts/${appId}/users/${user.uid}/medical_records`), recordData);
+                        resolve();
+                    } catch (e) { reject(e); }
+                });
+            });
+            setIsDocSaved(true);
+            setShowTypeSelect(false);
+        } catch (err) {
+            console.error("Error saving document:", err);
+            setError("Failed to save document. Please try again.");
+        }
+    };
+
+    const handleManualSave = (type) => {
+        performSave(type);
+    };
+
+    const handleDocSave = async () => {
+        if (!selectedFile || !user || isDocSaved) return;
+
+        if (analysisResult) {
+            let recordType = 'test_report';
+            const medications = analysisResult?.analysis?.medications || [];
+            if (medications.length > 0) recordType = 'prescription';
+            else if (analysisResult?.summary) {
+                const lowerSummary = analysisResult.summary.toLowerCase();
+                if (lowerSummary.includes('prescription') || lowerSummary.includes(' rx ') || lowerSummary.startsWith('rx ')) {
+                    recordType = 'prescription';
+                }
+            }
+            const details = recordType === 'prescription' ? { medications } : {};
+            await performSave(recordType, details);
+        } else {
+            setShowTypeSelect(true);
+        }
+    };
+
+
 
     const handleAnalysis = async () => {
         if (!selectedFile) {
@@ -305,16 +371,58 @@ const CureAnalyzer = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigat
                             </div>
                         )}
 
-                        <button
-                            disabled={!analysisResult}
-                            onClick={handleSave}
-                            className={`mt-8 w-full py-4 rounded-xl font-bold text-white transition-all duration-500 shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_50px_rgba(14,165,233,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isSaved
-                                ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500'
-                                : 'bg-gradient-to-r from-sky-500 via-blue-600 to-sky-500 bg-[length:200%_auto] hover:bg-right'
-                                }`}
-                        >
-                            {isSaved ? <><Check size={18} /> RECORD SAVED</> : <><Save size={18} /> SAVE RECORD</>}
-                        </button>
+                        {/* Manual Type Selection Dialog */}
+                        {showTypeSelect && (
+                            <div className="mt-4 mb-2 p-4 rounded-xl bg-slate-800/80 border border-amber-500/30 animate-in fade-in slide-in-from-top-2 shadow-lg backdrop-blur-md">
+                                <p className="text-sm font-semibold text-amber-100 mb-3 text-center">Unanalyzed Document: Select Category</p>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                        onClick={() => handleManualSave('prescription')}
+                                        className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-700 hover:bg-amber-500/20 hover:text-amber-400 text-slate-300 border border-slate-600 hover:border-amber-500/50 transition-all group"
+                                    >
+                                        <Pill size={16} className="text-slate-400 group-hover:text-amber-400" />
+                                        <span className="text-xs font-bold">Prescription</span>
+                                    </button>
+                                    <button
+                                        onClick={() => handleManualSave('test_report')}
+                                        className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-700 hover:bg-sky-500/20 hover:text-sky-400 text-slate-300 border border-slate-600 hover:border-sky-500/50 transition-all group"
+                                    >
+                                        <FileCheck size={16} className="text-slate-400 group-hover:text-sky-400" />
+                                        <span className="text-xs font-bold">Test Report</span>
+                                    </button>
+                                </div>
+                                <button
+                                    onClick={() => setShowTypeSelect(false)}
+                                    className="w-full mt-3 text-[10px] text-slate-500 hover:text-slate-300 uppercase tracking-widest font-bold"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        )}
+
+                        <div className="mt-8 flex gap-4">
+                            <button
+                                disabled={!analysisResult}
+                                onClick={handleSave}
+                                className={`flex-1 py-4 rounded-xl font-bold text-white transition-all duration-500 shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_50px_rgba(14,165,233,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isSaved
+                                    ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500'
+                                    : 'bg-gradient-to-r from-sky-500 via-blue-600 to-sky-500 bg-[length:200%_auto] hover:bg-right'
+                                    }`}
+                            >
+                                {isSaved ? <><Check size={18} /> RECORD SAVED</> : <><Save size={18} /> SAVE RECORD</>}
+                            </button>
+
+                            <button
+                                disabled={!selectedFile}
+                                onClick={handleDocSave}
+                                className={`flex-1 py-4 rounded-xl font-bold text-black transition-all duration-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isDocSaved
+                                    ? 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500 text-white'
+                                    : 'bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right'
+                                    }`}
+                            >
+                                {isDocSaved ? <><FileCheck size={18} /> DOCUMENT UPLOADED</> : <><UploadCloud size={18} /> SAVE DOCUMENT</>}
+                            </button>
+                        </div>
 
                     </div>
                 </div>
