@@ -102,7 +102,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     };
 
     return (
-        <header className="flex flex-wrap items-center gap-y-4 gap-x-2 sm:gap-4 pb-6 border-b border-white/10 relative z-20">
+        <header className="sticky top-0 w-full bg-slate-900/90 backdrop-blur-xl flex flex-wrap items-center gap-y-4 gap-x-2 sm:gap-4 py-4 sm:pb-6 border-b border-white/10 z-50 transition-all duration-300 shadow-2xl shadow-black/20">
 
             {/* Left Group: Menu, Logo, Nav */}
             <div className="flex items-center gap-1 sm:gap-4 order-1">
