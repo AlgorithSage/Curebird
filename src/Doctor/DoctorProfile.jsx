@@ -64,33 +64,48 @@ const DoctorProfile = ({ user }) => {
             </div>
 
             {/* Profile Grid - UPDATED OPACITY */}
+            {/* Profile Grid - UPDATED OPACITY */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-slate-900/80 border border-white/5 space-y-4 backdrop-blur-xl shadow-lg">
-                    <h3 className="text-lg font-bold text-white">Contact Information</h3>
+                <div className="p-6 rounded-2xl bg-[#1c1917] border border-stone-800 shadow-[0_0_20px_-10px_rgba(245,158,11,0.1)] space-y-4">
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                        <div className="w-1 h-6 bg-amber-500 rounded-full" />
+                        Contact Information
+                    </h3>
                     <div className="space-y-3">
-                        <div className="flex items-center gap-3 text-slate-400 p-3 rounded-xl bg-black/30">
-                            <Mail size={18} /> <span>{user.email}</span>
+                        <div className="flex items-center gap-4 text-stone-300 p-4 rounded-xl bg-[#0c0a09] border border-stone-800/50 hover:border-amber-500/30 transition-colors group">
+                            <div className="p-2 bg-stone-800/50 rounded-lg group-hover:bg-amber-500/10 transition-colors">
+                                <Mail size={18} className="text-stone-500 group-hover:text-amber-500 transition-colors" />
+                            </div>
+                            <span className="font-medium tracking-wide">{user.email}</span>
                         </div>
-                        <div className="flex items-center gap-3 text-slate-400 p-3 rounded-xl bg-black/30">
-                            <Phone size={18} /> <span>{user.phoneNumber || 'Not linked'}</span>
+                        <div className="flex items-center gap-4 text-stone-300 p-4 rounded-xl bg-[#0c0a09] border border-stone-800/50 hover:border-amber-500/30 transition-colors group">
+                            <div className="p-2 bg-stone-800/50 rounded-lg group-hover:bg-amber-500/10 transition-colors">
+                                <Phone size={18} className="text-stone-500 group-hover:text-amber-500 transition-colors" />
+                            </div>
+                            <span className="font-medium tracking-wide">{user.phoneNumber || 'Not linked'}</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-slate-900/80 border border-white/5 space-y-4 backdrop-blur-xl shadow-lg">
-                    <h3 className="text-lg font-bold text-white">Clinic Details</h3>
-                    <div className="space-y-3">
-                        <div className="flex justify-between text-sm py-2 border-b border-white/5">
-                            <span className="text-slate-500">Clinic Name</span>
-                            <span className="text-slate-200 font-medium">Curebird Central</span>
+                <div className="p-6 rounded-2xl bg-[#1c1917] border border-stone-800 shadow-[0_0_20px_-10px_rgba(245,158,11,0.1)] space-y-4">
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                        <div className="w-1 h-6 bg-amber-500 rounded-full" />
+                        Clinic Details
+                    </h3>
+                    <div className="space-y-0.5 bg-[#0c0a09] rounded-xl border border-stone-800/50 p-1">
+                        <div className="flex justify-between items-center text-sm p-3 rounded-lg hover:bg-white/5 transition-colors">
+                            <span className="text-stone-500 font-medium">Clinic Name</span>
+                            <span className="text-amber-500 font-bold tracking-wide">Curebird Central</span>
                         </div>
-                        <div className="flex justify-between text-sm py-2 border-b border-white/5">
-                            <span className="text-slate-500">Department</span>
-                            <span className="text-slate-200 font-medium">Cardiology</span>
+                        <div className="w-full h-px bg-stone-800/50" />
+                        <div className="flex justify-between items-center text-sm p-3 rounded-lg hover:bg-white/5 transition-colors">
+                            <span className="text-stone-500 font-medium">Department</span>
+                            <span className="text-stone-300 font-bold">Cardiology</span>
                         </div>
-                        <div className="flex justify-between text-sm py-2">
-                            <span className="text-slate-500">Room No.</span>
-                            <span className="text-slate-200 font-medium">304-B</span>
+                        <div className="w-full h-px bg-stone-800/50" />
+                        <div className="flex justify-between items-center text-sm p-3 rounded-lg hover:bg-white/5 transition-colors">
+                            <span className="text-stone-500 font-medium">Room No.</span>
+                            <span className="text-stone-300 font-bold bg-stone-800 px-2 py-0.5 rounded text-xs">304-B</span>
                         </div>
                     </div>
                 </div>
