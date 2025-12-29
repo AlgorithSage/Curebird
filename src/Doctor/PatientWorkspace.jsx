@@ -156,8 +156,8 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat }) => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
                 {/* Left: Quick Navigation (Vertical Tabs for Workspace) */}
-                <div className="lg:col-span-1 space-y-4">
-                    <div className="glass-card p-2 rounded-2xl bg-slate-900/80 backdrop-blur-xl border border-white/5 flex lg:flex-col overflow-x-auto lg:overflow-visible custom-scrollbar sticky top-24">
+                <div className="lg:col-span-1 space-y-6 sticky top-24 h-fit">
+                    <div className="glass-card p-2 rounded-2xl bg-[#1c1917] backdrop-blur-xl border border-stone-800 flex lg:flex-col overflow-x-auto lg:overflow-visible custom-scrollbar">
                         {tabs.map((tab) => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
@@ -166,8 +166,8 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat }) => {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all whitespace-nowrap ${isActive
-                                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-lg'
-                                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                        ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
+                                        : 'text-stone-400 hover:text-amber-500 hover:bg-amber-500/5'
                                         }`}
                                 >
                                     <Icon size={18} />
@@ -178,25 +178,25 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat }) => {
                     </div>
 
                     {/* Quick Vitals Summary */}
-                    <div className="glass-card p-6 rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-white/5 space-y-4">
-                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Current Vitals</h3>
-                        <div className="flex justify-between items-end pb-2 border-b border-white/5">
-                            <span className="text-slate-400 text-sm">BP</span>
+                    <div className="glass-card p-6 rounded-2xl bg-gradient-to-br from-[#1c1917] to-[#292524] border border-stone-800 shadow-[inset_0_0_30px_-15px_rgba(245,158,11,0.15)] space-y-4">
+                        <h3 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-4">Current Vitals</h3>
+                        <div className="flex justify-between items-end pb-2 border-b border-stone-800">
+                            <span className="text-stone-400 text-sm">BP</span>
                             <span className="text-xl font-bold text-white">120/80</span>
                         </div>
-                        <div className="flex justify-between items-end pb-2 border-b border-white/5">
-                            <span className="text-slate-400 text-sm">Heart Rate</span>
-                            <span className="text-xl font-bold text-emerald-400">72 <span className="text-xs text-slate-500 ml-1">bpm</span></span>
+                        <div className="flex justify-between items-end pb-2 border-b border-stone-800">
+                            <span className="text-stone-400 text-sm">Heart Rate</span>
+                            <span className="text-xl font-bold text-emerald-400">72 <span className="text-xs text-stone-500 ml-1">bpm</span></span>
                         </div>
-                        <div className="flex justify-between items-end pb-2 border-b border-white/5">
-                            <span className="text-slate-400 text-sm">Temp</span>
-                            <span className="text-xl font-bold text-white">98.6 <span className="text-xs text-slate-500 ml-1">°F</span></span>
+                        <div className="flex justify-between items-end pb-2 border-b border-stone-800">
+                            <span className="text-stone-400 text-sm">Temp</span>
+                            <span className="text-xl font-bold text-white">98.6 <span className="text-xs text-stone-500 ml-1">°F</span></span>
                         </div>
                         <div className="flex justify-between items-end">
-                            <span className="text-slate-400 text-sm">SpO2</span>
+                            <span className="text-stone-400 text-sm">SpO2</span>
                             <span className="text-xl font-bold text-sky-400">98%</span>
                         </div>
-                        <p className="text-[10px] text-slate-500 text-right mt-2">Last updated: 20 mins ago</p>
+                        <p className="text-[10px] text-stone-500 text-right mt-2">Last updated: 20 mins ago</p>
                     </div>
                 </div>
 
