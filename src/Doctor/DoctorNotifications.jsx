@@ -182,10 +182,10 @@ export default function DoctorNotifications({ onNavigate, onNavigateToPatient })
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 className={`
-                                    relative p-4 rounded-2xl border transition-all duration-300 group
+                                    relative p-4 rounded-[2rem] transition-all duration-300 group animated-border
                                     ${notification.read
-                                        ? 'bg-[#0c0a09]/80 border-stone-800/50 hover:border-stone-700'
-                                        : 'bg-[#1c1917]/95 border-amber-500/30 shadow-[inset_0_0_30px_-10px_rgba(245,158,11,0.15)]'
+                                        ? 'bg-[#0c0a09]/80 opacity-75 grayscale-[0.3]'
+                                        : 'bg-gradient-to-br from-[#1c1917] to-[#292524] shadow-[inset_0_0_30px_-15px_rgba(245,158,11,0.15)]'
                                     }
                                 `}
                             >
