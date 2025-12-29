@@ -21,6 +21,7 @@ import MedicalRecordManager from './MedicalRecordManager';
 import DoctorAnalytics from './DoctorAnalytics';
 import DoctorChat from './chat/DoctorChat';
 import DoctorNotifications from './DoctorNotifications';
+import DoctorSecurity from './DoctorSecurity';
 
 // --- Background Components (Top Level) ---
 const InteractiveHexGrid = () => {
@@ -315,7 +316,7 @@ const DoctorDashboard = ({ user }) => {
                 onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
             />;
             case 'profile': return <DoctorProfile user={user} />;
-            case 'security': return <PlaceholderView title="Security" icon={Shield} />;
+            case 'security': return <DoctorSecurity />;
             case 'help': return <PlaceholderView title="Help & Support" icon={HelpCircle} />;
             default: return <DashboardOverview />;
         }
