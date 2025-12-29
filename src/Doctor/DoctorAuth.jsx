@@ -57,13 +57,14 @@ export default function DoctorAuth({ initialUser }) {
     const onCaptchVerify = () => {
         if (!window.recaptchaVerifier) {
             // Ensure container is empty
-            const container = document.getElementById('recaptcha-container');
+            const container = document.getElementById('doctor-recaptcha-container');
             if (container) container.innerHTML = '';
 
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'doctor-recaptcha-container', {
                 'size': 'invisible',
                 'callback': (response) => {
                     // reCAPTCHA solved
+                    console.log("Doctor reCAPTCHA Solved");
                 },
                 'expired-callback': () => {
                     setError("Recaptcha expired. Please try again.");
@@ -316,7 +317,7 @@ export default function DoctorAuth({ initialUser }) {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <div id="recaptcha-container"></div>
+                                    <div id="doctor-recaptcha-container"></div>
                                     {!isOtpSent ? (
                                         <form onSubmit={handleSendOtp} className="space-y-4">
                                             <div className="group relative">

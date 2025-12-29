@@ -89,13 +89,14 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
     const onCaptchVerify = () => {
         if (!window.recaptchaVerifier) {
             // SAFEGUARD: Ensure container is empty before creating new instance
-            const container = document.getElementById('recaptcha-container');
+            const container = document.getElementById('patient-recaptcha-container');
             if (container) container.innerHTML = '';
 
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'patient-recaptcha-container', {
                 'size': 'invisible',
                 'callback': (response) => {
                     // reCAPTCHA solved
+                    console.log("Patient reCAPTCHA Solved");
                 },
                 'expired-callback': () => {
                     setError("Recaptcha expired. Please try again.");
@@ -389,7 +390,7 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
                             </div>
 
                             <div className="space-y-4">
-                                <div id="recaptcha-container"></div>
+                                <div id="patient-recaptcha-container"></div>
 
                                 {!isOtpSent ? (
                                     <form onSubmit={handleSendOtp} className="space-y-4">
