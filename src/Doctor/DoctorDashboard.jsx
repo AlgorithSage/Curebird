@@ -23,6 +23,7 @@ import DoctorChat from './chat/DoctorChat';
 import DoctorNotifications from './DoctorNotifications';
 import DoctorSecurity from './DoctorSecurity';
 import DoctorHelp from './DoctorHelp';
+import AddClinicalRecordModal from './AddClinicalRecordModal';
 
 // --- Background Components (Top Level) ---
 const InteractiveHexGrid = () => {
@@ -261,6 +262,16 @@ const DoctorDashboard = ({ user }) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [workspacePatient, setWorkspacePatient] = useState(null);
     const [targetChatPatientId, setTargetChatPatientId] = useState(null); // For Profile -> Chat Nav
+    const [isAddRecordModalOpen, setIsAddRecordModalOpen] = useState(false);
+
+    // MOCK PATIENTS LIST (Ideally fetched from a hook or context)
+    const mockPatients = [
+        { id: 'pat_001', name: 'Sarah Jenkins' },
+        { id: 'pat_002', name: 'Mike Ross' },
+        { id: 'pat_003', name: 'James Wilson' },
+        { id: 'pat_004', name: 'Emily Clark' },
+        { id: 'pat_005', name: 'Robert Ford' }
+    ];
 
     const handleLogout = () => {
         auth.signOut();
@@ -342,13 +353,19 @@ const DoctorDashboard = ({ user }) => {
                 onLogout={handleLogout}
             />
 
+            <AddClinicalRecordModal
+                isOpen={isAddRecordModalOpen}
+                onClose={() => setIsAddRecordModalOpen(false)}
+                patients={mockPatients}
+            />
+
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <Header
                     title="DOCTOR PORTAL"
                     description="Clinical Workspace"
                     user={user}
                     onLogout={handleLogout}
-                    onAddClick={() => { }}
+                    onAddClick={() => setIsAddRecordModalOpen(true)}
                     onToggleSidebar={() => setSidebarOpen(true)}
                     onNotificationClick={() => setActiveView('notifications')}
                     navItems={[]}
