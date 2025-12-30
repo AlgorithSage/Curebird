@@ -157,8 +157,8 @@ const EnvironmentalHealth = () => {
                                 key={tab.id}
                                 onClick={() => setActiveView(tab.id)}
                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeView === tab.id
-                                        ? 'bg-gradient-to-r from-slate-700 to-slate-600 text-white shadow-lg shadow-black/20 ring-1 ring-white/20'
-                                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                    ? 'bg-gradient-to-r from-slate-700 to-slate-600 text-white shadow-lg shadow-black/20 ring-1 ring-white/20'
+                                    : 'text-slate-400 hover:text-white hover:bg-white/5'
                                     }`}
                             >
                                 <tab.icon size={14} className={activeView === tab.id ? 'text-orange-400' : ''} />
@@ -186,7 +186,7 @@ const EnvironmentalHealth = () => {
                 <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 h-full mt-16 px-2">
 
                     {/* LEFT COLUMN: Narrative & Metrics */}
-                    <div className="flex flex-col justify-start h-full gap-12 pt-12">
+                    <div className="flex flex-col justify-start h-full gap-12 pt-12 order-2 lg:order-1">
 
                         {/* Header Dynamic Text */}
                         <AnimatePresence mode="wait">
@@ -242,9 +242,9 @@ const EnvironmentalHealth = () => {
                                         {currentAQI}
                                     </span>
                                     <span className={`px-5 py-2 mb-4 rounded-full text-sm font-bold uppercase tracking-wider border-2 shadow-lg ${currentAQI > 400 ? 'bg-red-600/20 text-red-500 border-red-600/30' :
-                                            currentAQI > 300 ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-                                                currentAQI > 200 ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' :
-                                                    'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                                        currentAQI > 300 ? 'bg-red-500/20 text-red-400 border-red-500/30' :
+                                            currentAQI > 200 ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' :
+                                                'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                                         }`}>
                                         {currentDesc}
                                     </span>
@@ -260,13 +260,13 @@ const EnvironmentalHealth = () => {
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     transition={{ duration: 0.3 }}
                                     className={`p-10 rounded-[2rem] border backdrop-blur-md shadow-2xl relative overflow-hidden group hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] transition-all duration-500 ${activeView === 'life' ? 'bg-red-950/20 border-red-500/20 shadow-[0_0_20px_rgba(220,38,38,0.1)]' :
-                                            activeView === 'dust' ? 'bg-emerald-950/20 border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]' :
-                                                'bg-slate-900/60 border-white/10'
+                                        activeView === 'dust' ? 'bg-emerald-950/20 border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]' :
+                                            'bg-slate-900/60 border-white/10'
                                         }`}
                                 >
                                     <div className={`absolute top-0 right-0 w-60 h-60 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 transition-all duration-700 ${activeView === 'life' ? 'bg-red-600/10 group-hover:bg-red-600/20' :
-                                            activeView === 'dust' ? 'bg-emerald-600/10 group-hover:bg-emerald-600/20' :
-                                                'bg-orange-500/10 group-hover:bg-orange-500/20'
+                                        activeView === 'dust' ? 'bg-emerald-600/10 group-hover:bg-emerald-600/20' :
+                                            'bg-orange-500/10 group-hover:bg-orange-500/20'
                                         }`}></div>
 
                                     {activeView === 'smoker' && (
@@ -344,12 +344,12 @@ const EnvironmentalHealth = () => {
 
 
                     {/* RIGHT COLUMN: Selector & Visualization */}
-                    <div className="flex flex-col gap-6 h-full">
+                    <div className="flex flex-col gap-6 h-full order-1 lg:order-2">
 
                         {/* Selector */}
                         <div className={`w-full p-6 rounded-[2rem] border backdrop-blur-md shadow-xl transition-all duration-500 ${activeView === 'life' ? 'bg-red-950/20 border-red-500/20 shadow-[0_0_20px_rgba(220,38,38,0.1)]' :
-                                activeView === 'dust' ? 'bg-emerald-950/20 border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]' :
-                                    'bg-slate-900/60 border-white/10'
+                            activeView === 'dust' ? 'bg-emerald-950/20 border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]' :
+                                'bg-slate-900/60 border-white/10'
                             }`}>
                             <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
                                 <div className="flex items-center gap-3">
@@ -398,8 +398,8 @@ const EnvironmentalHealth = () => {
 
                         {/* VISUALIZATION PANEL */}
                         <div className={`p-8 rounded-[2.5rem] border flex-grow min-h-[400px] flex flex-col items-center justify-center relative overflow-hidden group shadow-inner transition-all duration-500 ${activeView === 'life' ? 'bg-red-950/20 border-red-500/20 shadow-[0_0_20px_rgba(220,38,38,0.1)]' :
-                                activeView === 'dust' ? 'bg-emerald-950/20 border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]' :
-                                    'bg-slate-800/40 border-white/10'
+                            activeView === 'dust' ? 'bg-emerald-950/20 border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]' :
+                                'bg-slate-800/40 border-white/10'
                             }`}>
                             <p className="absolute top-6 left-8 text-xs text-slate-500 font-mono z-20 tracking-widest opacity-50 uppercase">{activeView} VISUALIZATION</p>
 

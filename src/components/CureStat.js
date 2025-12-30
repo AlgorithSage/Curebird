@@ -492,19 +492,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                     </div>
                 </div>
 
-                <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between glass-card p-4">
-                    <div className="relative w-full md:w-96 group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-400 transition-colors" size={20} />
-                        <input type="text" placeholder="Search diseases, symptoms..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white font-bold placeholder:text-white font-bold focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner" />
-                    </div>
-                    <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
-                        {['all', 'high', 'medium', 'low'].map((level) => (
-                            <button key={level} onClick={() => setRiskFilter(level)} className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all whitespace-nowrap border ${riskFilter === level ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25 border-sky-400' : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white'}`}>
-                                {level === 'all' ? 'All Risks' : `${level} Risk`}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+
 
                 {/* --- NEW SECTION: National Health Indices --- */}
                 <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }} className="mb-12">
@@ -576,6 +564,20 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                     </div>
                 </motion.div>
 
+                <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between glass-card p-4">
+                    <div className="relative w-full md:w-96 group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-400 transition-colors" size={20} />
+                        <input type="text" placeholder="Search diseases, symptoms..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white font-bold placeholder:text-white font-bold focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner" />
+                    </div>
+                    <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
+                        {['all', 'high', 'medium', 'low'].map((level) => (
+                            <button key={level} onClick={() => setRiskFilter(level)} className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all whitespace-nowrap border ${riskFilter === level ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25 border-sky-400' : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white'}`}>
+                                {level === 'all' ? 'All Risks' : `${level} Risk`}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
                     <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card p-6">
                         <div className="flex items-center justify-between mb-6">
@@ -636,84 +638,93 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                     </motion.div>
                 </div>
 
+
+
+                {/* --- NEW SECTION: Environmental Health (Corrected Position) --- */}
+                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.32 }} className="mb-12">
+                    <EnvironmentalHealth />
+                </motion.div>
+
                 {/* --- NEW SECTION: Resource Disparity (Respectful Presentation) --- */}
-                {resourceData.length > 0 && (
-                    <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.35 }} className="mb-12">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="bg-emerald-500/20 p-2.5 rounded-xl border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
-                                <Users size={24} className="text-emerald-400" />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                                    Healthcare Access Insights
-                                    <div className="group relative ml-1">
-                                        <Info size={16} className="text-slate-500 cursor-help hover:text-emerald-400 transition-colors" />
-                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-slate-900/95 backdrop-blur-sm text-xs text-slate-300 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-white/10 shadow-xl z-50">
-                                            <strong>Verified Source:</strong> Rural Health Statistics (RHS) 2021-22, MoHFW, Govt of India.
-                                            <br /><br />
-                                            Displays the gap in health infrastructure between Urban and Rural India.
+                {
+                    resourceData.length > 0 && (
+                        <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.35 }} className="mb-12">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="bg-emerald-500/20 p-2.5 rounded-xl border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
+                                    <Users size={24} className="text-emerald-400" />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                                        Healthcare Access Insights
+                                        <div className="group relative ml-1">
+                                            <Info size={16} className="text-slate-500 cursor-help hover:text-emerald-400 transition-colors" />
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 p-3 bg-slate-900/95 backdrop-blur-sm text-xs text-slate-300 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-white/10 shadow-xl z-50">
+                                                <strong>Verified Source:</strong> Rural Health Statistics (RHS) 2021-22, MoHFW, Govt of India.
+                                                <br /><br />
+                                                Displays the gap in health infrastructure between Urban and Rural India.
+                                            </div>
                                         </div>
+                                    </h2>
+                                    <p className="text-white font-bold text-sm">Comparative analysis of resource density and sector distribution across states.</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                {/* Chart 1: Bed Density Urban vs Rural */}
+                                <div className="glass-card p-6">
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                                        Infrastructure Density
+                                        <span className="text-xs font-normal text-slate-500 ml-auto bg-slate-800 px-2 py-1 rounded">Beds per 1000 Population</span>
+                                    </h3>
+                                    <div className="h-[300px]">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={resourceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.3} />
+                                                <XAxis dataKey="state" stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} interval={0} angle={-25} textAnchor="end" height={60} fontWeight="bold" />
+                                                <YAxis stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} fontWeight="bold" />
+                                                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+                                                <Legend wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
+                                                <Bar name="Urban Density" dataKey="urban_beds_per_1000" fill="#38bdf8" radius={[4, 4, 0, 0]} barSize={12} />
+                                                <Bar name="Rural Density" dataKey="rural_beds_per_1000" fill="#10b981" radius={[4, 4, 0, 0]} barSize={12} />
+                                            </BarChart>
+                                        </ResponsiveContainer>
                                     </div>
-                                </h2>
-                                <p className="text-white font-bold text-sm">Comparative analysis of resource density and sector distribution across states.</p>
-                            </div>
-                        </div>
+                                </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            {/* Chart 1: Bed Density Urban vs Rural */}
-                            <div className="glass-card p-6">
-                                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                                    Infrastructure Density
-                                    <span className="text-xs font-normal text-slate-500 ml-auto bg-slate-800 px-2 py-1 rounded">Beds per 1000 Population</span>
-                                </h3>
-                                <div className="h-[300px]">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={resourceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.3} />
-                                            <XAxis dataKey="state" stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} interval={0} angle={-25} textAnchor="end" height={60} fontWeight="bold" />
-                                            <YAxis stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} fontWeight="bold" />
-                                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
-                                            <Legend wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
-                                            <Bar name="Urban Density" dataKey="urban_beds_per_1000" fill="#38bdf8" radius={[4, 4, 0, 0]} barSize={12} />
-                                            <Bar name="Rural Density" dataKey="rural_beds_per_1000" fill="#10b981" radius={[4, 4, 0, 0]} barSize={12} />
-                                        </BarChart>
-                                    </ResponsiveContainer>
+                                {/* Chart 2: Sector Utilization */}
+                                <div className="glass-card p-6">
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                                        Sector Participation
+                                        <span className="text-xs font-normal text-slate-500 ml-auto bg-slate-800 px-2 py-1 rounded">% Share of Healthcare</span>
+                                    </h3>
+                                    <div className="h-[300px]">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart data={resourceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                                <defs>
+                                                    <linearGradient id="colorPrivate" x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                                                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                                                    </linearGradient>
+                                                    <linearGradient id="colorPublic" x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3} />
+                                                        <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                                                    </linearGradient>
+                                                </defs>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.3} />
+                                                <XAxis dataKey="state" stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} interval={0} angle={-25} textAnchor="end" height={60} fontWeight="bold" />
+                                                <YAxis stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} fontWeight="bold" />
+                                                <Tooltip content={<CustomTooltip />} />
+                                                <Legend wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
+                                                <Area type="monotone" name="Private Sector" dataKey="private_sector_share" stroke="#8b5cf6" fillOpacity={1} fill="url(#colorPrivate)" />
+                                                <Area type="monotone" name="Public Sector" dataKey="public_sector_share" stroke="#06b6d4" fillOpacity={1} fill="url(#colorPublic)" />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </div>
                                 </div>
                             </div>
-
-                            {/* Chart 2: Sector Utilization */}
-                            <div className="glass-card p-6">
-                                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                                    Sector Participation
-                                    <span className="text-xs font-normal text-slate-500 ml-auto bg-slate-800 px-2 py-1 rounded">% Share of Healthcare</span>
-                                </h3>
-                                <div className="h-[300px]">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={resourceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                            <defs>
-                                                <linearGradient id="colorPrivate" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                                                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                                                </linearGradient>
-                                                <linearGradient id="colorPublic" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3} />
-                                                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
-                                                </linearGradient>
-                                            </defs>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.3} />
-                                            <XAxis dataKey="state" stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} interval={0} angle={-25} textAnchor="end" height={60} fontWeight="bold" />
-                                            <YAxis stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} fontWeight="bold" />
-                                            <Tooltip content={<CustomTooltip />} />
-                                            <Legend wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
-                                            <Area type="monotone" name="Private Sector" dataKey="private_sector_share" stroke="#8b5cf6" fillOpacity={1} fill="url(#colorPrivate)" />
-                                            <Area type="monotone" name="Public Sector" dataKey="public_sector_share" stroke="#06b6d4" fillOpacity={1} fill="url(#colorPublic)" />
-                                        </AreaChart>
-                                    </ResponsiveContainer>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
+                        </motion.div>
+                    )
+                }
 
                 {/* --- NEW SECTION: Occupational Health --- */}
                 <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.38 }} className="mb-12">
@@ -725,10 +736,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                     <SocialDeterminants />
                 </motion.div>
 
-                {/* --- NEW SECTION: Environmental Health --- */}
-                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.48 }} className="mb-12">
-                    <EnvironmentalHealth />
-                </motion.div>
+
 
                 {/* --- NEW SECTION: Rare Diseases --- */}
                 <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.52 }} className="mb-12">
