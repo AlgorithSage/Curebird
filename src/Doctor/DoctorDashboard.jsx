@@ -28,6 +28,10 @@ import NewPrescriptionModal from './NewPrescriptionModal';
 import LabRequestModal from './LabRequestModal';
 import VitalsMonitorModal from './VitalsMonitorModal';
 import EmergencyAlertModal from './EmergencyAlertModal';
+import PatientRosterModal from './PatientRosterModal';
+import ScheduleQueueModal from './ScheduleQueueModal';
+import ActionInboxModal from './ActionInboxModal';
+import VitalsWatchlistModal from './VitalsWatchlistModal';
 
 // --- Background Components (Top Level) ---
 const InteractiveHexGrid = () => {
@@ -140,7 +144,7 @@ const ViewHeader = ({ icon: Icon, title, description }) => (
     </div>
 );
 
-const DashboardOverview = ({ onAddRecord }) => (
+const DashboardOverview = ({ onAddRecord, onViewOversight }) => (
     <>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10 relative z-10">
             {[
@@ -198,13 +202,45 @@ const DashboardOverview = ({ onAddRecord }) => (
             ))}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            <StatCard icon={<Users size={28} />} label="Total Patients" value="124" color="bg-amber-500/10 text-amber-500 border border-amber-500/20" change="12% Growth" className="!h-full" />
-            <StatCard icon={<Calendar size={28} />} label="Today's Schedule" value="8" color="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" change="On Track" className="!h-full" />
+            <StatCard
+                icon={<Users size={28} />}
+                label="Total Patients"
+                value="124"
+                color="bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                change="12% Growth"
+                className="!h-full"
+                onClick={() => onViewOversight('patients')}
+            />
+            <StatCard
+                icon={<Calendar size={28} />}
+                label="Today's Schedule"
+                value="8"
+                color="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                change="On Track"
+                className="!h-full"
+                onClick={() => onViewOversight('schedule')}
+            />
             <div className="relative group !h-full">
                 <div className="absolute inset-0 bg-rose-500/20 rounded-[2rem] blur-xl group-hover:bg-rose-500/30 transition-all opacity-0 group-hover:opacity-100"></div>
-                <StatCard icon={<ClipboardList size={28} />} label="Action Required" value="5" color="bg-rose-500/10 text-rose-500 border border-rose-500/20" change="Pending Review" className="!h-full relative z-10" />
+                <StatCard
+                    icon={<ClipboardList size={28} />}
+                    label="Action Required"
+                    value="5"
+                    color="bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                    change="Pending Review"
+                    className="!h-full relative z-10"
+                    onClick={() => onViewOversight('actions')}
+                />
             </div>
-            <StatCard icon={<Activity size={28} />} label="Patient Vitals" value="Stable" color="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" change="Real-time" className="!h-full" />
+            <StatCard
+                icon={<Activity size={28} />}
+                label="Patient Vitals"
+                value="Stable"
+                color="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+                change="Real-time"
+                className="!h-full"
+                onClick={() => onViewOversight('vitals')}
+            />
         </div>
     </>
 );
@@ -313,6 +349,7 @@ const DoctorDashboard = ({ user }) => {
     const [isLabRequestModalOpen, setIsLabRequestModalOpen] = useState(false);
     const [isVitalsModalOpen, setIsVitalsModalOpen] = useState(false);
     const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
+    const [activeOversightModal, setActiveOversightModal] = useState(null); // 'patients', 'schedule', 'actions', 'vitals'
 
     // MOCK PATIENTS LIST (Ideally fetched from a hook or context)
     const mockPatients = [
@@ -373,12 +410,15 @@ const DoctorDashboard = ({ user }) => {
             case 'dashboard': return (
                 <>
                     <ViewHeader icon={LayoutDashboard} title="Dashboard" description="Overview of clinical activities" />
-                    <DashboardOverview onAddRecord={(type) => {
-                        if (type === 'prescription') setIsPrescriptionModalOpen(true);
-                        if (type === 'lab') setIsLabRequestModalOpen(true);
-                        if (type === 'vitals') setIsVitalsModalOpen(true);
-                        if (type === 'emergency') setIsEmergencyModalOpen(true);
-                    }} />
+                    <DashboardOverview
+                        onAddRecord={(type) => {
+                            if (type === 'prescription') setIsPrescriptionModalOpen(true);
+                            if (type === 'lab') setIsLabRequestModalOpen(true);
+                            if (type === 'vitals') setIsVitalsModalOpen(true);
+                            if (type === 'emergency') setIsEmergencyModalOpen(true);
+                        }}
+                        onViewOversight={(type) => setActiveOversightModal(type)}
+                    />
                 </>
             );
             case 'patients': return <PatientManagement />;
@@ -454,6 +494,32 @@ const DoctorDashboard = ({ user }) => {
                 isOpen={isEmergencyModalOpen}
                 onClose={() => setIsEmergencyModalOpen(false)}
                 patients={mockPatients}
+            />
+
+            <PatientRosterModal
+                isOpen={activeOversightModal === 'patients'}
+                onClose={() => setActiveOversightModal(null)}
+                patients={mockPatients}
+                onViewPatient={(p) => {
+                    setWorkspacePatient(p);
+                    setActiveView('patient_workspace');
+                    setActiveOversightModal(null);
+                }}
+            />
+
+            <ScheduleQueueModal
+                isOpen={activeOversightModal === 'schedule'}
+                onClose={() => setActiveOversightModal(null)}
+            />
+
+            <ActionInboxModal
+                isOpen={activeOversightModal === 'actions'}
+                onClose={() => setActiveOversightModal(null)}
+            />
+
+            <VitalsWatchlistModal
+                isOpen={activeOversightModal === 'vitals'}
+                onClose={() => setActiveOversightModal(null)}
             />
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

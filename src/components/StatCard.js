@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 
-const StatCard = ({ icon, label, value, color, change }) => (
+const StatCard = ({ icon, label, value, color, change, onClick }) => (
     <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -41,10 +41,13 @@ const StatCard = ({ icon, label, value, color, change }) => (
                     </div>
                 ) : <div className="h-7" />}
 
-                <a href="#" className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-yellow-400 hover:text-black border border-white/5 hover:border-yellow-400 text-xs font-bold text-slate-300 transition-all uppercase tracking-wide flex items-center justify-center gap-2 group/btn">
+                <button
+                    onClick={onClick}
+                    className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-amber-400 hover:text-slate-900 border border-white/5 hover:border-amber-400 text-xs font-black transition-all uppercase tracking-widest flex items-center justify-center gap-2 group/btn shadow-xl hover:shadow-amber-500/20"
+                >
                     View Full Details
                     <ArrowUpRight size={14} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                </a>
+                </button>
             </div>
         </div>
     </motion.div>
