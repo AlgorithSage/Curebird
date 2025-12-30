@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { updateProfile } from "firebase/auth";
+import { updateProfile, getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from 'framer-motion';
 import { Settings as SettingsIcon, User, Mail, Shield, AlertTriangle, Save, Camera, BadgeCheck } from 'lucide-react';
 
@@ -20,7 +20,10 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
         setSaveSuccess(false);
         try {
             // 1. Update Firebase Auth Profile
-            await updateProfile(user, { displayName: displayName });
+            const auth = getAuth();
+            if (auth.currentUser) {
+                await updateProfile(auth.currentUser, { displayName: displayName });
+            }
 
             // 2. Update Firestore User Document
             // Split name into First/Last for consistency

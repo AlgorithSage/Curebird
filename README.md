@@ -1,111 +1,118 @@
-# 🏥 Curebird - Medical Portfolio & AI Health Analytics
+# Curebird 🏥🐦
 
-Curebird is a modern, full-stack medical portfolio application that combines secure health record management with advanced AI analytics. It features real-time disease intelligence, prescription analysis, and a comprehensive personal health dashboard.
-
-![Curebird Dashboard](public/logo.png)
-
-## 🌟 Key Features
-
-### 👤 Personal Medical Portfolio
-- **Secure Dashboard**: Manage your health records, appointments, and medications.
-- **Visual Analytics**: Track your vital signs and health trends over time.
-- **Document Storage**: Securely store and organize your medical reports.
-
-### 🧠 Cure Analyzer (AI-Powered)
-- **Prescription Analysis**: Upload prescription images to extract medicines and instructions.
-- **AI Intelligence**: Powered by Google Gemini AI and Tesseract OCR.
-- **Disease Detection**: automatically identifies potential conditions mentioned in reports.
-
-### 📊 Cure Stat (Disease Intelligence)
-- **Real-Time Trends**: Visualizes disease outbreaks across India using government data.
-- **Interactive Heatmap**: Geographic distribution of diseases via Google Maps.
-- **Research Metrics**: Detailed demographics, recovery rates, and medication trends.
-- **Risk Analysis**: AI-driven risk assessment (High/Medium/Low) for various regions.
+**Curebird** is an advanced digital health platform designed to bridge the gap between patients and healthcare providers. It leverages cutting-edge **Generative AI** and **Real-time Data Visualization** to provide actionable health insights, digitize medical records, and monitor epidemiological trends across India.
 
 ---
 
-## 🚀 Getting Started
+## 🏗️ Project Architecture & Organization
 
-### Prerequisites
-- Node.js (v16+)
-- Python (v3.10+)
-- Google Cloud API Key (for Maps & AI)
-- Tesseract OCR (installed on system)
+### 1. CureStat 📊
+**Purpose**: A comprehensive public health dashboard that visualizes epidemiological data to help users stay informed about disease outbreaks and environmental risks.
 
-### 1️⃣ Installation
+*   **National Health Indices**: Displays critical health metrics (Diabetes, Cardiac, Respiratory, Renal, Mental) derived from national surveys (ICMR, IDSP), giving a quick snapshot of the country's health burden.
+*   **Regional Impact (Bar Chart)**: Visualizes the top affected states for current outbreaks, allowing users to identify high-risk zones.
+*   **Disease Distribution (Pie Chart)**: Break down of reported cases by disease type, helping to identify dominant health threats.
+*   **Live Heatmap**: An interactive Google Maps layer showing the density of disease clusters across the Indian subcontinent.
+*   **Environmental Health**: Tracks Air Quality Index (AQI) and other environmental factors that directly correlate with respiratory and cardiovascular health.
+*   **Resource Disparity**: Analyzes the gap between urban and rural healthcare infrastructure (bed density, doctor availability).
 
-**Clone the repository:**
-```bash
-git clone https://github.com/yourusername/curebird.git
-cd curebird
-```
+### 2. Cure Analyzer 🔬
+**Purpose**: A tool to digitize and interpret complex medical documents (prescriptions, lab reports).
 
-**Install Frontend Dependencies:**
-```bash
-npm install
-```
+**The Two-Step AI Process**:
+1.  **Step 1: Visual Language Model (VLM) Extraction**
+    *   The uploaded image is processed by **Groq's Vision Model** (Llama-based).
+    *   It performs OCR (Optical Character Recognition) and Structure Extraction simultaneously to identify medications, dosages, and clinical conditions in strict JSON format.
+2.  **Step 2: Intelligent Summarization**
+    *   The raw JSON data is fed into a **Llama 3.1 8B** model via Groq.
+    *   A specialized System Prompt acts as a "Medical Interpreter," translating technical jargon into a customized, empathetic summary for the patient (e.g., explaining that "Hypertension" means "High Blood Pressure").
 
-**Install Backend Dependencies:**
-```bash
-cd backend
-python -m venv venv
-.\venv\Scripts\activate  # Windows
-pip install -r requirements.txt
-```
+### 3. Cure AI 🤖
+**Purpose**: An intelligent, context-aware health assistant.
 
-### 2️⃣ Configuration
-
-**Frontend Setup:**
-Create a `.env.local` file in the root directory:
-```env
-# Google Maps API Key for Heatmap
-REACT_APP_GOOGLE_MAPS_API_KEY=your_api_key_here
-
-# Backend API URL
-REACT_APP_API_URL=http://127.0.0.1:5001
-```
-
-**Backend Setup:**
-Create a `.env` file in the `backend` directory:
-```env
-# Gemini AI API Key
-GEMINI_API_KEY=your_gemini_key
-
-# India Gov Data API Key
-DATA_GOV_API_KEY=your_gov_data_key
-```
-
-### 3️⃣ Running the Application
-
-**Start Backend Server:**
-```bash
-cd backend
-python run.py
-# Server runs on http://127.0.0.1:5001
-```
-
-**Start Frontend Application:**
-```bash
-# In a new terminal
-npm start
-# Application opens at http://localhost:3000
-```
+*   **Context Injection**: The AI is fed real-time disease trend data (cached from CureStat) via a System Prompt. This allows it to give advice relevant to current outbreaks (e.g., advising on Dengue prevention during monsoon season if cases are high).
+*   **Hybrid Model Routing**:
+    *   **Llama 3.1 8B**: Handles casual greetings and simple interactions for low latency.
+    *   **Llama 3.3 70B**: Handles complex clinical queries to ensure high accuracy and reasoning capabilities.
 
 ---
 
-## 🛠️ Tech Stack
-- **Frontend**: React, Tailwind CSS, Framer Motion, Recharts
-- **Backend**: Flask, Pandas, Python
-- **AI/ML**: Google Gemini 2.0, Tesseract OCR
-- **Database**: Firebase Firestore
-- **Auth**: Firebase Authentication
+## 🚀 Key Features
 
-## 🔐 Security
-- Environment variables for sensitive keys.
-- Firebase security rules for data protection.
-- Client-side data processing for privacy.
+### 🧑‍⚕️ For Patients (Active Module)
+*   **Medical Portfolio**: A central hub for health stats (BP, BMI, Heart Rate), upcoming appointments, and active prescriptions.
+*   **Digital Health Locker**: Securely upload, store, and categorize medical records (Lab Reports, Prescriptions, Imaging).
+*   **Cure Analyzer**: Instantly convert physical reports into digital, understandable summaries using the dual-core AI pipeline.
+*   **Cure AI Chatbot**: 24/7 access to a health assistant that knows the current disease landscape of India.
+*   **Medication Tracker**: Visual tracking of active medicines with dosage and frequency details extracted from your records.
+*   **Doctor Discovery**: Browse specialist profiles and book appointments.
+
+### 👨‍⚕️ For Doctors (Under Development)
+*   **Doctor Portal**: A dedicated workspace for medical practitioners (Currently in **Pre-Development/Alpha Phase**).
+*   **Profile Management**: Doctors can manage their display profile, specialization details, and verification status.
+*   **Availability Toggle**: Simple online/offline switch to manage patient bookings.
+*   **Patient Verification**: (Planned) Secure handshake protocol to view patient records with consent.
 
 ---
 
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+## �️ Backend Technologies
+
+The backend is built as a modular Flask application optimized for AI inference and data processing.
+
+*   **Framework**: **Flask** (Python) - Lightweight and flexible for microservices.
+*   **AI Inference Engine**: **Groq API**
+    *   Delivers ultra-low latency inference for Llama 3 models.
+    *   Used for both VLM (Vision) and Text generation.
+*   **Optical Character Recognition (OCR)**:
+    *   **Groq VLM**: Primary tool for structure extraction.
+    *   **Tesseract OCR** (`pytesseract`): Fallback engine for raw text extraction.
+*   **Data Processing**:
+    *   **Pandas**: For manipulating epidemiological datasets.
+    *   **NumPy**: For statistical analysis of health trends.
+*   **Server**: **Gunicorn** - Production-grade WSGI server for handling concurrent requests.
+
+---
+
+## 💾 Storage & Database (Firebase)
+
+The project relies on a serverless **Firebase** architecture for security and scalability.
+
+### 1. Authentication (`Firebase Auth`)
+*   Handles user sign-up/login via Email/Password and Google OAuth.
+*   Manages Identity Tokens for securing API requests.
+
+### 2. Database (`Cloud Firestore`)
+*   **Structure**: NoSQL Document-based.
+*   **Collections**:
+    *   `users/{uid}`: Stores user profile, roles, and health stats.
+    *   `users/{uid}/medical_records`: Stores metadata of uploaded files (file URL, doctor name, date).
+    *   `users/{uid}/appointments`: Tracks booking history.
+
+### 3. File Storage (`Cloud Storage`)
+*   Secure bucket for storing actual medical document files (Images/PDFs).
+*   Files are organized by User ID to enforce privacy and access control.
+
+---
+
+## 📡 API Setup & Endpoints
+
+The Flask backend exposes RESTful endpoints for the frontend React application.
+
+### AI Endpoints
+*   `POST /api/health-assistant/chat`:
+    *   Accepts a message history.
+    *   Routes to **Groq Llama 3** (8B or 70B) based on complexity.
+    *   Returns a context-aware medical response.
+*   `POST /api/analyzer/process`:
+    *   Accepts a file upload (`FormData`).
+    *   Triggers the **Two-Step AI Pipeline** (VLM -> Summary).
+    *   Returns structured JSON (medications, diseases) and a plain-text summary.
+
+### Data Endpoints
+*   `GET /api/disease-trends`:
+    *   Returns the top 10 outbreak trends from the local cache (`disease_data_cache.json`).
+*   `GET /api/resource-distribution`:
+    *   Returns comparative health infrastructure data (Urban vs Rural beds) for visualizations.
+
+### Context Management
+*   `POST /api/health-assistant/clear`: Resets the conversation context for the AI.
