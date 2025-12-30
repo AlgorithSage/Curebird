@@ -73,18 +73,18 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [] }) => {
     if (!isOpen) return null;
 
     const VitalInput = ({ icon: Icon, label, value, onChange, placeholder, unit }) => (
-        <div className="space-y-2">
-            <label className="text-[10px] font-black text-amber-500/50 uppercase tracking-widest ml-1">{label}</label>
-            <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.5rem] transition-all">
-                <Icon className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={18} />
+        <div className="space-y-3">
+            <label className="text-[12px] font-black text-amber-500/70 uppercase tracking-widest ml-1">{label}</label>
+            <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all">
+                <Icon className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
                 <input
                     type="text"
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={placeholder}
-                    className="w-full bg-transparent border-none outline-none pl-12 pr-12 text-sm text-white placeholder-stone-700 font-medium"
+                    className="w-full bg-transparent border-none outline-none pl-12 pr-14 text-base text-white placeholder-stone-700 font-medium"
                 />
-                <span className="absolute right-4 text-[10px] font-black text-stone-600 uppercase">{unit}</span>
+                <span className="absolute right-4 text-[11px] font-black text-stone-600 uppercase">{unit}</span>
             </div>
         </div>
     );
@@ -132,8 +132,8 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [] }) => {
                                     <Activity size={22} />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-white tracking-tight">Vitals Monitor</h2>
-                                    <p className="text-[10px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-0.5">Physiological Entry</p>
+                                    <h2 className="text-3xl font-bold text-white tracking-tight">Vitals Monitor</h2>
+                                    <p className="text-[11px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-1">Physiological Entry</p>
                                 </div>
                             </div>
                             <button onClick={onClose} className="p-2.5 text-stone-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-full transition-all duration-300">
@@ -145,14 +145,14 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [] }) => {
                         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar relative z-10">
                             <form id="vitals-form" onSubmit={handleSubmit} className="space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Select Patient</label>
-                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.5rem] transition-all font-sans">
-                                            <User className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={18} />
+                                    <div className="space-y-3">
+                                        <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-widest ml-1">Select Patient</label>
+                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all font-sans">
+                                            <User className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
                                             <select
                                                 value={patientId}
                                                 onChange={(e) => setPatientId(e.target.value)}
-                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-sm text-white appearance-none cursor-pointer"
+                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-base text-white appearance-none cursor-pointer"
                                                 required
                                             >
                                                 <option value="" disabled className="bg-stone-900">Choose Patient...</option>
@@ -192,14 +192,14 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [] }) => {
                             {!error && !success && <div></div>}
 
                             <div className="flex items-center gap-6">
-                                <button onClick={onClose} className="text-stone-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">Cancel</button>
+                                <button onClick={onClose} className="text-stone-500 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors">Cancel</button>
                                 <motion.button
                                     form="vitals-form"
                                     type="submit"
                                     disabled={loading || success}
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-black text-xs font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 flex items-center gap-2 disabled:opacity-50"
+                                    className="px-10 py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-black text-sm font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 flex items-center gap-2 disabled:opacity-50"
                                 >
                                     {loading ? <Loader size={16} className="animate-spin" /> : <CheckCircle size={16} />}
                                     {loading ? 'Logging...' : 'Secure Vitals Log'}

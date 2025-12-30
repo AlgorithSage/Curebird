@@ -176,14 +176,14 @@ const DashboardOverview = ({ onAddRecord }) => (
                         {/* Content Container */}
                         <div className="relative z-10 flex flex-col items-center">
                             <div className={`p-6 rounded-2xl bg-amber-950/40 border border-amber-500/20 shadow-lg group-hover:border-amber-400/50 group-hover:shadow-amber-500/40 group-hover:scale-110 transition-all duration-300 mb-6 ${b.c}`}>
-                                <b.icon size={42} strokeWidth={2.5} />
+                                <b.icon size={44} strokeWidth={2.5} />
                             </div>
 
-                            <div className="space-y-2">
-                                <span className="block text-sm font-black uppercase tracking-[0.25em] text-amber-50/90 group-hover:text-amber-300 transition-colors drop-shadow-lg">
+                            <div className="space-y-3">
+                                <span className="block text-base font-black uppercase tracking-[0.25em] text-amber-50/90 group-hover:text-amber-300 transition-colors drop-shadow-lg">
                                     {b.l}
                                 </span>
-                                <span className="block text-[10px] font-bold text-amber-500/30 uppercase tracking-[0.15em] group-hover:text-amber-500/60 transition-colors">
+                                <span className="block text-[11px] font-bold text-amber-500/30 uppercase tracking-[0.15em] group-hover:text-amber-500/50 transition-colors">
                                     {b.desc}
                                 </span>
                             </div>

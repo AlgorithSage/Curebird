@@ -114,8 +114,8 @@ const EmergencyAlertModal = ({ isOpen, onClose, patients = [] }) => {
                                     <Siren size={24} />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">{level === 'rapid_response' ? 'Rapid Response' : 'Code Blue'}</h2>
-                                    <p className="text-[10px] text-stone-400 font-black uppercase tracking-[0.4em]">Critical Escalation</p>
+                                    <h2 className="text-4xl font-black text-white tracking-tighter italic uppercase">{level === 'rapid_response' ? 'Rapid Response' : 'Code Blue'}</h2>
+                                    <p className="text-[12px] text-stone-400 font-black uppercase tracking-[0.4em] mt-1">Critical Escalation</p>
                                 </div>
                             </div>
                             <button onClick={onClose} className="p-2 text-stone-500 hover:text-white transition-colors">
@@ -126,14 +126,14 @@ const EmergencyAlertModal = ({ isOpen, onClose, patients = [] }) => {
                         <div className="flex-1 p-8 space-y-8 relative z-10">
                             <form id="emergency-form" onSubmit={handleSubmit} className="space-y-8">
                                 {/* Urgent Patient Selection */}
-                                <div className="space-y-3">
-                                    <label className="text-[11px] font-black text-stone-500 uppercase tracking-widest ml-1">Identify Patient</label>
-                                    <div className="relative flex items-center bg-black/40 border border-white/5 focus-within:border-amber-500/30 rounded-2xl h-16 transition-all overflow-hidden group">
-                                        <User className="absolute left-5 text-stone-600 group-focus-within:text-amber-500 transition-colors" size={20} />
+                                <div className="space-y-4">
+                                    <label className="text-[14px] font-black text-stone-500 uppercase tracking-widest ml-1">Identify Patient</label>
+                                    <div className="relative flex items-center bg-black/40 border border-white/5 focus-within:border-amber-500/30 rounded-2xl h-[4.2rem] transition-all overflow-hidden group">
+                                        <User className="absolute left-6 text-stone-600 group-focus-within:text-amber-500 transition-colors" size={24} />
                                         <select
                                             value={patientId}
                                             onChange={(e) => setPatientId(e.target.value)}
-                                            className="w-full bg-transparent border-none outline-none pl-14 pr-6 text-base text-white appearance-none cursor-pointer font-bold"
+                                            className="w-full bg-transparent border-none outline-none pl-16 pr-8 text-lg text-white appearance-none cursor-pointer font-bold"
                                             required
                                         >
                                             <option value="" disabled className="bg-stone-900">Select Patient in Distress...</option>
@@ -163,13 +163,13 @@ const EmergencyAlertModal = ({ isOpen, onClose, patients = [] }) => {
                                 </div>
 
                                 {/* Status Input */}
-                                <div className="space-y-3">
-                                    <label className="text-[11px] font-black text-stone-500 uppercase tracking-widest ml-1">Condition Overview</label>
+                                <div className="space-y-4">
+                                    <label className="text-[14px] font-black text-stone-500 uppercase tracking-widest ml-1">Condition Overview</label>
                                     <textarea
                                         value={status}
                                         onChange={(e) => setStatus(e.target.value)}
                                         placeholder="e.g. Unconscious, Severe Respiratory Distress..."
-                                        className="w-full bg-black/40 border border-white/5 focus:border-rose-500/30 rounded-2xl p-6 text-base text-white placeholder-stone-800 outline-none transition-all resize-none h-32 font-medium leading-relaxed"
+                                        className="w-full bg-black/40 border border-white/5 focus:border-rose-500/30 rounded-2xl p-8 text-lg text-white placeholder-stone-800 outline-none transition-all resize-none h-40 font-medium leading-relaxed"
                                         required
                                     />
                                 </div>
@@ -183,12 +183,12 @@ const EmergencyAlertModal = ({ isOpen, onClose, patients = [] }) => {
                                 disabled={loading || success}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
-                                className={`w-full py-5 rounded-2xl flex items-center justify-center gap-4 text-sm font-black uppercase tracking-[0.2em] transition-all shadow-2xl ${level === 'rapid_response' ? 'bg-amber-500 text-black shadow-amber-500/20' : 'bg-rose-600 text-white shadow-rose-600/30'}`}
+                                className={`w-full py-6 rounded-2xl flex items-center justify-center gap-6 text-base font-black uppercase tracking-[0.25em] transition-all shadow-2xl ${level === 'rapid_response' ? 'bg-amber-500 text-black shadow-amber-500/20' : 'bg-rose-600 text-white shadow-rose-600/30'}`}
                             >
-                                {loading ? <Loader className="animate-spin" size={20} /> : <Zap size={20} />}
+                                {loading ? <Loader className="animate-spin" size={24} /> : <Zap size={24} />}
                                 {loading ? 'BROADCASTING...' : success ? 'ALERT TRANSMITTED' : `TRIGGER ${level === 'rapid_response' ? 'RAPID RESPONSE' : 'CODE BLUE'}`}
                             </motion.button>
-                            <p className="text-[9px] text-center text-stone-600 mt-4 font-black uppercase tracking-widest">Immediate response team will be notified upon submission</p>
+                            <p className="text-[10px] text-center text-stone-600 mt-5 font-black uppercase tracking-widest">Immediate response team will be notified upon submission</p>
                         </div>
                     </div>
                 </motion.div>

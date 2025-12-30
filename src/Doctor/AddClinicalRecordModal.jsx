@@ -20,7 +20,7 @@ const TabButton = ({ children, active, onClick, colorClass = "text-amber-400" })
             type="button"
             onClick={onClick}
             onMouseMove={handleMouseMove}
-            className={`relative flex-1 py-3 rounded-xl text-xs font-bold transition-all duration-300 overflow-hidden group border ${active
+            className={`relative flex-1 py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 overflow-hidden group border ${active
                 ? 'bg-amber-500/10 border-amber-500 ' + colorClass
                 : 'bg-stone-900 border-white/5 text-stone-500 hover:text-stone-300'
                 }`}
@@ -190,10 +190,8 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], doctorId, doct
                                 <FileText size={22} />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-bold text-white tracking-tight">
-                                    Add Clinical Record
-                                </h2>
-                                <p className="text-[10px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-0.5">New Entry</p>
+                                <h2 className="text-3xl font-bold text-white tracking-tight">Add Clinical Record</h2>
+                                <p className="text-[11px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-1">Medical Documentation</p>
                             </div>
                         </div>
                         <button onClick={onClose} className="p-2.5 text-stone-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-full transition-all duration-300">
@@ -207,39 +205,35 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], doctorId, doct
 
                             {/* Row 1: Patient & Date */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Patient</label>
-                                    <div className="relative group">
-                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] group-focus-within:border-amber-500/30 rounded-xl transition-all h-[3.5rem]">
-                                            <User className="absolute left-4 text-stone-600 group-focus-within:text-amber-500 transition-colors" size={18} />
-                                            <select
-                                                value={formData.patientId}
-                                                onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
-                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-sm text-white appearance-none cursor-pointer font-medium"
-                                                required
-                                            >
-                                                <option value="" disabled className="bg-stone-900">Select Patient...</option>
-                                                {patients.map(p => (
-                                                    <option key={p.id} value={p.id} className="bg-stone-900">{p.name} (ID: {p.id.slice(0, 6)})</option>
-                                                ))}
-                                            </select>
-                                        </div>
+                                <div className="space-y-3">
+                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Patient Name</label>
+                                    <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all font-sans">
+                                        <User className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
+                                        <select
+                                            value={formData.patientId}
+                                            onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
+                                            className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-base text-white appearance-none cursor-pointer"
+                                            required
+                                        >
+                                            <option value="" disabled className="bg-stone-900">Choose Patient...</option>
+                                            {patients.map(p => (
+                                                <option key={p.id} value={p.id} className="bg-stone-900">{p.name} (ID: {p.id.slice(0, 6)})</option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Date</label>
-                                    <div className="relative group">
-                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] group-focus-within:border-amber-500/30 rounded-xl transition-all h-[3.5rem]">
-                                            <Calendar className="absolute left-4 text-stone-600 group-focus-within:text-amber-500 transition-colors" size={18} />
-                                            <input
-                                                type="date"
-                                                value={formData.date}
-                                                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-sm text-white [color-scheme:dark] transition-all font-medium"
-                                                required
-                                            />
-                                        </div>
+                                <div className="space-y-3">
+                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Record Date</label>
+                                    <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all font-sans">
+                                        <Calendar className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
+                                        <input
+                                            type="date"
+                                            value={formData.date}
+                                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                            className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-base text-white [color-scheme:dark] transition-all font-medium"
+                                            required
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -247,7 +241,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], doctorId, doct
                             {/* Row 2: Type & Priority */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
-                                    <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Record Type</label>
+                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Record Type</label>
                                     <div className="grid grid-cols-2 gap-2 relative">
                                         {recordTypes.slice(0, 2).map(type => (
                                             <TabButton
@@ -269,7 +263,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], doctorId, doct
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Priority</label>
+                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Priority</label>
                                     <div className="flex gap-2 relative">
                                         {priorities.map(p => (
                                             <TabButton
@@ -286,27 +280,28 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], doctorId, doct
                             </div>
 
                             {/* Row 3: Title */}
-                            <div className="space-y-3">
-                                <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Title / Subject</label>
+                            <div className="space-y-4">
+                                <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Clinical Title</label>
                                 <input
                                     type="text"
-                                    placeholder="e.g. Annual Physical Results"
+                                    placeholder="e.g. Annual Cardiovascular Assessment"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl py-4 px-5 text-[15px] text-white placeholder-stone-700 outline-none transition-all font-medium"
+                                    className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] px-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
                                     required
                                 />
                             </div>
 
                             {/* Row 4: Description */}
-                            <div className="space-y-3">
-                                <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Clinical Notes</label>
+                            <div className="space-y-4">
+                                <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Clinical Details</label>
                                 <textarea
-                                    rows={4}
-                                    placeholder="Enter detailed clinical findings, diagnosis, or instructions..."
+                                    rows={5}
+                                    placeholder="Enter full clinical observations, symptoms, and assessments..."
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-2xl py-4 px-5 text-[15px] text-white placeholder-stone-800 outline-none transition-all custom-scrollbar resize-none font-medium leading-relaxed"
+                                    className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-2xl py-5 px-6 text-base text-white placeholder-stone-800 outline-none transition-all custom-scrollbar resize-none leading-relaxed font-medium"
+                                    required
                                 />
                             </div>
 
@@ -358,19 +353,14 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], doctorId, doct
                         )}
 
                         <div className="flex items-center gap-6">
-                            <button
-                                onClick={onClose}
-                                className="px-5 py-2.5 rounded-xl text-sm font-bold text-stone-500 hover:text-white transition-all uppercase tracking-widest"
-                            >
-                                Cancel
-                            </button>
+                            <button onClick={onClose} className="text-stone-500 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors">Cancel</button>
                             <motion.button
-                                type="submit"
                                 form="add-record-form"
+                                type="submit"
                                 disabled={loading || success}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
-                                className="px-10 py-3.5 rounded-xl text-[14px] font-black text-black bg-gradient-to-r from-amber-400 to-amber-600 disabled:opacity-30 transition-all flex items-center gap-3 uppercase tracking-widest shadow-xl shadow-amber-900/20"
+                                className="px-10 py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-black text-sm font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 flex items-center gap-2 disabled:opacity-50"
                             >
                                 {loading ? <Loader size={18} className="animate-spin" /> : <CheckCircle size={18} />}
                                 {loading ? 'Saving...' : 'Save Record'}

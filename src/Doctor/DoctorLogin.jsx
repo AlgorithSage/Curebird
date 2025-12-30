@@ -89,7 +89,7 @@ export default function DoctorLogin({ onSwitchToSignup }) {
 
             <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                    <label className="text-xs text-slate-400" htmlFor="d-email">Doctor Email</label>
+                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-widest ml-1" htmlFor="d-email">Doctor Email</label>
                     <input
                         id="d-email"
                         type="email"
@@ -97,11 +97,11 @@ export default function DoctorLogin({ onSwitchToSignup }) {
                         value={email}
                         placeholder="Enter your doctor email"
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full mt-1 p-3 border bg-slate-800/50 border-slate-700 rounded-md text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+                        className="w-full mt-2 p-4 border bg-slate-900/50 border-white/5 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all text-base font-medium"
                     />
                 </div>
                 <div>
-                    <label className="text-xs text-slate-400" htmlFor="d-password">Password</label>
+                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-widest ml-1" htmlFor="d-password">Password</label>
                     <input
                         id="d-password"
                         type="password"
@@ -109,13 +109,13 @@ export default function DoctorLogin({ onSwitchToSignup }) {
                         value={password}
                         placeholder="Enter your password"
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full mt-1 p-3 border bg-slate-800/50 border-slate-700 rounded-md text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+                        className="w-full mt-2 p-4 border bg-slate-900/50 border-white/5 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all text-base font-medium"
                     />
                 </div>
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-amber-500 text-slate-900 py-3 rounded-lg hover:bg-amber-400 font-semibold transition-colors disabled:opacity-50 mt-2"
+                    className="w-full bg-gradient-to-r from-amber-400 to-amber-600 text-slate-900 py-4 rounded-xl hover:from-amber-300 hover:to-amber-500 font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 transition-all disabled:opacity-50 mt-4 text-sm"
                 >
                     {loading ? 'Logging in...' : 'Login as Doctor'}
                 </button>

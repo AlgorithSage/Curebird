@@ -157,8 +157,8 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [] }) => {
                                     <Pill size={22} />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-white tracking-tight">New Prescription</h2>
-                                    <p className="text-[10px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-0.5">Clinical Order</p>
+                                    <h2 className="text-3xl font-bold text-white tracking-tight">New Prescription</h2>
+                                    <p className="text-[11px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-1">Clinical Order</p>
                                 </div>
                             </div>
                             <button onClick={onClose} className="p-2.5 text-stone-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-full transition-all duration-300">
@@ -171,14 +171,14 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [] }) => {
                             <form id="prescription-form" onSubmit={handleSubmit} className="space-y-8">
                                 {/* Patient Selection */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Select Patient</label>
-                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.5rem] transition-all overflow-hidden font-sans">
-                                            <User className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={18} />
+                                    <div className="space-y-3">
+                                        <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Select Patient</label>
+                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all overflow-hidden font-sans">
+                                            <User className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
                                             <select
                                                 value={patientId}
                                                 onChange={(e) => setPatientId(e.target.value)}
-                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-sm text-white appearance-none cursor-pointer"
+                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-base text-white appearance-none cursor-pointer"
                                                 required
                                             >
                                                 <option value="" disabled className="bg-stone-900">Choose Patient...</option>
@@ -186,14 +186,14 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [] }) => {
                                             </select>
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Primary Diagnosis</label>
+                                    <div className="space-y-3">
+                                        <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Primary Diagnosis</label>
                                         <input
                                             type="text"
                                             placeholder="e.g. Type 2 Diabetes"
                                             value={diagnosis}
                                             onChange={(e) => setDiagnosis(e.target.value)}
-                                            className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.5rem] px-5 text-sm text-white outline-none transition-all placeholder-stone-700 font-medium"
+                                            className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] px-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
                                             required
                                         />
                                     </div>
@@ -202,13 +202,13 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [] }) => {
                                 {/* Medications Section */}
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Medications</label>
+                                        <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Medications</label>
                                         <button
                                             type="button"
                                             onClick={addMedication}
-                                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase tracking-widest hover:bg-amber-500/20 transition-all border border-amber-500/20"
+                                            className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-500/10 text-amber-500 text-[11px] font-black uppercase tracking-widest hover:bg-amber-500/20 transition-all border border-amber-500/20"
                                         >
-                                            <Plus size={14} /> Add Medicine
+                                            <Plus size={16} /> Add Medicine
                                         </button>
                                     </div>
 
@@ -230,23 +230,23 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [] }) => {
 
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                     <div className="space-y-2">
-                                                        <label className="text-[9px] font-black text-stone-500 uppercase tracking-widest">Medicine Name</label>
+                                                        <label className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Medicine Name</label>
                                                         <input
                                                             type="text"
                                                             placeholder="Metformin, Lisinopril..."
                                                             value={med.name}
                                                             onChange={(e) => updateMedication(idx, 'name', e.target.value)}
-                                                            className="w-full bg-stone-900/50 border border-white/5 focus:border-amber-500/30 rounded-xl py-3 px-4 text-sm text-white outline-none font-medium"
+                                                            className="w-full bg-stone-900/50 border border-white/5 focus:border-amber-500/30 rounded-xl py-3.5 px-5 text-base text-white outline-none font-medium"
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label className="text-[9px] font-black text-stone-500 uppercase tracking-widest">Dosage</label>
+                                                        <label className="text-[10px] font-black text-stone-500 uppercase tracking-widest">Dosage</label>
                                                         <input
                                                             type="text"
                                                             placeholder="500mg, 10ml..."
                                                             value={med.dosage}
                                                             onChange={(e) => updateMedication(idx, 'dosage', e.target.value)}
-                                                            className="w-full bg-stone-900/50 border border-white/5 focus:border-amber-500/30 rounded-xl py-3 px-4 text-sm text-white outline-none font-medium"
+                                                            className="w-full bg-stone-900/50 border border-white/5 focus:border-amber-500/30 rounded-xl py-3.5 px-5 text-base text-white outline-none font-medium"
                                                         />
                                                     </div>
                                                 </div>
@@ -309,14 +309,14 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [] }) => {
                             {!error && !success && <div></div>}
 
                             <div className="flex items-center gap-6">
-                                <button onClick={onClose} className="text-stone-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">Cancel</button>
+                                <button onClick={onClose} className="text-stone-500 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors">Cancel</button>
                                 <motion.button
                                     form="prescription-form"
                                     type="submit"
                                     disabled={loading || success}
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-black text-xs font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 flex items-center gap-2 disabled:opacity-50"
+                                    className="px-10 py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-black text-sm font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 flex items-center gap-2 disabled:opacity-50"
                                 >
                                     {loading ? <Loader size={16} className="animate-spin" /> : <CheckCircle size={16} />}
                                     {loading ? 'Validating...' : 'Authorize Prescription'}

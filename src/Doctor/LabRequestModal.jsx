@@ -147,8 +147,8 @@ const LabRequestModal = ({ isOpen, onClose, patients = [] }) => {
                                     <Microscope size={22} />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-white tracking-tight">Lab Request</h2>
-                                    <p className="text-[10px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-0.5">Diagnostic Order</p>
+                                    <h2 className="text-3xl font-bold text-white tracking-tight">Lab Request</h2>
+                                    <p className="text-[11px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-1">Diagnostic Order</p>
                                 </div>
                             </div>
                             <button onClick={onClose} className="p-2.5 text-stone-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-full transition-all duration-300">
@@ -161,14 +161,14 @@ const LabRequestModal = ({ isOpen, onClose, patients = [] }) => {
                             <form id="lab-request-form" onSubmit={handleSubmit} className="space-y-8">
                                 {/* Row 1: Patient & Urgency */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Select Patient</label>
-                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.5rem] transition-all overflow-hidden font-sans">
-                                            <User className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={18} />
+                                    <div className="space-y-3">
+                                        <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Select Patient</label>
+                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all overflow-hidden font-sans">
+                                            <User className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
                                             <select
                                                 value={patientId}
                                                 onChange={(e) => setPatientId(e.target.value)}
-                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-sm text-white appearance-none cursor-pointer"
+                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-base text-white appearance-none cursor-pointer"
                                                 required
                                             >
                                                 <option value="" disabled className="bg-stone-900">Choose Patient...</option>
@@ -176,8 +176,8 @@ const LabRequestModal = ({ isOpen, onClose, patients = [] }) => {
                                             </select>
                                         </div>
                                     </div>
-                                    <div className="space-y-4">
-                                        <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Urgency Level</label>
+                                    <div className="space-y-3">
+                                        <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Urgency Level</label>
                                         <div className="flex gap-2">
                                             {urgencyLevels.map(u => (
                                                 <ModalTabButton
@@ -195,8 +195,8 @@ const LabRequestModal = ({ isOpen, onClose, patients = [] }) => {
 
                                 {/* Row 2: Test Category & Specifics */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Test Category</label>
+                                    <div className="space-y-3">
+                                        <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Test Category</label>
                                         <div className="flex gap-1">
                                             {categories.map(c => (
                                                 <ModalTabButton
@@ -209,16 +209,16 @@ const LabRequestModal = ({ isOpen, onClose, patients = [] }) => {
                                             ))}
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Specific Test / Panel</label>
-                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.5rem] transition-all">
-                                            <FileText className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={18} />
+                                    <div className="space-y-3">
+                                        <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Specific Test / Panel</label>
+                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all">
+                                            <FileText className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
                                             <input
                                                 type="text"
                                                 placeholder="e.g. CBC, MRI Brain, HbA1c"
                                                 value={testName}
                                                 onChange={(e) => setTestName(e.target.value)}
-                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-sm text-white placeholder-stone-700 font-medium"
+                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-base text-white placeholder-stone-700 font-medium"
                                                 required
                                             />
                                         </div>
@@ -226,14 +226,14 @@ const LabRequestModal = ({ isOpen, onClose, patients = [] }) => {
                                 </div>
 
                                 {/* Row 3: Instructions */}
-                                <div className="space-y-3">
-                                    <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Preparation Instructions</label>
+                                <div className="space-y-4">
+                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Preparation Instructions</label>
                                     <textarea
                                         rows={4}
                                         placeholder="e.g. Fast for 12 hours, Maintain hydration..."
                                         value={instructions}
                                         onChange={(e) => setInstructions(e.target.value)}
-                                        className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-2xl py-4 px-5 text-sm text-white placeholder-stone-800 outline-none transition-all custom-scrollbar resize-none leading-relaxed font-medium"
+                                        className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-2xl py-5 px-6 text-base text-white placeholder-stone-800 outline-none transition-all custom-scrollbar resize-none leading-relaxed font-medium"
                                     />
                                 </div>
                             </form>
@@ -254,14 +254,14 @@ const LabRequestModal = ({ isOpen, onClose, patients = [] }) => {
                             {!error && !success && <div></div>}
 
                             <div className="flex items-center gap-6">
-                                <button onClick={onClose} className="text-stone-500 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">Cancel</button>
+                                <button onClick={onClose} className="text-stone-500 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors">Cancel</button>
                                 <motion.button
                                     form="lab-request-form"
                                     type="submit"
                                     disabled={loading || success}
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-black text-xs font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 flex items-center gap-2 disabled:opacity-50"
+                                    className="px-10 py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-black text-sm font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 flex items-center gap-2 disabled:opacity-50"
                                 >
                                     {loading ? <Loader size={16} className="animate-spin" /> : <Microscope size={16} />}
                                     {loading ? 'Transmitting...' : 'Issue Lab Request'}
