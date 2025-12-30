@@ -78,7 +78,7 @@ const ClinicalHeader = ({ patient, onBack, onOpenChat }) => (
     </div>
 );
 
-const TimelineItem = ({ date, title, type, doctor, details, delay }) => (
+const TimelineItem = ({ date, title, type, doctor, details, delay, data }) => (
     <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
@@ -103,10 +103,23 @@ const TimelineItem = ({ date, title, type, doctor, details, delay }) => (
                 <span className="text-xs font-mono text-slate-500 bg-black/20 px-2 py-1 rounded">{date}</span>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed">{details}</p>
+
+            {/* Metadata (Vitals) */}
+            {data?.vitals && (
+                <div className="mt-3 flex flex-wrap gap-3 p-2 rounded-lg bg-black/20 border border-white/5">
+                    {data.vitals.bp && <div className="text-[10px] font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">BP: {data.vitals.bp}</div>}
+                    {data.vitals.heartRate && <div className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">HR: {data.vitals.heartRate}</div>}
+                    {data.vitals.spo2 && <div className="text-[10px] font-bold text-sky-400 bg-sky-400/10 px-2 py-0.5 rounded">SpO2: {data.vitals.spo2}%</div>}
+                </div>
+            )}
+
             {/* Attachment Chip */}
-            {type === 'Lab' && (
-                <button className="mt-3 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/50 border border-white/5 text-xs text-sky-400 hover:text-sky-300 hover:border-sky-500/30 transition-all">
-                    <File size={14} /> Report_Full.pdf <Download size={12} className="ml-auto opacity-50" />
+            {data?.fileUrl && (
+                <button
+                    onClick={() => window.open(data.fileUrl, '_blank')}
+                    className="mt-3 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/50 border border-white/5 text-xs text-sky-400 hover:text-sky-300 hover:border-sky-500/30 transition-all"
+                >
+                    <File size={14} /> {data.fileName || 'View Attachment'} <Download size={12} className="ml-auto opacity-50" />
                 </button>
             )}
         </div>
@@ -133,7 +146,7 @@ const DocumentGrid = () => (
     </div>
 );
 
-const PatientWorkspace = ({ patient, onBack, onOpenChat }) => {
+const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -295,6 +308,7 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat }) => {
                                                         rec.type === 'lab_report' ? 'Lab' : 'General'}
                                                 doctor={rec.doctorName || 'Doctor'}
                                                 details={rec.description}
+                                                data={rec}
                                             />
                                         ))
                                     ) : (
@@ -314,7 +328,10 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat }) => {
                                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
                                             <input type="text" placeholder="Search medical records..." className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500/50 transition-all text-slate-200" />
                                         </div>
-                                        <button className="px-4 py-2 bg-emerald-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-colors">
+                                        <button
+                                            onClick={() => onAddAction && onAddAction('report')}
+                                            className="px-4 py-2 bg-emerald-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-colors"
+                                        >
                                             <UploadIcon /> Upload
                                         </button>
                                     </div>

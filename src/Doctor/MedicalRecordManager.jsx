@@ -9,7 +9,7 @@ import {
 import { getFirestore, collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { auth } from '../App';
 
-const MedicalRecordManager = () => {
+const MedicalRecordManager = ({ onAddAction }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
@@ -103,11 +103,55 @@ const MedicalRecordManager = () => {
                                 </div>
                                 <span className="text-xs font-mono text-slate-500 border border-slate-700/50 px-2 py-1 rounded bg-slate-900/50">{rec.date}</span>
                             </div>
+
+                            {/* Metadata Display (Vitals etc.) */}
+                            {rec.vitals && (
+                                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                                    {rec.vitals.bp && (
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">BP</span>
+                                            <span className="text-sm font-bold text-amber-500">{rec.vitals.bp} <span className="text-[10px] text-slate-600 font-normal">mmHg</span></span>
+                                        </div>
+                                    )}
+                                    {rec.vitals.heartRate && (
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">HR</span>
+                                            <span className="text-sm font-bold text-emerald-500">{rec.vitals.heartRate} <span className="text-[10px] text-slate-600 font-normal">BPM</span></span>
+                                        </div>
+                                    )}
+                                    {rec.vitals.temp && (
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Temp</span>
+                                            <span className="text-sm font-bold text-stone-300">{rec.vitals.temp} <span className="text-[10px] text-slate-600 font-normal">°F</span></span>
+                                        </div>
+                                    )}
+                                    {rec.vitals.spo2 && (
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">SpO2</span>
+                                            <span className="text-sm font-bold text-sky-400">{rec.vitals.spo2}%</span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
-                        <button className="p-2 hover:bg-amber-500/10 rounded-full text-slate-500 hover:text-amber-400 transition-colors">
-                            <Download size={18} />
-                        </button>
+                        <div className="flex gap-2">
+                            {rec.fileUrl && (
+                                <button
+                                    onClick={() => window.open(rec.fileUrl, '_blank')}
+                                    className="p-2 hover:bg-amber-500/10 rounded-full text-slate-500 hover:text-amber-400 transition-colors"
+                                    title="View Document"
+                                >
+                                    <FileText size={18} />
+                                </button>
+                            )}
+                            <button
+                                onClick={() => rec.fileUrl ? window.open(rec.fileUrl, '_blank') : null}
+                                className="p-2 hover:bg-amber-500/10 rounded-full text-slate-500 hover:text-amber-400 transition-colors"
+                            >
+                                <Download size={18} />
+                            </button>
+                        </div>
                     </motion.div>
                 ))
             ) : (
@@ -147,17 +191,26 @@ const MedicalRecordManager = () => {
                     </div>
 
                     <div className="flex gap-4 mt-8 relative z-10">
-                        <button className="flex-1 py-4 rounded-xl bg-slate-800/50 hover:bg-amber-500/10 text-slate-300 hover:text-amber-400 text-sm font-bold tracking-wide transition-all border border-white/5 hover:border-amber-500/30 shadow-lg hover:shadow-amber-900/20 flex items-center justify-center gap-2">
+                        <button
+                            onClick={() => rec.fileUrl && window.open(rec.fileUrl, '_blank')}
+                            className="flex-1 py-4 rounded-xl bg-slate-800/50 hover:bg-amber-500/10 text-slate-300 hover:text-amber-400 text-sm font-bold tracking-wide transition-all border border-white/5 hover:border-amber-500/30 shadow-lg hover:shadow-amber-900/20 flex items-center justify-center gap-2"
+                        >
                             View Document
                         </button>
-                        <button className="px-5 py-4 rounded-xl bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors border border-white/5 shadow-lg">
+                        <button
+                            onClick={() => {/* Share logic */ }}
+                            className="px-5 py-4 rounded-xl bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors border border-white/5 shadow-lg"
+                        >
                             <Share2 size={20} />
                         </button>
                     </div>
                 </motion.div>
             ))}
             {/* Add New Report Button */}
-            <button className="glass-card flex flex-col items-center justify-center p-8 border-dashed border-2 border-slate-700 hover:border-amber-500/50 group transition-all text-slate-500 hover:text-amber-400 min-h-[22rem]">
+            <button
+                onClick={() => onAddAction && onAddAction('report')}
+                className="glass-card flex flex-col items-center justify-center p-8 border-dashed border-2 border-slate-700 hover:border-amber-500/50 group transition-all text-slate-500 hover:text-amber-400 min-h-[22rem]"
+            >
                 <div className="p-6 rounded-full bg-slate-900 group-hover:bg-amber-500/10 transition-colors mb-6 shadow-xl group-hover:shadow-amber-500/20">
                     <Plus size={40} />
                 </div>
@@ -183,8 +236,8 @@ const MedicalRecordManager = () => {
                             <Pill size={24} />
                         </div>
                         <div>
-                            <h4 className="font-bold text-slate-100 text-lg group-hover:text-amber-400 transition-colors">{rec.diagnosis}</h4>
-                            <p className="text-sm text-slate-500">{rec.medicines.length} Medicines Prescribed • {rec.date}</p>
+                            <h4 className="font-bold text-slate-100 text-lg group-hover:text-amber-400 transition-colors">{rec.diagnosis || rec.title}</h4>
+                            <p className="text-sm text-slate-500">{(rec.medicines?.length || 0)} Medicines Prescribed • {rec.date}</p>
                         </div>
                     </div>
 
@@ -203,7 +256,10 @@ const MedicalRecordManager = () => {
                 </motion.div>
             ))}
             {/* New Prescription Button */}
-            <button className="w-full glass-card p-4 border-dashed border-2 border-slate-700 hover:border-amber-500/50 text-slate-500 hover:text-amber-400 transition-colors flex items-center justify-center gap-2 group">
+            <button
+                onClick={() => onAddAction && onAddAction('prescription')}
+                className="w-full glass-card p-4 border-dashed border-2 border-slate-700 hover:border-amber-500/50 text-slate-500 hover:text-amber-400 transition-colors flex items-center justify-center gap-2 group"
+            >
                 <Plus size={20} className="group-hover:scale-110 transition-transform" />
                 <span className="font-bold">Create New Prescription</span>
             </button>
@@ -260,7 +316,10 @@ const MedicalRecordManager = () => {
             ))}
 
             {/* Add New Note Button */}
-            <button className="glass-card flex flex-col items-center justify-center p-8 border-dashed border-2 border-slate-700 hover:border-amber-500/50 group transition-all text-slate-500 hover:text-amber-400 min-h-[12rem]">
+            <button
+                onClick={() => onAddAction && onAddAction('note')}
+                className="glass-card flex flex-col items-center justify-center p-8 border-dashed border-2 border-slate-700 hover:border-amber-500/50 group transition-all text-slate-500 hover:text-amber-400 min-h-[12rem]"
+            >
                 <div className="p-4 rounded-full bg-slate-800 group-hover:bg-amber-500/10 transition-colors mb-3">
                     <Plus size={32} />
                 </div>

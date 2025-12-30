@@ -24,6 +24,10 @@ import DoctorNotifications from './DoctorNotifications';
 import DoctorSecurity from './DoctorSecurity';
 import DoctorHelp from './DoctorHelp';
 import AddClinicalRecordModal from './AddClinicalRecordModal';
+import NewPrescriptionModal from './NewPrescriptionModal';
+import LabRequestModal from './LabRequestModal';
+import VitalsMonitorModal from './VitalsMonitorModal';
+import EmergencyAlertModal from './EmergencyAlertModal';
 
 // --- Background Components (Top Level) ---
 const InteractiveHexGrid = () => {
@@ -138,16 +142,46 @@ const ViewHeader = ({ icon: Icon, title, description }) => (
 
 const DashboardOverview = ({ onAddRecord }) => (
     <>
-        <div className="glass-card grid grid-cols-2 md:grid-cols-4 gap-6 mb-10 overflow-hidden relative group">
-            {/* Ambient Background Effect in Container */}
-            <div className="absolute top-[-50%] left-[-20%] w-[150%] h-[200%] bg-amber-500/5 rotate-12 blur-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10 relative z-10">
+            {[
+                { icon: FilePlus, l: "New Prescription", c: "text-amber-400", type: 'prescription', desc: 'Secure clinical shorthand' },
+                { icon: Microscope, l: "Lab Request", c: "text-amber-500", type: 'lab', desc: 'Diagnostic requisitions' },
+                { icon: Activity, l: "Vitals Monitor", c: "text-amber-400", type: 'vitals', desc: 'Physiological tracking' },
+                { icon: Siren, l: "Emergency Alert", c: "text-rose-500", type: 'emergency', desc: 'Critical escalation' }
+            ].map((b, i) => (
+                <motion.button
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    whileHover={{ scale: 1.05, translateY: -5 }}
+                    onClick={() => onAddRecord(b.type)}
+                    className="group relative flex flex-col items-center justify-center p-8 rounded-[2rem] bg-gradient-to-br from-[#2e2a0a] via-[#1c1a05] to-[#0c0a05] border border-amber-500/30 shadow-2xl overflow-hidden text-center"
+                >
+                    {/* Subtle Internal Glow */}
+                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent opacity-30" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(251,191,36,0.1),_transparent_70%)] pointer-events-none" />
 
-            {[{ icon: FilePlus, l: "New Prescription", c: "text-sky-400 group-hover:text-amber-400" }, { icon: Microscope, l: "Lab Request", c: "text-purple-400 group-hover:text-amber-400" }, { icon: Activity, l: "Vitals Monitor", c: "text-emerald-400 group-hover:text-amber-400" }, { icon: Siren, l: "Emergency Alert", c: "text-rose-500 group-hover:text-amber-400" }].map((b, i) => (
-                <motion.button key={i} whileHover={{ scale: 1.05 }} className={`flex flex-col items-center gap-4 py-4 rounded-xl hover:bg-white/5 transition-all text-center group/btn relative z-10`}>
-                    <div className={`p-4 rounded-full bg-slate-900/50 border border-white/5 shadow-lg group-hover/btn:shadow-amber-500/50 group-hover/btn:border-amber-500/50 transition-all ${b.c}`}>
-                        <b.icon size={32} />
+                    {/* Content Container */}
+                    <div className="relative z-10 flex flex-col items-center">
+                        <div className={`p-6 rounded-2xl bg-amber-950/40 border border-amber-500/20 shadow-lg group-hover:border-amber-400/50 group-hover:shadow-amber-500/40 group-hover:scale-110 transition-all duration-300 mb-6 ${b.c}`}>
+                            <b.icon size={42} strokeWidth={2.5} />
+                        </div>
+
+                        <div className="space-y-2">
+                            <span className="block text-sm font-black uppercase tracking-[0.25em] text-amber-50/90 group-hover:text-amber-300 transition-colors drop-shadow-lg">
+                                {b.l}
+                            </span>
+                            <span className="block text-[10px] font-bold text-amber-500/30 uppercase tracking-[0.15em] group-hover:text-amber-500/60 transition-colors">
+                                {b.desc}
+                            </span>
+                        </div>
                     </div>
-                    <span className="text-xs font-bold uppercase tracking-widest text-slate-400 group-hover/btn:text-white transition-colors">{b.l}</span>
+
+                    {/* Interaction Flare */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-amber-500/5 blur-3xl rounded-full" />
+                    </div>
                 </motion.button>
             ))}
         </div>
@@ -263,6 +297,10 @@ const DoctorDashboard = ({ user }) => {
     const [workspacePatient, setWorkspacePatient] = useState(null);
     const [targetChatPatientId, setTargetChatPatientId] = useState(null); // For Profile -> Chat Nav
     const [isAddRecordModalOpen, setIsAddRecordModalOpen] = useState(false);
+    const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
+    const [isLabRequestModalOpen, setIsLabRequestModalOpen] = useState(false);
+    const [isVitalsModalOpen, setIsVitalsModalOpen] = useState(false);
+    const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
 
     // MOCK PATIENTS LIST (Ideally fetched from a hook or context)
     const mockPatients = [
@@ -299,6 +337,13 @@ const DoctorDashboard = ({ user }) => {
                             setTargetChatPatientId(patientId);
                             setActiveView('messages');
                         }}
+                        onAddAction={(type) => {
+                            if (type === 'prescription') setIsPrescriptionModalOpen(true);
+                            else if (type === 'lab') setIsLabRequestModalOpen(true);
+                            else if (type === 'vitals') setIsVitalsModalOpen(true);
+                            else if (type === 'emergency') setIsEmergencyModalOpen(true);
+                            else setIsAddRecordModalOpen(true);
+                        }}
                     />
                 );
             }
@@ -313,11 +358,27 @@ const DoctorDashboard = ({ user }) => {
 
         // 3. Fallback/Direct views
         switch (activeView) {
-            case 'dashboard': return <><ViewHeader icon={LayoutDashboard} title="Dashboard" description="Overview of clinical activities" /><DashboardOverview /></>;
+            case 'dashboard': return (
+                <>
+                    <ViewHeader icon={LayoutDashboard} title="Dashboard" description="Overview of clinical activities" />
+                    <DashboardOverview onAddRecord={(type) => {
+                        if (type === 'prescription') setIsPrescriptionModalOpen(true);
+                        if (type === 'lab') setIsLabRequestModalOpen(true);
+                        if (type === 'vitals') setIsVitalsModalOpen(true);
+                        if (type === 'emergency') setIsEmergencyModalOpen(true);
+                    }} />
+                </>
+            );
             case 'patients': return <PatientManagement />;
             case 'appointments_group': return <AppointmentManager view="overview" />;
             case 'consultations': return <ConsultationWorkflow />;
-            case 'medical_records': return <MedicalRecordManager />;
+            case 'medical_records': return <MedicalRecordManager onAddAction={(type) => {
+                if (type === 'prescription') setIsPrescriptionModalOpen(true);
+                else if (type === 'lab') setIsLabRequestModalOpen(true);
+                else if (type === 'vitals') setIsVitalsModalOpen(true);
+                else if (type === 'emergency') setIsEmergencyModalOpen(true);
+                else setIsAddRecordModalOpen(true);
+            }} />;
             case 'analytics': return <DoctorAnalytics onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }} />;
             case 'messages': return <DoctorChat
                 initialPatientId={targetChatPatientId} // Pass target ID
@@ -356,6 +417,30 @@ const DoctorDashboard = ({ user }) => {
             <AddClinicalRecordModal
                 isOpen={isAddRecordModalOpen}
                 onClose={() => setIsAddRecordModalOpen(false)}
+                patients={mockPatients}
+            />
+
+            <NewPrescriptionModal
+                isOpen={isPrescriptionModalOpen}
+                onClose={() => setIsPrescriptionModalOpen(false)}
+                patients={mockPatients}
+            />
+
+            <LabRequestModal
+                isOpen={isLabRequestModalOpen}
+                onClose={() => setIsLabRequestModalOpen(false)}
+                patients={mockPatients}
+            />
+
+            <VitalsMonitorModal
+                isOpen={isVitalsModalOpen}
+                onClose={() => setIsVitalsModalOpen(false)}
+                patients={mockPatients}
+            />
+
+            <EmergencyAlertModal
+                isOpen={isEmergencyModalOpen}
+                onClose={() => setIsEmergencyModalOpen(false)}
                 patients={mockPatients}
             />
 
