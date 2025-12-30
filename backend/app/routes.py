@@ -161,3 +161,22 @@ def patient_chat_reply():
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/disease-insight', methods=['POST'])
+def get_disease_insight():
+    """Generate AI insight for disease metrics."""
+    try:
+        data = request.get_json()
+        disease = data.get('disease')
+        metrics = data.get('metrics')
+        
+        if not disease or not metrics:
+            return jsonify({'error': 'Missing disease or metrics data'}), 400
+            
+        assistant = get_health_assistant()
+        result = assistant.analyze_disease_progress(disease.get('name'), metrics)
+        
+        return jsonify(result)
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500

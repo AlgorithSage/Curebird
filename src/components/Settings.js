@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-import { updateProfile, getAuth } from "firebase/auth";
-import { AnimatePresence, motion } from 'framer-motion';
-import { Settings as SettingsIcon, User, Mail, Shield, AlertTriangle, Save, Camera, BadgeCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { getAuth, updateProfile, updateEmail, updatePassword, deleteUser } from 'firebase/auth';
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { motion, AnimatePresence } from 'framer-motion';
+import { User, Mail, Shield, Save, Camera, AlertTriangle, BadgeCheck, FileText, ArrowRight, Settings as SettingsIcon } from 'lucide-react';
 
 import Header from './Header';
 import { DeleteAccountModal } from './Modals';
+import MedicalDisclaimerModal from './legal/MedicalDisclaimerModal';
 
 const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [displayName, setDisplayName] = useState(user?.displayName || '');
+    const [photoURL, setPhotoURL] = useState(user?.photoURL || '');
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDisclaimerOpen, setIsDisclaimerOpen] = useState(false);
 
     const handleProfileUpdate = async (e) => {
         e.preventDefault();
@@ -47,6 +52,23 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
             console.error("Error updating profile:", error);
         } finally {
             setIsSaving(false);
+        }
+    };
+
+
+
+    const handleDeleteAccount = async () => {
+        try {
+            const user = getAuth().currentUser;
+            if (user) {
+                // Delete user data from Firestore (Optional: Use Cloud Functions for full cleanup)
+                // For MVP, just delete the auth user
+                await deleteUser(user);
+                onLogout();
+            }
+        } catch (error) {
+            console.error("Error deleting account:", error);
+            alert("For security, you may need to re-login before deleting your account.");
         }
     };
 
@@ -234,10 +256,45 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
                             </button>
                         </motion.div>
                     </div>
+                    {/* Legal & Trust */}
+                    <section className="bg-white/50 backdrop-blur-md rounded-2xl p-6 border border-white/60 shadow-sm">
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
+                            <Shield size={16} /> Legal & Compliance
+                        </h3>
+                        <div className="space-y-4">
+                            <button
+                                onClick={() => setIsDisclaimerOpen(true)}
+                                className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition-all group"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                        <FileText size={20} />
+                                    </div>
+                                    <div className="text-left">
+                                        <div className="font-bold text-slate-800">Medical Disclaimer</div>
+                                        <div className="text-xs text-slate-500">Read our liability and safety terms</div>
+                                    </div>
+                                </div>
+                                <ArrowRight size={18} className="text-slate-300 group-hover:text-indigo-500" />
+                            </button>
+                        </div>
+                    </section>
 
                 </main>
                 <AnimatePresence>
-                    {isDeleteModalOpen && <DeleteAccountModal user={user} onClose={() => setIsDeleteModalOpen(false)} />}
+                    {isDeleteModalOpen && (
+                        <DeleteAccountModal
+                            isOpen={isDeleteModalOpen}
+                            onClose={() => setIsDeleteModalOpen(false)}
+                            onConfirm={handleDeleteAccount}
+                        />
+                    )}
+                    {isDisclaimerOpen && (
+                        <MedicalDisclaimerModal
+                            isOpen={isDisclaimerOpen}
+                            onClose={() => setIsDisclaimerOpen(false)}
+                        />
+                    )}
                 </AnimatePresence>
             </div>
         </div>

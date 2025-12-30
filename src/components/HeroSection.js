@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { HeartPulse, Sparkles, Activity, ShieldPlus, FileText, Pill, Calendar, Bot, BarChart2, CheckCircle2, Volume2, VolumeX } from 'lucide-react';
 
-const HeroSection = ({ onOverviewClick, onAddClick, onNavigate }) => {
+const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) => {
     const [isMobile, setIsMobile] = React.useState(false);
     const [isMuted, setIsMuted] = React.useState(true);
     const videoRef = React.useRef(null);
@@ -152,7 +152,45 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate }) => {
                         </div>
 
                         {/* Right Side: Fluid Video Modal */}
-                        <div className="w-full lg:w-1/2 flex items-center justify-center lg:justify-end relative z-20">
+                        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center lg:justify-end relative z-20 space-y-6">
+
+                            {/* Health Index (Moved Here) */}
+                            {healthScore && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="glass-card w-full !p-6 !rounded-3xl border border-white/10 flex items-center justify-between gap-4"
+                                >
+                                    <div>
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <Sparkles size={14} className="text-indigo-400" />
+                                            <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Curebird Health Index</span>
+                                        </div>
+                                        <div className="flex items-baseline gap-1">
+                                            <span className="text-5xl font-black text-white">{healthScore.score}</span>
+                                            <span className="text-sm text-slate-500 font-bold">/100</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 max-w-[200px] leading-tight mt-1">
+                                            Based on log consistency, adherence, and stability.
+                                        </p>
+                                    </div>
+
+                                    <div className="flex flex-col items-end gap-2">
+                                        <div className="bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 flex items-center gap-2">
+                                            <span className="text-[10px] text-slate-500 uppercase font-bold">Tier</span>
+                                            <span className={`text-lg font-black ${healthScore.grade === 'A' ? 'text-emerald-400' : healthScore.grade === 'B' ? 'text-amber-400' : 'text-rose-400'}`}>
+                                                {healthScore.grade}
+                                            </span>
+                                        </div>
+                                        {healthScore.deductions.length === 0 && (
+                                            <div className="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded font-bold border border-emerald-500/20">
+                                                Excellent Stability
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            )}
+
                             <div className="p-4 bg-white/5 backdrop-blur-2xl rounded-[3rem] border border-white/10 shadow-[0_0_120px_-30px_rgba(0,0,0,0.8)] w-full">
                                 <div className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden border border-white/5 bg-slate-900/80 group">
                                     <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-purple-500/5 z-10 pointer-events-none" />

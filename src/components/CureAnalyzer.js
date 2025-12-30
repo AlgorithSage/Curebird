@@ -4,6 +4,8 @@ import { collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { API_BASE_URL } from '../config';
 import Header from './Header';
+import ReviewImportModal from './diseases/ReviewImportModal';
+
 
 const CureAnalyzer = ({ user, db, storage, appId, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -14,6 +16,8 @@ const CureAnalyzer = ({ user, db, storage, appId, onLogout, onLoginClick, onTogg
     const [isSaved, setIsSaved] = useState(false);
     const [isDocSaved, setIsDocSaved] = useState(false);
     const [showTypeSelect, setShowTypeSelect] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -356,10 +360,10 @@ const CureAnalyzer = ({ user, db, storage, appId, onLogout, onLoginClick, onTogg
                                 <p className="text-sm font-semibold text-sky-100">Do you want to save the Analysis of Document?</p>
                                 <div className="flex gap-2">
                                     <button
-                                        onClick={() => setShowSavePrompt(false)}
-                                        className="px-3 py-1.5 rounded-lg border border-slate-600 text-xs font-bold text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                                        onClick={() => setIsImportModalOpen(true)}
+                                        className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 transition-colors shadow-[0_0_10px_rgba(16,185,129,0.3)]"
                                     >
-                                        No
+                                        Import Data
                                     </button>
                                     <button
                                         onClick={handleSave}
@@ -427,6 +431,19 @@ const CureAnalyzer = ({ user, db, storage, appId, onLogout, onLoginClick, onTogg
                     </div>
                 </div>
             </div>
+            {isImportModalOpen && analysisResult && (
+                <ReviewImportModal
+                    userId={user.uid}
+                    analysisData={analysisResult.analysis}
+                    db={db}
+                    onClose={() => setIsImportModalOpen(false)}
+                    onComplete={() => {
+                        setIsImportModalOpen(false);
+                        handleSave(); // Trigger save state update
+                        // Maybe show toast?
+                    }}
+                />
+            )}
         </div>
     );
 };

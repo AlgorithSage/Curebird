@@ -266,6 +266,59 @@ Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
             return True
         return False
 
+    def analyze_disease_progress(self, disease_name, metrics):
+        """
+        Generate a dual-view insight (Patient vs Doctor) for a specific disease trend.
+        Uses 70B model for clinical accuracy.
+        """
+        try:
+            # Format metrics for prompt
+            metrics_str = "Recent Readings:\n"
+            for m in metrics[:10]: # Limit to last 10
+                 metrics_str += f"- {m.get('value')} {m.get('unit')} on {m.get('timestamp')}\n"
+
+            system_prompt = """You are an expert Medical AI Assistant. 
+Your task is to analyze disease progression data and output a JSON response.
+Do NOT output markdown. Output ONLY valid JSON in the following format:
+{
+  "patientView": {
+    "title": "Short, encouraging summary title",
+    "explanation": "Simple, non-medical explanation of the trend (e.g. 'Your sugar levels are stabilizing'). Avoid complex jargon.",
+    "action": "One single, actionable, safe recommendation (e.g. 'Keep walking 20 mins daily')."
+  },
+  "doctorView": {
+    "points": [
+      "Clinical observation 1 (e.g. 'Fasting glucose shows 10% variance')",
+      "Clinical observation 2 (e.g. 'Potential dawn phenomenon observed')",
+      "Risk assessment or pattern note"
+    ]
+  }
+}
+CRITICAL SAFETY:
+- Do NOT diagnose.
+- Do NOT sugest changing medication dosages.
+- If data is critical/dangerous, advise immediate doctor consult.
+"""
+            
+            user_prompt = f"Analyze progress for Condition: {disease_name}.\n{metrics_str}"
+
+            completion = self.client.chat.completions.create(
+                model=self.MODEL_70B,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.5,
+                max_tokens=500,
+                response_format={"type": "json_object"} 
+            )
+            
+            return json.loads(completion.choices[0].message.content)
+
+        except Exception as e:
+            print(f"Disease Analysis Error: {e}")
+            raise e
+
 # Global singleton instance
 _health_assistant = None
 

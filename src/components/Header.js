@@ -72,10 +72,49 @@ const UserProfile = ({ user, onLogout, onNavigate }) => {
             </AnimatePresence>
         </div>
     );
+
+};
+
+// Notification Dropdown Component
+const NotificationDropdown = ({ alerts, onClose }) => {
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [onClose]);
+
+    return (
+        <div ref={dropdownRef} className="absolute right-0 mt-3 w-80 glass rounded-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200 border border-white/10 shadow-2xl">
+            <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                <Bell size={16} className="text-amber-400" /> Notifications
+            </h3>
+            <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                {alerts.length > 0 ? (
+                    alerts.map((alert, i) => (
+                        <div key={i} className={`p-3 rounded-xl border ${alert.severity === 'warning' ? 'bg-amber-500/10 border-amber-500/30' : 'bg-slate-700/50 border-white/5'}`}>
+                            <div className={`text-xs font-bold uppercase mb-1 ${alert.severity === 'warning' ? 'text-amber-400' : 'text-slate-400'}`}>
+                                {alert.title}
+                            </div>
+                            <div className="text-sm text-slate-200">{alert.message}</div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center py-4 text-slate-500 text-sm">No new notifications</div>
+                )}
+            </div>
+        </div>
+    );
 };
 
 // This Header component is now fully responsive
-const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate, onNotificationClick }) => {
+const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate, alerts = [] }) => {
+    const [isNotifOpen, setIsNotifOpen] = useState(false);
 
     // Quick Navigation Items
     const navItems = [
@@ -86,8 +125,6 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
         { name: 'Settings', icon: <Settings size={20} /> },
         { name: 'Contact', icon: <Mail size={20} /> }
     ];
-
-
 
     return (
 
@@ -176,9 +213,15 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                             <button onClick={onShareClick} className="hidden lg:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
                                 <Share2 size={20} />
                             </button>
-                            <button onClick={onNotificationClick} className="hidden lg:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
-                                <Bell size={20} />
-                            </button>
+                            <div className="relative relative-notif-container">
+                                <button onClick={() => setIsNotifOpen(!isNotifOpen)} className="hidden lg:block p-2.5 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white relative">
+                                    <Bell size={20} />
+                                    {alerts.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>}
+                                </button>
+                                <AnimatePresence>
+                                    {isNotifOpen && <NotificationDropdown alerts={alerts} onClose={() => setIsNotifOpen(false)} />}
+                                </AnimatePresence>
+                            </div>
                             <button
                                 onClick={onAddClick}
                                 className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black p-3 sm:px-5 sm:py-2.5 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-sm font-bold border border-white/10"
