@@ -82,7 +82,7 @@ const AddPatientModal = ({ isOpen, onClose, onAddPatient }) => {
                     initial={{ scale: 0.95, opacity: 0, y: 30 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.95, opacity: 0, y: 30 }}
-                    className="relative w-full max-w-5xl bg-[#0f0b05] rounded-[2.5rem] overflow-hidden flex flex-col max-h-[90vh] shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0_0_120px_rgba(245,158,11,0.05)] border border-amber-500/20"
+                    className="relative w-full max-w-5xl bg-[#0f0b05] rounded-[2.5rem] overflow-hidden flex flex-col max-h-[90vh] shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0_0_120px_rgba(245,158,11,0.05)] border border-amber-500/20 animated-border"
                 >
                     {/* Background Effects */}
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/5 blur-[120px] pointer-events-none" />
