@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Users, Search, Filter, ShieldAlert, ArrowRight, Star } from 'lucide-react';
 
-const PatientRosterModal = ({ isOpen, onClose, patients = [], onViewPatient }) => {
+const PatientRosterModal = ({ isOpen, onClose, patients = [], onViewPatient, onAddPatient }) => {
     const [searchTerm, setSearchTerm] = React.useState('');
 
     const filteredPatients = patients.filter(p =>
@@ -63,7 +63,10 @@ const PatientRosterModal = ({ isOpen, onClose, patients = [], onViewPatient }) =
                                 <button className="p-4 bg-slate-900 text-stone-400 hover:text-amber-400 rounded-xl border border-white/5 transition-all">
                                     <Filter size={20} />
                                 </button>
-                                <button className="px-6 py-4 bg-amber-500 text-black font-black uppercase tracking-widest text-xs rounded-xl shadow-lg shadow-amber-500/20 hover:scale-105 transition-all">
+                                <button
+                                    onClick={onAddPatient}
+                                    className="px-6 py-4 bg-amber-500 text-black font-black uppercase tracking-widest text-xs rounded-xl shadow-lg shadow-amber-500/20 hover:scale-105 transition-all"
+                                >
                                     Add Patient
                                 </button>
                             </div>

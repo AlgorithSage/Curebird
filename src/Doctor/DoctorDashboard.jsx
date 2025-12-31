@@ -32,6 +32,7 @@ import PatientRosterModal from './PatientRosterModal';
 import ScheduleQueueModal from './ScheduleQueueModal';
 import ActionInboxModal from './ActionInboxModal';
 import VitalsWatchlistModal from './VitalsWatchlistModal';
+import AddPatientModal from './AddPatientModal';
 
 // --- Background Components (Top Level) ---
 const InteractiveHexGrid = () => {
@@ -349,16 +350,24 @@ const DoctorDashboard = ({ user }) => {
     const [isLabRequestModalOpen, setIsLabRequestModalOpen] = useState(false);
     const [isVitalsModalOpen, setIsVitalsModalOpen] = useState(false);
     const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
+    const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
     const [activeOversightModal, setActiveOversightModal] = useState(null); // 'patients', 'schedule', 'actions', 'vitals'
 
-    // MOCK PATIENTS LIST (Ideally fetched from a hook or context)
-    const mockPatients = [
-        { id: 'pat_001', name: 'Sarah Jenkins' },
-        { id: 'pat_002', name: 'Mike Ross' },
-        { id: 'pat_003', name: 'James Wilson' },
-        { id: 'pat_004', name: 'Emily Clark' },
-        { id: 'pat_005', name: 'Robert Ford' }
-    ];
+    // Managed Patient State
+    const [patients, setPatients] = useState([
+        { id: 'pat_001', name: 'Sarah Jenkins', age: 34, gender: 'F', condition: 'Hypertension', status: 'Stable' },
+        { id: 'pat_002', name: 'Mike Ross', age: 45, gender: 'M', condition: 'Post-Op Recovery', status: 'Critical' },
+        { id: 'pat_003', name: 'James Wilson', age: 29, gender: 'M', condition: 'Routine Checkup', status: 'Stable' },
+        { id: 'pat_004', name: 'Emily Clark', age: 62, gender: 'F', condition: 'Arthritis', status: 'Stable' },
+        { id: 'pat_005', name: 'Robert Ford', age: 78, gender: 'M', condition: 'Cardiac Arrhythmia', status: 'At Risk' }
+    ]);
+
+    const handleAddPatient = (newPatient) => {
+        setPatients(prev => [newPatient, ...prev]);
+        setIsAddPatientModalOpen(false);
+        // Ensure new patient is visible in roster
+        console.log("New Patient Added:", newPatient);
+    };
 
     const handleLogout = () => {
         auth.signOut();
@@ -470,51 +479,56 @@ const DoctorDashboard = ({ user }) => {
             <AddClinicalRecordModal
                 isOpen={isAddRecordModalOpen}
                 onClose={() => setIsAddRecordModalOpen(false)}
-                patients={mockPatients}
+                patients={patients}
                 user={user}
+            />
+
+            <AddPatientModal
+                isOpen={isAddPatientModalOpen}
+                onClose={() => setIsAddPatientModalOpen(false)}
+                onAddPatient={handleAddPatient}
             />
 
             <NewPrescriptionModal
                 isOpen={isPrescriptionModalOpen}
                 onClose={() => setIsPrescriptionModalOpen(false)}
-                patients={mockPatients}
+                patients={patients}
                 user={user}
             />
 
             <LabRequestModal
                 isOpen={isLabRequestModalOpen}
                 onClose={() => setIsLabRequestModalOpen(false)}
-                patients={mockPatients}
+                patients={patients}
                 user={user}
             />
 
             <VitalsMonitorModal
                 isOpen={isVitalsModalOpen}
                 onClose={() => setIsVitalsModalOpen(false)}
-                patients={mockPatients}
+                patients={patients}
                 user={user}
             />
 
             <EmergencyAlertModal
                 isOpen={isEmergencyModalOpen}
                 onClose={() => setIsEmergencyModalOpen(false)}
-                patients={mockPatients}
+                patients={patients}
                 user={user}
             />
 
             <PatientRosterModal
                 isOpen={activeOversightModal === 'patients'}
                 onClose={() => setActiveOversightModal(null)}
-                patients={mockPatients}
+                patients={patients}
                 onViewPatient={(p) => {
                     setWorkspacePatient(p);
                     setActiveView('patient_workspace');
                     setActiveOversightModal(null);
                 }}
                 onAddPatient={() => {
-                    // Logic to open add patient workflow
-                    console.log('Opening Add Patient Workflow');
-                    setActiveOversightModal(null);
+                    setIsAddPatientModalOpen(true);
+                    // Keep Roster open so user sees the new patient immediately
                 }}
             />
 
@@ -522,7 +536,7 @@ const DoctorDashboard = ({ user }) => {
                 isOpen={activeOversightModal === 'schedule'}
                 onClose={() => setActiveOversightModal(null)}
                 onStartConsultation={(appt) => {
-                    setWorkspacePatient(mockPatients.find(p => p.name === appt.patient) || mockPatients[0]);
+                    setWorkspacePatient(patients.find(p => p.name === appt.patient) || patients[0]);
                     setActiveView('patient_workspace');
                     setActiveOversightModal(null);
                 }}
@@ -537,7 +551,7 @@ const DoctorDashboard = ({ user }) => {
                 onResolve={(type, action) => {
                     console.log(`Action ${type}:`, action);
                     if (type === 'review') {
-                        setWorkspacePatient(mockPatients.find(p => p.name === action.patient) || mockPatients[0]);
+                        setWorkspacePatient(patients.find(p => p.name === action.patient) || patients[0]);
                         setActiveView('patient_workspace');
                     }
                     setActiveOversightModal(null);
@@ -548,7 +562,7 @@ const DoctorDashboard = ({ user }) => {
                 isOpen={activeOversightModal === 'vitals'}
                 onClose={() => setActiveOversightModal(null)}
                 onAssess={(patient) => {
-                    setWorkspacePatient(mockPatients.find(p => p.id === patient.id) || mockPatients[0]);
+                    setWorkspacePatient(patients.find(p => p.id === patient.id) || patients[0]);
                     setActiveView('patient_workspace');
                     setActiveOversightModal(null);
                 }}
