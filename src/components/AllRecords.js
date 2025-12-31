@@ -100,19 +100,20 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
 
     return (
         <LayoutGroup>
-            <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-hidden flex flex-col text-white">
-                <Header
-                    title="All Records"
-                    description="View and manage all your historical medical records."
-                    user={user}
-                    onLogout={onLogout}
-                    onLoginClick={onLoginClick}
-                    onToggleSidebar={onToggleSidebar}
-                    onNavigate={onNavigate}
-                    onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
-                />
+            <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
+                <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                    <Header
+                        title="All Records"
+                        description="View and manage all your historical medical records."
+                        user={user}
+                        onLogout={onLogout}
+                        onLoginClick={onLoginClick}
+                        onToggleSidebar={onToggleSidebar}
+                        onNavigate={onNavigate}
+                    />
+                </div>
 
-                <main className={`flex-1 flex flex-col transition-all duration-500 overflow-y-auto custom-scrollbar ${!isSearchActive ? 'justify-center items-center' : 'justify-start'}`}>
+                <main className={`flex-1 flex flex-col transition-all duration-500 ${!isSearchActive ? 'justify-center items-center' : 'justify-start'}`}>
                     {/* Centered Initial Search State */}
                     {!isSearchActive && (
                         <motion.div

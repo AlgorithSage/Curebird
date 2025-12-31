@@ -98,7 +98,12 @@ const RareDisease = () => {
                                         ))}
                                     </Pie>
                                     <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }} />
-                                    <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                                    <Legend
+                                        verticalAlign="bottom"
+                                        height={36}
+                                        iconType="circle"
+                                        formatter={(value, entry) => <span className="text-slate-300 font-medium ml-1">{value}</span>}
+                                    />
                                 </PieChart>
                             </ResponsiveContainer>
                             {/* Center Text */}

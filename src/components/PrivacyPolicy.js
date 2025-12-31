@@ -1,35 +1,24 @@
 import React from 'react';
+import Header from './Header';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock, Database, Eye, Server } from 'lucide-react';
+import { Lock, Database, Eye, Server } from 'lucide-react';
 
-const PrivacyPolicy = ({ onBack }) => {
+const PrivacyPolicy = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-        >
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onBack}></div>
+        <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
+            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                <Header
+                    title="Privacy Policy"
+                    description="Your privacy is our highest priority."
+                    user={user}
+                    onLogout={onLogout}
+                    onLoginClick={onLoginClick}
+                    onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
+                />
+            </div>
 
-            <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900/90 border border-white/10 rounded-3xl shadow-2xl text-slate-300 p-8 sm:p-12 scrollbar-thin scrollbar-thumb-amber-500/50 scrollbar-track-transparent">
-                <button
-                    onClick={onBack}
-                    className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/10 transition-colors text-slate-400 hover:text-white"
-                >
-                    <ArrowLeft size={24} />
-                    <span className="sr-only">Close</span>
-                </button>
-
-                <div className="flex items-center gap-4 mb-8">
-                    <div className="bg-sky-500/10 p-3 rounded-2xl">
-                        <Lock size={32} className="text-sky-400" />
-                    </div>
-                    <div>
-                        <h2 className="text-3xl font-bold text-white">Privacy Policy</h2>
-                        <p className="text-slate-400">Your privacy is our highest priority.</p>
-                    </div>
-                </div>
+            <div className="relative w-full max-w-4xl mx-auto bg-slate-900/90 border border-white/10 rounded-3xl shadow-2xl text-slate-300 p-8 sm:p-12">
 
                 <div className="space-y-8">
                     <section className="grid md:grid-cols-2 gap-6 mb-8">
@@ -96,7 +85,7 @@ const PrivacyPolicy = ({ onBack }) => {
                     </section>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 

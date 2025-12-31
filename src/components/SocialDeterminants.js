@@ -178,7 +178,7 @@ const SocialDeterminants = () => {
                                             </BarChart>
                                         </ResponsiveContainer>
                                     </div>
-                                    <div className="bg-cyan-900/10 p-3 sm:p-6 rounded-2xl border border-cyan-500/20 flex flex-col justify-center mt-16 lg:mt-0">
+                                    <div className="bg-cyan-900/10 p-3 sm:p-6 rounded-2xl border-2 border-cyan-500/30 flex flex-col justify-center mt-16 lg:mt-0">
                                         <h4 className="text-lg font-bold text-cyan-400 mb-4">Hygiene Hypothesis</h4>
                                         <p className="text-slate-300 text-sm leading-relaxed mb-4">
                                             States with &gt;90% sanitation coverage (like Kerala) see Diarrheal disease rates drop to <span className="text-white font-bold">below 4%</span>.
@@ -255,10 +255,10 @@ const SocialDeterminants = () => {
 
                                         <div className="w-full h-[300px]">
                                             <ResponsiveContainer width="100%" height="100%">
-                                                <BarChart data={DRUG_CONSUMPTION_DATA} margin={{ top: 20, right: 30, left: 20, bottom: 50 }}>
+                                                <BarChart data={DRUG_CONSUMPTION_DATA} margin={{ top: 20, right: 30, left: 50, bottom: 50 }}>
                                                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} vertical={false} />
                                                     <XAxis dataKey="type" stroke="#94a3b8" fontSize={11} angle={-45} textAnchor="end" height={60} />
-                                                    <YAxis stroke="#94a3b8" fontSize={12} label={{ value: 'Market Share (%)', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
+                                                    <YAxis stroke="#94a3b8" fontSize={12} label={{ value: 'Market Share (%)', angle: -90, position: 'insideLeft', fill: '#e2e8f0' }} />
                                                     <Tooltip
                                                         cursor={{ fill: '#334155', opacity: 0.2 }}
                                                         contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }}

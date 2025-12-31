@@ -256,7 +256,7 @@ const DiseaseCard = ({ disease, onClick, getRiskLevel }) => {
 };
 
 const HealthIndexCard = ({ title, value, status, trend, icon: Icon, color, source, description, utility }) => (
-    <div className="glass-card p-5 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+    <div className="glass-card p-5 relative group hover:-translate-y-1 transition-transform duration-300">
         <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity`}>
             <Icon size={64} className={color} />
         </div>
@@ -454,9 +454,11 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
     );
 
     return (
-        <div className="h-screen text-white overflow-y-auto relative selection:bg-sky-500/30">
-            <Header title="Cure Stat" description="Real-time disease intelligence, medication insights, and predictive analytics for a healthier India." user={user} onLogout={onLogout} onLoginClick={onLoginClick} onToggleSidebar={onToggleSidebar} onNavigate={onNavigate} />
-            <div className="relative z-10 p-4 sm:p-6 lg:p-8">
+        <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto relative text-white selection:bg-sky-500/30">
+            <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
+                <Header title="Cure Stat" description="Real-time disease intelligence, medication insights, and predictive analytics for a healthier India." user={user} onLogout={onLogout} onLoginClick={onLoginClick} onToggleSidebar={onToggleSidebar} onNavigate={onNavigate} />
+            </div>
+            <div className="relative z-10">
 
                 {/* Premium Hero Section */}
                 <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-8 text-center mt-6">

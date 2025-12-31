@@ -159,7 +159,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="glass-card w-full !p-6 !rounded-3xl border border-white/10 flex items-center justify-between gap-4"
+                                    className="glass-card w-full !p-6 !rounded-3xl flex items-center justify-between gap-4"
                                 >
                                     <div>
                                         <div className="flex items-center gap-2 mb-1">
