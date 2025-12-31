@@ -158,15 +158,42 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                 </div>
             )}
             {error && (
-                <div className="mt-8 p-6 bg-amber-500/5 border border-amber-500/20 rounded-2xl flex flex-col items-center gap-4 text-center">
-                    <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.1)]">
-                        <Activity size={24} className="animate-pulse" />
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-12 group relative overflow-hidden"
+                >
+                    {/* Background Glass Layer */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-amber-500/2 opacity-50 transition-opacity group-hover:opacity-100" />
+
+                    {/* Visual Content */}
+                    <div className="relative p-10 rounded-[2.5rem] border border-white/5 bg-stone-900/40 backdrop-blur-xl flex flex-col items-center gap-6 text-center shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+                        {/* Status Icon with Dynamic Glow */}
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-amber-500/20 blur-2xl rounded-full animate-pulse" />
+                            <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400/20 to-amber-600/5 border border-amber-500/20 flex items-center justify-center text-amber-500 shadow-inner">
+                                <Activity size={32} className="animate-[pulse_2s_ease-in-out_infinite]" />
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <h4 className="text-amber-500 font-black uppercase tracking-[0.4em] text-[11px]">
+                                Clinical Sync Status
+                            </h4>
+                            <div className="h-px w-32 bg-gradient-to-r from-transparent via-amber-500/30 to-transparent mx-auto" />
+                            <p className="text-stone-300 text-sm font-medium max-w-lg leading-relaxed antialiased px-6 italic opacity-80">
+                                {error}
+                            </p>
+                            <p className="text-[10px] text-stone-600 font-bold uppercase tracking-widest mt-4">
+                                Optimizing Secure Link...
+                            </p>
+                        </div>
+
+                        {/* subtle corner accents */}
+                        <div className="absolute top-6 left-6 w-2 h-2 border-t border-l border-amber-500/20 rounded-tl" />
+                        <div className="absolute bottom-6 right-6 w-2 h-2 border-b border-r border-amber-500/20 rounded-br" />
                     </div>
-                    <div>
-                        <p className="text-amber-500 font-black uppercase tracking-[0.2em] text-[10px] mb-1">Clinical Sync Status</p>
-                        <p className="text-slate-300 text-sm font-medium max-w-md mx-auto">{error}</p>
-                    </div>
-                </div>
+                </motion.div>
             )}
         </div>
     );
