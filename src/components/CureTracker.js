@@ -12,18 +12,20 @@ const CureTracker = ({ user, userId, onNavigate, onLogout, onLoginClick, onToggl
     const activeUserId = userId || (user ? user.uid : null);
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-hidden flex flex-col">
-            <Header
-                title="Cure Tracker"
-                description="Monitor and manage your active health conditions."
-                user={user}
-                onLogout={onLogout}
-                onLoginClick={onLoginClick}
-                onToggleSidebar={onToggleSidebar}
-                onNavigate={onNavigate}
-            />
+        <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto">
+            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                <Header
+                    title="Cure Tracker"
+                    description="Monitor and manage your active health conditions."
+                    user={user}
+                    onLogout={onLogout}
+                    onLoginClick={onLoginClick}
+                    onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
+                />
+            </div>
 
-            <main className="flex-1 overflow-y-auto custom-scrollbar mt-4">
+            <main className="mt-8">
                 {selectedDisease ? (
                     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
                         <button

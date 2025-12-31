@@ -134,15 +134,17 @@ const CureAnalyzer = ({ user, db, storage, appId, onLogout, onLoginClick, onTogg
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-            <Header
-                title="Cure Analyzer"
-                description="Upload an image of a medical document to automatically identify key information."
-                user={user}
-                onLogout={onLogout}
-                onLoginClick={onLoginClick}
-                onToggleSidebar={onToggleSidebar}
-                onNavigate={onNavigate}
-            />
+            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                <Header
+                    title="Cure Analyzer"
+                    description="Upload an image of a medical document to automatically identify key information."
+                    user={user}
+                    onLogout={onLogout}
+                    onLoginClick={onLoginClick}
+                    onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
+                />
+            </div>
 
             {/* Premium Feature Hero Section */}
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-12 text-center mt-6">

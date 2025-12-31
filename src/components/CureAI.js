@@ -188,15 +188,17 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) =
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white scroll-smooth relative z-0">
-            <Header
-                title="Cure AI"
-                description="Powered by Llama 3.3 - Ask me about diseases, symptoms, treatments, and health trends in India"
-                user={user}
-                onLogout={onLogout}
-                onLoginClick={onLoginClick}
-                onToggleSidebar={onToggleSidebar}
-                onNavigate={onNavigate}
-            />
+            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                <Header
+                    title="Cure AI"
+                    description="Powered by Llama 3.3 - Ask me about diseases, symptoms, treatments, and health trends in India"
+                    user={user}
+                    onLogout={onLogout}
+                    onLoginClick={onLoginClick}
+                    onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
+                />
+            </div>
 
             {/* Premium Hero Section - Compact AI Console Look */}
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-4 sm:p-8 mb-6 sm:mb-12 text-center mt-4 sm:mt-6">

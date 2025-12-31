@@ -159,7 +159,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="glass-card w-full !p-6 !rounded-3xl border border-white/10 flex items-center justify-between gap-4"
+                                    className="glass-card w-full !p-6 !rounded-3xl flex items-center justify-between gap-4"
                                 >
                                     <div>
                                         <div className="flex items-center gap-2 mb-1">
@@ -244,7 +244,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div
                                 onClick={() => onNavigate && onNavigate('Cure AI')}
-                                className="flex flex-col items-center p-6 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group backdrop-blur-sm cursor-pointer text-center h-full"
+                                className="glass-card flex flex-col items-center cursor-pointer text-center h-full group"
                             >
                                 <div className="mb-4 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_15px_-3px_rgba(245,158,11,0.2)]">
                                     <Bot size={28} className="text-amber-400" />
@@ -257,7 +257,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
 
                             <div
                                 onClick={() => onNavigate && onNavigate('Cure Analyzer')}
-                                className="flex flex-col items-center p-6 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group backdrop-blur-sm cursor-pointer text-center h-full"
+                                className="glass-card flex flex-col items-center cursor-pointer text-center h-full group"
                             >
                                 <div className="mb-4 p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_15px_-3px_rgba(14,165,233,0.2)]">
                                     <Activity size={28} className="text-sky-400" />
@@ -270,7 +270,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
 
                             <div
                                 onClick={() => onNavigate && onNavigate('Cure Stat')}
-                                className="flex flex-col items-center p-6 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group backdrop-blur-sm cursor-pointer text-center h-full"
+                                className="glass-card flex flex-col items-center cursor-pointer text-center h-full group"
                             >
                                 <div className="mb-4 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 shrink-0 group-hover:scale-110 transition-transform shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)]">
                                     <BarChart2 size={28} className="text-emerald-400" />

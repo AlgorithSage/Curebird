@@ -2,9 +2,10 @@ import React, { useState, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Mail, Send, MapPin, Phone } from 'lucide-react';
+import { Mail, Send, Phone } from 'lucide-react';
+import Header from './Header';
 
-const Contact = ({ onBack, db }) => {
+const Contact = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const form = useRef();
     const [formState, setFormState] = useState({ name: '', email: '', subject: '', message: '' });
     const [status, setStatus] = useState('idle'); // idle, submitting, success, error
@@ -48,22 +49,20 @@ const Contact = ({ onBack, db }) => {
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-        >
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onBack}></div>
+        <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
+            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                <Header
+                    title="Contact Us"
+                    description="We'd love to hear from you."
+                    user={user}
+                    onLogout={onLogout}
+                    onLoginClick={onLoginClick}
+                    onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
+                />
+            </div>
 
-            <div className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-slate-900/90 border border-white/10 rounded-3xl shadow-2xl text-slate-300 flex flex-col md:flex-row overflow-hidden">
-                <button
-                    onClick={onBack}
-                    className="absolute top-6 right-6 md:right-auto md:left-6 z-20 p-2 rounded-full bg-black/20 hover:bg-white/10 transition-colors text-white"
-                >
-                    <ArrowLeft size={24} />
-                    <span className="sr-only">Close</span>
-                </button>
+            <div className="relative w-full max-w-5xl mx-auto bg-slate-900/90 border border-white/10 rounded-3xl shadow-2xl text-slate-300 flex flex-col md:flex-row overflow-hidden">
 
                 {/* Left Side: Info */}
                 <div className="w-full md:w-1/3 bg-gradient-to-br from-amber-600 to-amber-800 p-8 sm:p-12 text-white relative overflow-hidden">
@@ -197,7 +196,7 @@ const Contact = ({ onBack, db }) => {
                     )}
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 

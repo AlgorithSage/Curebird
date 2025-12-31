@@ -156,9 +156,9 @@ export default function App() {
             case 'Cure Stat': return <CureStat {...pageProps} />;
             case 'Cure AI': return <CureAI {...pageProps} />;
             case 'Settings': return <Settings {...pageProps} />;
-            case 'Contact': return <div className="p-6"><Contact onBack={() => setActiveView('Dashboard')} db={db} /></div>;
-            case 'Terms': return <div className="p-6"><TermsOfService onBack={() => setActiveView('Dashboard')} /></div>;
-            case 'Privacy': return <div className="p-6"><PrivacyPolicy onBack={() => setActiveView('Dashboard')} /></div>;
+            case 'Contact': return <Contact {...pageProps} db={db} />;
+            case 'Terms': return <TermsOfService {...pageProps} />;
+            case 'Privacy': return <PrivacyPolicy {...pageProps} />;
             default: return <MedicalPortfolio {...pageProps} />;
         }
     };

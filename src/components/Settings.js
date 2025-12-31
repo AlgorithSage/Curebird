@@ -100,14 +100,16 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
             <div className="fixed bottom-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-600/5 blur-[120px] pointer-events-none z-0" />
 
             <div className="relative z-10">
-                <Header
-                    title="Account Settings"
-                    description="Manage your profile and security preferences."
-                    user={user}
-                    onLogout={onLogout}
-                    onToggleSidebar={onToggleSidebar}
-                    onNavigate={onNavigate}
-                />
+                <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                    <Header
+                        title="Account Settings"
+                        description="Manage your profile and security preferences."
+                        user={user}
+                        onLogout={onLogout}
+                        onToggleSidebar={onToggleSidebar}
+                        onNavigate={onNavigate}
+                    />
+                </div>
 
                 <main className="mt-8 max-w-5xl mx-auto space-y-8 pb-12">
                     {/* Identity Section */}

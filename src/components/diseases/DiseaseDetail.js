@@ -167,7 +167,7 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                                 )}
 
                                 {/* Chart Container */}
-                                <div className="bg-slate-800/50 rounded-2xl p-6 border border-white/5 h-[350px]">
+                                <div className="bg-slate-800/50 rounded-2xl p-6 border border-white/5 h-[350px] flex flex-col">
                                     <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                                         <TrendingUp size={18} className="text-blue-400" />
                                         {availableMetrics.find(m => m.id === activeMetricType)?.label || 'Trends'}
@@ -194,7 +194,7 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                                             </ResponsiveContainer>
                                         </div>
                                     ) : (
-                                        <div className="h-full flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/50 rounded-xl">
+                                        <div className="flex-1 w-full box-border flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/50 rounded-xl p-4">
                                             <Activity size={32} className="mb-2 opacity-50" />
                                             No data logged yet.
                                         </div>

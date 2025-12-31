@@ -134,14 +134,16 @@ const Appointments = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-            <Header
-                title="Appointments"
-                description="Manage your upcoming and past medical appointments."
-                user={user}
-                onLogout={onLogout}
-                onToggleSidebar={onToggleSidebar}
-                onNavigate={onNavigate}
-            />
+            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                <Header
+                    title="Appointments"
+                    description="Manage your upcoming and past medical appointments."
+                    user={user}
+                    onLogout={onLogout}
+                    onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
+                />
+            </div>
 
             <main className="mt-8">
                 <button
