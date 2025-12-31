@@ -151,11 +151,31 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                     </motion.div>
                 ))
             ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-slate-500 bg-slate-950/20 rounded-3xl border border-dashed border-slate-800">
-                    <FileText size={48} className="mb-4 opacity-20" />
-                    <p className="text-lg font-bold">No clinical records found.</p>
-                    <p className="text-sm opacity-50">Saved records will appear here as a live timeline.</p>
-                </div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="relative p-20 rounded-[3rem] border border-white/5 bg-stone-900/20 backdrop-blur-md flex flex-col items-center justify-center text-center group overflow-hidden"
+                >
+                    {/* Background Dynamic Glow */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/5 via-transparent to-transparent opacity-30 group-hover:opacity-60 transition-opacity duration-700" />
+
+                    <div className="relative z-10">
+                        <div className="w-20 h-20 rounded-3xl bg-amber-500/5 border border-amber-500/10 flex items-center justify-center mb-8 mx-auto shadow-inner group-hover:border-amber-500/30 transition-colors">
+                            <FileText size={40} className="text-amber-500/20 group-hover:text-amber-500/50 transition-colors" />
+                        </div>
+                        <h3 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-300 to-amber-500 tracking-tight mb-4 antialiased drop-shadow-xl">
+                            Timeline is currently vacant
+                        </h3>
+                        <p className="text-amber-400 font-bold text-lg tracking-normal max-w-sm mx-auto leading-snug opacity-95">
+                            Systems are synchronized and awaiting data. Initiate a clinical encounter to begin the patient history.
+                        </p>
+
+                        <div className="mt-10 flex items-center justify-center gap-4">
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                            <span className="text-[10px] font-black text-amber-500/40 uppercase tracking-[.3em]">Monitoring Live Feed</span>
+                        </div>
+                    </div>
+                </motion.div>
             )}
             {error && (
                 <motion.div
@@ -177,15 +197,15 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                         </div>
 
                         <div className="space-y-3">
-                            <h4 className="text-amber-500 font-black uppercase tracking-[0.4em] text-[11px]">
-                                Clinical Sync Status
+                            <h4 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 tracking-tight">
+                                Clinical synchronization in progress
                             </h4>
                             <div className="h-px w-32 bg-gradient-to-r from-transparent via-amber-500/30 to-transparent mx-auto" />
-                            <p className="text-stone-300 text-sm font-medium max-w-lg leading-relaxed antialiased px-6 italic opacity-80">
+                            <p className="text-amber-100/60 text-base font-semibold max-w-lg leading-relaxed antialiased px-6">
                                 {error}
                             </p>
-                            <p className="text-[10px] text-stone-600 font-bold uppercase tracking-widest mt-4">
-                                Optimizing Secure Link...
+                            <p className="text-[11px] text-amber-500/40 font-black tracking-widest mt-4">
+                                OPTIMIZING SECURE LINK...
                             </p>
                         </div>
 
