@@ -154,25 +154,25 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="relative p-20 rounded-[3rem] border border-white/5 bg-stone-900/20 backdrop-blur-md flex flex-col items-center justify-center text-center group overflow-hidden"
+                    className="relative p-20 rounded-[4rem] border border-yellow-400/20 bg-stone-900/40 backdrop-blur-xl flex flex-col items-center justify-center text-center group overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.5)]"
                 >
-                    {/* Background Dynamic Glow */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/5 via-transparent to-transparent opacity-30 group-hover:opacity-60 transition-opacity duration-700" />
+                    {/* Background Dynamic Gold Glow */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-yellow-400/15 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-700" />
 
                     <div className="relative z-10">
-                        <div className="w-20 h-20 rounded-3xl bg-amber-500/5 border border-amber-500/10 flex items-center justify-center mb-8 mx-auto shadow-inner group-hover:border-amber-500/30 transition-colors">
-                            <FileText size={40} className="text-amber-500/20 group-hover:text-amber-500/50 transition-colors" />
+                        <div className="w-24 h-24 rounded-[2rem] bg-yellow-400 text-black flex items-center justify-center mb-10 mx-auto shadow-[0_0_50px_rgba(250,204,21,0.3)] group-hover:scale-110 transition-transform duration-500 border-4 border-yellow-300/50">
+                            <FileText size={48} strokeWidth={2.5} />
                         </div>
-                        <h3 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-300 to-amber-500 tracking-tight mb-4 antialiased drop-shadow-xl">
+                        <h3 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-yellow-200 to-yellow-400 tracking-tighter mb-6 antialiased drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
                             Timeline is currently vacant
                         </h3>
-                        <p className="text-amber-400 font-bold text-lg tracking-normal max-w-sm mx-auto leading-snug opacity-95">
-                            Systems are synchronized and awaiting data. Initiate a clinical encounter to begin the patient history.
+                        <p className="text-yellow-100/80 font-bold text-xl tracking-tight max-w-md mx-auto leading-relaxed">
+                            Systems are synchronized and <span className="text-yellow-400">awaiting data</span>. Initiate a clinical encounter to begin the patient history.
                         </p>
 
-                        <div className="mt-10 flex items-center justify-center gap-4">
-                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                            <span className="text-[10px] font-black text-amber-500/40 uppercase tracking-[.3em]">Monitoring Live Feed</span>
+                        <div className="mt-12 flex items-center justify-center gap-6">
+                            <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse shadow-[0_0_15px_rgba(250,204,21,1)]" />
+                            <span className="text-[12px] font-black text-yellow-400 uppercase tracking-[.4em] drop-shadow-md">Monitoring Live Feed</span>
                         </div>
                     </div>
                 </motion.div>
@@ -181,37 +181,40 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-12 group relative overflow-hidden"
+                    className="mt-12 group relative overflow-hidden rounded-[3rem]"
                 >
-                    {/* Background Glass Layer */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-amber-500/2 opacity-50 transition-opacity group-hover:opacity-100" />
+                    {/* Intense Gold Diffusion */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 via-transparent to-yellow-600/10 opacity-70 transition-opacity group-hover:opacity-100" />
 
                     {/* Visual Content */}
-                    <div className="relative p-10 rounded-[2.5rem] border border-white/5 bg-stone-900/40 backdrop-blur-xl flex flex-col items-center gap-6 text-center shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
-                        {/* Status Icon with Dynamic Glow */}
+                    <div className="relative p-12 rounded-[3rem] border border-yellow-400/30 bg-stone-900/70 backdrop-blur-3xl flex flex-col items-center gap-8 text-center shadow-[0_40px_80px_rgba(0,0,0,0.6)]">
+                        {/* Status Icon with Massive Gold Glow */}
                         <div className="relative">
-                            <div className="absolute inset-0 bg-amber-500/20 blur-2xl rounded-full animate-pulse" />
-                            <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400/20 to-amber-600/5 border border-amber-500/20 flex items-center justify-center text-amber-500 shadow-inner">
-                                <Activity size={32} className="animate-[pulse_2s_ease-in-out_infinite]" />
+                            <div className="absolute inset-0 bg-yellow-400/40 blur-[50px] rounded-full animate-pulse" />
+                            <div className="relative w-20 h-20 rounded-[1.5rem] bg-yellow-400 border border-yellow-200/50 flex items-center justify-center text-black shadow-[0_0_30px_rgba(250,204,21,0.4)]">
+                                <Activity size={40} strokeWidth={2.5} className="animate-[pulse_1.5s_ease-in-out_infinite]" />
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <h4 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 tracking-tight">
+                        <div className="space-y-4">
+                            <h4 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-100 via-yellow-400 to-amber-600 tracking-tight">
                                 Clinical synchronization in progress
                             </h4>
-                            <div className="h-px w-32 bg-gradient-to-r from-transparent via-amber-500/30 to-transparent mx-auto" />
-                            <p className="text-amber-100/60 text-base font-semibold max-w-lg leading-relaxed antialiased px-6">
+                            <div className="h-1 w-48 bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent mx-auto rounded-full" />
+                            <p className="text-yellow-100/80 text-lg font-bold max-w-xl leading-relaxed antialiased px-8 outline-none">
                                 {error}
                             </p>
-                            <p className="text-[11px] text-amber-500/40 font-black tracking-widest mt-4">
-                                OPTIMIZING SECURE LINK...
-                            </p>
+                            <div className="flex items-center justify-center gap-3 pt-4">
+                                <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping" />
+                                <p className="text-[12px] text-yellow-400 font-black tracking-[0.5em] uppercase drop-shadow-md">
+                                    Optimizing Secure Link...
+                                </p>
+                            </div>
                         </div>
 
-                        {/* subtle corner accents */}
-                        <div className="absolute top-6 left-6 w-2 h-2 border-t border-l border-amber-500/20 rounded-tl" />
-                        <div className="absolute bottom-6 right-6 w-2 h-2 border-b border-r border-amber-500/20 rounded-br" />
+                        {/* heavy corner accents */}
+                        <div className="absolute top-8 left-8 w-4 h-4 border-t-2 border-l-2 border-yellow-400/40 rounded-tl-lg" />
+                        <div className="absolute bottom-8 right-8 w-4 h-4 border-b-2 border-r-2 border-yellow-400/40 rounded-br-lg" />
                     </div>
                 </motion.div>
             )}

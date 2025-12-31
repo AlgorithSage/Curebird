@@ -178,7 +178,6 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
 
                     {/* Soft Warm Diffusion Layer */}
                     <div className="absolute inset-0 bg-amber-950/20 backdrop-blur-3xl pointer-events-none" />
-
                     {/* Global Grain/Noise Texture */}
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
 
