@@ -173,16 +173,18 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto">
-            <Header
-                user={user}
-                onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
-                onShareClick={() => setIsShareModalOpen(true)}
-                onLogout={onLogout}
-                onLoginClick={onLoginClick}
-                onToggleSidebar={onToggleSidebar}
-                onNavigate={onNavigate}
-                alerts={alerts}
-            />
+            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                <Header
+                    user={user}
+                    onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
+                    onShareClick={() => setIsShareModalOpen(true)}
+                    onLogout={onLogout}
+                    onLoginClick={onLoginClick}
+                    onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
+                    alerts={alerts}
+                />
+            </div>
 
             <main className="mt-8">
                 {/* Content Removed - Moved to Cure Tracker */}
@@ -199,26 +201,26 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
 
 
                     {/* Dashboard Overview Banner */}
-                    <div className="mb-12">
+                    <div className="mb-12 px-2 sm:px-6">
                         <DashboardOverview user={user} />
                     </div>
 
                     {isLoading ? <SkeletonDashboard /> : (
                         <>
                             {/* Standard Stat Cards for Dashboard Overview */}
-                            <div ref={dashboardRef} className="grid grid-cols-1 sm:grid-cols-3 gap-6 scroll-mt-24">
+                            <div ref={dashboardRef} className="grid grid-cols-1 sm:grid-cols-3 gap-6 scroll-mt-24 px-2 sm:px-6">
                                 <StatCard icon={<FileText size={24} className="text-black" />} label="Total Records" value={records.length} color="bg-yellow-500" />
                                 <StatCard icon={<ShieldCheck size={24} className="text-black" />} label="Identity Verified" value="Active" color="bg-amber-400" />
                                 <StatCard icon={<Calendar size={24} className="text-black" />} label="Last Visit" value={lastVisit} color="bg-yellow-600" />
                             </div>
-                            <div className="mt-8">
+                            <div className="mt-8 px-2 sm:px-6">
                                 <RecordsChart data={dashboardData} />
                             </div>
 
                         </>
                     )}
 
-                    <div className="mt-12 mb-6 flex items-center justify-between" ref={medicalHistoryRef}>
+                    <div className="mt-12 mb-6 flex items-center justify-between px-2 sm:px-6" ref={medicalHistoryRef}>
                         <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Medical History Categories</h2>
                         {activeTypeFilter && (
                             <button
@@ -237,7 +239,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                     ) : (
                         <>
                             {/* Opaque Amber & High Visibility Category Grid */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 px-2 sm:px-6">
                                 {[
                                     { id: 'prescription', label: 'Prescriptions', icon: <Pill size={32} />, count: records.filter(r => r.type === 'prescription').length },
                                     { id: 'test_report', label: 'Test Reports', icon: <FileText size={32} />, count: records.filter(r => r.type === 'test_report').length },
