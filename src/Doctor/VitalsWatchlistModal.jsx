@@ -39,12 +39,12 @@ const VitalsWatchlistModal = ({ isOpen, onClose }) => {
                                     <Activity size={32} />
                                 </div>
                                 <div>
-                                    <h2 className="text-3xl font-black text-white tracking-tight uppercase">Vitals Watchlist</h2>
-                                    <p className="text-[11px] text-stone-500 font-bold uppercase tracking-[0.3em] mt-1">Real-time Triage & Physiological Monitoring</p>
+                                    <h2 className="text-2xl font-extrabold text-white tracking-tight uppercase">Vitals Watchlist</h2>
+                                    <p className="text-[11px] text-stone-500 font-bold uppercase tracking-[0.2em] mt-1">Real-time Triage & Physiological Monitoring</p>
                                 </div>
                             </div>
                             <button onClick={onClose} className="p-4 text-stone-500 hover:text-white hover:bg-white/5 rounded-2xl transition-all">
-                                <X size={28} />
+                                <X size={24} />
                             </button>
                         </div>
 
@@ -57,51 +57,51 @@ const VitalsWatchlistModal = ({ isOpen, onClose }) => {
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ delay: i * 0.05 }}
-                                        className="group bg-white/[0.02] border border-white/5 rounded-[2rem] p-6 hover:bg-indigo-500/5 hover:border-indigo-500/20 transition-all duration-300 relative overflow-hidden"
+                                        className="group glass-card-indigo p-8 hover:bg-indigo-500/10 hover:border-indigo-500/40 transition-all duration-500 relative overflow-hidden"
                                     >
-                                        <div className="flex items-center justify-between mb-6">
-                                            <h4 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors uppercase tracking-tight">{p.name}</h4>
-                                            <div className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${p.status === 'Critical' ? 'bg-rose-500/20 text-rose-500' :
-                                                    p.status === 'At Risk' ? 'bg-amber-500/20 text-amber-500' :
-                                                        'bg-indigo-500/20 text-indigo-400'
+                                        <div className="flex items-center justify-between mb-8">
+                                            <h4 className="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors uppercase tracking-tight">{p.name}</h4>
+                                            <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${p.status === 'Critical' ? 'bg-rose-500/30 text-rose-400 border border-rose-500/40' :
+                                                p.status === 'At Risk' ? 'bg-amber-500/30 text-amber-400 border border-amber-500/40' :
+                                                    'bg-indigo-500/30 text-indigo-300 border border-indigo-500/40'
                                                 }`}>
                                                 {p.status}
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-3 mb-6">
-                                            <div className="p-4 bg-black/40 rounded-2xl border border-white/5 flex flex-col items-center">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <Heart size={14} className="text-rose-500" />
-                                                    <span className="text-[9px] font-black text-stone-500 uppercase">HR</span>
+                                        <div className="grid grid-cols-2 gap-4 mb-8">
+                                            <div className="p-5 bg-black/40 rounded-3xl border border-white/5 flex flex-col items-center group-hover:bg-black/60 transition-colors">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <Heart size={16} className="text-rose-500 group-hover:animate-pulse" />
+                                                    <span className="text-[10px] font-black text-indigo-300/40 uppercase tracking-widest">HR</span>
                                                 </div>
-                                                <p className="text-2xl font-black text-white">{p.heartRate}</p>
-                                                <span className="text-[10px] text-stone-600 font-bold">bpm</span>
+                                                <p className="text-4xl font-black text-white drop-shadow-lg">{p.heartRate}</p>
+                                                <span className="text-[11px] text-indigo-300/30 font-bold uppercase mt-1">bpm</span>
                                             </div>
-                                            <div className="p-4 bg-black/40 rounded-2xl border border-white/5 flex flex-col items-center">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <Droplets size={14} className="text-blue-400" />
-                                                    <span className="text-[9px] font-black text-stone-500 uppercase">SpO2</span>
+                                            <div className="p-5 bg-black/40 rounded-3xl border border-white/5 flex flex-col items-center group-hover:bg-black/60 transition-colors">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <Droplets size={16} className="text-blue-400" />
+                                                    <span className="text-[10px] font-black text-indigo-300/40 uppercase tracking-widest">SpO2</span>
                                                 </div>
-                                                <p className="text-2xl font-black text-white">{p.spO2}%</p>
-                                                <span className="text-[10px] text-stone-600 font-bold">pulse-ox</span>
+                                                <p className="text-4xl font-black text-white drop-shadow-lg">{p.spO2}%</p>
+                                                <span className="text-[11px] text-indigo-300/30 font-bold uppercase mt-1">pulse-ox</span>
                                             </div>
                                         </div>
 
-                                        <div className="w-full flex items-center justify-between px-4 py-3 bg-black/20 rounded-xl border border-white/5 mb-6">
+                                        <div className="w-full flex items-center justify-between px-6 py-4 bg-white/5 rounded-2xl border border-white/10 mb-8 group-hover:bg-white/10 transition-colors">
                                             <div className="flex items-center gap-3">
-                                                <Thermometer size={16} className="text-indigo-500" />
-                                                <span className="text-xs font-bold text-white uppercase">{p.bp}</span>
+                                                <Thermometer size={18} className="text-indigo-400" />
+                                                <span className="text-sm font-black text-white uppercase tracking-tighter">{p.bp}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <LineChart size={16} className="text-stone-600" />
-                                                <span className={`text-[10px] font-black uppercase tracking-widest ${p.trend === 'rising' ? 'text-amber-500' :
-                                                        p.trend === 'falling' ? 'text-rose-400' : 'text-emerald-500'
+                                                <LineChart size={18} className="text-indigo-300/30" />
+                                                <span className={`text-[11px] font-black uppercase tracking-[0.3em] ${p.trend === 'rising' ? 'text-amber-400' :
+                                                    p.trend === 'falling' ? 'text-rose-400' : 'text-emerald-400'
                                                     }`}>{p.trend}</span>
                                             </div>
                                         </div>
 
-                                        <button className="w-full py-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 hover:text-black transition-all">
+                                        <button className="w-full py-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[11px] font-black uppercase tracking-[0.4em] hover:bg-indigo-500 hover:text-black transition-all shadow-xl hover:shadow-indigo-500/40">
                                             Assess Physiological Data
                                         </button>
                                     </motion.div>

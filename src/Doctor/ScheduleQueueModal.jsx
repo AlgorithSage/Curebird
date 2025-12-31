@@ -39,8 +39,8 @@ const ScheduleQueueModal = ({ isOpen, onClose }) => {
                                     <Calendar size={32} />
                                 </div>
                                 <div>
-                                    <h2 className="text-3xl font-black text-white tracking-tight uppercase">Daily Schedule</h2>
-                                    <p className="text-[11px] text-stone-500 font-bold uppercase tracking-[0.3em] mt-1">Consultation Queue & Appointments</p>
+                                    <h2 className="text-2xl font-extrabold text-white tracking-tight uppercase">Daily Schedule</h2>
+                                    <p className="text-[11px] text-stone-500 font-bold uppercase tracking-[0.2em] mt-1">Consultation Queue & Appointments</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
@@ -89,8 +89,8 @@ const ScheduleQueueModal = ({ isOpen, onClose }) => {
                                         <div className="flex-1 bg-white/[0.02] border border-white/5 rounded-3xl p-6 hover:bg-emerald-500/5 hover:border-emerald-500/20 transition-all duration-300 relative overflow-hidden">
                                             <div className="absolute top-0 right-0 p-6 flex flex-col items-end gap-2">
                                                 <div className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${appt.status === 'Confirmed' ? 'bg-emerald-500/20 text-emerald-400' :
-                                                        appt.status === 'In-Queue' ? 'bg-amber-500/20 text-amber-500' :
-                                                            'bg-blue-500/20 text-blue-400'
+                                                    appt.status === 'In-Queue' ? 'bg-amber-500/20 text-amber-500' :
+                                                        'bg-blue-500/20 text-blue-400'
                                                     }`}>
                                                     {appt.status}
                                                 </div>
@@ -103,7 +103,7 @@ const ScheduleQueueModal = ({ isOpen, onClose }) => {
                                             </div>
 
                                             <div className="flex flex-col gap-1">
-                                                <h4 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors uppercase tracking-tight">{appt.patient}</h4>
+                                                <h4 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors uppercase tracking-tight">{appt.patient}</h4>
                                                 <p className="text-xs font-black text-stone-500 uppercase tracking-widest flex items-center gap-2">
                                                     {appt.type}
                                                     <span className="h-1 w-1 bg-stone-700 rounded-full" />

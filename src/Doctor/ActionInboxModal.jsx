@@ -45,8 +45,8 @@ const ActionInboxModal = ({ isOpen, onClose }) => {
                                     <ClipboardList size={32} />
                                 </div>
                                 <div>
-                                    <h2 className="text-3xl font-black text-white tracking-tight uppercase">Action Inbox</h2>
-                                    <p className="text-[11px] text-stone-500 font-bold uppercase tracking-[0.3em] mt-1">Pending Clinical Tasks & Approvals</p>
+                                    <h2 className="text-2xl font-extrabold text-white tracking-tight uppercase">Action Inbox</h2>
+                                    <p className="text-[11px] text-stone-500 font-bold uppercase tracking-[0.2em] mt-1">Pending Clinical Tasks & Approvals</p>
                                 </div>
                             </div>
                             <button onClick={onClose} className="p-4 text-stone-500 hover:text-white hover:bg-white/5 rounded-2xl transition-all">
@@ -90,7 +90,7 @@ const ActionInboxModal = ({ isOpen, onClose }) => {
                                                             {action.priority}
                                                         </span>
                                                     </div>
-                                                    <h4 className="text-xl font-bold text-white group-hover:text-rose-400 transition-colors tracking-tight leading-tight">{action.title}</h4>
+                                                    <h4 className="text-lg font-bold text-white group-hover:text-rose-400 transition-colors tracking-tight leading-tight">{action.title}</h4>
                                                     <p className="text-sm text-stone-400 font-medium mt-1">Patient: <span className="text-white font-bold uppercase">{action.patient}</span></p>
                                                 </div>
                                             </div>
