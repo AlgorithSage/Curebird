@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { X, Pill, Plus, Trash2, CheckCircle, AlertTriangle, Loader, User, Calendar } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { auth } from '../App';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db, auth } from '../App';
 
 const ModalTabButton = ({ children, active, onClick, colorClass = "text-amber-400" }) => {
     const mouseX = useMotionValue(0);
@@ -38,8 +38,7 @@ const ModalTabButton = ({ children, active, onClick, colorClass = "text-amber-40
     );
 };
 
-const NewPrescriptionModal = ({ isOpen, onClose, patients = [] }) => {
-    const db = getFirestore();
+const NewPrescriptionModal = ({ isOpen, onClose, patients = [], user }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
@@ -87,8 +86,8 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [] }) => {
                 diagnosis,
                 medicines: medications,
                 date: new Date().toISOString().split('T')[0],
-                doctorId: auth.currentUser?.uid,
-                doctorName: auth.currentUser?.displayName || 'Dr. Curebird',
+                doctorId: user?.uid || auth.currentUser?.uid,
+                doctorName: user?.name || user?.displayName || auth.currentUser?.displayName || 'Dr. Curebird',
                 patientId,
                 patientName,
                 priority: 'routine',

@@ -4,7 +4,8 @@ import {
     ArrowLeft, Activity, Calendar, FileText, Pill, Microscope,
     AlertCircle, Clock, File, Download, Search, MessageSquare, Loader
 } from 'lucide-react';
-import { getFirestore, collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '../App';
 
 // --- Sub-Components ---
 
@@ -151,7 +152,6 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const db = getFirestore();
 
     useEffect(() => {
         if (!patient?.id) return;

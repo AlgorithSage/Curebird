@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getAuth, updateProfile, updateEmail, updatePassword, deleteUser } from 'firebase/auth';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';

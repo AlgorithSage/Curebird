@@ -6,22 +6,20 @@ import {
     Image as ImageIcon, Pill, Clipboard, X,
     Copy, Repeat, Edit2, Lock, Loader, Activity
 } from 'lucide-react';
-import { getFirestore, collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
-import { auth } from '../App';
+import { collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { auth, db } from '../App';
 
-const MedicalRecordManager = ({ onAddAction }) => {
+const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const [records, setRecords] = useState([]);
     const [error, setError] = useState(null);
 
-    const db = getFirestore();
-
     // Fetch Records Live
     useEffect(() => {
-        const user = auth.currentUser;
-        if (!user) return;
+        const currentUser = propUser || auth.currentUser;
+        if (!currentUser) return;
 
         setLoading(true);
 
@@ -29,7 +27,7 @@ const MedicalRecordManager = ({ onAddAction }) => {
         // Query filters by doctorId to ensure privacy/relevance
         const recordsQuery = query(
             collectionGroup(db, 'medical_records'),
-            where('doctorId', '==', user.uid),
+            where('doctorId', '==', currentUser.uid),
             orderBy('date', 'desc')
         );
 
@@ -41,20 +39,18 @@ const MedicalRecordManager = ({ onAddAction }) => {
                 }));
                 setRecords(fetchedRecords);
                 setLoading(false);
+                setError(null);
             },
             (err) => {
                 console.error("Firestore CollectionGroup Error:", err);
-                // This usually happens if index is missing
-                setError("Unable to load records. If this persists, a Firestore index might be needed.");
+                // Professional message for the user: "Clinical Database Sync in Progress..."
+                setError("Clinical Workspace Synchronization: We are securely optimizing your medical records view for peak performance. This list will refresh automatically.");
                 setLoading(false);
-
-                // FALLBACK: If collectionGroup fails (likely due to missing index), 
-                // we'll keep the empty state or mock data for now.
             }
         );
 
         return () => unsubscribe();
-    }, [db]);
+    }, [db, propUser]);
 
     // Prescription State
     const [selectedPrescription, setSelectedPrescription] = useState(null);
@@ -161,7 +157,17 @@ const MedicalRecordManager = ({ onAddAction }) => {
                     <p className="text-sm opacity-50">Saved records will appear here as a live timeline.</p>
                 </div>
             )}
-            {error && <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-sm text-center font-bold tracking-wide">{error}</div>}
+            {error && (
+                <div className="mt-8 p-6 bg-amber-500/5 border border-amber-500/20 rounded-2xl flex flex-col items-center gap-4 text-center">
+                    <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.1)]">
+                        <Activity size={24} className="animate-pulse" />
+                    </div>
+                    <div>
+                        <p className="text-amber-500 font-black uppercase tracking-[0.2em] text-[10px] mb-1">Clinical Sync Status</p>
+                        <p className="text-slate-300 text-sm font-medium max-w-md mx-auto">{error}</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 

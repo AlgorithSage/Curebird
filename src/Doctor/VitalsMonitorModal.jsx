@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { X, Activity, CheckCircle, AlertTriangle, Loader, User, Calendar, Droplets, Thermometer, Wind, Monitor } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { auth } from '../App';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db, auth } from '../App';
 
-const VitalsMonitorModal = ({ isOpen, onClose, patients = [] }) => {
-    const db = getFirestore();
+const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
@@ -46,8 +45,8 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [] }) => {
                     }
                 },
                 date: new Date().toISOString().split('T')[0],
-                doctorId: auth.currentUser?.uid,
-                doctorName: auth.currentUser?.displayName || 'Dr. Curebird',
+                doctorId: user?.uid || auth.currentUser?.uid,
+                doctorName: user?.name || user?.displayName || auth.currentUser?.displayName || 'Dr. Curebird',
                 patientId,
                 patientName,
                 priority: 'routine',

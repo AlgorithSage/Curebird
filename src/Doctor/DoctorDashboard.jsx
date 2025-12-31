@@ -424,7 +424,7 @@ const DoctorDashboard = ({ user }) => {
             case 'patients': return <PatientManagement />;
             case 'appointments_group': return <AppointmentManager view="overview" />;
             case 'consultations': return <ConsultationWorkflow />;
-            case 'medical_records': return <MedicalRecordManager onAddAction={(type) => {
+            case 'medical_records': return <MedicalRecordManager user={user} onAddAction={(type) => {
                 if (type === 'prescription') setIsPrescriptionModalOpen(true);
                 else if (type === 'lab') setIsLabRequestModalOpen(true);
                 else if (type === 'vitals') setIsVitalsModalOpen(true);
@@ -470,30 +470,35 @@ const DoctorDashboard = ({ user }) => {
                 isOpen={isAddRecordModalOpen}
                 onClose={() => setIsAddRecordModalOpen(false)}
                 patients={mockPatients}
+                user={user}
             />
 
             <NewPrescriptionModal
                 isOpen={isPrescriptionModalOpen}
                 onClose={() => setIsPrescriptionModalOpen(false)}
                 patients={mockPatients}
+                user={user}
             />
 
             <LabRequestModal
                 isOpen={isLabRequestModalOpen}
                 onClose={() => setIsLabRequestModalOpen(false)}
                 patients={mockPatients}
+                user={user}
             />
 
             <VitalsMonitorModal
                 isOpen={isVitalsModalOpen}
                 onClose={() => setIsVitalsModalOpen(false)}
                 patients={mockPatients}
+                user={user}
             />
 
             <EmergencyAlertModal
                 isOpen={isEmergencyModalOpen}
                 onClose={() => setIsEmergencyModalOpen(false)}
                 patients={mockPatients}
+                user={user}
             />
 
             <PatientRosterModal
