@@ -146,7 +146,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     return (
 
         <>
-            <header className="rounded-[2rem] bg-slate-900/40 backdrop-blur-2xl border border-white/10 shadow-2xl flex flex-nowrap items-center justify-between px-4 py-3 sm:px-6 sm:py-4 transition-all duration-300">
+            <header className="rounded-full bg-slate-900/40 backdrop-blur-2xl border border-white/10 shadow-2xl flex flex-nowrap items-center justify-between px-4 py-3 sm:px-6 sm:py-4 transition-all duration-300">
 
                 {/* Left Group: Menu, Logo, Nav - Always First */}
                 <div className="flex items-center gap-2 sm:gap-4 order-1 min-w-0">

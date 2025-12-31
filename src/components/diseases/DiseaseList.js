@@ -50,34 +50,34 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
 
     return (
         <div className="mb-8">
-            <div className="relative mb-8 p-8 rounded-3xl overflow-hidden bg-slate-900/50 border border-slate-800 backdrop-blur-sm">
-                {/* Background Glows */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-3xl bg-amber-500/10 blur-[100px] -z-10" />
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-8 text-center mt-6">
+                {/* Background Glow */}
+                <div className="absolute top-0 left-0 -translate-x-1/4 w-96 h-96 bg-amber-500/20 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
 
-                <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
+                <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
                     {/* Pill Label */}
-                    <div className="mb-6 px-4 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-xs font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                        Overview
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-bold mb-6 animate-pulse">
+                        <Activity size={16} /> LIVE TRACKER
                     </div>
 
                     {/* Main Heading */}
-                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                        Live Health <span className="text-amber-400">Tracker</span>
-                    </h2>
+                    <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+                        Live Health <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Tracker</span>
+                    </h1>
 
                     {/* Description */}
-                    <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-2xl">
+                    <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8">
                         Your central command center for health data. <span className="text-white font-semibold">Track conditions</span>, monitor <span className="text-amber-400 font-semibold">vital trends</span>, and manage your <span className="text-emerald-400 font-semibold">daily insights</span> in one secure, real-time dashboard.
                     </p>
 
                     {/* Action Button */}
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="group relative inline-flex items-center gap-3 px-8 py-4 bg-slate-950 text-white font-semibold rounded-2xl border border-slate-800 hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300"
+                        className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold rounded-2xl shadow-xl hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 border border-white/20"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-                        <span className="p-1.5 bg-amber-400/10 text-amber-400 rounded-lg group-hover:bg-amber-400 group-hover:text-slate-900 transition-colors duration-300">
-                            <Plus size={18} />
+                        <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="p-1.5 bg-white/20 text-white rounded-lg group-hover:bg-white group-hover:text-amber-600 transition-colors duration-300">
+                            <Plus size={18} strokeWidth={3} />
                         </span>
                         <span>Add New Condition</span>
                     </button>
