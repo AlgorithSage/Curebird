@@ -64,12 +64,20 @@ const ActionInboxModal = ({ isOpen, onClose, onResolve }) => {
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab.toLowerCase())}
-                                    className={`text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all pb-1 border-b-2 ${activeTab === tab.toLowerCase()
-                                        ? 'text-rose-400 border-rose-500 shadow-[0_10px_20px_-5px_rgba(244,63,94,0.3)]'
-                                        : 'text-stone-600 border-transparent hover:text-stone-400'
+                                    className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap transition-all relative z-10 ${activeTab === tab.toLowerCase()
+                                        ? 'text-white shadow-lg shadow-rose-500/20'
+                                        : 'text-stone-500 hover:text-rose-400 hover:bg-rose-500/5'
                                         }`}
                                 >
                                     {tab}
+                                    {activeTab === tab.toLowerCase() && (
+                                        <motion.div
+                                            layoutId="activeTabInbox"
+                                            className="absolute inset-0 bg-gradient-to-r from-rose-500 to-rose-600 rounded-xl z-[-1]"
+                                            initial={false}
+                                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                        />
+                                    )}
                                 </button>
                             ))}
                         </div>

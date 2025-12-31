@@ -210,8 +210,8 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                                         : 'text-stone-500 hover:text-amber-500 hover:bg-amber-500/5'
                                         }`}
                                 >
-                                    <Icon size={18} />
-                                    <span className="font-black text-[10px] uppercase tracking-widest">{tab.label}</span>
+                                    <Icon size={18} className={isActive ? 'text-black' : 'text-stone-400 group-hover:text-amber-500'} />
+                                    <span className={`font-black text-[11px] uppercase tracking-[0.2em] ${isActive ? 'text-black' : 'text-stone-500'}`}>{tab.label}</span>
                                 </button>
                             );
                         })}

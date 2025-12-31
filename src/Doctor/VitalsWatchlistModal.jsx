@@ -95,24 +95,31 @@ const VitalsWatchlistModal = ({ isOpen, onClose, onAssess }) => {
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4 mb-6">
-                                            <div className="bg-black/60 rounded-3xl p-5 border border-white/5 flex flex-col items-center justify-center">
-                                                <Heart size={18} className="text-rose-500 mb-2" />
-                                                <span className="text-3xl font-black text-white">{p.bpm}</span>
-                                                <span className="text-[9px] font-black text-stone-600 uppercase tracking-widest">BPM</span>
+                                            <div className="bg-[#0f0f1a] rounded-3xl p-5 border border-white/10 flex flex-col items-center justify-center shadow-inner group/metric transition-all hover:bg-rose-500/[0.02]">
+                                                <Heart size={18} className="text-rose-500 mb-2 group-hover/metric:scale-110 transition-transform" />
+                                                <span className="text-3xl font-black text-white tracking-tighter">{p.bpm}</span>
+                                                <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest mt-1">BPM</span>
                                             </div>
-                                            <div className="bg-black/60 rounded-3xl p-5 border border-white/5 flex flex-col items-center justify-center">
-                                                <Droplets size={18} className="text-blue-500 mb-2" />
-                                                <span className="text-3xl font-black text-white">{p.spo2}%</span>
-                                                <span className="text-[9px] font-black text-stone-600 uppercase tracking-widest">PULSE-OX</span>
+                                            <div className="bg-[#0f0f1a] rounded-3xl p-5 border border-white/10 flex flex-col items-center justify-center shadow-inner group/metric transition-all hover:bg-blue-500/[0.02]">
+                                                <Droplets size={18} className="text-blue-500 mb-2 group-hover/metric:scale-110 transition-transform" />
+                                                <span className="text-3xl font-black text-white tracking-tighter">{p.spo2}%</span>
+                                                <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest mt-1">PULSE-OX</span>
                                             </div>
                                         </div>
 
-                                        <div className="bg-black/40 rounded-2xl p-4 border border-white/5 flex items-center justify-between mb-10">
+                                        <div className="bg-[#0f0f1a] rounded-2xl p-5 border border-white/10 flex items-center justify-between mb-10 shadow-inner group/bp transition-all">
                                             <div className="flex items-center gap-3">
-                                                <Thermometer size={16} className="text-indigo-400" />
-                                                <span className="text-sm font-black text-white">{p.bp}</span>
+                                                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400">
+                                                    <Thermometer size={16} />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[9px] font-black text-stone-500 uppercase tracking-[0.2em]">Blood Pressure</span>
+                                                    <span className="text-sm font-black text-white tracking-tight">{p.bp}</span>
+                                                </div>
                                             </div>
-                                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${p.trendColor}`}>{p.trend}</span>
+                                            <div className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest bg-black/40 border border-white/5 ${p.trendColor}`}>
+                                                {p.trend}
+                                            </div>
                                         </div>
 
                                         <button
