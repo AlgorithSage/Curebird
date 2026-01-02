@@ -6,11 +6,23 @@ const ActionInboxModal = ({ isOpen, onClose, onResolve }) => {
     const [activeTab, setActiveTab] = React.useState('pending');
 
     const actions = [
-        { id: '1', title: 'Complete Blood Count', patient: 'Sarah Connor', type: 'Lab Approval', priority: 'High', time: '2m ago', category: 'diagnostic' },
-        { id: '2', title: 'Chest X-Ray Review', patient: 'John Smith', type: 'Imaging', priority: 'Urgent', time: '15m ago', category: 'imaging' },
-        { id: '3', title: 'Medication Amendment', patient: 'Ellen Ripley', type: 'Prescription', priority: 'Routine', time: '1h ago', category: 'rx' },
-        { id: '4', title: 'Abnormal Glucose Level', patient: 'Tony Stark', type: 'Alert', priority: 'Critical', time: 'Just Now', category: 'diagnostic' },
+        { id: '1', title: 'Complete Blood Count', patient: 'Sarah Connor', type: 'Lab Approval', priority: 'High', time: '2m ago', category: 'diagnostic', status: 'pending' },
+        { id: '2', title: 'Chest X-Ray Review', patient: 'John Smith', type: 'Imaging', priority: 'Urgent', time: '15m ago', category: 'imaging', status: 'pending' },
+        { id: '3', title: 'Medication Amendment', patient: 'Ellen Ripley', type: 'Prescription', priority: 'Routine', time: '1h ago', category: 'rx', status: 'pending' },
+        { id: '4', title: 'Abnormal Glucose Level', patient: 'Tony Stark', type: 'Alert', priority: 'Critical', time: 'Just Now', category: 'diagnostic', status: 'pending' },
+        { id: '5', title: 'Discharge Summary', patient: 'Bruce Wayne', type: 'Paperwork', priority: 'Routine', time: '1d ago', category: 'documentation', status: 'pending' },
+        { id: '6', title: 'Insurance Verification', patient: 'Peter Parker', type: 'Admin', priority: 'Low', time: '2d ago', category: 'documentation', status: 'pending' },
+        { id: '7', title: 'Cardiology Referral', patient: 'Steve Rogers', type: 'Referral', priority: 'High', time: '3d ago', category: 'admin', status: 'resolved' },
+        { id: '8', title: 'Prescription Refill', patient: 'Natasha Romanoff', type: 'Rx', priority: 'Routine', time: '4d ago', category: 'rx', status: 'resolved' },
     ];
+
+    const filteredActions = actions.filter(action => {
+        if (activeTab === 'pending') return action.status === 'pending';
+        if (activeTab === 'urgent alerts') return action.status === 'pending' && (action.priority === 'Urgent' || action.priority === 'Critical' || action.priority === 'High');
+        if (activeTab === 'documentation') return action.status === 'pending' && action.category === 'documentation';
+        if (activeTab === 'resolved') return action.status === 'resolved';
+        return true;
+    });
 
     const getPriorityColor = (p) => {
         switch (p) {
@@ -85,55 +97,64 @@ const ActionInboxModal = ({ isOpen, onClose, onResolve }) => {
                         {/* Content */}
                         <div className="flex-1 overflow-y-auto p-8 relative z-10 custom-scrollbar">
                             <div className="space-y-4 max-w-3xl mx-auto">
-                                {actions.map((action, i) => (
-                                    <motion.div
-                                        key={action.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className="group glass-card animated-border animated-border-rose overflow-hidden transition-all duration-300 hover:bg-rose-500/5 p-6 flex flex-col gap-6"
-                                    >
-                                        <div className="flex items-start justify-between">
-                                            <div className="flex items-start gap-5">
-                                                <div className="p-3 bg-rose-500/10 rounded-xl text-rose-500 border border-white/5 group-hover:scale-110 transition-transform">
-                                                    {action.category === 'diagnostic' ? <Bell size={20} /> : <FileCheck size={20} />}
-                                                </div>
-                                                <div>
-                                                    <div className="flex items-center gap-4 mb-2">
-                                                        <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest">{action.type}</span>
-                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter border ${getPriorityColor(action.priority)}`}>
-                                                            {action.priority}
-                                                        </span>
+                                {filteredActions.length > 0 ? (
+                                    filteredActions.map((action, i) => (
+                                        <motion.div
+                                            key={action.id}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: i * 0.1 }}
+                                            className="group glass-card animated-border animated-border-rose overflow-hidden transition-all duration-300 hover:bg-rose-500/5 p-6 flex flex-col gap-6"
+                                        >
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex items-start gap-5">
+                                                    <div className="p-3 bg-rose-500/10 rounded-xl text-rose-500 border border-white/5 group-hover:scale-110 transition-transform">
+                                                        {action.category === 'diagnostic' ? <Bell size={20} /> : <FileCheck size={20} />}
                                                     </div>
-                                                    <h4 className="text-lg font-bold text-white group-hover:text-rose-400 transition-colors tracking-tight leading-tight mb-2">{action.title}</h4>
-                                                    <p className="text-sm text-stone-400 font-medium">Patient: <span className="text-white font-bold uppercase">{action.patient}</span></p>
+                                                    <div>
+                                                        <div className="flex items-center gap-4 mb-2">
+                                                            <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest">{action.type}</span>
+                                                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter border ${getPriorityColor(action.priority)}`}>
+                                                                {action.priority}
+                                                            </span>
+                                                        </div>
+                                                        <h4 className="text-lg font-bold text-white group-hover:text-rose-400 transition-colors tracking-tight leading-tight mb-2">{action.title}</h4>
+                                                        <p className="text-sm text-stone-400 font-medium">Patient: <span className="text-white font-bold uppercase">{action.patient}</span></p>
+                                                    </div>
                                                 </div>
+                                                <span className="text-[10px] font-black text-stone-600 uppercase tracking-widest">{action.time}</span>
                                             </div>
-                                            <span className="text-[10px] font-black text-stone-600 uppercase tracking-widest">{action.time}</span>
-                                        </div>
 
-                                        <div className="flex items-center gap-3">
-                                            <button
-                                                onClick={() => onResolve?.('review', action)}
-                                                className="flex-1 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500 hover:text-black transition-all"
-                                            >
-                                                Review & Finalize
-                                            </button>
-                                            <button
-                                                onClick={() => onResolve?.('approve', action)}
-                                                className="px-6 py-3 rounded-xl bg-stone-900 border border-white/5 text-stone-400 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all hover:bg-white/5"
-                                            >
-                                                Approve
-                                            </button>
-                                            <button
-                                                onClick={() => onResolve?.('forward', action)}
-                                                className="px-6 py-3 rounded-xl bg-stone-900 border border-white/5 text-stone-400 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all hover:bg-white/5"
-                                            >
-                                                Forward
-                                            </button>
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    onClick={() => onResolve?.('review', action)}
+                                                    className="flex-1 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500 hover:text-black transition-all"
+                                                >
+                                                    Review & Finalize
+                                                </button>
+                                                <button
+                                                    onClick={() => onResolve?.('approve', action)}
+                                                    className="px-6 py-3 rounded-xl bg-stone-900 border border-white/5 text-stone-400 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all hover:bg-white/5"
+                                                >
+                                                    Approve
+                                                </button>
+                                                <button
+                                                    onClick={() => onResolve?.('forward', action)}
+                                                    className="px-6 py-3 rounded-xl bg-stone-900 border border-white/5 text-stone-400 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all hover:bg-white/5"
+                                                >
+                                                    Forward
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    ))
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-64 text-stone-600">
+                                        <div className="p-6 rounded-full bg-white/5 mb-4">
+                                            <FileCheck size={48} className="opacity-20" />
                                         </div>
-                                    </motion.div>
-                                ))}
+                                        <p className="text-sm font-bold uppercase tracking-widest text-stone-500">No items found</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </motion.div>
