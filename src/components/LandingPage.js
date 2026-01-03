@@ -118,91 +118,147 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                 </motion.div>
             </header>
 
-            {/* Content Sections (SEO Optimized) */}
+            {/* Main Content Area: Authority & Depth */}
             <main className="relative z-10 bg-slate-950">
 
-                {/* Features Section */}
-                <section className="py-20 px-6 max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">Why Choose CureBird?</h2>
-                        <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-                            We bridge the gap between fragmented medical records and actionable health intelligence.
+                {/* 1. KEY VALUE PROPOSITION (H2) */}
+                <section className="py-24 px-6 max-w-7xl mx-auto">
+                    <div className="text-center mb-20">
+                        <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-6">
+                            Why Digitalize Your Medical History?
+                        </h2>
+                        <p className="text-slate-400 max-w-3xl mx-auto text-xl leading-relaxed">
+                            Healthcare is fragmented. CureBird is the cohesive force that brings your scattered prescriptions, lab reports, and imaging into one secure, AI-powered timeline. We don't just store data; we transform it into <span className="text-amber-400 font-semibold">life-saving intelligence</span>.
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <div className="grid md:grid-cols-3 gap-10">
                         {[
-                            { icon: <ShieldCheck size={40} className="text-emerald-400" />, title: "Bank-Grade Security", desc: "Your health data is encrypted with military-grade protocols. We prioritize privacy and HIPAA compliance." },
-                            { icon: <Zap size={40} className="text-amber-400" />, title: "AI Diagnostics", desc: "Our advanced algorithms analyze your reports to flag potential risks and summarize complex medical jargon." },
-                            { icon: <Globe size={40} className="text-blue-400" />, title: "Universal Access", desc: "Access your entire medical history from anywhere in the world. Never carry physical files again." }
+                            {
+                                icon: <ShieldCheck size={48} className="text-emerald-400" />,
+                                title: "Bank-Grade HIPAA Security",
+                                desc: "Your health data is your property. We secure it with AES-256 encryption and strict access controls. You decide who sees your records—whether it's for 5 minutes or 5 years."
+                            },
+                            {
+                                icon: <Zap size={48} className="text-amber-400" />,
+                                title: "AI-Powered Diagnostics",
+                                desc: "Stop guessing. Our advanced LLMs analyze your blood reports to flag anomalies like pre-diabetes or hypertension trends long before they become critical issues."
+                            },
+                            {
+                                icon: <Globe size={48} className="text-blue-400" />,
+                                title: "Universal Interoperability",
+                                desc: "Whether it's a handwritten note from a local clinic or a DICOM file from a major hospital, CureBird creates a unified, graphable patient history accessible globally."
+                            }
                         ].map((feature, idx) => (
-                            <article key={idx} className="p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-amber-500/30 transition-colors">
-                                <div className="mb-6 p-4 rounded-2xl bg-white/5 inline-block">{feature.icon}</div>
-                                <h3 className="text-2xl font-bold text-white mb-3">{feature.title}</h3>
-                                <p className="text-slate-400 leading-relaxed">{feature.desc}</p>
+                            <article key={idx} className="p-10 rounded-[2rem] bg-gradient-to-br from-white/5 to-transparent border border-white/10 hover:border-amber-500/30 transition-all hover:-translate-y-2 duration-300">
+                                <div className="mb-8 p-5 rounded-2xl bg-slate-900 inline-block shadow-lg shadow-black/50">{feature.icon}</div>
+                                <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
+                                <p className="text-slate-400 text-lg leading-relaxed">{feature.desc}</p>
                             </article>
                         ))}
                     </div>
                 </section>
 
-                {/* How It Works */}
-                <section className="py-20 px-6 bg-gradient-to-b from-transparent to-black/30">
+                {/* 2. HOW IT WORKS (H2) */}
+                <section className="py-24 px-6 bg-gradient-to-b from-slate-900 to-black/40">
                     <div className="max-w-7xl mx-auto">
-                        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-16">Streamlined Health Management</h2>
-                        <div className="grid md:grid-cols-2 gap-12 items-center">
+                        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-16 text-slate-100">
+                            The CureBird Ecosystem
+                        </h2>
+
+                        <div className="grid lg:grid-cols-2 gap-16 items-center">
                             <div className="space-y-12">
-                                {[
-                                    { step: "01", title: "Create Your Profile", desc: "Sign up in seconds. Build your secure digital identity and link your family members." },
-                                    { step: "02", title: "Upload Records", desc: "Take photos or upload PDFs of prescriptions, lab reports, and X-rays. Our OCR extracts data instantly." },
-                                    { step: "03", title: "Get Insights", desc: "View trend graphs for vitals like Blood Pressure and Glucose. Receive personalized alerts." }
-                                ].map((item, i) => (
-                                    <div key={i} className="flex gap-6">
-                                        <div className="text-4xl font-black text-amber-500/20">{item.step}</div>
-                                        <div>
-                                            <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                                            <p className="text-slate-400">{item.desc}</p>
-                                        </div>
+                                <article className="flex gap-6 group">
+                                    <div className="text-5xl font-black text-amber-500/10 group-hover:text-amber-500/20 transition-colors">01</div>
+                                    <div>
+                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Create Your Digital Twin</h3>
+                                        <p className="text-slate-400 text-lg">
+                                            Sign up in seconds. Build a comprehensive medical profile that includes your allergies, surgeries, and family history. This baseline data helps our AI tailor its monitoring specifically to your genetic predispositions.
+                                        </p>
                                     </div>
-                                ))}
+                                </article>
+
+                                <article className="flex gap-6 group">
+                                    <div className="text-5xl font-black text-amber-500/10 group-hover:text-amber-500/20 transition-colors">02</div>
+                                    <div>
+                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Zero-Entry Digitization</h3>
+                                        <p className="text-slate-400 text-lg">
+                                            Nobody likes typing. Just snap a photo of your prescription or upload a PDF lab report. Our **OCR & NLP engine** instantly extracts values (like HbA1c, Lipid Profile) and plots them on interactive charts.
+                                        </p>
+                                    </div>
+                                </article>
+
+                                <article className="flex gap-6 group">
+                                    <div className="text-5xl font-black text-amber-500/10 group-hover:text-amber-500/20 transition-colors">03</div>
+                                    <div>
+                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Doctor Collaboration</h3>
+                                        <p className="text-slate-400 text-lg">
+                                            Visiting a specialist? Generate a temporary "Share Link" or QR code. The doctor gets instant, read-only access to your relevant history without needing to install any app.
+                                        </p>
+                                    </div>
+                                </article>
                             </div>
-                            <div className="h-[400px] rounded-[2rem] bg-gradient-to-br from-amber-500/10 to-slate-800/50 border border-white/10 flex items-center justify-center relative overflow-hidden">
-                                <Activity size={120} className="text-amber-500/20 animate-pulse" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                                <div className="absolute bottom-8 left-8 right-8">
-                                    <div className="text-sm font-mono text-amber-500 mb-2">LIVE MONITORING</div>
-                                    <div className="text-2xl font-bold">Real-time Vitals Tracking</div>
+
+                            {/* Visual Representation */}
+                            <div className="relative h-[600px] w-full bg-slate-800 rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl">
+                                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-slate-900 to-black" />
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                                    <Activity size={180} className="text-amber-500/80 mb-8 animate-pulse drop-shadow-[0_0_50px_rgba(245,158,11,0.5)]" />
+                                    <h4 className="text-3xl font-bold text-white mb-4">Live Vitals Dashboard</h4>
+                                    <p className="text-slate-400 max-w-sm">
+                                        Tracking <span className="text-emerald-400">Heart Rate</span>, <span className="text-blue-400">SpO2</span>, and <span className="text-purple-400">Stress Levels</span> in real-time via wearable integration.
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* Trust & SEO Text (The "Meat") */}
-                <section className="py-20 px-6 max-w-5xl mx-auto text-slate-300 leading-Relaxed space-y-8">
-                    <article>
-                        <h2 className="text-2xl font-bold text-white mb-4">The Future of Personal Health Records (PHR)</h2>
-                        <p>
-                            In an era of fragmented healthcare, <strong>CureBird</strong> emerges as the cohesive solution for patients and doctors alike.
-                            Gone are the days of carrying bulky files to every appointment. By digitizing your health records, you not only
-                            ensure their safety but also enable <a href="#" className="text-amber-400 hover:underline">predictive analytics</a> that can save lives.
+                {/* 3. DEEP DIVE CONTENT (H2 -> H3) - For SEO Authority */}
+                <section className="py-24 px-6 max-w-4xl mx-auto text-slate-300 space-y-12">
+                    <div className="prose prose-invert prose-lg max-w-none">
+                        <h2 className="text-3xl font-bold text-white mb-6">Redefining Personal Health Records (PHR) in India</h2>
+                        <p className="text-lg leading-8 text-slate-400">
+                            The traditional healthcare model is reactive: you get sick, you visit a doctor, you get treated. CureBird shifts this paradigm to **proactive wellness**. By maintaining a clean, digitized, and analyzed longitudinal record of your health, we empower you to catch silent killers like cardiac issues or metabolic disorders early.
                         </p>
-                        <p className="mt-4">
-                            Our platform supports a wide range of medical data types, including <em>DICOM imaging, PDF lab reports, and handwritten prescriptions</em>.
-                            Using state-of-the-art Natural Language Processing (NLP), CureBird structures unstructured data, making it searchable
-                            and graphable. Whether you are managing chronic conditions like <strong>Diabetes</strong> or <strong>Hypertension</strong>,
-                            or simply maintaining wellness, our dashboard adapts to your needs.
-                        </p>
-                    </article>
 
-                    <article>
-                        <h3 className="text-xl font-bold text-white mb-3">Privacy First, Always</h3>
-                        <p>
-                            We understand that medical data is sensitive. That's why CureBird employs end-to-end encryption for data at rest and in transit.
-                            You have granular control over who sees your data. Share temporary access links with specialists or keep your profile entirely private.
-                            Your health, your data, your control.
+                        <h3 className="text-2xl font-bold text-white mt-12 mb-4">Why Manual Records Fail</h3>
+                        <p className="text-lg leading-8 text-slate-400">
+                            Paper records degrade. They get lost. Most importantly, they are **siloed**. A cardiologist in Mumbai doesn't know what your dermatologist in Delhi prescribed last month. This lack of interoperability leads to dangerous drug interactions and redundant testing. CureBird solves this by being the **single source of truth** for your medical existence.
                         </p>
-                    </article>
+
+                        <h3 className="text-2xl font-bold text-white mt-12 mb-4">AI: The New Stethoscope</h3>
+                        <p className="text-lg leading-8 text-slate-400">
+                            We don't replace doctors; we give them superpowers. Our AI engine scans thousands of data points from your upload history to generate a "Clinician's Summary" before you even walk into the consultation room. This saves valuable time and ensures your doctor focuses on *treating you*, not reading files.
+                        </p>
+                    </div>
                 </section>
+
+                {/* 4. FAQ SECTION (Schema-Ready) */}
+                <section className="py-24 px-6 bg-slate-900/50">
+                    <div className="max-w-4xl mx-auto">
+                        <h2 className="text-3xl font-bold text-center text-white mb-16">Frequently Asked Questions</h2>
+                        <div className="space-y-6">
+                            {[
+                                { q: "Is my medical data sold to third parties?", a: "Absolutely not. CureBird is a privacy-first platform. Your data is encrypted and you are the sole owner. We do not sell, rent, or monetize your personal health information." },
+                                { q: "Can doctors access my files without the app?", a: "Yes. We use a secure, web-based viewer technology. You can send a time-limited link via WhatsApp or Email, and doctors can view your records on any browser securely." },
+                                { q: "What file formats do you support?", a: "We support PDF, JPG, PNG for standard reports. For radiology, we have a built-in DICOM viewer that works directly in the browser—no heavy software required." },
+                                { q: "Is CureBird free for patients?", a: "Our core 'Personal Portfolio' is free forever for individual patients. We offer premium tiers for families and advanced AI analytics." }
+                            ].map((faq, i) => (
+                                <details key={i} className="group bg-slate-950 border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 open:border-amber-500/30">
+                                    <summary className="flex justify-between items-center p-6 cursor-pointer list-none text-lg font-medium text-slate-200 group-hover:text-amber-400 transition-colors">
+                                        {faq.q}
+                                        <span className="text-amber-500 transform group-open:rotate-180 transition-transform duration-300">▼</span>
+                                    </summary>
+                                    <div className="px-6 pb-6 text-slate-400 leading-relaxed border-t border-white/5 pt-4">
+                                        {faq.a}
+                                    </div>
+                                </details>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
             </main>
 
             {/* Footer */}

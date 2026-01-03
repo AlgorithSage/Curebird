@@ -533,16 +533,63 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
         return null;
     };
 
+    // --- Dynamic Loading Screen Logic ---
+    const [currentFactIndex, setCurrentFactIndex] = useState(0);
+
+    const LOADING_FACTS = [
+        "Use our 'Cure Analyzer' to instantly interpret complex medical prescriptions.",
+        "CureBird uses advanced AI to track disease outbreaks in real-time.",
+        "Securely store and organize your entire family's medical history in one place.",
+        "Our heatmaps visualize regional health trends to help you stay informed.",
+        "Upload lab reports (PDF/Image) and let our OCR engine digitize the data for you."
+    ];
+
+    useEffect(() => {
+        if (!loading) return;
+        const interval = setInterval(() => {
+            setCurrentFactIndex((prev) => (prev + 1) % LOADING_FACTS.length);
+        }, 4000); // Change fact every 4 seconds
+        return () => clearInterval(interval);
+    }, [loading]);
+
     if (loading) return (
-        <div className="h-screen flex flex-col items-center justify-center bg-black text-white">
-            <div className="w-64 h-64 md:w-80 md:h-80">
+        <div className="h-screen flex flex-col items-center justify-center bg-black text-white p-6 text-center">
+            <div className="w-64 h-64 md:w-80 md:h-80 mb-6">
                 <DotLottieReact
                     src="/assets/curestat_loader.lottie"
                     loop
                     autoplay
                 />
             </div>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-2 text-xl font-light tracking-wide text-slate-400">Analyzing Health Data...</motion.p>
+
+            <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-md space-y-4"
+            >
+                <h3 className="text-2xl font-bold text-amber-500 animate-pulse">
+                    Analyzing Health Data...
+                </h3>
+
+                <p className="text-sm text-slate-500 font-mono bg-slate-900/50 px-3 py-1 rounded-full border border-white/10 inline-block">
+                    ⚠️ This may take 1-2 mins to load
+                </p>
+
+                <div className="h-20 flex items-center justify-center mt-4">
+                    <AnimatePresence mode="wait">
+                        <motion.p
+                            key={currentFactIndex}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.5 }}
+                            className="text-slate-300 text-lg font-medium leading-relaxed"
+                        >
+                            "Did you know? {LOADING_FACTS[currentFactIndex]}"
+                        </motion.p>
+                    </AnimatePresence>
+                </div>
+            </motion.div>
         </div>
     );
 
