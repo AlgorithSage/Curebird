@@ -275,7 +275,7 @@ const DiseaseCard = ({ disease, onClick, getRiskLevel }) => {
 };
 
 const HealthIndexCard = ({ title, value, status, trend, icon: Icon, color, source, description, utility }) => (
-    <div className="glass-card p-5 relative group hover:-translate-y-1 transition-transform duration-300">
+    <div className="glass-card p-5 relative group hover:-translate-y-1 transition-all duration-300 hover:z-[45]">
         <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity`}>
             <Icon size={64} className={color} />
         </div>
@@ -291,7 +291,7 @@ const HealthIndexCard = ({ title, value, status, trend, icon: Icon, color, sourc
                 {/* Info Icon with Tooltip */}
                 <div className="relative group/info">
                     <Info size={16} className="text-slate-500 hover:text-sky-400 cursor-help transition-colors" />
-                    <div className="absolute right-0 top-6 w-64 p-4 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/info:opacity-100 group-hover/info:visible transition-all z-50 translate-y-2 group-hover/info:translate-y-0 pointer-events-none group-hover/info:pointer-events-auto">
+                    <div className="absolute right-0 top-6 w-64 p-4 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/info:opacity-100 group-hover/info:visible transition-all z-[100] translate-y-2 group-hover/info:translate-y-0 pointer-events-none group-hover/info:pointer-events-auto">
                         <div className="mb-3">
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">What is this?</h4>
                             <p className="text-xs text-slate-200 leading-relaxed font-medium">{description}</p>
@@ -714,14 +714,14 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                    <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card p-6">
+                    <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card p-6 relative hover:z-[45] transition-all duration-200">
                         <div className="flex items-center justify-between mb-2">
                             <div>
                                 <div className="flex items-center gap-2">
                                     <h2 className="text-xl font-bold text-white">Regional Impact</h2>
                                     <div className="group relative">
                                         <Info size={16} className="text-slate-500 hover:text-sky-400 cursor-help transition-colors" />
-                                        <div className="absolute left-0 bottom-full mb-2 w-96 p-4 bg-slate-900/95 border border-slate-700/80 rounded-xl shadow-2xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                        <div className="absolute left-0 bottom-full mb-2 w-96 p-4 bg-slate-900/95 border border-slate-700/80 rounded-xl shadow-2xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[100]">
                                             {/* Section 1: The Calculation Formula */}
                                             <p className="text-xs font-bold text-white mb-2 border-b border-white/10 pb-2">Calculation Methodology</p>
                                             <p className="text-[11px] text-slate-300 leading-relaxed mb-4">
@@ -784,14 +784,14 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                         </div>
                     </motion.div>
 
-                    <motion.div initial={{ x: 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="glass-card p-6">
+                    <motion.div initial={{ x: 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="glass-card p-6 relative hover:z-[45] transition-all duration-200">
                         <div className="flex items-center justify-between mb-2">
                             <div>
                                 <div className="flex items-center gap-2">
                                     <h2 className="text-xl font-bold text-white">Disease Distribution</h2>
                                     <div className="group relative">
                                         <Info size={16} className="text-slate-500 hover:text-sky-400 cursor-help transition-colors" />
-                                        <div className="absolute right-0 bottom-full mb-2 w-96 p-4 bg-slate-900/95 border border-slate-700/80 rounded-xl shadow-2xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                        <div className="absolute right-0 bottom-full mb-2 w-96 p-4 bg-slate-900/95 border border-slate-700/80 rounded-xl shadow-2xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[100]">
                                             {/* Section 1: The Calculation Formula */}
                                             <p className="text-xs font-bold text-white mb-2 border-b border-white/10 pb-2">Calculation Methodology</p>
                                             <p className="text-[11px] text-slate-300 leading-relaxed mb-4">
@@ -819,7 +819,6 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                 </div>
                                 <p className="text-xs text-slate-400 font-medium mt-1">Proportion of top reported illnesses</p>
                             </div>
-                            <div className="bg-purple-500/20 p-2 rounded-lg border border-purple-500/30"><Sparkles size={20} className="text-purple-400" /></div>
                         </div>
                         <div className="h-[250px] sm:h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
