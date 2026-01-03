@@ -262,7 +262,7 @@ const TelehealthSession = ({ user }) => {
                             <textarea
                                 value={noteContent}
                                 onChange={(e) => setNoteContent(e.target.value)}
-                                className="flex-1 w-full bg-amber-900/10 border border-amber-500/20 rounded-xl p-4 text-sm text-amber-100 placeholder-amber-500/30 focus:outline-none focus:border-amber-500/50 resize-none font-medium leading-relaxed custom-scrollbar"
+                                className="flex-1 w-full bg-[#0c0a05] border border-amber-500/30 rounded-xl p-4 text-sm text-amber-100 placeholder-amber-500/30 focus:outline-none focus:border-amber-500/60 resize-none font-medium leading-relaxed custom-scrollbar shadow-inner"
                                 placeholder="Type observations, symptoms, or instructions..."
                                 autoFocus
                             ></textarea>
@@ -277,8 +277,8 @@ const TelehealthSession = ({ user }) => {
                                 onClick={handleSaveNote}
                                 disabled={isSaving || !noteContent.trim()}
                                 className={`mt-4 w-full py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${isSaving ? 'bg-stone-800 text-stone-500 cursor-wait' :
-                                        !noteContent.trim() ? 'bg-stone-900 text-stone-600 cursor-not-allowed' :
-                                            'bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-black shadow-lg hover:shadow-amber-500/20'
+                                    !noteContent.trim() ? 'bg-stone-900 text-stone-600 cursor-not-allowed' :
+                                        'bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-black shadow-lg hover:shadow-amber-500/20'
                                     }`}
                             >
                                 {isSaving ? <Loader size={14} className="animate-spin" /> : <Save size={14} />}
