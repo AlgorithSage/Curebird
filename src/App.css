@@ -22,8 +22,17 @@
 
 /* Base Styles using @layer base */
 @layer base {
-  *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: var(--font-primary);
     background-color: var(--color-bg-primary-light);
@@ -31,60 +40,187 @@
     overflow-x: hidden;
     transition: background-color var(--transition-medium), color var(--transition-medium);
   }
+
   .dark body {
     background-color: var(--color-bg-primary-dark);
     color: var(--color-text-primary-dark);
   }
+
   ::selection {
     background-color: var(--color-accent-primary-light);
     color: rgb(12, 4, 4);
   }
+
   .dark ::selection {
     background-color: var(--color-accent-primary-dark);
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold;
   }
-  h1 {@apply text-4xl;}
-  h2 {@apply text-3xl;}
-  h3 {@apply text-2xl;}
-  h4 {@apply text-xl;}
-  p {@apply leading-relaxed;}
-  a {@apply text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300 transition-colors;}
+
+  h1 {
+    @apply text-4xl;
+  }
+
+  h2 {
+    @apply text-3xl;
+  }
+
+  h3 {
+    @apply text-2xl;
+  }
+
+  h4 {
+    @apply text-xl;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  a {
+    @apply text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300 transition-colors;
+  }
 }
 
 /* Visual Background Effects */
-body::before, body::after { position: fixed; content: ''; }
-body::after { animation: background-pan 50s linear infinite; }
-@keyframes background-pan { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+body::before,
+body::after {
+  position: fixed;
+  content: '';
+}
+
+body::after {
+  animation: background-pan 50s linear infinite;
+}
+
+@keyframes background-pan {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 /* Scrollbar Styling */
-::-webkit-scrollbar { width: 12px; height: 12px; }
-::-webkit-scrollbar-thumb { border-radius: var(--border-radius-lg); background-clip: content-box; }
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: var(--border-radius-lg);
+  background-clip: content-box;
+}
 
 /* Components Layer */
 @layer components {
-  .btn { @apply inline-flex items-center justify-center px-5 py-2.5 font-semibold rounded-lg transition-all focus:outline-none; }
-  .btn-primary {@apply bg-sky-500 text-white hover:bg-sky-600;}
+  .btn {
+    @apply inline-flex items-center justify-center px-5 py-2.5 font-semibold rounded-lg transition-all focus:outline-none;
+  }
+
+  .btn-primary {
+    @apply bg-sky-500 text-white hover:bg-sky-600;
+  }
+
   /* Other button, card, modal, form, alert styles here... */
 }
 
 /* Animation Keyframes & Utility Classes */
-@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-.animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+/* Rotating Amber Border Effect */
+@keyframes spin-border {
+  from {
+    --angle: 0deg;
+  }
+
+  to {
+    --angle: 360deg;
+  }
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.rotating-amber-border {
+  position: relative;
+  border: 1px solid transparent;
+  /* Fallback */
+  background:
+    linear-gradient(#0c0a05, #0c0a05) padding-box,
+    conic-gradient(from var(--angle), transparent 70%, #f59e0b 100%) border-box;
+  animation: spin-border 3s linear infinite;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);
+}
+
+.rotating-amber-border:hover {
+  animation: spin-border 1.5s linear infinite;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
 
 /* Responsive Media Queries */
-@media (min-width: 640px) { :root { --container-padding: 32px; } }
-@media (min-width: 768px) { .main-dashboard-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); } }
+@media (min-width: 640px) {
+  :root {
+    --container-padding: 32px;
+  }
+}
+
+@media (min-width: 768px) {
+  .main-dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
 @media (min-width: 1024px) {
-  body { font-size: 16px; }
-  .container { max-width: 1280px; margin: 0 auto; padding: var(--container-padding); }
+  body {
+    font-size: 16px;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--container-padding);
+  }
 }
 
 /* Print Styles */
 @media print {
-  body, .card, .modal-content { background: transparent !important; color: #000 !important; box-shadow: none !important; }
-  .no-print { display: none !important; }
+
+  body,
+  .card,
+  .modal-content {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
 }
 
 /* Additional utility and accessibility fixes can be added below */

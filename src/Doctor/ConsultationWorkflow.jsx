@@ -3,14 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Mic, MicOff, Video, VideoOff, PhoneOff, Monitor,
     MoreVertical, FileText, Pill, Activity, ChevronRight,
-    Wifi, Users, Clock, Shield, Zap, AlertCircle, PhoneIncoming, Check, X
+    Wifi, Users, Clock, Shield, Zap, AlertCircle, PhoneIncoming, Check, X, Save, Loader
 } from 'lucide-react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../App';
 
-const TelehealthSession = () => {
+const TelehealthSession = ({ user }) => {
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
     const [activeSideTab, setActiveSideTab] = useState('notes');
     const [duration, setDuration] = useState(0);
+
+    // Note State
+    const [noteContent, setNoteContent] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveStatus, setSaveStatus] = useState(null); // 'success', 'error'
 
     // Call Timer Simulation
     useEffect(() => {
@@ -33,13 +40,42 @@ const TelehealthSession = () => {
     ]);
 
     const handleAccept = (id) => {
-        // Logic to switch call would go here
         alert(`Connecting to patient #${id}...`);
         setWaitingQueue(prev => prev.filter(p => p.id !== id));
     };
 
     const handleDecline = (id) => {
         setWaitingQueue(prev => prev.filter(p => p.id !== id));
+    };
+
+    const handleSaveNote = async () => {
+        if (!noteContent.trim()) return;
+        setIsSaving(true);
+        setSaveStatus(null);
+
+        try {
+            await addDoc(collection(db, 'medical_records'), {
+                type: 'consultation_note',
+                title: 'Telehealth Session Note',
+                description: noteContent,
+                date: new Date().toISOString().split('T')[0],
+                createdAt: serverTimestamp(),
+                patientName: "Sarah Connor", // Simulated active patient
+                patientId: "simulated_sarah_id",
+                doctorId: user?.uid || 'unknown_doctor',
+                doctorName: user?.displayName || 'Dr. User',
+                isTelehealth: true
+            });
+
+            setSaveStatus('success');
+            setNoteContent('');
+            setTimeout(() => setSaveStatus(null), 3000);
+        } catch (error) {
+            console.error("Error saving note:", error);
+            setSaveStatus('error');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const getUrgencyColor = (u) => {
@@ -224,12 +260,29 @@ const TelehealthSession = () => {
                                 <FileText size={14} /> Quick Clinical Note
                             </h3>
                             <textarea
+                                value={noteContent}
+                                onChange={(e) => setNoteContent(e.target.value)}
                                 className="flex-1 w-full bg-amber-900/10 border border-amber-500/20 rounded-xl p-4 text-sm text-amber-100 placeholder-amber-500/30 focus:outline-none focus:border-amber-500/50 resize-none font-medium leading-relaxed custom-scrollbar"
                                 placeholder="Type observations, symptoms, or instructions..."
                                 autoFocus
                             ></textarea>
-                            <button className="mt-4 w-full py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-widest hover:bg-amber-500 hover:text-black transition-all">
-                                Save Entry
+
+                            {saveStatus === 'success' && (
+                                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-2 text-center text-emerald-500 text-xs font-bold uppercase flex items-center justify-center gap-2">
+                                    <Check size={14} /> Saved to Medical Records!
+                                </motion.div>
+                            )}
+
+                            <button
+                                onClick={handleSaveNote}
+                                disabled={isSaving || !noteContent.trim()}
+                                className={`mt-4 w-full py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${isSaving ? 'bg-stone-800 text-stone-500 cursor-wait' :
+                                        !noteContent.trim() ? 'bg-stone-900 text-stone-600 cursor-not-allowed' :
+                                            'bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-black shadow-lg hover:shadow-amber-500/20'
+                                    }`}
+                            >
+                                {isSaving ? <Loader size={14} className="animate-spin" /> : <Save size={14} />}
+                                {isSaving ? 'Saving...' : 'Save Entry'}
                             </button>
                         </motion.div>
                     )}
