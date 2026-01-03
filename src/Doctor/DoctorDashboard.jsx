@@ -6,7 +6,7 @@ import {
     Bell, Shield, HelpCircle, BarChart2, Search, ArrowRight
 } from 'lucide-react';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
-import { auth, db } from '../App';
+import { auth, db } from '../firebase';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection'; // Keep if used, though strict hierarchy is preferred
 import StatCard from '../components/StatCard';

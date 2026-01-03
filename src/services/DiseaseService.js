@@ -14,7 +14,7 @@ import {
     deleteDoc
 } from 'firebase/firestore';
 import { API_BASE_URL } from '../config';
-import { db } from '../App';
+import { db } from '../firebase';
 
 /**
  * Service to handle Disease-Centric Data interactions.

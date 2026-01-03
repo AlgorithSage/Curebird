@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import App, { auth, db } from './App';
-import DoctorPortal from './Doctor/DoctorPortal';
+import { auth, db } from './firebase';
 import LoadingScreen from './components/LoadingScreen';
+
+// Lazy load heavy components
+const App = React.lazy(() => import('./App'));
+const DoctorPortal = React.lazy(() => import('./Doctor/DoctorPortal'));
 
 export default function Main() {
     const [user, setUser] = useState(null);
@@ -70,26 +73,21 @@ export default function Main() {
     }
 
     // RENDER LOGIC
-
-    // 1. DOCTOR CONTEXT (Path starts with /doctor)
-    if (isDoctorContext) {
-        if (user) {
-            if (doctorRoleVerified) {
-                // Authenticated Doctor in Doctor Area -> Allow
-                return <DoctorPortal user={user} />;
-            } else {
-                // Authenticated but NOT a verified Doctor -> New Doctor Onboarding
-                return <DoctorPortal user={user} isNewDoctor={true} />;
-            }
-        } else {
-            // Not logged in -> Show Doctor Login (handled by Portal)
-            return <DoctorPortal user={null} />;
-        }
-    }
-
-    // 2. USER CONTEXT (Path is /, /dashboard, etc.)
-    // We strictly render App. We NEVER checked the 'doctors' collection here.
-    // If a Doctor logs in here, they get treated as a User (App handles the UI).
-    // This satisfies "Doctor logic must NOT execute at all during User login".
-    return <App />;
+    return (
+        <Suspense fallback={<LoadingScreen />}>
+            {isDoctorContext ? (
+                user ? (
+                    doctorRoleVerified ? (
+                        <DoctorPortal user={user} />
+                    ) : (
+                        <DoctorPortal user={user} isNewDoctor={true} />
+                    )
+                ) : (
+                    <DoctorPortal user={null} />
+                )
+            ) : (
+                <App />
+            )}
+        </Suspense>
+    );
 }

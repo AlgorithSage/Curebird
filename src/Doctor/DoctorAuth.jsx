@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, ArrowLeft } from 'lucide-react';
 
 // Use the central Firebase exports
-import { auth, db, storage } from '../App';
+import { auth, db, storage } from '../firebase';
 
 const googleProvider = new GoogleAuthProvider();
 

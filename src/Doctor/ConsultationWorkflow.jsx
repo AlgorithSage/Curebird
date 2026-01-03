@@ -6,7 +6,7 @@ import {
     Wifi, Users, Clock, Shield, Zap, AlertCircle, PhoneIncoming, Check, X, Save, Loader
 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../App';
+import { db } from '../firebase';
 
 const TelehealthSession = ({ user }) => {
     const [isMuted, setIsMuted] = useState(false);

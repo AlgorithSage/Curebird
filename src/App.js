@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
 import {
-    getAuth,
     onAuthStateChanged,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
-    GoogleAuthProvider,
     signInWithPopup
 } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { AnimatePresence } from 'framer-motion';
+
+import { auth, db, storage, googleProvider, appId } from './firebase';
 
 // Import all components
 import Sidebar from './components/Sidebar';
@@ -31,23 +29,6 @@ import TermsOfService from './components/TermsOfService';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import Contact from './components/Contact';
 import LoadingScreen from './components/LoadingScreen';
-
-const firebaseConfig = {
-    apiKey: "AIzaSyB6phfALFUYNvEhF3BkVwuHK4OeocV-IEo",
-    authDomain: "curebird-535e5.firebaseapp.com",
-    projectId: "curebird-535e5",
-    storageBucket: "curebird-535e5.firebasestorage.app",
-    messagingSenderId: "325018733204",
-    appId: "1:325018733204:web:8b10b21d92afe506e1c281"
-};
-
-// Export initialized Firebase instances for use in other modules (like Main.js)
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-const appId = firebaseConfig.appId;
-const googleProvider = new GoogleAuthProvider();
 
 const formatDate = (date) => date?.toDate ? date.toDate().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ') : '');

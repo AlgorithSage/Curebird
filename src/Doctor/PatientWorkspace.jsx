@@ -5,7 +5,7 @@ import {
     AlertCircle, Clock, File, Download, Search, MessageSquare, Loader
 } from 'lucide-react';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { db } from '../App';
+import { db } from '../firebase';
 
 // --- Sub-Components ---
 

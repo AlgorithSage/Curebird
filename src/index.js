@@ -6,10 +6,14 @@ import './index.css';
 import Main from './Main';
 import reportWebVitals from './reportWebVitals';
 
+import { HelmetProvider } from 'react-helmet-async';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Main />
+    <HelmetProvider>
+      <Main />
+    </HelmetProvider>
   </React.StrictMode>
 );
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Activity, CheckCircle, AlertTriangle, Loader, User, Calendar, Droplets, Thermometer, Wind, Monitor } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '../App';
+import { db, auth } from '../firebase';
 
 const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
     const [loading, setLoading] = useState(false);

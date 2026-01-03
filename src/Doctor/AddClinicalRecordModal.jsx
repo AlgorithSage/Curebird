@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Upload, FileText, User, Calendar, AlertTriangle, CheckCircle, Loader } from 'lucide-react';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '../App'; // Import auth from main App
+import { db, auth } from '../firebase'; // Import auth from main firebase config
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 const TabButton = ({ children, active, onClick, colorClass = "text-amber-400" }) => {

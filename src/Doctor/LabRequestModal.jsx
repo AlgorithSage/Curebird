@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Microscope, CheckCircle, AlertTriangle, Loader, User, Calendar, FileText } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '../App';
+import { db, auth } from '../firebase';
 
 const ModalTabButton = ({ children, active, onClick, colorClass = "text-amber-400" }) => {
     const mouseX = useMotionValue(0);

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, User, Activity, Calendar, HeartPulse, CheckCircle, Loader, AlertTriangle, Phone, Mail, MapPin, Shield, FileText, Droplet, UserPlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../App';
+import { db } from '../firebase';
 
 const AddPatientModal = ({ isOpen, onClose, onAddPatient }) => {
     const [loading, setLoading] = useState(false);

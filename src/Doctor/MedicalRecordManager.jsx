@@ -7,7 +7,7 @@ import {
     Copy, Repeat, Edit2, Lock, Loader, Activity, ChevronRight
 } from 'lucide-react';
 import { collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
-import { auth, db } from '../App';
+import { auth, db } from '../firebase';
 
 const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
     const [activeTab, setActiveTab] = useState('overview');
