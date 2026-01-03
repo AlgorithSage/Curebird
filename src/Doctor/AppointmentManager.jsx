@@ -13,67 +13,66 @@ const AppointmentCard = ({ appt, type }) => (
         layout
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card p-4 rounded-xl border border-white/5 bg-slate-800/40 hover:bg-slate-800/60 transition-all group"
+        className="glass-card p-6 rounded-[1.5rem] border border-white/5 bg-[#0c0a05] hover:bg-[#14120a] transition-all group relative overflow-hidden"
     >
-        <div className="flex justify-between items-start mb-3">
-            <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-inner ${type === 'upcoming' ? 'bg-sky-500/20 text-sky-400' :
-                        type === 'request' ? 'bg-amber-500/20 text-amber-400' :
-                            'bg-slate-700 text-slate-400'
+        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-amber-500/10 transition-colors" />
+
+        <div className="flex justify-between items-start mb-4 relative z-10">
+            <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-white/5 ${type === 'upcoming' ? 'bg-amber-500 text-black shadow-amber-500/20' :
+                    type === 'request' ? 'bg-slate-800 text-slate-400' :
+                        'bg-slate-900 text-slate-600'
                     }`}>
                     {appt.patientName.charAt(0)}
                 </div>
                 <div>
-                    <h4 className="font-bold text-slate-200 group-hover:text-white transition-colors">{appt.patientName}</h4>
-                    <p className="text-xs text-slate-500 flex items-center gap-1">
-                        {appt.type === 'video' ? <Video size={12} /> : <MapPin size={12} />}
-                        {appt.reason}
+                    <h4 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors tracking-tight">{appt.patientName}</h4>
+                    <p className="text-[11px] text-stone-500 font-bold uppercase tracking-wider flex items-center gap-2 mt-1">
+                        <Video size={12} className={type === 'upcoming' ? 'text-amber-500' : 'text-stone-600'} />
+                        Topic: {appt.reason}
                     </p>
                 </div>
             </div>
             {/* Status Pill or Time */}
             <div className="text-right">
-                <p className="text-sm font-bold text-white tracking-wide">{appt.time}</p>
-                <p className="text-[10px] text-slate-500 uppercase font-bold">{appt.date}</p>
+                <p className="text-base font-black text-white tracking-wide">{appt.time}</p>
+                <p className="text-[10px] text-amber-500/50 uppercase font-black tracking-widest">{appt.date}</p>
             </div>
         </div>
 
         {/* Actions Area */}
-        <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+        <div className="pt-4 border-t border-white/5 flex items-center justify-between relative z-10">
             {type === 'upcoming' && (
-                <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all">
-                    <Video size={14} /> Join Call
+                <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 text-black text-[11px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:bg-amber-400 hover:scale-105 transition-all w-full justify-center">
+                    <Video size={16} /> Enter Telehealth Room
                 </button>
             )}
             {type === 'request' && (
-                <div className="flex gap-2 w-full">
-                    <button className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors">
-                        Reject
+                <div className="flex gap-3 w-full">
+                    <button className="flex-1 py-2.5 rounded-xl bg-stone-900 hover:bg-rose-950/30 text-stone-500 hover:text-rose-500 text-[10px] font-black uppercase tracking-widest transition-colors border border-white/5 hover:border-rose-500/20">
+                        Decline
                     </button>
-                    <button className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white text-xs font-bold transition-colors border border-emerald-500/20 hover:border-emerald-500">
-                        Accept
+                    <button className="flex-1 py-2.5 rounded-xl bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-black text-[10px] font-black uppercase tracking-widest transition-all border border-amber-500/20 shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20">
+                        Approve
                     </button>
                 </div>
             )}
-            <button className="p-1.5 rounded-lg hover:bg-white/5 text-slate-500 hover:text-slate-300 transition-colors ml-auto">
-                <MoreVertical size={16} />
-            </button>
         </div>
     </motion.div>
 );
 
 const ScheduleSlot = ({ time, status }) => (
-    <div className={`p-3 rounded-xl border flex items-center justify-between transition-colors ${status === 'booked' ? 'bg-emerald-500/10 border-emerald-500/20' :
-            status === 'blocked' ? 'bg-slate-800/50 border-slate-700 dashed-border opacity-50' :
-                'bg-slate-900/50 border-white/5 hover:border-white/10'
+    <div className={`p-4 rounded-2xl border flex items-center justify-between transition-all cursor-pointer group ${status === 'booked' ? 'bg-amber-500/5 border-amber-500/20' :
+        status === 'blocked' ? 'bg-stone-900/50 border-stone-800 border-dashed opacity-40' :
+            'bg-stone-900/40 border-white/5 hover:border-amber-500/30 hover:bg-amber-500/5'
         }`}>
-        <span className={`text-sm font-mono font-bold ${status === 'booked' ? 'text-emerald-400' : 'text-slate-400'}`}>{time}</span>
+        <span className={`text-sm font-mono font-bold ${status === 'booked' ? 'text-amber-500' : 'text-stone-400 group-hover:text-amber-200'}`}>{time}</span>
         {status === 'booked' ? (
-            <span className="text-xs text-white bg-emerald-500/20 px-2 py-0.5 rounded font-bold">John Doe</span>
+            <span className="text-[10px] text-black bg-amber-500 px-3 py-1 rounded-lg font-black uppercase tracking-wider shadow-lg shadow-amber-500/20">Reserved</span>
         ) : status === 'blocked' ? (
-            <span className="text-xs text-slate-600">Blocked</span>
+            <span className="text-[10px] text-stone-600 font-bold uppercase tracking-wider">Unavail</span>
         ) : (
-            <span className="text-xs text-slate-500 flex items-center gap-1"><Plus size={12} /> Available</span>
+            <span className="text-[10px] text-stone-500 group-hover:text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1"><Plus size={12} /> Open</span>
         )}
     </div>
 );
@@ -83,38 +82,38 @@ const ScheduleSlot = ({ time, status }) => (
 const AppointmentManager = ({ view = 'overview' }) => {
     // view prop comes from sidebar: 'overview', 'requests', 'schedule'
 
-    // Mock Data
+    // Mock Data - Pure Telehealth
     const upcomingAppts = [
         { id: 1, patientName: "Sarah Connor", time: "10:30 AM", date: "Today", reason: "Follow-up", type: "video" },
-        { id: 2, patientName: "Kyle Reese", time: "02:00 PM", date: "Today", reason: "Consultation", type: "in-person" },
+        { id: 2, patientName: "Kyle Reese", time: "02:00 PM", date: "Today", reason: "Trauma Review", type: "video" },
     ];
 
     const requests = [
-        { id: 3, patientName: "Marty McFly", time: "11:00 AM", date: "Tomorrow", reason: "New Symptom", type: "video" },
-        { id: 4, patientName: "Emmett Brown", time: "04:30 PM", date: "Fri, 27 Oct", reason: "Lab Review", type: "video" },
+        { id: 3, patientName: "Marty McFly", time: "11:00 AM", date: "Tomorrow", reason: "Vertigo Symptoms", type: "video" },
+        { id: 4, patientName: "Emmett Brown", time: "04:30 PM", date: "Fri, 27 Oct", reason: "Lab Results", type: "video" },
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
 
             {/* Context Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <div className="p-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                            <Calendar className="text-orange-400" size={20} />
+                    <h2 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
+                        <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.1)]">
+                            <Video className="text-amber-500" size={24} />
                         </div>
-                        Appointment Center
+                        Telehealth Scheduler
                     </h2>
-                    <p className="text-slate-400 text-sm mt-1">
-                        {view === 'overview' && "Daily snapshot and upcoming events."}
-                        {view === 'requests' && "Manage pending appointment requests."}
-                        {view === 'schedule' && "Configure availability and time slots."}
+                    <p className="text-stone-500 text-xs font-bold uppercase tracking-[0.2em] mt-2 ml-1">
+                        {view === 'overview' && "Live Queue & Daily Briefing"}
+                        {view === 'requests' && "Pending Video Consultations"}
+                        {view === 'schedule' && "Manage Digital Availability"}
                     </p>
                 </div>
                 {view === 'schedule' && (
-                    <button className="bg-white text-slate-900 px-4 py-2 rounded-xl font-bold text-sm hover:bg-slate-200 transition-colors flex items-center gap-2">
-                        <Plus size={16} /> Add Slot
+                    <button className="bg-amber-500 text-black px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2">
+                        <Plus size={16} /> New Slot
                     </button>
                 )}
             </div>
@@ -127,48 +126,49 @@ const AppointmentManager = ({ view = 'overview' }) => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
                     >
                         {/* Left: Today's Agenda */}
-                        <div className="lg:col-span-2 space-y-6">
-                            <div className="glass-card p-6 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/5">
-                                <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-                                    <Clock size={16} className="text-emerald-400" /> Today's Agenda
+                        <div className="lg:col-span-2 space-y-8">
+                            <div className="glass-card p-8 rounded-[2rem] bg-[#080705] border border-white/5 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                                <h3 className="text-white font-bold mb-6 flex items-center gap-3 text-lg">
+                                    <Clock size={20} className="text-amber-400" /> Today's Video Queue
                                 </h3>
-                                <div className="space-y-3">
+                                <div className="space-y-4 relative z-10">
                                     {upcomingAppts.map(appt => (
                                         <AppointmentCard key={appt.id} appt={appt} type="upcoming" />
                                     ))}
-                                    {upcomingAppts.length === 0 && <p className="text-slate-500 text-sm">No appointments scheduled for today.</p>}
+                                    {upcomingAppts.length === 0 && <p className="text-stone-600 text-sm font-medium italic">No video sessions scheduled for today.</p>}
                                 </div>
                             </div>
 
                             {/* Stats Mockup */}
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="p-4 rounded-2xl bg-slate-800/40 border border-white/5 text-center">
-                                    <h4 className="text-2xl font-bold text-white">8</h4>
-                                    <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Served</p>
+                            <div className="grid grid-cols-3 gap-6">
+                                <div className="p-6 rounded-[2rem] bg-stone-900/40 border border-white/5 text-center group hover:bg-stone-900/60 transition-colors">
+                                    <h4 className="text-3xl font-black text-white group-hover:text-amber-500 transition-colors">8</h4>
+                                    <p className="text-[10px] text-stone-500 uppercase font-black tracking-[0.2em] mt-2">Completed</p>
                                 </div>
-                                <div className="p-4 rounded-2xl bg-slate-800/40 border border-white/5 text-center">
-                                    <h4 className="text-2xl font-bold text-amebr-400">3</h4>
-                                    <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Pending</p>
+                                <div className="p-6 rounded-[2rem] bg-stone-900/40 border border-white/5 text-center group hover:bg-stone-900/60 transition-colors">
+                                    <h4 className="text-3xl font-black text-amber-400">3</h4>
+                                    <p className="text-[10px] text-stone-500 uppercase font-black tracking-[0.2em] mt-2">Waiting</p>
                                 </div>
-                                <div className="p-4 rounded-2xl bg-slate-800/40 border border-white/5 text-center">
-                                    <h4 className="text-2xl font-bold text-rose-400">1</h4>
-                                    <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">No-Show</p>
+                                <div className="p-6 rounded-[2rem] bg-stone-900/40 border border-white/5 text-center group hover:bg-stone-900/60 transition-colors">
+                                    <h4 className="text-3xl font-black text-rose-500">1</h4>
+                                    <p className="text-[10px] text-stone-500 uppercase font-black tracking-[0.2em] mt-2">Missed</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Right: Quick Requests Preview */}
-                        <div className="glass-card p-6 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/5 h-fit">
-                            <div className="flex items-center justify-between mb-4">
+                        <div className="glass-card p-8 rounded-[2rem] bg-[#0c0a05] border border-white/5 h-fit relative">
+                            <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-white font-bold flex items-center gap-2">
-                                    <AlertCircle size={16} className="text-amber-400" /> Requests
+                                    <AlertCircle size={20} className="text-amber-500" /> New Requests
                                 </h3>
-                                <button className="text-xs text-emerald-400 hover:text-emerald-300 font-bold">View All</button>
+                                <button className="text-[10px] text-amber-500 hover:text-amber-300 font-black uppercase tracking-widest">View All</button>
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-4">
                                 {requests.slice(0, 2).map(req => (
                                     <AppointmentCard key={req.id} appt={req} type="request" />
                                 ))}
@@ -182,7 +182,7 @@ const AppointmentManager = ({ view = 'overview' }) => {
                         key="requests"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                     >
                         {requests.map(req => (
                             <AppointmentCard key={req.id} appt={req} type="request" />
@@ -198,21 +198,23 @@ const AppointmentManager = ({ view = 'overview' }) => {
                         key="schedule"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="glass-card p-6 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/5"
+                        className="glass-card p-8 rounded-[2.5rem] bg-[#080705] border border-white/5 relative overflow-hidden"
                     >
+                        <div className="absolute top-0 left-0 w-96 h-96 bg-amber-500/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+
                         {/* Calendar Week Strip */}
-                        <div className="flex justify-between items-center mb-6 overflow-x-auto pb-2">
+                        <div className="flex justify-between items-center mb-8 overflow-x-auto pb-4 relative z-10 no-scrollbar gap-4">
                             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
-                                <button key={day} className={`flex flex-col items-center justify-center w-14 h-20 rounded-2xl border transition-all ${i === 2 ? 'bg-emerald-500 text-white shadow-lg border-emerald-400' : 'bg-slate-800/50 text-slate-400 border-white/5 hover:border-white/10'}`}>
-                                    <span className="text-xs font-bold uppercase">{day}</span>
-                                    <span className="text-xl font-bold">{24 + i}</span>
+                                <button key={day} className={`flex flex-col items-center justify-center min-w-[4.5rem] h-24 rounded-2xl border transition-all ${i === 2 ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 border-amber-400 scale-110' : 'bg-stone-900/50 text-stone-500 border-white/5 hover:border-amber-500/30 hover:text-white'}`}>
+                                    <span className="text-[10px] font-black uppercase tracking-wider mb-1">{day}</span>
+                                    <span className="text-2xl font-black">{24 + i}</span>
                                 </button>
                             ))}
                         </div>
 
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
                             {['09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM'].map(t => <ScheduleSlot key={t} time={t} status="booked" />)}
-                            {['11:00 AM', '11:30 AM'].map(t => <ScheduleSlot key={t} time={t} status="available" />)}
+                            {['11:00 AM', '11:30 AM'].map(t => <ScheduleSlot key={t} time={t} status="blocked" />)}
                             {['12:00 PM', '12:30 PM'].map(t => <ScheduleSlot key={t} time={t} status="blocked" />)}
                             {['01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM'].map(t => <ScheduleSlot key={t} time={t} status="available" />)}
                         </div>
