@@ -17,7 +17,91 @@ const TelehealthSession = ({ user }) => {
     // Note State
     const [noteContent, setNoteContent] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const [saveStatus, setSaveStatus] = useState(null); // 'success', 'error'
+    const [saveStatus, setSaveStatus] = useState(null);
+
+    const localVideoRef = React.useRef(null);
+    const [stream, setStream] = useState(null);
+    const [pc, setPc] = useState(null);
+    const [callId, setCallId] = useState(null);
+
+    // Initialize Camera
+    useEffect(() => {
+        const startCamera = async () => {
+            try {
+                const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                setStream(mediaStream);
+                if (localVideoRef.current) {
+                    localVideoRef.current.srcObject = mediaStream;
+                }
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+            }
+        };
+
+        startCamera();
+
+        return () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, []);
+
+    // Initialize WebRTC Call (Create Offer)
+    const createCall = async () => {
+        const servers = {
+            iceServers: [
+                {
+                    urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
+                },
+            ],
+            iceCandidatePoolSize: 10,
+        };
+        const newPc = new RTCPeerConnection(servers);
+        setPc(newPc);
+
+        // Push tracks from local stream to peer connection
+        stream.getTracks().forEach((track) => {
+            newPc.addTrack(track, stream);
+        });
+
+        // Create the call document in Firestore
+        const callDoc = collection(db, 'calls');
+        const callRef = await addDoc(callDoc, {
+            date: serverTimestamp(),
+            doctorId: user?.uid || 'unknown',
+        });
+        const callId = callRef.id;
+        setCallId(callId);
+
+        // Create Offer
+        const offerDescription = await newPc.createOffer();
+        await newPc.setLocalDescription(offerDescription);
+
+        const offer = {
+            sdp: offerDescription.sdp,
+            type: offerDescription.type,
+        };
+
+        await addDoc(collection(db, `calls/${callId}/offer`), { offer });
+
+        console.log("Call Created with ID:", callId);
+    };
+
+    // Toggle Handlers
+    const toggleVideo = () => {
+        if (stream) {
+            stream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+            setIsVideoOff(!stream.getVideoTracks()[0].enabled);
+        }
+    };
+
+    const toggleAudio = () => {
+        if (stream) {
+            stream.getAudioTracks().forEach(track => track.enabled = !track.enabled);
+            setIsMuted(!stream.getAudioTracks()[0].enabled);
+        }
+    };
 
     // Call Timer Simulation
     useEffect(() => {
@@ -30,6 +114,9 @@ const TelehealthSession = ({ user }) => {
         const secs = seconds % 60;
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
+
+
+
 
     // Mock Data for Waiting Room / Queue
     const [waitingQueue, setWaitingQueue] = useState([
@@ -90,10 +177,16 @@ const TelehealthSession = ({ user }) => {
         <div className="h-[80vh] flex gap-6 overflow-hidden">
             {/* --- Main Video Stage (70%) --- */}
             <div className="flex-1 relative bg-black rounded-[2.5rem] border border-amber-500/20 shadow-2xl overflow-hidden group">
-                {/* Simulated Video Feed Background */}
+                {/* Live Video Feed */}
                 <div className="absolute inset-0 bg-stone-900 flex items-center justify-center overflow-hidden">
-                    <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80')] bg-cover bg-center mix-blend-overlay"></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40"></div>
+                    <video
+                        ref={localVideoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        className={`w-full h-full object-cover transform scale-x-[-1] transition-opacity duration-500 ${isVideoOff ? 'opacity-0' : 'opacity-100'}`}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none"></div>
 
                     {/* Placeholder Avatar if Video Off */}
                     {isVideoOff && (
@@ -111,14 +204,17 @@ const TelehealthSession = ({ user }) => {
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col">
                             <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
-                                Sarah Connor
-                                <span className="px-2 py-0.5 rounded text-[10px] bg-red-500 text-white font-black uppercase tracking-widest animate-pulse">
-                                    LIVE
-                                </span>
+                                {callId ? "Waiting for Patient..." : "Start Telehealth Session"}
+                                {callId && <span className="px-2 py-0.5 rounded text-[10px] bg-red-500 text-white font-black uppercase tracking-widest animate-pulse">LIVE SIGNAL</span>}
                             </h2>
                             <p className="text-xs text-amber-500/70 font-bold uppercase tracking-widest mt-1 flex items-center gap-2">
-                                <Wifi size={12} /> HD Connection • Encrypted
+                                <Wifi size={12} /> {callId ? `Session ID: ${callId}` : "Secure HD Connection Ready"}
                             </p>
+                            {!callId && (
+                                <button onClick={createCall} className="mt-2 text-xs bg-amber-500 text-black px-3 py-1 font-bold rounded hover:bg-amber-400">
+                                    Initiate Connection
+                                </button>
+                            )}
                         </div>
                     </div>
                     <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
@@ -149,13 +245,13 @@ const TelehealthSession = ({ user }) => {
                 {/* Call Controls (Bottom Center) */}
                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-30 p-4 rounded-[2rem] bg-stone-900/80 border border-white/10 backdrop-blur-xl shadow-2xl">
                     <button
-                        onClick={() => setIsMuted(!isMuted)}
+                        onClick={toggleAudio}
                         className={`p-4 rounded-full transition-all ${isMuted ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-stone-800 text-stone-300 hover:bg-stone-700'}`}
                     >
                         {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
                     </button>
                     <button
-                        onClick={() => setIsVideoOff(!isVideoOff)}
+                        onClick={toggleVideo}
                         className={`p-4 rounded-full transition-all ${isVideoOff ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-stone-800 text-stone-300 hover:bg-stone-700'}`}
                     >
                         {isVideoOff ? <VideoOff size={20} /> : <Video size={20} />}
