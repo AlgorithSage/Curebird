@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { HeartPulse, Sparkles, Activity, ShieldPlus, FileText, Pill, Calendar, Bot, BarChart2, CheckCircle2, Volume2, VolumeX, MessageSquare, Microscope } from 'lucide-react';
+import { HeartPulse, Activity, ShieldPlus, FileText, Pill, Calendar, Bot, BarChart2, CheckCircle2, Volume2, VolumeX, MessageSquare, Microscope } from 'lucide-react';
 
 const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) => {
     const [isMobile, setIsMobile] = React.useState(false);
@@ -163,7 +163,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                 >
                                     <div>
                                         <div className="flex items-center gap-2 mb-1">
-                                            <Sparkles size={14} className="text-indigo-400" />
+                                            <Activity size={14} className="text-indigo-400" />
                                             <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Curebird Health Index</span>
                                         </div>
                                         <div className="flex items-baseline gap-1">
@@ -326,7 +326,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                 <FileText size={12} className="text-amber-500" /> Multi-Format Support
                             </div>
                             <div className="flex items-center gap-2 text-[10px] font-bold text-white uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
-                                <Sparkles size={12} className="text-purple-500" /> Predictive Modeling
+                                <BarChart2 size={12} className="text-purple-500" /> Predictive Modeling
                             </div>
                         </div>
                     </motion.div>
