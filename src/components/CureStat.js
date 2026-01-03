@@ -333,6 +333,9 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
     const [riskFilter, setRiskFilter] = useState('all');
     const [showHeatmap, setShowHeatmap] = useState(false);
     const [selectedDisease, setSelectedDisease] = useState(null);
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const searchWrapperRef = React.useRef(null);
 
     useEffect(() => {
         const fetchDiseaseTrends = async () => {
@@ -395,6 +398,41 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
     useEffect(() => {
         applyFilters();
     }, [applyFilters]);
+
+    // Close suggestions on click outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (searchWrapperRef.current && !searchWrapperRef.current.contains(event.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+
+        if (value.length > 0) {
+            // Create a unique list of matches
+            const uniqueDiseases = [...new Set(trends.map(t => t.disease))];
+            const matches = uniqueDiseases.filter(d =>
+                d.toLowerCase().includes(value.toLowerCase())
+            ).slice(0, 6); // Limit to 6 suggestions
+
+            setSuggestions(matches);
+            setShowSuggestions(true);
+        } else {
+            setSuggestions([]);
+            setShowSuggestions(false);
+        }
+    };
+
+    const handleSuggestionClick = (diseaseName) => {
+        setSearchTerm(diseaseName);
+        setShowSuggestions(false);
+    };
 
     const [isMobile, setIsMobile] = useState(false);
 
@@ -631,10 +669,40 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                     </div>
                 </motion.div>
 
-                <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between glass-card p-4">
-                    <div className="relative w-full md:w-96 group">
+                <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between glass-card p-4 relative z-40">
+                    <div className="relative w-full md:w-96 group" ref={searchWrapperRef}>
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-400 transition-colors" size={20} />
-                        <input type="text" placeholder="Search diseases, symptoms..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white font-bold placeholder:text-white font-bold focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner" />
+                        <input
+                            type="text"
+                            placeholder="Search diseases, symptoms..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            onFocus={() => { if (searchTerm) setShowSuggestions(true); }}
+                            className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white font-bold placeholder:text-white font-bold focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner"
+                        />
+
+                        {/* Auto-complete Dropdown */}
+                        <AnimatePresence>
+                            {showSuggestions && suggestions.length > 0 && (
+                                <motion.ul
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 5 }}
+                                    className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 border border-white/10 rounded-xl shadow-2xl backdrop-blur-md z-[100] overflow-hidden"
+                                >
+                                    {suggestions.map((disease, idx) => (
+                                        <li
+                                            key={idx}
+                                            onClick={() => handleSuggestionClick(disease)}
+                                            className="px-4 py-3 text-sm text-slate-300 hover:bg-sky-500/10 hover:text-sky-400 cursor-pointer border-b border-white/5 last:border-0 flex items-center gap-2 transition-colors font-medium"
+                                        >
+                                            <Search size={14} className="opacity-50" />
+                                            {disease}
+                                        </li>
+                                    ))}
+                                </motion.ul>
+                            )}
+                        </AnimatePresence>
                     </div>
                     <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
                         {['all', 'high', 'medium', 'low'].map((level) => (
