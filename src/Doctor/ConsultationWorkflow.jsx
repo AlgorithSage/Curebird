@@ -103,6 +103,23 @@ const TelehealthSession = ({ user }) => {
         }
     };
 
+    const endCall = () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        if (pc) {
+            pc.close();
+        }
+        setStream(null);
+        setPc(null);
+        setCallId(null);
+        if (localVideoRef.current) {
+            localVideoRef.current.srcObject = null;
+        }
+        setIsVideoOff(false);
+        setIsMuted(false);
+    };
+
     // Call Timer Simulation
     useEffect(() => {
         const timer = setInterval(() => setDuration(prev => prev + 1), 1000);
@@ -190,11 +207,13 @@ const TelehealthSession = ({ user }) => {
 
                     {/* Placeholder Avatar if Video Off */}
                     {isVideoOff && (
-                        <div className="z-10 flex flex-col items-center gap-4 text-stone-500">
-                            <div className="p-8 rounded-full bg-stone-800 border border-white/5">
-                                <Users size={64} />
+                        <div className="absolute inset-0 flex items-center justify-center z-10">
+                            <div className="flex flex-col items-center gap-4 text-stone-500 bg-stone-900/90 p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
+                                <div className="p-6 rounded-full bg-stone-800 border border-white/5 shadow-inner">
+                                    <Users size={48} />
+                                </div>
+                                <p className="font-bold uppercase tracking-widest text-xs">Video Paused</p>
                             </div>
-                            <p className="font-bold uppercase tracking-widest text-sm">Video Paused</p>
                         </div>
                     )}
                 </div>
@@ -223,21 +242,23 @@ const TelehealthSession = ({ user }) => {
                 </div>
 
                 {/* Vitals Overlay (Float) */}
-                <div className="absolute top-24 left-6 z-20 space-y-3">
-                    <div className="p-3 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md w-32">
-                        <p className="text-[10px] text-stone-400 font-bold uppercase tracking-wider mb-1">Heart Rate</p>
-                        <div className="flex items-end gap-2 text-emerald-400">
-                            <Activity size={18} className="animate-pulse" />
-                            <span className="text-xl font-bold leading-none">72</span>
-                            <span className="text-[10px]">BPM</span>
+                <div className="absolute top-40 left-6 z-20 flex flex-col gap-6">
+                    <div className="p-3 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md w-32 shadow-lg hover:bg-black/80 transition-all cursor-default">
+                        <p className="text-[9px] text-stone-400 font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
+                            <Activity size={10} className="text-emerald-500" /> Heart Rate
+                        </p>
+                        <div className="flex items-end gap-1 text-emerald-400">
+                            <span className="text-xl font-black leading-none">72</span>
+                            <span className="text-[9px] font-bold opacity-60 mb-0.5">BPM</span>
                         </div>
                     </div>
-                    <div className="p-3 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md w-32">
-                        <p className="text-[10px] text-stone-400 font-bold uppercase tracking-wider mb-1">SpO2</p>
-                        <div className="flex items-end gap-2 text-amber-400">
-                            <Zap size={18} />
-                            <span className="text-xl font-bold leading-none">98</span>
-                            <span className="text-[10px]">%</span>
+                    <div className="p-3 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md w-32 shadow-lg hover:bg-black/80 transition-all cursor-default">
+                        <p className="text-[9px] text-stone-400 font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
+                            <Zap size={10} className="text-amber-500" /> SpO2
+                        </p>
+                        <div className="flex items-end gap-1 text-amber-400">
+                            <span className="text-xl font-black leading-none">98</span>
+                            <span className="text-[9px] font-bold opacity-60 mb-0.5">%</span>
                         </div>
                     </div>
                 </div>
@@ -260,7 +281,10 @@ const TelehealthSession = ({ user }) => {
                         <Monitor size={20} />
                     </button>
                     <div className="w-px h-8 bg-white/10 mx-2"></div>
-                    <button className="px-8 py-4 rounded-full bg-red-500 text-white font-black uppercase tracking-widest text-xs hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center gap-2">
+                    <button
+                        onClick={endCall}
+                        className="px-8 py-4 rounded-full bg-red-500 text-white font-black uppercase tracking-widest text-xs hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center gap-2"
+                    >
                         <PhoneOff size={18} /> End Call
                     </button>
                 </div>
