@@ -221,7 +221,7 @@ const TelehealthSession = ({ user }) => {
                                     </div>
                                 )}
                                 {waitingQueue.map(patient => (
-                                    <div key={patient.id} className="p-4 rounded-xl bg-stone-900/40 border border-white/5 hover:bg-stone-900/60 transition-colors group">
+                                    <div key={patient.id} className="p-4 rounded-xl bg-[#0c0a05] border border-stone-800 hover:border-amber-500/30 transition-all group shadow-sm">
                                         <div className="flex justify-between items-start mb-2">
                                             <h4 className="font-bold text-white text-sm">{patient.name}</h4>
                                             <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border ${getUrgencyColor(patient.urgency)}`}>
@@ -262,7 +262,7 @@ const TelehealthSession = ({ user }) => {
                             <textarea
                                 value={noteContent}
                                 onChange={(e) => setNoteContent(e.target.value)}
-                                className="flex-1 w-full bg-[#0c0a05] border border-amber-500/30 rounded-xl p-4 text-sm text-amber-100 placeholder-amber-500/30 focus:outline-none focus:border-amber-500/60 resize-none font-medium leading-relaxed custom-scrollbar shadow-inner"
+                                className="flex-1 w-full bg-[#0c0a05] border border-amber-500/30 rounded-xl p-4 text-sm text-amber-100 placeholder-amber-500/70 focus:outline-none focus:border-amber-500/60 resize-none font-medium leading-relaxed custom-scrollbar shadow-inner"
                                 placeholder="Type observations, symptoms, or instructions..."
                                 autoFocus
                             ></textarea>
@@ -298,8 +298,8 @@ const TelehealthSession = ({ user }) => {
                                 <Pill size={14} /> Quick Prescribe
                             </h3>
                             <div className="space-y-3 flex-1">
-                                <input type="text" placeholder="Medication Name" className="w-full bg-amber-900/10 border border-amber-500/20 rounded-xl px-4 py-3 text-sm text-white placeholder-amber-500/30 focus:outline-none focus:border-amber-500/50" />
-                                <input type="text" placeholder="Dosage (e.g. 500mg)" className="w-full bg-amber-900/10 border border-amber-500/20 rounded-xl px-4 py-3 text-sm text-white placeholder-amber-500/30 focus:outline-none focus:border-amber-500/50" />
+                                <input type="text" placeholder="Medication Name" className="w-full bg-[#0c0a05] border border-amber-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder-amber-500/70 focus:outline-none focus:border-amber-500/60 shadow-inner" />
+                                <input type="text" placeholder="Dosage (e.g. 500mg)" className="w-full bg-[#0c0a05] border border-amber-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder-amber-500/70 focus:outline-none focus:border-amber-500/60 shadow-inner" />
                                 <div className="grid grid-cols-2 gap-3">
                                     <button className="py-2 rounded-lg bg-stone-800 text-stone-400 text-[10px] font-bold uppercase border border-white/5 hover:border-amber-500/50 hover:text-amber-500">QD</button>
                                     <button className="py-2 rounded-lg bg-stone-800 text-stone-400 text-[10px] font-bold uppercase border border-white/5 hover:border-amber-500/50 hover:text-amber-500">BID</button>
@@ -313,9 +313,27 @@ const TelehealthSession = ({ user }) => {
 
                     {/* --- HISTORY TAB --- */}
                     {activeSideTab === 'history' && (
-                        <div className="flex flex-col items-center justify-center h-full text-stone-500">
-                            <Clock size={32} className="mb-2 opacity-50" />
-                            <p className="text-xs font-bold uppercase tracking-wider">Loading History...</p>
+                        <div className="flex flex-col h-full bg-transparent">
+                            <h3 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-4 flex items-center gap-2">
+                                <Clock size={14} /> Patient History
+                            </h3>
+                            <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
+                                {[
+                                    { type: 'note', title: 'Follow-up Consultation', date: 'Oct 12, 2025', desc: 'Patient reported reduced symptoms. BP normal.' },
+                                    { type: 'rx', title: 'Prescription: Amoxicillin', date: 'Oct 12, 2025', desc: '500mg - BID for 7 days.' },
+                                    { type: 'lab', title: 'Lab Report: Blood Panel', date: 'Sep 28, 2025', desc: 'Hemoglobin levels improved. WNL.' },
+                                    { type: 'note', title: 'Initial Assessment', date: 'Sep 15, 2025', desc: 'Complaints of persistent fever and fatigue.' }
+                                ].map((item, idx) => (
+                                    <div key={idx} className="p-4 rounded-xl bg-[#0c0a05] border border-stone-800 hover:border-amber-500/30 transition-all group shadow-sm flex flex-col gap-1">
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-[10px] font-black uppercase tracking-wider text-amber-500/70 border border-amber-500/10 px-1.5 py-0.5 rounded">{item.type}</span>
+                                            <span className="text-[10px] font-bold text-stone-500">{item.date}</span>
+                                        </div>
+                                        <h4 className="font-bold text-stone-200 text-xs mt-1">{item.title}</h4>
+                                        <p className="text-[10px] text-stone-400 leading-relaxed">{item.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
