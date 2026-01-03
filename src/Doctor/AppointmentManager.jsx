@@ -8,11 +8,12 @@ import {
 
 // --- Sub-Components ---
 
-const AppointmentCard = ({ appt, type }) => (
+const AppointmentCard = ({ appt, type, onAction }) => (
     <motion.div
         layout
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card p-6 rounded-[1.5rem] border border-white/5 bg-[#0c0a05] hover:bg-[#14120a] transition-all group relative overflow-hidden"
     >
         <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-amber-500/10 transition-colors" />
@@ -43,16 +44,25 @@ const AppointmentCard = ({ appt, type }) => (
         {/* Actions Area */}
         <div className="pt-4 border-t border-white/5 flex items-center justify-between relative z-10">
             {type === 'upcoming' && (
-                <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 text-black text-[11px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:bg-amber-400 hover:scale-105 transition-all w-full justify-center">
+                <button
+                    onClick={() => onAction('enter_room', appt)}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 text-black text-[11px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:bg-amber-400 hover:scale-105 transition-all w-full justify-center"
+                >
                     <Video size={16} /> Enter Telehealth Room
                 </button>
             )}
             {type === 'request' && (
                 <div className="flex gap-3 w-full">
-                    <button className="flex-1 py-2.5 rounded-xl bg-stone-900 hover:bg-rose-950/30 text-stone-500 hover:text-rose-500 text-[10px] font-black uppercase tracking-widest transition-colors border border-white/5 hover:border-rose-500/20">
+                    <button
+                        onClick={() => onAction('decline', appt)}
+                        className="flex-1 py-2.5 rounded-xl bg-stone-900 hover:bg-rose-950/30 text-stone-500 hover:text-rose-500 text-[10px] font-black uppercase tracking-widest transition-colors border border-white/5 hover:border-rose-500/20"
+                    >
                         Decline
                     </button>
-                    <button className="flex-1 py-2.5 rounded-xl bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-black text-[10px] font-black uppercase tracking-widest transition-all border border-amber-500/20 shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20">
+                    <button
+                        onClick={() => onAction('approve', appt)}
+                        className="flex-1 py-2.5 rounded-xl bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-black text-[10px] font-black uppercase tracking-widest transition-all border border-amber-500/20 shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20"
+                    >
                         Approve
                     </button>
                 </div>
@@ -79,19 +89,39 @@ const ScheduleSlot = ({ time, status }) => (
 
 // --- Main Manager Component ---
 
-const AppointmentManager = ({ view = 'overview' }) => {
+const AppointmentManager = ({ view = 'overview', onNavigate }) => {
     // view prop comes from sidebar: 'overview', 'requests', 'schedule'
 
-    // Mock Data - Pure Telehealth
-    const upcomingAppts = [
+    // Interactive State (Initialized with Mock Data)
+    const [upcomingAppts, setUpcomingAppts] = useState([
         { id: 1, patientName: "Sarah Connor", time: "10:30 AM", date: "Today", reason: "Follow-up", type: "video" },
         { id: 2, patientName: "Kyle Reese", time: "02:00 PM", date: "Today", reason: "Trauma Review", type: "video" },
-    ];
+    ]);
 
-    const requests = [
+    const [requests, setRequests] = useState([
         { id: 3, patientName: "Marty McFly", time: "11:00 AM", date: "Tomorrow", reason: "Vertigo Symptoms", type: "video" },
         { id: 4, patientName: "Emmett Brown", time: "04:30 PM", date: "Fri, 27 Oct", reason: "Lab Results", type: "video" },
-    ];
+    ]);
+
+    // Handlers
+    const handleAction = (action, appt) => {
+        if (action === 'enter_room') {
+            if (onNavigate) {
+                onNavigate('consultations');
+            } else {
+                console.warn('Navigation handler missing for Telehealth Room');
+            }
+        }
+        else if (action === 'approve') {
+            // Move from requests to upcoming
+            setRequests(prev => prev.filter(r => r.id !== appt.id));
+            setUpcomingAppts(prev => [...prev, { ...appt, type: 'video', date: 'Today' }]); // Simplified for demo
+        }
+        else if (action === 'decline') {
+            // Remove from requests
+            setRequests(prev => prev.filter(r => r.id !== appt.id));
+        }
+    };
 
     return (
         <div className="space-y-8">
@@ -130,15 +160,17 @@ const AppointmentManager = ({ view = 'overview' }) => {
                     >
                         {/* Left: Today's Agenda */}
                         <div className="lg:col-span-2 space-y-8">
-                            <div className="glass-card p-8 rounded-[2rem] bg-[#080705] border border-white/5 relative overflow-hidden">
+                            <div className="glass-card p-8 rounded-[2rem] bg-[#080705] border border-white/5 relative overflow-hidden h-full">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                                 <h3 className="text-white font-bold mb-6 flex items-center gap-3 text-lg">
                                     <Clock size={20} className="text-amber-400" /> Today's Video Queue
                                 </h3>
                                 <div className="space-y-4 relative z-10">
-                                    {upcomingAppts.map(appt => (
-                                        <AppointmentCard key={appt.id} appt={appt} type="upcoming" />
-                                    ))}
+                                    <AnimatePresence>
+                                        {upcomingAppts.map(appt => (
+                                            <AppointmentCard key={appt.id} appt={appt} type="upcoming" onAction={handleAction} />
+                                        ))}
+                                    </AnimatePresence>
                                     {upcomingAppts.length === 0 && <p className="text-stone-600 text-sm font-medium italic">No video sessions scheduled for today.</p>}
                                 </div>
                             </div>
@@ -150,8 +182,8 @@ const AppointmentManager = ({ view = 'overview' }) => {
                                     <p className="text-[10px] text-stone-500 uppercase font-black tracking-[0.2em] mt-2">Completed</p>
                                 </div>
                                 <div className="p-6 rounded-[2rem] bg-stone-900/40 border border-white/5 text-center group hover:bg-stone-900/60 transition-colors">
-                                    <h4 className="text-3xl font-black text-amber-400">3</h4>
-                                    <p className="text-[10px] text-stone-500 uppercase font-black tracking-[0.2em] mt-2">Waiting</p>
+                                    <h4 className="text-3xl font-black text-amber-400">{requests.length}</h4>
+                                    <p className="text-[10px] text-stone-500 uppercase font-black tracking-[0.2em] mt-2">Pending</p>
                                 </div>
                                 <div className="p-6 rounded-[2rem] bg-stone-900/40 border border-white/5 text-center group hover:bg-stone-900/60 transition-colors">
                                     <h4 className="text-3xl font-black text-rose-500">1</h4>
@@ -166,12 +198,19 @@ const AppointmentManager = ({ view = 'overview' }) => {
                                 <h3 className="text-white font-bold flex items-center gap-2">
                                     <AlertCircle size={20} className="text-amber-500" /> New Requests
                                 </h3>
-                                <button className="text-[10px] text-amber-500 hover:text-amber-300 font-black uppercase tracking-widest">View All</button>
+                                <button
+                                    onClick={() => onNavigate && onNavigate('appointments_requests')}
+                                    className="text-[10px] text-amber-500 hover:text-amber-300 font-black uppercase tracking-widest"
+                                >
+                                    View All
+                                </button>
                             </div>
                             <div className="space-y-4">
-                                {requests.slice(0, 2).map(req => (
-                                    <AppointmentCard key={req.id} appt={req} type="request" />
-                                ))}
+                                <AnimatePresence>
+                                    {requests.slice(0, 2).map(req => (
+                                        <AppointmentCard key={req.id} appt={req} type="request" onAction={handleAction} />
+                                    ))}
+                                </AnimatePresence>
                             </div>
                         </div>
                     </motion.div>
@@ -184,12 +223,17 @@ const AppointmentManager = ({ view = 'overview' }) => {
                         animate={{ opacity: 1 }}
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                     >
-                        {requests.map(req => (
-                            <AppointmentCard key={req.id} appt={req} type="request" />
-                        ))}
-                        {requests.map(req => ( // duplicate mock to fill
-                            <AppointmentCard key={req.id + 99} appt={{ ...req, id: req.id + 99 }} type="request" />
-                        ))}
+                        <AnimatePresence>
+                            {requests.map(req => (
+                                <AppointmentCard key={req.id} appt={req} type="request" onAction={handleAction} />
+                            ))}
+                        </AnimatePresence>
+                        {requests.length === 0 && (
+                            <div className="col-span-full py-20 text-center text-stone-500">
+                                <AlertCircle size={48} className="mx-auto mb-4 opacity-20" />
+                                <p className="font-bold uppercase tracking-widest">No pending requests</p>
+                            </div>
+                        )}
                     </motion.div>
                 )}
 
