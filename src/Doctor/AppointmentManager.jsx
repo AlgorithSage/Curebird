@@ -46,9 +46,10 @@ const AppointmentCard = ({ appt, type, onAction }) => (
             {type === 'upcoming' && (
                 <button
                     onClick={() => onAction('enter_room', appt)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 text-black text-[11px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:bg-amber-400 hover:scale-105 transition-all w-full justify-center"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/10 hover:shadow-amber-500/30 transition-all active:scale-[0.98]"
                 >
-                    <Video size={16} /> Enter Telehealth Room
+                    <Video size={16} strokeWidth={2.5} />
+                    <span>Enter Telehealth Room</span>
                 </button>
             )}
             {type === 'request' && (
