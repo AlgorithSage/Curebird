@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, RefreshCw, Check, FileText, Bot, Cpu, History, ChevronRight } from 'lucide-react';
+import { X, RefreshCw, Check, FileText, Bot, Cpu, History, ChevronRight, CheckCircle } from 'lucide-react';
 
 const GenerateSummaryModal = ({ isOpen, onClose }) => {
     const [isGenerating, setIsGenerating] = useState(true);
@@ -63,7 +63,7 @@ const GenerateSummaryModal = ({ isOpen, onClose }) => {
                                     AI Consultation Summary
                                 </h2>
                                 <p className="text-stone-500 text-xs font-bold uppercase tracking-[0.2em] mt-1.5 flex items-center gap-2">
-                                    <Sparkles size={12} className="text-purple-400 animate-pulse" />
+                                    <Bot size={12} className="text-amber-500 animate-pulse" />
                                     Powered by Curebird Clinical Engine
                                 </p>
                             </div>
@@ -98,13 +98,13 @@ const GenerateSummaryModal = ({ isOpen, onClose }) => {
                             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
                                 {/* Info Box */}
-                                <div className="p-6 rounded-2xl bg-purple-500/5 border border-purple-500/10 flex items-start gap-5 shadow-[0_0_20px_rgba(168,85,247,0.05)]">
-                                    <div className="p-2.5 rounded-full bg-purple-500/10 text-purple-400">
-                                        <Sparkles size={20} />
+                                <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex items-start gap-5 shadow-[0_0_20px_rgba(16,185,129,0.05)]">
+                                    <div className="p-2.5 rounded-full bg-emerald-500/10 text-emerald-400">
+                                        <CheckCircle size={20} />
                                     </div>
                                     <div>
-                                        <h4 className="text-purple-200 font-bold text-base tracking-wide">Context Analysis Complete</h4>
-                                        <p className="text-purple-300/60 text-sm mt-1.5 font-medium leading-relaxed">
+                                        <h4 className="text-emerald-200 font-bold text-base tracking-wide">Context Analysis Complete</h4>
+                                        <p className="text-emerald-300/60 text-sm mt-1.5 font-medium leading-relaxed">
                                             Processed 14 messages, 1 lab report (CBC), and 3 days of vitals history.
                                         </p>
                                     </div>

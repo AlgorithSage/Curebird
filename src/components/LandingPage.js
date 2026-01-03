@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeartPulse, LogIn, Dna, Pill, Stethoscope, Syringe, Activity, Sparkles } from 'lucide-react';
+import { HeartPulse, LogIn, Dna, Pill, Stethoscope, Syringe, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import CurebirdLogo from '../curebird_logo.png';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import { Activity, Loader, ServerCrash, Info, Pill, TrendingUp, X, Sparkles, Download, Users, Brain, Search, MapPin, AlertTriangle, Map, Calendar, ShieldCheck, Clock, Layers, HeartPulse, Wind, Droplets, Database, ArrowLeft } from 'lucide-react';
+import { Activity, Loader, ServerCrash, Info, Pill, TrendingUp, X, Download, Users, Brain, Search, MapPin, AlertTriangle, Map, Calendar, ShieldCheck, Clock, Layers, HeartPulse, Wind, Droplets, Database, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import Header from './Header';

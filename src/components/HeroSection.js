@@ -159,11 +159,11 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="glass-card w-full !p-6 !rounded-3xl flex items-center justify-between gap-4"
+                                    className="glass-card w-full !p-6 !rounded-3xl flex items-center justify-between gap-4 mb-8"
                                 >
                                     <div>
                                         <div className="flex items-center gap-2 mb-1">
-                                            <Activity size={14} className="text-indigo-400" />
+                                            <HeartPulse size={14} className="text-indigo-400" />
                                             <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Curebird Health Index</span>
                                         </div>
                                         <div className="flex items-baseline gap-1">

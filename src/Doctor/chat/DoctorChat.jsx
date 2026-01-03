@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Sparkles, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck } from 'lucide-react';
+import { Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck } from 'lucide-react';
 import InsightReviewModal from './InsightReviewModal';
 import GenerateSummaryModal from './actions/GenerateSummaryModal';
 import FlagObservationModal from './actions/FlagObservationModal';
@@ -304,13 +304,13 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                                     setShowActionMenu(false);
                                                 }}
                                                 className="w-full text-left px-3.5 py-3 rounded-lg hover:bg-amber-500/10 text-stone-300 hover:text-amber-100 flex items-center gap-4 transition-colors group">
-                                                <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 group-hover:bg-purple-500/20 shadow-[0_0_15px_rgba(245,158,11,0.05)]">
-                                                    <Sparkles size={20} />
+                                                <div className="p-2 rounded-lg bg-sky-500/10 text-sky-400 group-hover:bg-sky-500/20 shadow-[0_0_15px_rgba(245,158,11,0.05)]">
+                                                    <Bot size={20} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="text-[15px] font-semibold flex items-center gap-2">
                                                         Generate Summary
-                                                        <span className="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-500/20 uppercase tracking-wider font-bold shadow-[0_0_10px_rgba(245,158,11,0.05)] flex-shrink-0">AI</span>
+                                                        <span className="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded border border-sky-500/20 uppercase tracking-wider font-bold shadow-[0_0_10px_rgba(245,158,11,0.05)] flex-shrink-0">AI</span>
                                                     </div>
                                                 </div>
                                             </button>
