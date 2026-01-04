@@ -32,7 +32,7 @@ const Toggle = ({ enabled, onToggle }) => (
 export default function DoctorSecurity() {
     const [activeTab, setActiveTab] = useState('protection');
     const [twoFactor, setTwoFactor] = useState(true);
-    const [biometric, setBiometric] = useState(false);
+
 
     // Mock Data for Sessions
     const sessions = [

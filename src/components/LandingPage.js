@@ -7,7 +7,7 @@ import CurebirdLogo from '../curebird_logo.png';
 
 // --- Video Background Component (Mobile Optimized) ---
 const VideoBackground = ({ isMobile }) => (
-    <div className="absolute inset-0 overflow-hidden z-0">
+    <div className="fixed inset-0 overflow-hidden z-0">
         {!isMobile ? (
             <video
                 autoPlay
@@ -68,10 +68,10 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                 title="CureBird | AI-Powered Personal Medical Portfolio"
                 description="Securely manage your medical records, track vitals, and get AI-powered health insights with CureBird. The comprehensive digital health dashboard for modern patient care."
             />
+            <VideoBackground isMobile={isMobile} />
 
             {/* Hero Section */}
             <header className="relative min-h-screen flex flex-col items-center justify-center p-4">
-                <VideoBackground isMobile={isMobile} />
 
                 {/* Decorative Icons */}
                 {!isMobile && (
@@ -119,7 +119,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
             </header>
 
             {/* Main Content Area: Authority & Depth */}
-            <main className="relative z-10 bg-slate-950">
+            <main className="relative z-10">
 
                 {/* 1. KEY VALUE PROPOSITION (H2) */}
                 <section className="py-24 px-6 max-w-7xl mx-auto">
@@ -150,7 +150,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 desc: "Whether it's a handwritten note from a local clinic or a DICOM file from a major hospital, CureBird creates a unified, graphable patient history accessible globally."
                             }
                         ].map((feature, idx) => (
-                            <article key={idx} className="p-10 rounded-[2rem] bg-gradient-to-br from-white/5 to-transparent border border-white/10 hover:border-amber-500/30 transition-all hover:-translate-y-2 duration-300">
+                            <article key={idx} className="glass-card">
                                 <div className="mb-8 p-5 rounded-2xl bg-slate-900 inline-block shadow-lg shadow-black/50">{feature.icon}</div>
                                 <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
                                 <p className="text-slate-400 text-lg leading-relaxed">{feature.desc}</p>
@@ -160,7 +160,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                 </section>
 
                 {/* 2. HOW IT WORKS (H2) */}
-                <section className="py-24 px-6 bg-gradient-to-b from-slate-900 to-black/40">
+                <section className="py-24 px-6">
                     <div className="max-w-7xl mx-auto">
                         <h2 className="text-3xl sm:text-4xl font-bold text-center mb-16 text-slate-100">
                             The CureBird Ecosystem
@@ -235,7 +235,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                 </section>
 
                 {/* 4. FAQ SECTION (Schema-Ready) */}
-                <section className="py-24 px-6 bg-slate-900/50">
+                <section className="py-24 px-6">
                     <div className="max-w-4xl mx-auto">
                         <h2 className="text-3xl font-bold text-center text-white mb-16">Frequently Asked Questions</h2>
                         <div className="space-y-6">
@@ -262,7 +262,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
             </main>
 
             {/* Footer */}
-            <footer className="py-12 border-t border-white/10 bg-black/40 text-center">
+            <footer className="py-12 border-t border-white/10 text-center bg-black/20 backdrop-blur-sm">
                 <div className="flex justify-center gap-6 mb-8">
                     {[
                         { Icon: Twitter, label: "Twitter" },
@@ -272,7 +272,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                         { Icon: Facebook, label: "Facebook" }
                     ].map(({ Icon, label }) => (
                         <div key={label} className="group relative">
-                            <button className="p-3 bg-white/5 rounded-full text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 transition-all">
+                            <button className="p-3 bg-white/5 rounded-full text-slate-300 hover:text-amber-400 hover:bg-amber-500/10 transition-all">
                                 <Icon size={20} />
                             </button>
                             <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-amber-500 text-black text-[10px] font-bold uppercase tracking-wide rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
@@ -281,12 +281,15 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                         </div>
                     ))}
                 </div>
-                <div className="flex justify-center gap-8 mb-8 text-sm text-slate-400">
+                <div className="flex justify-center gap-8 mb-8 text-sm text-slate-300">
                     <button onClick={onTermsClick} className="hover:text-amber-400 transition-colors">Terms of Service</button>
                     <button onClick={onPrivacyClick} className="hover:text-amber-400 transition-colors">Privacy Policy</button>
                     <button onClick={onContactClick} className="hover:text-amber-400 transition-colors">Contact Us</button>
                 </div>
-                <p className="text-slate-600 text-xs">© {new Date().getFullYear()} CureBird. All rights reserved.</p>
+                <div className="mb-4 text-slate-400 text-sm">
+                    Developed by <span className="text-amber-500 font-semibold">AlgoZeniths</span> - Archisman Chakraborty, Sohan Ghosh, Snehil Das, Soumyartho Banerjee
+                </div>
+                <p className="text-slate-500 text-xs">© {new Date().getFullYear()} CureBird. All rights reserved.</p>
             </footer>
         </div>
     );

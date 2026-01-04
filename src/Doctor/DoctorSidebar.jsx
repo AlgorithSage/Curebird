@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutDashboard, Users, Calendar, ClipboardList, FileText,
     BarChart2, Bell, Settings, Shield, HelpCircle, LogOut, X,
-    Activity, Stethoscope, ChevronDown, List, Clock, CheckCircle,
-    AlertCircle, Siren
+    Stethoscope, ChevronDown, Siren
 } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 

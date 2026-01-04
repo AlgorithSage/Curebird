@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Bell, filter, CheckCircle2, AlertTriangle, FileText,
-    MessageSquare, Activity, Calendar, Search, X, ChevronRight,
-    Stethoscope, Pill, BrainCircuit, ArrowUpRight, Plus
+    Bell, CheckCircle2, AlertTriangle, FileText,
+    MessageSquare, Activity,
+    BrainCircuit, ArrowUpRight, Plus
 } from 'lucide-react';
 
 const NOTIFICATION_CATEGORIES = [
@@ -84,13 +84,10 @@ const MOCK_NOTIFICATIONS = [
 export default function DoctorNotifications({ onNavigate, onNavigateToPatient }) {
     const [activeTab, setActiveTab] = useState('all');
     const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
-    const [searchQuery, setSearchQuery] = useState('');
 
     const filteredNotifications = notifications.filter(n => {
         const matchesTab = activeTab === 'all' || n.type === activeTab;
-        const matchesSearch = n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            n.message.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesTab && matchesSearch;
+        return matchesTab;
     });
 
     const unreadCount = notifications.filter(n => !n.read).length;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    FileText, Download, Share2, Search,
-    Filter, Plus, Clock,
-    Image as ImageIcon, Pill, Clipboard, X,
-    Copy, Repeat, Edit2, Lock, Loader, Activity, ChevronRight
+    FileText, Share2, Search,
+    Plus, Clock,
+    Pill, Clipboard, X,
+    Loader, ChevronRight
 } from 'lucide-react';
 import { collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -14,7 +14,6 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const [records, setRecords] = useState([]);
-    const [error, setError] = useState(null);
 
     // View State
     const [selectedRecord, setSelectedRecord] = useState(null);
@@ -81,7 +80,6 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                         setRecords(getMockRecords());
                     }
                     setLoading(false);
-                    setError(null);
                 },
                 (err) => {
                     console.error("Firestore CollectionGroup Error:", err);
@@ -95,7 +93,7 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
         }
 
         return () => unsubscribe();
-    }, [db, propUser]);
+    }, [propUser]);
 
     const handleRecordClick = (record) => {
         setSelectedRecord(record);

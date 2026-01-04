@@ -10,7 +10,6 @@ import {
     orderBy,
     limit,
     serverTimestamp,
-    setDoc,
     deleteDoc
 } from 'firebase/firestore';
 import { API_BASE_URL } from '../config';

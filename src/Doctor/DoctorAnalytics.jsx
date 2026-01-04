@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    AreaChart, Area, PieChart, Pie, Cell, LineChart, Line,
-    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
+    XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+    AreaChart, Area, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
 import {
     TrendingUp, Users, Activity, AlertTriangle, Calendar,
-    Filter, Download, ChevronDown, HeartPulse, BrainCircuit,
-    Zap, Clock, Thermometer, Stethoscope
+    BrainCircuit, Clock, Stethoscope
 } from 'lucide-react';
 
 // --- Improved Mock Data ---

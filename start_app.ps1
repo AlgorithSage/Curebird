@@ -1,5 +1,10 @@
-# Start Backend (Navigate to backend, activate venv, run python script)
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd backend; .\venv\Scripts\Activate.ps1; python run.py"
+# Start both Backend and Frontend in the SAME terminal using concurrently
+Write-Host "Starting CureBird System..."
+Write-Host "--------------------------------"
+Write-Host "Backend: http://localhost:5000"
+Write-Host "Frontend: http://localhost:3000"
+Write-Host "--------------------------------"
 
-# Start Frontend (Run npm start in root)
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "npm start"
+# Use npx concurrently to pipe both outputs to this shell
+# We use 'call' for activate.bat to ensure it runs in the cmd chain properly if needed, though && usually works.
+npx -y concurrently -k -n "BACKEND,WebAPP" -c "bgBlue.bold,bgGreen.bold" "cd backend && venv\\Scripts\\activate && python run.py" "npm start"

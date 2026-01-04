@@ -72,6 +72,14 @@ const STATE_COORDINATES = {
     'West Bengal': { lat: 22.9868, lng: 87.8550 }
 };
 
+const LOADING_FACTS = [
+    "Use our 'Cure Analyzer' to instantly interpret complex medical prescriptions.",
+    "CureBird uses advanced AI to track disease outbreaks in real-time.",
+    "Securely store and organize your entire family's medical history in one place.",
+    "Our heatmaps visualize regional health trends to help you stay informed.",
+    "Upload lab reports (PDF/Image) and let our OCR engine digitize the data for you."
+];
+
 const HeatmapModal = ({ isOpen, onClose, regionalData }) => {
     const mapRef = React.useRef(null);
     const [mapError, setMapError] = useState(null);
@@ -536,13 +544,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
     // --- Dynamic Loading Screen Logic ---
     const [currentFactIndex, setCurrentFactIndex] = useState(0);
 
-    const LOADING_FACTS = [
-        "Use our 'Cure Analyzer' to instantly interpret complex medical prescriptions.",
-        "CureBird uses advanced AI to track disease outbreaks in real-time.",
-        "Securely store and organize your entire family's medical history in one place.",
-        "Our heatmaps visualize regional health trends to help you stay informed.",
-        "Upload lab reports (PDF/Image) and let our OCR engine digitize the data for you."
-    ];
+
 
     useEffect(() => {
         if (!loading) return;

@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Users, Calendar, Activity, ClipboardList, Stethoscope, FilePlus,
-    Microscope, Siren, FileText, Settings, LogOut, LayoutDashboard,
-    Bell, Shield, HelpCircle, BarChart2, Search, ArrowRight
+    Users, Calendar, Activity, ClipboardList, FilePlus,
+    Microscope, Siren, LayoutDashboard, Search, ArrowRight
 } from 'lucide-react';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import Header from '../components/Header';
-import HeroSection from '../components/HeroSection'; // Keep if used, though strict hierarchy is preferred
 import StatCard from '../components/StatCard';
 import DoctorSidebar from './DoctorSidebar';
 
@@ -247,13 +245,7 @@ const DashboardOverview = ({ onAddRecord, onViewOversight }) => (
     </>
 );
 
-const PlaceholderView = ({ title, icon: Icon }) => (
-    <div className="flex flex-col items-center justify-center h-[50vh] text-slate-500">
-        <Icon size={64} className="mb-4 opacity-20" />
-        <h3 className="text-lg font-bold text-slate-400">Coming Soon</h3>
-        <p>{title} module is under development.</p>
-    </div>
-);
+
 
 const PatientSearchLanding = ({ onSelectPatient }) => {
     const [searchTerm, setSearchTerm] = useState('');

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Siren, AlertTriangle, CheckCircle, Loader, User, Zap, Activity } from 'lucide-react';
+import { X, Siren, Loader, User, Zap, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../firebase';
@@ -139,6 +139,7 @@ const EmergencyAlertModal = ({ isOpen, onClose, patients = [], user }) => {
                                             {patients.map(p => <option key={p.id} value={p.id} className="bg-stone-900">{p.name}</option>)}
                                         </select>
                                     </div>
+                                    {error && <p className="text-rose-500 text-sm mt-1 font-bold">{error}</p>}
                                 </div>
 
                                 {/* Alert Level Toggle */}
