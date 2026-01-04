@@ -353,6 +353,7 @@ const DoctorDashboard = ({ user }) => {
     const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
     const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
     const [activeOversightModal, setActiveOversightModal] = useState(null); // 'patients', 'schedule', 'actions', 'vitals'
+    const [unreadNotifications, setUnreadNotifications] = useState(3); // Demo: Start with 3 unread
 
     // Managed Patient State - Synced with Firestore
     const [patients, setPatients] = useState([]);
@@ -389,6 +390,9 @@ const DoctorDashboard = ({ user }) => {
         setActiveView(view);
         if (view !== 'patient_workspace') {
             setWorkspacePatient(null);
+        }
+        if (view === 'notifications') {
+            setUnreadNotifications(0);
         }
     };
 
@@ -485,6 +489,7 @@ const DoctorDashboard = ({ user }) => {
                 activeView={activeView}
                 onNavigate={handleNavigate}
                 onLogout={handleLogout}
+                unreadCount={unreadNotifications}
             />
 
             <AddClinicalRecordModal

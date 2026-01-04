@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 
-const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expanded, onToggleExpand }) => {
+const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expanded, onToggleExpand, badge }) => {
 
     // Parent Item Click
     const handleMainClick = () => {
@@ -46,12 +46,12 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
                     <span className="relative z-10 font-medium tracking-wide text-sm">{label}</span>
                 </div>
 
-                {/* Chevron */}
+                {/* Chevron or Badge */}
                 {subItems ? (
                     <ChevronDown size={16} className={`transition-transform duration-300 ${expanded ? 'rotate-180 text-amber-400' : 'text-slate-600 group-hover:text-amber-400'}`} />
                 ) : (
-                    label === 'Notifications' && (
-                        <span className="w-5 h-5 flex items-center justify-center bg-rose-500 text-white text-[10px] font-bold rounded-full shadow-lg shadow-rose-900/50">3</span>
+                    badge > 0 && (
+                        <span className="w-5 h-5 flex items-center justify-center bg-rose-500 text-white text-[10px] font-bold rounded-full shadow-lg shadow-rose-900/50">{badge}</span>
                     )
                 )}
             </motion.button>
@@ -85,7 +85,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
     );
 };
 
-const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) => {
+const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unreadCount }) => {
 
     // Manage expanded states for groups
     const [expandedGroups, setExpandedGroups] = useState({ appointments: true }); // Default open for demo
@@ -136,7 +136,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
             title: "Insights & Tools",
             items: [
                 { id: 'analytics', label: 'Analytics', icon: BarChart2 },
-                { id: 'notifications', label: 'Notifications', icon: Bell },
+                { id: 'notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
             ]
         },
         // ... Account group same as before
@@ -194,10 +194,6 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                                     </div>
                                 </div>
 
-                                {/* Close Button (Subtle integration) */}
-                                <button onClick={onClose} className="p-1.5 text-slate-600 hover:text-rose-400 transition-colors rounded-lg hover:bg-white/5">
-                                    <X size={16} strokeWidth={2.5} />
-                                </button>
                             </div>
                         </div>
 
@@ -228,6 +224,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                                                 subItems={item.subItems}
                                                 expanded={expandedGroups[item.id]} // Using item.id correctly
                                                 onToggleExpand={() => toggleGroup(item.id)}
+                                                badge={item.badge}
                                             />
                                         ))}
                                     </div>
@@ -247,8 +244,9 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                         </div>
                     </motion.aside>
                 </>
-            )}
-        </AnimatePresence>
+            )
+            }
+        </AnimatePresence >
     );
 };
 
