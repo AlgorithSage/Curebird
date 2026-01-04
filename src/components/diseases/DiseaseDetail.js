@@ -66,10 +66,11 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
 
     // Transform data for Recharts
     const chartData = metrics.map(m => ({
+        timestamp: m.timestamp.seconds,
         date: new Date(m.timestamp.seconds * 1000).toLocaleDateString(),
         time: new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         val: m.value
-    })).reverse(); // Recharts wants Log -> Newest usually goes right, so Chronological order
+    })).sort((a, b) => a.timestamp - b.timestamp); // Ensure Ascending Order (Left=Oldest, Right=Newest)
 
     return (
         <div className="glass-card min-h-full border border-white/5">
