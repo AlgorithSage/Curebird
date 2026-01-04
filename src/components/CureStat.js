@@ -1147,183 +1147,187 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                     {showHeatmap && (<HeatmapModal isOpen={showHeatmap} onClose={() => setShowHeatmap(false)} regionalData={getRegionalData(trends[0] || { disease: 'Default' })} />)}
                 </AnimatePresence>
 
-                <AnimatePresence>
-                    {selectedDisease && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 z-50" onClick={() => setSelectedDisease(null)}>
-                            <motion.div
-                                initial={{ scale: 0.9, opacity: 0, y: 100 }}
-                                animate={{ scale: 1, opacity: 1, y: 0 }}
-                                exit={{ scale: 0.9, opacity: 0, y: 100 }}
-                                onClick={(e) => e.stopPropagation()}
-                                className="glass w-full sm:w-[95%] max-w-6xl h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-y-auto rounded-none sm:rounded-3xl border-0 sm:border border-white/10 shadow-2xl relative"
-                            >
-                                <div className="p-4 sm:p-8 border-b border-white/10 sticky top-0 bg-slate-900/80 backdrop-blur-xl z-20 flex flex-col sm:flex-row justify-between items-start gap-4 shadow-sm">
-                                    <div className="w-full sm:w-auto">
-                                        <motion.h2 initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="text-2xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{selectedDisease.disease}</motion.h2>
+                {/* Modal Portal - Always render Portal, let AnimatePresence handle content */}
+                {createPortal(
+                    <AnimatePresence>
+                        {selectedDisease && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 z-[9999]" onClick={() => setSelectedDisease(null)}>
+                                <motion.div
+                                    initial={{ scale: 0.9, opacity: 0, y: 100 }}
+                                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                                    exit={{ scale: 0.9, opacity: 0, y: 100 }}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="glass w-full sm:w-[95%] max-w-6xl h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-y-auto rounded-none sm:rounded-3xl border-0 sm:border border-white/10 shadow-2xl relative"
+                                >
+                                    <div className="p-4 sm:p-8 border-b border-white/10 sticky top-0 bg-slate-900/80 backdrop-blur-xl z-20 flex flex-col sm:flex-row justify-between items-start gap-4 shadow-sm">
+                                        <div className="w-full sm:w-auto">
+                                            <motion.h2 initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="text-2xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{selectedDisease.disease}</motion.h2>
 
-                                        {/* --- DEBUG DIAGNOSTIC OVERLAY (Hidden on tiny screens) --- */}
-                                        <div className="hidden sm:flex gap-2 mt-2">
-                                            <span className={`text-[8px] px-2 py-0.5 rounded ${selectedDisease.history ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                                                TRENDS: {selectedDisease.history ? `OK (${selectedDisease.history.length})` : 'MISSING'}
-                                            </span>
-                                            <span className={`text-[8px] px-2 py-0.5 rounded ${selectedDisease.age_groups ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                                                AGE: {selectedDisease.age_groups ? `OK (${selectedDisease.age_groups.length})` : 'MISSING'}
-                                            </span>
-                                            <span className="text-[8px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-400">
-                                                ID: {selectedDisease.id}
-                                            </span>
-                                        </div>
-
-                                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 sm:mt-3">
-                                            <p className="text-sky-400 text-sm sm:text-lg font-medium flex items-center gap-2">
-                                                <Activity size={16} />
-                                                {selectedDisease.segment === 'Chronic' ? selectedDisease.outbreaks : selectedDisease.outbreaks.toLocaleString()}
-                                                <span className="text-slate-500 text-xs sm:text-sm font-normal">
-                                                    {selectedDisease.segment === 'Chronic' ? ' Prevalence' : ' cases (weekly)'}
+                                            {/* --- DEBUG DIAGNOSTIC OVERLAY (Hidden on tiny screens) --- */}
+                                            <div className="hidden sm:flex gap-2 mt-2">
+                                                <span className={`text-[8px] px-2 py-0.5 rounded ${selectedDisease.history ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                                                    TRENDS: {selectedDisease.history ? `OK (${selectedDisease.history.length})` : 'MISSING'}
                                                 </span>
-                                            </p>
-                                            <span className={`text-[9px] sm:text-[10px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border ${getRiskLevel(selectedDisease).bg} ${getRiskLevel(selectedDisease).color} ${getRiskLevel(selectedDisease).border} flex items-center gap-1 uppercase tracking-wider`}>
-                                                {selectedDisease.severity}
-                                            </span>
+                                                <span className={`text-[8px] px-2 py-0.5 rounded ${selectedDisease.age_groups ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                                                    AGE: {selectedDisease.age_groups ? `OK (${selectedDisease.age_groups.length})` : 'MISSING'}
+                                                </span>
+                                                <span className="text-[8px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-400">
+                                                    ID: {selectedDisease.id}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 sm:mt-3">
+                                                <p className="text-sky-400 text-sm sm:text-lg font-medium flex items-center gap-2">
+                                                    <Activity size={16} />
+                                                    {selectedDisease.segment === 'Chronic' ? selectedDisease.outbreaks : selectedDisease.outbreaks.toLocaleString()}
+                                                    <span className="text-slate-500 text-xs sm:text-sm font-normal">
+                                                        {selectedDisease.segment === 'Chronic' ? ' Prevalence' : ' cases (weekly)'}
+                                                    </span>
+                                                </p>
+                                                <span className={`text-[9px] sm:text-[10px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border ${getRiskLevel(selectedDisease).bg} ${getRiskLevel(selectedDisease).color} ${getRiskLevel(selectedDisease).border} flex items-center gap-1 uppercase tracking-wider`}>
+                                                    {selectedDisease.severity}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                                            <button onClick={() => downloadCSV(selectedDisease)} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded-xl transition-colors font-medium border border-sky-500/20 text-xs sm:text-base">
+                                                <Download size={16} /> <span className="sm:inline">Export</span>
+                                            </button>
+                                            <button onClick={() => setSelectedDisease(null)} className="p-2 bg-slate-800/50 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors border border-white/5"><X size={24} /></button>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                                        <button onClick={() => downloadCSV(selectedDisease)} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded-xl transition-colors font-medium border border-sky-500/20 text-xs sm:text-base">
-                                            <Download size={16} /> <span className="sm:inline">Export</span>
-                                        </button>
-                                        <button onClick={() => setSelectedDisease(null)} className="p-2 bg-slate-800/50 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors border border-white/5"><X size={24} /></button>
-                                    </div>
-                                </div>
 
-                                <div className="p-4 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
-                                    <div className="lg:col-span-5 space-y-8">
-                                        <div className="bg-slate-800/30 p-4 sm:p-6 rounded-2xl border border-white/5">
-                                            <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Info size={20} className="text-sky-400" /> Public Health Intelligence</h3>
-                                            <div className="space-y-4">
-                                                <p className="text-slate-400 leading-relaxed text-sm sm:text-base">{selectedDisease.description}</p>
+                                    <div className="p-4 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+                                        <div className="lg:col-span-5 space-y-8">
+                                            <div className="bg-slate-800/30 p-4 sm:p-6 rounded-2xl border border-white/5">
+                                                <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Info size={20} className="text-sky-400" /> Public Health Intelligence</h3>
+                                                <div className="space-y-4">
+                                                    <p className="text-slate-400 leading-relaxed text-sm sm:text-base">{selectedDisease.description}</p>
 
-                                                <div className="grid grid-cols-1 gap-3 pt-2">
-                                                    <div className="flex items-center gap-3 bg-slate-900/40 p-3 rounded-xl border border-white/5">
-                                                        <Calendar size={18} className="text-slate-500" />
-                                                        <div>
-                                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Timeframe</p>
-                                                            <p className="text-xs sm:text-sm text-slate-300 font-medium">{selectedDisease.timeframe}</p>
+                                                    <div className="grid grid-cols-1 gap-3 pt-2">
+                                                        <div className="flex items-center gap-3 bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                                                            <Calendar size={18} className="text-slate-500" />
+                                                            <div>
+                                                                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Timeframe</p>
+                                                                <p className="text-xs sm:text-sm text-slate-300 font-medium">{selectedDisease.timeframe}</p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-3 bg-slate-900/40 p-3 rounded-xl border border-white/5">
-                                                        <Clock size={18} className="text-slate-500" />
-                                                        <div>
-                                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Seasonality</p>
-                                                            <p className="text-xs sm:text-sm text-slate-300 font-medium">{selectedDisease.seasonality}</p>
+                                                        <div className="flex items-center gap-3 bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                                                            <Clock size={18} className="text-slate-500" />
+                                                            <div>
+                                                                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Seasonality</p>
+                                                                <p className="text-xs sm:text-sm text-slate-300 font-medium">{selectedDisease.seasonality}</p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-3 bg-slate-900/40 p-3 rounded-xl border border-white/5">
-                                                        <Layers size={18} className="text-slate-500" />
-                                                        <div>
-                                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Sources</p>
-                                                            <div className="flex flex-wrap gap-1.5 mt-1">
-                                                                {selectedDisease.sources && selectedDisease.sources.map((src, i) => (
-                                                                    <span key={i} className="text-[9px] sm:text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20">{src}</span>
-                                                                ))}
+                                                        <div className="flex items-center gap-3 bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                                                            <Layers size={18} className="text-slate-500" />
+                                                            <div>
+                                                                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Sources</p>
+                                                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                                                    {selectedDisease.sources && selectedDisease.sources.map((src, i) => (
+                                                                        <span key={i} className="text-[9px] sm:text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20">{src}</span>
+                                                                    ))}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
-                                            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Brain size={20} className="text-pink-400" /> Research Metrics</h3>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                                                    <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Recovery Rate</p>
-                                                    <p className="text-2xl font-bold text-green-400">{selectedDisease.recovery_rate}</p>
-                                                </div>
-                                                <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                                                    <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Avg. Recovery</p>
-                                                    <p className="text-2xl font-bold text-sky-400">{selectedDisease.avg_recovery}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
-                                            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Pill size={20} className="text-green-400" /> Top Medicines</h3>
-                                            <div className="space-y-3">
-                                                <div className="flex flex-wrap gap-2">
-                                                    {selectedDisease.top_medicines && selectedDisease.top_medicines.map((med, i) => (
-                                                        <span key={i} className="bg-green-500/10 text-green-400 px-4 py-2 rounded-lg text-sm font-medium border border-green-500/20 hover:bg-green-500/20 transition-colors cursor-default">{med}</span>
-                                                    ))}
-                                                </div>
-                                                <div className="pt-2 border-t border-white/5 space-y-1">
-                                                    <div className="flex items-center gap-2 text-[10px] text-slate-500 italic">
-                                                        <Info size={12} /> Source: {selectedDisease.med_source.split('. Disclaimer:')[0]}
-                                                    </div>
-                                                    <div className="text-[10px] text-amber-500/80 font-medium">
-                                                        Disclaimer: Always consult a healthcare professional before starting any medication or treatment.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="lg:col-span-7 space-y-8">
-                                        <div className="bg-slate-800/30 p-4 sm:p-6 rounded-2xl border border-white/5">
-                                            <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 mb-4 sm:mb-6 text-slate-200"><TrendingUp size={20} className="text-orange-400" /> 5-Year Trend Analysis</h3>
-                                            <div className="h-[200px] sm:h-[250px] w-full">
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <AreaChart data={selectedDisease.history}>
-                                                        <defs>
-                                                            <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                                                                <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
-                                                                <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
-                                                            </linearGradient>
-                                                        </defs>
-                                                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                                                        <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} dy={5} />
-                                                        <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} dx={-5} />
-                                                        <Tooltip content={<CustomTooltip />} />
-                                                        <Area type="monotone" dataKey="count" stroke="#f97316" fillOpacity={1} fill="url(#colorCount)" strokeWidth={3} />
-                                                    </AreaChart>
-                                                </ResponsiveContainer>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
-                                                <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Users size={20} className="text-blue-400" /> Age Groups</h3>
-                                                <div className="h-[200px]">
+                                                <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Brain size={20} className="text-pink-400" /> Research Metrics</h3>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
+                                                        <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Recovery Rate</p>
+                                                        <p className="text-2xl font-bold text-green-400">{selectedDisease.recovery_rate}</p>
+                                                    </div>
+                                                    <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
+                                                        <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Avg. Recovery</p>
+                                                        <p className="text-2xl font-bold text-sky-400">{selectedDisease.avg_recovery}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
+                                                <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Pill size={20} className="text-green-400" /> Top Medicines</h3>
+                                                <div className="space-y-3">
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {selectedDisease.top_medicines && selectedDisease.top_medicines.map((med, i) => (
+                                                            <span key={i} className="bg-green-500/10 text-green-400 px-4 py-2 rounded-lg text-sm font-medium border border-green-500/20 hover:bg-green-500/20 transition-colors cursor-default">{med}</span>
+                                                        ))}
+                                                    </div>
+                                                    <div className="pt-2 border-t border-white/5 space-y-1">
+                                                        <div className="flex items-center gap-2 text-[10px] text-slate-500 italic">
+                                                            <Info size={12} /> Source: {selectedDisease.med_source.split('. Disclaimer:')[0]}
+                                                        </div>
+                                                        <div className="text-[10px] text-amber-500/80 font-medium">
+                                                            Disclaimer: Always consult a healthcare professional before starting any medication or treatment.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="lg:col-span-7 space-y-8">
+                                            <div className="bg-slate-800/30 p-4 sm:p-6 rounded-2xl border border-white/5">
+                                                <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 mb-4 sm:mb-6 text-slate-200"><TrendingUp size={20} className="text-orange-400" /> 5-Year Trend Analysis</h3>
+                                                <div className="h-[200px] sm:h-[250px] w-full">
                                                     <ResponsiveContainer width="100%" height="100%">
-                                                        <BarChart data={selectedDisease.age_groups}>
+                                                        <AreaChart data={selectedDisease.history}>
+                                                            <defs>
+                                                                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                                                                    <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
+                                                                    <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+                                                                </linearGradient>
+                                                            </defs>
                                                             <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                                                            <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                                                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
-                                                            <Bar dataKey="value" fill="#38bdf8" radius={[4, 4, 0, 0]} />
-                                                        </BarChart>
+                                                            <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} dy={5} />
+                                                            <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} dx={-5} />
+                                                            <Tooltip content={<CustomTooltip />} />
+                                                            <Area type="monotone" dataKey="count" stroke="#f97316" fillOpacity={1} fill="url(#colorCount)" strokeWidth={3} />
+                                                        </AreaChart>
                                                     </ResponsiveContainer>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
-                                                <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Users size={20} className="text-pink-400" /> Gender Split</h3>
-                                                <div className="h-[200px]">
-                                                    <ResponsiveContainer width="100%" height="100%">
-                                                        <PieChart>
-                                                            <Pie data={selectedDisease.gender_split} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value">
-                                                                {selectedDisease.gender_split && selectedDisease.gender_split.map((entry, index) => (<Cell key={`cell-${index}`} fill={GENDER_COLORS[index % GENDER_COLORS.length]} />))}
-                                                            </Pie>
-                                                            <Tooltip content={<CustomTooltip />} />
-                                                            <Legend verticalAlign="bottom" height={36} iconType="circle" formatter={(value) => <span className="text-slate-400 text-xs ml-1">{value}</span>} />
-                                                        </PieChart>
-                                                    </ResponsiveContainer>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
+                                                    <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Users size={20} className="text-blue-400" /> Age Groups</h3>
+                                                    <div className="h-[200px]">
+                                                        <ResponsiveContainer width="100%" height="100%">
+                                                            <BarChart data={selectedDisease.age_groups}>
+                                                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                                                                <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                                                                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+                                                                <Bar dataKey="value" fill="#38bdf8" radius={[4, 4, 0, 0]} />
+                                                            </BarChart>
+                                                        </ResponsiveContainer>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-slate-800/30 p-6 rounded-2xl border border-white/5">
+                                                    <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-slate-200"><Users size={20} className="text-pink-400" /> Gender Split</h3>
+                                                    <div className="h-[200px]">
+                                                        <ResponsiveContainer width="100%" height="100%">
+                                                            <PieChart>
+                                                                <Pie data={selectedDisease.gender_split} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value">
+                                                                    {selectedDisease.gender_split && selectedDisease.gender_split.map((entry, index) => (<Cell key={`cell-${index}`} fill={GENDER_COLORS[index % GENDER_COLORS.length]} />))}
+                                                                </Pie>
+                                                                <Tooltip content={<CustomTooltip />} />
+                                                                <Legend verticalAlign="bottom" height={36} iconType="circle" formatter={(value) => <span className="text-slate-400 text-xs ml-1">{value}</span>} />
+                                                            </PieChart>
+                                                        </ResponsiveContainer>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                        )}
+                    </AnimatePresence>,
+                    document.body
+                )}
             </div >
         </div >
     );
