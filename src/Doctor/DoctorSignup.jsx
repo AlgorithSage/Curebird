@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { auth, db } from '../App';
+import { useToast } from '../context/ToastContext';
 
 export default function DoctorSignup({ onSwitchToLogin }) {
+    const { showToast } = useToast();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const handleSignup = async (e) => {
         e.preventDefault();
-        setError(null);
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match");
+            showToast("Passwords do not match", "error");
             return;
         }
 
@@ -35,15 +35,16 @@ export default function DoctorSignup({ onSwitchToLogin }) {
                 joinedVia: 'email'
             });
 
+            showToast("Account created successfully!", "success");
+
         } catch (err) {
-            setError(err.message);
+            showToast(err.message, "error");
         } finally {
             setLoading(false);
         }
     };
 
     const handleGoogleSignIn = async () => {
-        setError(null);
         setLoading(true);
         const provider = new GoogleAuthProvider();
         try {
@@ -65,20 +66,22 @@ export default function DoctorSignup({ onSwitchToLogin }) {
                     createdAt: serverTimestamp(),
                     joinedVia: 'google'
                 });
+                showToast("Account created! Welcome to Curebird Doctor Portal.", "success");
             } else {
                 // EXISTING USER: Check if they are actually a doctor
                 if (docSnap.data().role !== 'doctor') {
                     await auth.signOut();
-                    setError("This Google account is registered as a Patient, not a Doctor.");
+                    showToast("This Google account is registered as a Patient, not a Doctor.", "error");
                     return;
                 }
                 // If they are a doctor, doing nothing here is fine; 
                 // auth state change in Main.js will pick it up and redirect to Dashboard.
+                showToast("Welcome back, Dr. " + (docSnap.data().name || user.displayName), "success");
             }
 
         } catch (err) {
             console.error("Google Sign In Error:", err);
-            setError(err.message);
+            showToast(err.message, "error");
         } finally {
             setLoading(false);
         }
@@ -90,12 +93,7 @@ export default function DoctorSignup({ onSwitchToLogin }) {
             <h2 className="text-3xl font-bold text-white mb-2 text-center">Doctor Registration</h2>
             <p className="text-center text-slate-400 mb-8">Join the clinical network.</p>
 
-            {error && (
-                <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded mb-4 text-sm flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    {error}
-                </div>
-            )}
+
 
             <form onSubmit={handleSignup} className="space-y-4">
                 <div>

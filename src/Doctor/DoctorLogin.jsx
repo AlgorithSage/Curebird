@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../App';
+import { useToast } from '../context/ToastContext';
 
 export default function DoctorLogin({ onSwitchToSignup }) {
+    const { showToast } = useToast();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError(null);
         setLoading(true);
 
         try {
@@ -26,17 +26,18 @@ export default function DoctorLogin({ onSwitchToSignup }) {
             if (!docSnap.exists() || docSnap.data().role !== 'doctor') {
                 // Not a doctor! Sign out immediately.
                 await auth.signOut();
-                setError("Access Denied: This account is not registered as a Doctor.");
+                showToast("Access Denied: This account is not registered as a Doctor.", "error");
+            } else {
+                showToast("Welcome back, Dr. " + (docSnap.data().name || ""), "success");
             }
         } catch (err) {
-            setError(err.message);
+            showToast(err.message, "error");
         } finally {
             setLoading(false);
         }
     };
 
     const handleGoogleSignIn = async () => {
-        setError(null);
         setLoading(true);
         const provider = new GoogleAuthProvider();
         try {
@@ -50,7 +51,10 @@ export default function DoctorLogin({ onSwitchToSignup }) {
                 // EXISTING: Verify Role
                 if (docSnap.data().role !== 'doctor') {
                     await auth.signOut();
-                    setError("Access Denied: This Google account is for a Patient.");
+                    const toastMsg = "Access Denied: This Google account is for a Patient.";
+                    showToast(toastMsg, "error");
+                } else {
+                    showToast("Welcome back, Dr. " + (docSnap.data().name || user.displayName), "success");
                 }
             } else {
                 // NEW: Auto-create Doctor account (Seamless Onboarding)
@@ -64,11 +68,12 @@ export default function DoctorLogin({ onSwitchToSignup }) {
                     createdAt: serverTimestamp(),
                     authProvider: 'google'
                 });
+                showToast("Account created! Welcome to Curebird Doctor Portal.", "success");
             }
 
         } catch (err) {
             console.error("Google Login Error:", err);
-            setError(err.message);
+            showToast(err.message, "error");
         } finally {
             setLoading(false);
         }
@@ -80,12 +85,7 @@ export default function DoctorLogin({ onSwitchToSignup }) {
             <h2 className="text-3xl font-bold text-white mb-2 text-center">Doctor Portal Login</h2>
             <p className="text-center text-slate-400 mb-8">Secure access to clinical records.</p>
 
-            {error && (
-                <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded mb-4 text-sm flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    {error}
-                </div>
-            )}
+
 
             <form onSubmit={handleLogin} className="space-y-4">
                 <div>
