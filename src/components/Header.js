@@ -167,7 +167,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     return (
 
         <>
-            <header className="rounded-full bg-slate-900/40 backdrop-blur-2xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.08)] flex flex-nowrap items-center justify-between px-4 py-3 sm:px-6 sm:py-4 transition-all duration-500 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group relative overflow-hidden">
+            <header className="z-50 rounded-full bg-slate-900/40 backdrop-blur-2xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.08)] flex flex-nowrap items-center justify-between px-4 py-3 sm:px-6 sm:py-4 transition-all duration-500 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group relative">
                 {/* Subtle sheen reflection for metallic/glass rim effect */}
                 <div className="absolute inset-0 rounded-full border border-white/5 pointer-events-none"></div>
                 <div className="absolute -inset-[1px] rounded-full border border-amber-500/10 opacity-50 blur-[1px] pointer-events-none"></div>
