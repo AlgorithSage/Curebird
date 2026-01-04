@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 
-const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expanded, onToggleExpand }) => {
+const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expanded, onToggleExpand, badge }) => {
 
     // Parent Item Click
     const handleMainClick = () => {
@@ -45,12 +45,12 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
                     <span className="relative z-10 font-medium tracking-wide text-sm">{label}</span>
                 </div>
 
-                {/* Chevron */}
+                {/* Chevron or Badge */}
                 {subItems ? (
                     <ChevronDown size={16} className={`transition-transform duration-300 ${expanded ? 'rotate-180 text-amber-400' : 'text-slate-600 group-hover:text-amber-400'}`} />
                 ) : (
-                    label === 'Notifications' && (
-                        <span className="w-5 h-5 flex items-center justify-center bg-rose-500 text-white text-[10px] font-bold rounded-full shadow-lg shadow-rose-900/50">3</span>
+                    badge > 0 && (
+                        <span className="w-5 h-5 flex items-center justify-center bg-rose-500 text-white text-[10px] font-bold rounded-full shadow-lg shadow-rose-900/50">{badge}</span>
                     )
                 )}
             </motion.button>
@@ -84,7 +84,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
     );
 };
 
-const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) => {
+const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unreadCount }) => {
 
     // Manage expanded states for groups
     const [expandedGroups, setExpandedGroups] = useState({ appointments: true }); // Default open for demo
@@ -135,7 +135,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
             title: "Insights & Tools",
             items: [
                 { id: 'analytics', label: 'Analytics', icon: BarChart2 },
-                { id: 'notifications', label: 'Notifications', icon: Bell },
+                { id: 'notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
             ]
         },
         // ... Account group same as before
@@ -158,7 +158,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
                     />
 
                     <motion.aside
@@ -172,19 +172,28 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                         className="fixed top-0 left-0 bottom-0 w-72 bg-gradient-to-b from-slate-950/40 via-slate-950/40 to-emerald-950/30 backdrop-blur-3xl border-r border-amber-500/20 z-50 shadow-[20px_0_60px_rgba(16,185,129,0.05)] flex flex-col"
                     >
                         {/* Header with Warm Amber Hue */}
-                        <div className="p-6 border-b border-amber-500/10 flex items-center justify-between bg-gradient-to-b from-amber-500/10 to-transparent border-t border-amber-500/10">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-white/5 p-2 flex items-center justify-center shadow-inner border border-white/10 group-hover:border-amber-500/50 transition-colors backdrop-blur-md">
-                                    <img src={CurebirdLogo} alt="Logo" className="w-full h-full object-contain" />
+                        {/* Header: Tab-Style UX */}
+                        <div className="px-5 pt-6 pb-2">
+                            <div className="relative bg-black rounded-2xl p-4 border border-amber-500/20 shadow-[0_0_25px_rgba(245,158,11,0.1)] flex items-center justify-between group overflow-hidden transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_0_35px_rgba(245,158,11,0.25)]">
+
+                                {/* Lively Amber Glow */}
+                                <div className="absolute top-1/2 left-8 w-16 h-16 bg-amber-500/30 blur-[40px] rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
+
+                                <div className="flex items-center gap-4 relative z-10">
+                                    {/* Logo */}
+                                    <div className="w-10 h-10 flex items-center justify-center relative">
+                                        <div className="absolute inset-0 bg-amber-400 blur-md rounded-full opacity-25"></div>
+                                        <img src={CurebirdLogo} alt="Logo" className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" />
+                                    </div>
+
+                                    {/* Text Identity */}
+                                    <div className="flex flex-col justify-center">
+                                        <h2 className="text-xl font-black text-white tracking-tight leading-none drop-shadow-md">Curebird</h2>
+                                        <p className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] leading-none mt-1.5 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">Doctor Portal</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h2 className="font-bold text-white text-lg tracking-tight drop-shadow-md">Curebird</h2>
-                                    <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider drop-shadow-sm">Doctor Portal</p>
-                                </div>
+
                             </div>
-                            <button onClick={onClose} className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors">
-                                <X size={20} />
-                            </button>
                         </div>
 
                         {/* Scrollable Content */}
@@ -214,6 +223,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                                                 subItems={item.subItems}
                                                 expanded={expandedGroups[item.id]} // Using item.id correctly
                                                 onToggleExpand={() => toggleGroup(item.id)}
+                                                badge={item.badge}
                                             />
                                         ))}
                                     </div>
@@ -233,8 +243,9 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                         </div>
                     </motion.aside>
                 </>
-            )}
-        </AnimatePresence>
+            )
+            }
+        </AnimatePresence >
     );
 };
 

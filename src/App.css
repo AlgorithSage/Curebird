@@ -226,3 +226,32 @@ body::after {
 /* Additional utility and accessibility fixes can be added below */
 
 /* End of file */
+
+/* Global Form Polish */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1) !important;
+  transition: all 0.3s ease;
+}
+
+/* Custom Scrollbar for Webkit */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.4);
+}

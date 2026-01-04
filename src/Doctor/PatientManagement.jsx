@@ -72,9 +72,10 @@ const PatientManagement = () => {
                                 key={p.id}
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
+                                whileHover={{ scale: 1.005, backgroundColor: "rgba(255,255,255,0.08)" }}
                                 transition={{ delay: i * 0.05 }}
                                 onClick={() => setSelectedPatient(p)} // Drill down
-                                className="hover:bg-white/5 transition-colors group cursor-pointer"
+                                className="hover:bg-white/5 transition-colors group cursor-pointer border-b border-transparent hover:border-emerald-500/20"
                             >
                                 <td className="px-6 py-4 font-mono text-slate-500 hover:text-emerald-400 transition-colors">{p.id}</td>
                                 <td className="px-6 py-4">
