@@ -159,7 +159,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
                     />
 
                     <motion.aside
@@ -183,7 +183,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                                     <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider drop-shadow-sm">Doctor Portal</p>
                                 </div>
                             </div>
-                            <button onClick={onClose} className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors">
+                            <button onClick={onClose} className="p-2 text-slate-400 hover:text-white transition-colors">
                                 <X size={20} />
                             </button>
                         </div>
