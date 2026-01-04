@@ -173,19 +173,32 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout }) =>
                         className="fixed top-0 left-0 bottom-0 w-72 bg-gradient-to-b from-slate-950/40 via-slate-950/40 to-emerald-950/30 backdrop-blur-3xl border-r border-amber-500/20 z-50 shadow-[20px_0_60px_rgba(16,185,129,0.05)] flex flex-col"
                     >
                         {/* Header with Warm Amber Hue */}
-                        <div className="p-6 border-b border-amber-500/10 flex items-center justify-between bg-gradient-to-b from-amber-500/10 to-transparent border-t border-amber-500/10">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-white/5 p-2 flex items-center justify-center shadow-inner border border-white/10 group-hover:border-amber-500/50 transition-colors backdrop-blur-md">
-                                    <img src={CurebirdLogo} alt="Logo" className="w-full h-full object-contain" />
+                        {/* Header: Tab-Style UX */}
+                        <div className="px-5 pt-6 pb-2">
+                            <div className="relative bg-black rounded-2xl p-4 border border-amber-500/20 shadow-[0_0_25px_rgba(245,158,11,0.1)] flex items-center justify-between group overflow-hidden transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_0_35px_rgba(245,158,11,0.25)]">
+
+                                {/* Lively Amber Glow */}
+                                <div className="absolute top-1/2 left-8 w-16 h-16 bg-amber-500/30 blur-[40px] rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
+
+                                <div className="flex items-center gap-4 relative z-10">
+                                    {/* Logo */}
+                                    <div className="w-10 h-10 flex items-center justify-center relative">
+                                        <div className="absolute inset-0 bg-amber-400 blur-md rounded-full opacity-25"></div>
+                                        <img src={CurebirdLogo} alt="Logo" className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" />
+                                    </div>
+
+                                    {/* Text Identity */}
+                                    <div className="flex flex-col justify-center">
+                                        <h2 className="text-xl font-black text-white tracking-tight leading-none drop-shadow-md">Curebird</h2>
+                                        <p className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] leading-none mt-1.5 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">Doctor Portal</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h2 className="font-bold text-white text-lg tracking-tight drop-shadow-md">Curebird</h2>
-                                    <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider drop-shadow-sm">Doctor Portal</p>
-                                </div>
+
+                                {/* Close Button (Subtle integration) */}
+                                <button onClick={onClose} className="p-1.5 text-slate-600 hover:text-rose-400 transition-colors rounded-lg hover:bg-white/5">
+                                    <X size={16} strokeWidth={2.5} />
+                                </button>
                             </div>
-                            <button onClick={onClose} className="p-2 text-slate-400 hover:text-white transition-colors">
-                                <X size={20} />
-                            </button>
                         </div>
 
                         {/* Scrollable Content */}
