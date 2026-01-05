@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Share2, Bell, LogIn, LogOut, Settings, Menu, LayoutDashboard, Bot, Activity, Mail, MessageSquare } from 'lucide-react';
+import {
+    Plus, Share2, Bell, LogIn, LogOut, Settings, Menu,
+    LayoutDashboard, Bot, Activity, Mail, MessageSquare,
+    Users, Calendar, ClipboardList, FileText, BarChart2,
+    Shield, HelpCircle, Stethoscope, Siren
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CurebirdLogo from '../curebird_logo.png';
 
@@ -113,21 +118,11 @@ const NotificationDropdown = ({ alerts, onClose }) => {
 };
 
 // This Header component is now fully responsive
-const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate, alerts = [] }) => {
+const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate, alerts = [], navItems: propNavItems = [] }) => {
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => {
-            // Check if any element is scrolled (using capture phase allows this)
-            // We use a small threshold to prevent flickering
-            setIsScrolled(true);
-
-            // Re-evaluating: simpler logic. If *any* scroll happens that is significant.
-            // Actually, we want to hide it if the USER has scrolled down. 
-            // Since we can't easily check 'which' container, let's just check if the event target has scrollTop > 10.
-        };
-
         const onScroll = (e) => {
             const scrollTop = e.target.scrollTop || window.scrollY;
             setIsScrolled(scrollTop > 10);
@@ -137,8 +132,8 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
         return () => window.removeEventListener('scroll', onScroll, true);
     }, []);
 
-    // Quick Navigation Items
-    const navItems = [
+    // Default Navigation Items (Patient Portal Defaults)
+    const defaultNavItems = [
         { name: 'Dashboard', icon: <LayoutDashboard size={20} /> },
         { name: 'Cure Analyzer', icon: <Bot size={20} /> },
         { name: 'Cure Stat', icon: <Activity size={20} /> },
@@ -146,6 +141,8 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
         { name: 'Settings', icon: <Settings size={20} /> },
         { name: 'Contact', icon: <Mail size={20} /> }
     ];
+
+    const navItems = propNavItems.length > 0 ? propNavItems : defaultNavItems;
 
 
     const HeaderText = () => (
@@ -200,7 +197,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                 return (
                                     <motion.button
                                         key={item.name}
-                                        onClick={() => onNavigate && onNavigate(item.name)}
+                                        onClick={() => onNavigate && onNavigate(item.id || item.name)}
                                         whileHover={{ scale: 1.1 }}
                                         whileTap={{ scale: 0.95 }}
                                         animate={isActive ? {
