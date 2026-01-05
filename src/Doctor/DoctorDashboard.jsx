@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Users, Calendar, Activity, ClipboardList, FilePlus,
-    Microscope, Siren, LayoutDashboard, Search, ArrowRight
+    Microscope, Siren, LayoutDashboard, Search, ArrowRight,
+    Stethoscope, FileText, Settings, HelpCircle
 } from 'lucide-react';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
 import { auth, db } from '../firebase';
