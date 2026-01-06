@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Suspense } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
@@ -7,23 +8,14 @@ import LoadingScreen from './components/LoadingScreen';
 // Lazy load heavy components
 const App = React.lazy(() => import('./App'));
 const DoctorPortal = React.lazy(() => import('./Doctor/DoctorPortal'));
+const PatientTelehealthSession = React.lazy(() => import('./components/PatientTelehealthSession'));
 
 export default function Main() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [currentPath, setCurrentPath] = useState(window.location.pathname);
-    const [isDoctorContext, setIsDoctorContext] = useState(window.location.pathname.startsWith('/doctor'));
+    const location = useLocation();
+    const isDoctorContext = location.pathname.startsWith('/doctor');
     const [doctorRoleVerified, setDoctorRoleVerified] = useState(false);
-
-    useEffect(() => {
-        const handleLocationChange = () => {
-            const path = window.location.pathname;
-            setCurrentPath(path);
-            setIsDoctorContext(path.startsWith('/doctor'));
-        };
-        window.addEventListener('popstate', handleLocationChange);
-        return () => window.removeEventListener('popstate', handleLocationChange);
-    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -66,7 +58,7 @@ export default function Main() {
         });
 
         return () => unsubscribe();
-    }, [isDoctorContext]); // Re-run if context changes (e.g. user navigates to /doctor manually)
+    }, [isDoctorContext]);
 
     if (loading) {
         return <LoadingScreen />;
@@ -75,19 +67,28 @@ export default function Main() {
     // RENDER LOGIC
     return (
         <Suspense fallback={<LoadingScreen />}>
-            {isDoctorContext ? (
-                user ? (
-                    doctorRoleVerified ? (
-                        <DoctorPortal user={user} />
+            <Routes>
+                {/* Doctor Portal Routes */}
+                <Route path="/doctor/*" element={
+                    user ? (
+                        doctorRoleVerified ? (
+                            <DoctorPortal user={user} />
+                        ) : (
+                            <DoctorPortal user={user} isNewDoctor={true} />
+                        )
                     ) : (
-                        <DoctorPortal user={user} isNewDoctor={true} />
+                        <DoctorPortal user={null} />
                     )
-                ) : (
-                    <DoctorPortal user={null} />
-                )
-            ) : (
-                <App />
-            )}
+                } />
+
+                {/* Patient Telehealth Route */}
+                <Route path="/telehealth/:appointmentId" element={
+                    <PatientTelehealthSession user={user} />
+                } />
+
+                {/* Main Patient App (Catch-all) */}
+                <Route path="/*" element={<App />} />
+            </Routes>
         </Suspense>
     );
 }

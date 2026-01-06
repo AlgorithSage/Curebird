@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, MoreVertical, Edit, Trash2 } from 'lucide-react';
+import { Plus, MoreVertical, Edit, Trash2, Video } from 'lucide-react';
 
 import Header from './Header';
 import { AppointmentFormModal, DeleteConfirmModal } from './Modals';
@@ -9,6 +10,10 @@ import { SkeletonCard } from './SkeletonLoaders';
 
 const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
+
+    // Check if appointment is "active" (For demo: if status is 'upcoming', treat as active)
+    const isActive = appointment.status === 'upcoming';
 
     // Using thick left borders to indicate status against the yellow glass background
     const statusConfig = {
@@ -57,9 +62,19 @@ const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
                 <p className="text-sm text-white font-bold tracking-wide">
                     {formatDate(appointment.date)}
                 </p>
-                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${config.badge}`}>
-                    {appointment.status}
-                </span>
+
+                {isActive ? (
+                    <button
+                        onClick={() => navigate(`/telehealth/${appointment.id}`)}
+                        className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500 text-black text-xs font-black uppercase tracking-widest hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 animate-pulse"
+                    >
+                        <Video size={14} /> Join Session
+                    </button>
+                ) : (
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${config.badge}`}>
+                        {appointment.status}
+                    </span>
+                )}
             </div>
         </motion.div>
     )
