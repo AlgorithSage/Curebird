@@ -5,6 +5,7 @@ import {
     Video, Phone, MessageSquare, MapPin, Filter, Plus, ChevronLeft,
     ChevronRight, AlertCircle
 } from 'lucide-react';
+import NewSlotModal from './NewSlotModal';
 
 // --- Sub-Components ---
 
@@ -90,6 +91,9 @@ const ScheduleSlot = ({ time, status }) => (
 
 // --- Main Manager Component ---
 
+// --- Main Manager Component ---
+
+
 const AppointmentManager = ({ view = 'overview', onNavigate }) => {
     // view prop comes from sidebar: 'overview', 'requests', 'schedule'
 
@@ -103,6 +107,23 @@ const AppointmentManager = ({ view = 'overview', onNavigate }) => {
         { id: 3, patientName: "Marty McFly", time: "11:00 AM", date: "Tomorrow", reason: "Vertigo Symptoms", type: "video" },
         { id: 4, patientName: "Emmett Brown", time: "04:30 PM", date: "Fri, 27 Oct", reason: "Lab Results", type: "video" },
     ]);
+
+    // Scheduler State
+    const [slots, setSlots] = useState([
+        { time: '09:00 AM', status: 'booked' },
+        { time: '09:30 AM', status: 'booked' },
+        { time: '10:00 AM', status: 'booked' },
+        { time: '10:30 AM', status: 'booked' },
+        { time: '11:00 AM', status: 'blocked' },
+        { time: '11:30 AM', status: 'blocked' },
+        { time: '12:00 PM', status: 'blocked' },
+        { time: '12:30 PM', status: 'blocked' },
+        { time: '01:00 PM', status: 'available' },
+        { time: '01:30 AM', status: 'available' },
+        { time: '02:00 PM', status: 'available' },
+        { time: '02:30 PM', status: 'available' },
+    ]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Handlers
     const handleAction = (action, appt) => {
@@ -124,6 +145,11 @@ const AppointmentManager = ({ view = 'overview', onNavigate }) => {
         }
     };
 
+    const handleAddSlot = (timeString) => {
+        setSlots(prev => [...prev, { time: timeString, status: 'available' }]);
+        setIsModalOpen(false);
+    };
+
     return (
         <div className="space-y-8">
 
@@ -143,7 +169,10 @@ const AppointmentManager = ({ view = 'overview', onNavigate }) => {
                     </p>
                 </div>
                 {view === 'schedule' && (
-                    <button className="bg-amber-500 text-black px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2">
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-amber-500 text-black px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2"
+                    >
                         <Plus size={16} /> New Slot
                     </button>
                 )}
@@ -257,13 +286,22 @@ const AppointmentManager = ({ view = 'overview', onNavigate }) => {
                             ))}
                         </div>
 
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
-                            {['09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM'].map(t => <ScheduleSlot key={t} time={t} status="booked" />)}
-                            {['11:00 AM', '11:30 AM'].map(t => <ScheduleSlot key={t} time={t} status="blocked" />)}
-                            {['12:00 PM', '12:30 PM'].map(t => <ScheduleSlot key={t} time={t} status="blocked" />)}
-                            {['01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM'].map(t => <ScheduleSlot key={t} time={t} status="available" />)}
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10 mb-6">
+                            {slots.map((s, i) => (
+                                <ScheduleSlot key={i} time={s.time} status={s.status} />
+                            ))}
                         </div>
                     </motion.div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {isModalOpen && (
+                    <NewSlotModal
+                        isOpen={isModalOpen}
+                        onClose={() => setIsModalOpen(false)}
+                        onConfirm={handleAddSlot}
+                    />
                 )}
             </AnimatePresence>
         </div>

@@ -47,11 +47,20 @@
 *   **Medication Tracker**: Visual tracking of active medicines with dosage and frequency details extracted from your records.
 *   **Doctor Discovery**: Browse specialist profiles and book appointments.
 
-### 👨‍⚕️ For Doctors (Under Development)
-*   **Doctor Portal**: A dedicated workspace for medical practitioners (Currently in **Pre-Development/Alpha Phase**).
-*   **Profile Management**: Doctors can manage their display profile, specialization details, and verification status.
-*   **Availability Toggle**: Simple online/offline switch to manage patient bookings.
-*   **Patient Verification**: (Planned) Secure handshake protocol to view patient records with consent.
+### 👨‍⚕️ For Doctors (Active Module - Beta)
+*   **Premium Clinical Workspace**: A sophisticated, glassmorphic dashboard designed for high-performance clinical workflows.
+*   **Secure Authentication**: Role-based access via Email/Google Sign-In with strict Firestore security rules.
+*   **Patient Management**: 
+    *   **Live Roster**: Real-time view of assigned patients with status indicators.
+    *   **Digital Workspace**: Unified view for vitals monitoring, medical history, and clinical notes.
+*   **Telehealth Suite**:
+    *   **Smart Scheduler**: "Time Command" modal for rapid availability management.
+    *   **Live Consultation**: Integrated video room entry and queue management.
+    *   **Chat System**: Secure, real-time messaging with patients.
+*   **Clinical Tools**:
+    *   **Quick Actions**: Rapidly issue Prescriptions, Lab Requests, and Emergency Alerts.
+    *   **Vitals Monitoring**: Track patient health trends with interactive charts.
+*   **Dual Access Navigation**: Seamlessly switch between tools via the Sidebar or the Quick Access Header.
 
 ---
 

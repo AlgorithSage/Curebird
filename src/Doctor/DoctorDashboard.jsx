@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Users, Calendar, Activity, ClipboardList, FilePlus,
-    Microscope, Siren, LayoutDashboard, Search, ArrowRight
+    Microscope, Siren, LayoutDashboard, Search, ArrowRight,
+    Stethoscope, FileText, Settings, HelpCircle
 } from 'lucide-react';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -416,7 +417,7 @@ const DoctorDashboard = ({ user }) => {
         }
 
         // 2. Appointment Manager (Sub-views)
-        if (activeView.startsWith('appointments_')) {
+        if (activeView.startsWith('appointments_') && activeView !== 'appointments_group') {
             const subView = activeView.split('_')[1]; // overview, requests, schedule
             return <AppointmentManager view={subView} onNavigate={handleNavigate} />;
         }
@@ -585,7 +586,18 @@ const DoctorDashboard = ({ user }) => {
                     onAddClick={() => setIsAddRecordModalOpen(true)}
                     onToggleSidebar={() => setSidebarOpen(true)}
                     onNotificationClick={() => setActiveView('notifications')}
-                    navItems={[]}
+                    onNavigate={handleNavigate}
+                    navItems={[
+                        { name: 'Dashboard', id: 'dashboard', icon: <LayoutDashboard size={20} /> },
+                        { name: 'My Patients', id: 'patients', icon: <Users size={20} /> },
+                        { name: 'Appointments', id: 'appointments_group', icon: <Calendar size={20} /> },
+                        { name: 'Consultations', id: 'consultations', icon: <Stethoscope size={20} /> },
+                        { name: 'Medical Records', id: 'medical_records', icon: <FileText size={20} /> },
+                        { name: 'Messages', id: 'messages', icon: <Siren size={20} /> },
+                        { name: 'Analytics', id: 'analytics', icon: <Activity size={20} /> },
+                        { name: 'Profile & Settings', id: 'profile', icon: <Settings size={20} /> },
+                        { name: 'Help & Support', id: 'help', icon: <HelpCircle size={20} /> },
+                    ]}
                 />
 
                 <main className="min-h-[60vh] pb-12 pt-6">
