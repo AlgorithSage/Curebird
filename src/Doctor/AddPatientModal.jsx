@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, User, Activity, Calendar, HeartPulse, CheckCircle, Loader, AlertTriangle, Phone, Mail, MapPin, Shield, FileText, Droplet, UserPlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 
 const AddPatientModal = ({ isOpen, onClose, onAddPatient }) => {
     const [loading, setLoading] = useState(false);
@@ -35,6 +35,13 @@ const AddPatientModal = ({ isOpen, onClose, onAddPatient }) => {
 
         try {
             // Add to Firestore
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                setError("You must be logged in to add a patient.");
+                setLoading(false);
+                return;
+            }
+
             const docRef = await addDoc(collection(db, "patients"), {
                 name: `${formData.firstName} ${formData.lastName}`,
                 age: Number(new Date().getFullYear() - new Date(formData.dob).getFullYear()),
@@ -48,7 +55,8 @@ const AddPatientModal = ({ isOpen, onClose, onAddPatient }) => {
                 email: formData.email,
                 address: formData.address,
                 lastVisit: 'Just now',
-                createdAt: serverTimestamp()
+                createdAt: serverTimestamp(),
+                doctorId: currentUser.uid // Link patient to this doctor
             });
 
             const newPatient = {
