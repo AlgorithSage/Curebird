@@ -8,6 +8,7 @@ import {
     TrendingUp, Users, Activity, AlertTriangle, Calendar,
     BrainCircuit, Clock, Stethoscope
 } from 'lucide-react';
+import AIReportModal from './AIReportModal';
 
 // --- Improved Mock Data ---
 
@@ -125,6 +126,7 @@ const StatCard = ({ label, value, sub, icon: Icon, colorClass, accentColor = 'am
 
 const DoctorAnalytics = ({ onNavigateToPatient }) => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
     const handleMouseMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -142,10 +144,15 @@ const DoctorAnalytics = ({ onNavigateToPatient }) => {
                     </h2>
                     <p className="text-slate-400 font-medium">Population health intelligence & operational metrics.</p>
                 </div>
-                <button className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] flex items-center gap-2">
+                <button
+                    onClick={() => setIsReportModalOpen(true)}
+                    className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] flex items-center gap-2"
+                >
                     <BrainCircuit size={20} /> Generate AI Report
                 </button>
             </div>
+
+            <AIReportModal isOpen={isReportModalOpen} onClose={() => setIsReportModalOpen(false)} />
 
             {/* Top Stats Row - Using Semantic Tints on Amber Base */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -157,9 +164,7 @@ const DoctorAnalytics = ({ onNavigateToPatient }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                {/* Main: Adherence Dual-Area Chart (Dark Premium Theme) */}
                 {/* Main: Adherence Dual-Area Chart (Dark Premium Theme + Dynamic Spotlight) */}
-                {/* Main: Adherence Dual-Area Chart (Amber/Gold Theme) */}
                 <div
                     onMouseMove={handleMouseMove}
                     className="lg:col-span-2 relative rounded-[2rem] p-8 border border-amber-500/10 bg-[#0c0a09] shadow-2xl overflow-hidden group/chart animated-border"
@@ -210,9 +215,7 @@ const DoctorAnalytics = ({ onNavigateToPatient }) => {
                                     contentStyle={{ backgroundColor: '#0c0a09', borderColor: '#44403c', borderRadius: '12px', color: '#f5f5f4', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)' }}
                                     itemStyle={{ paddingTop: '4px' }}
                                 />
-                                {/* Amber Curve (Top) */}
                                 <Area type="monotone" dataKey="projected" stroke="#f59e0b" strokeWidth={3} fillOpacity={1} fill="url(#amberGradient)" />
-                                {/* Yellow Curve (Bottom) */}
                                 <Area type="monotone" dataKey="rate" stroke="#facc15" strokeWidth={3} fillOpacity={1} fill="url(#yellowGradient)" />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -245,7 +248,6 @@ const DoctorAnalytics = ({ onNavigateToPatient }) => {
             {/* Bottom Row: Radar & Heatmap */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                {/* 1. Population Risk Radar (Deep Purple Theme) */}
                 {/* 1. Population Risk Radar (Dark Olive/Gold Theme) */}
                 <div className="relative rounded-[2rem] p-6 border border-yellow-500/10 bg-gradient-to-br from-[#1a1c10] to-[#020617] shadow-[0_4px_20px_rgba(0,0,0,0.2)] overflow-hidden animated-border">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 blur-[60px] pointer-events-none" />
@@ -288,7 +290,6 @@ const DoctorAnalytics = ({ onNavigateToPatient }) => {
                     </div>
                 </div>
 
-                {/* 2. Clinic Load Heatmap (Amber Border / Dark Interior / Cyan+Purple Cells) */}
                 {/* 2. Clinic Load Heatmap (Dark Olive/Gold Theme) */}
                 <div className="relative rounded-[2rem] p-6 border border-yellow-500/10 bg-gradient-to-br from-[#1a1c10] to-[#020617] shadow-[0_4px_20px_rgba(0,0,0,0.2)] overflow-hidden animated-border">
                     {/* Subtle Internal Yellow Glow */}
@@ -315,7 +316,6 @@ const DoctorAnalytics = ({ onNavigateToPatient }) => {
                     </div>
                 </div>
 
-                {/* 3. Critical Patients List (Red Tinted "Riskbox") */}
                 {/* 3. Critical Patients List (Dark Olive/Gold Theme) */}
                 <div className="relative rounded-[2rem] flex flex-col overflow-hidden border border-yellow-500/10 bg-gradient-to-br from-[#1a1c10] to-[#020617] shadow-[0_4px_20px_rgba(0,0,0,0.2)] group/panel animated-border">
 
