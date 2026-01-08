@@ -248,19 +248,11 @@ const DashboardOverview = ({ onAddRecord, onViewOversight, patientCount, actionC
 
 
 
-const PatientSearchLanding = ({ onSelectPatient }) => {
+const PatientSearchLanding = ({ onSelectPatient, patients = [] }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
-    const allPatients = [
-        { id: 'P-001', name: 'Sarah Connor', age: 34, gender: 'F', lastVisit: '2023-10-24', status: 'Stable', condition: 'Hypertension' },
-        { id: 'P-002', name: 'John Smith', age: 45, gender: 'M', lastVisit: '2023-10-22', status: 'Critical', condition: 'Post-Op Recovery' },
-        { id: 'P-003', name: 'Ellen Ripley', age: 29, gender: 'F', lastVisit: '2023-10-20', status: 'Active', condition: 'Routine Checkup' },
-        { id: 'P-004', name: 'Marty McFly', age: 19, gender: 'M', lastVisit: '2023-10-18', status: 'Stable', condition: 'Sports Injury' },
-        { id: 'P-005', name: 'Tony Stark', age: 48, gender: 'M', lastVisit: '2023-10-15', status: 'Stable', condition: 'Cardiac Arrhythmia' },
-    ];
-
     const results = searchTerm
-        ? allPatients.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.id.toLowerCase().includes(searchTerm.toLowerCase()))
+        ? patients.filter(p => p.name?.toLowerCase().includes(searchTerm.toLowerCase()) || p.id?.toLowerCase().includes(searchTerm.toLowerCase()))
         : [];
 
     return (
@@ -309,11 +301,11 @@ const PatientSearchLanding = ({ onSelectPatient }) => {
                                         >
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 font-bold group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
-                                                    {patient.name.charAt(0)}
+                                                    {patient.name?.charAt(0)}
                                                 </div>
                                                 <div>
                                                     <h4 className="font-bold text-white">{patient.name}</h4>
-                                                    <p className="text-xs text-slate-500">{patient.id} • {patient.condition}</p>
+                                                    <p className="text-xs text-slate-500">{patient.id} • {patient.condition || 'General'}</p>
                                                 </div>
                                             </div>
                                             <ArrowRight size={18} className="text-slate-600 group-hover:text-emerald-400 -translate-x-2 group-hover:translate-x-0 transition-all opacity-0 group-hover:opacity-100" />
@@ -338,7 +330,7 @@ const DoctorDashboard = ({ user }) => {
     const [activeView, setActiveView] = useState('dashboard');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [workspacePatient, setWorkspacePatient] = useState(null);
-    const [targetChatPatientId, setTargetChatPatientId] = useState(null); // For Profile -> Chat Nav
+    const [targetChatPatient, setTargetChatPatient] = useState(null); // For Profile -> Chat Nav
     const [isAddRecordModalOpen, setIsAddRecordModalOpen] = useState(false);
     const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
     const [isLabRequestModalOpen, setIsLabRequestModalOpen] = useState(false);
@@ -418,9 +410,9 @@ const DoctorDashboard = ({ user }) => {
                     <PatientWorkspace
                         patient={workspacePatient}
                         onBack={() => setWorkspacePatient(null)}
-                        onOpenChat={(patientId) => {
-                            console.log('Dashboard: Switching to Chat for ID:', patientId);
-                            setTargetChatPatientId(patientId);
+                        onOpenChat={(patient) => {
+                            console.log('Dashboard: Switching to Chat for:', patient.name);
+                            setTargetChatPatient(patient);
                             setActiveView('messages');
                         }}
                         onAddAction={(type) => {
@@ -433,7 +425,7 @@ const DoctorDashboard = ({ user }) => {
                     />
                 );
             }
-            return <PatientSearchLanding onSelectPatient={setWorkspacePatient} />;
+            return <PatientSearchLanding onSelectPatient={setWorkspacePatient} patients={patients} />;
         }
 
         // 2. Appointment Manager (Sub-views)
@@ -461,7 +453,10 @@ const DoctorDashboard = ({ user }) => {
                     />
                 </>
             );
-            case 'patients': return <PatientManagement />;
+            case 'patients': return <PatientManagement onViewPatient={(p) => {
+                setWorkspacePatient(p);
+                setActiveView('patient_workspace');
+            }} />;
             case 'appointments_group': return <AppointmentManager view="overview" onNavigate={handleNavigate} />;
             case 'consultations': return <ConsultationWorkflow user={user} />;
             case 'medical_records': return <MedicalRecordManager user={user} onAddAction={(type) => {
@@ -476,7 +471,7 @@ const DoctorDashboard = ({ user }) => {
                 onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
             />;
             case 'messages': return <DoctorChat
-                initialPatientId={targetChatPatientId} // Pass target ID
+                initialPatientId={targetChatPatient} // Pass target Patient Object
                 onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
             />;
             case 'notifications': return <DoctorNotifications

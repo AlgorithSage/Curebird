@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck } from 'lucide-react';
+import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../../firebase';
 import InsightReviewModal from './InsightReviewModal';
 import GenerateSummaryModal from './actions/GenerateSummaryModal';
 import FlagObservationModal from './actions/FlagObservationModal';
@@ -9,7 +11,15 @@ import ConsultationStatusModal from './actions/ConsultationStatusModal';
 import EscalateRiskModal from './actions/EscalateRiskModal';
 
 const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
-    const [activeChat, setActiveChat] = useState('chat_001');
+    // Firestore Hooks
+    const [chats, setChats] = React.useState([]);
+    const [messages, setMessages] = React.useState([]);
+    const [patients, setPatients] = React.useState([]); // New Patient List State
+    const [currentUser, setCurrentUser] = React.useState(null);
+    const [loadingChats, setLoadingChats] = React.useState(true);
+
+    // UI State
+    const [activeChat, setActiveChat] = useState(null);
     const [messageInput, setMessageInput] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [isInsightModalOpen, setIsInsightModalOpen] = useState(false);
@@ -17,141 +27,180 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     const [showActionMenu, setShowActionMenu] = useState(false);
     const [activeAction, setActiveAction] = useState(null); // 'summary', 'flag', 'carePlan', 'status', 'escalate'
 
-    // Mock Data: Conversations
-    const chats = [
-        {
-            id: 'chat_001',
-            patient: 'Sarah Williams',
-            patientId: 'P-001',
-            condition: 'Hypertension',
-            lastMsg: 'Attached my blood report.',
-            time: '2m ago',
-            unread: 1,
-            status: 'online',
-            avatarColor: 'bg-emerald-500'
-        },
-        {
-            id: 'chat_002',
-            patient: 'John Doe',
-            patientId: 'P-002',
-            condition: 'Post-Op Recovery',
-            lastMsg: 'Thanks doctor, feeling better.',
-            time: '1h ago',
-            unread: 0,
-            status: 'offline',
-            avatarColor: 'bg-indigo-500'
-        },
-        {
-            id: 'chat_003',
-            patient: 'Robert Chen',
-            patientId: 'P-003',
-            condition: 'Routine Checkup',
-            lastMsg: 'When is my next appointment?',
-            time: '1d ago',
-            unread: 0,
-            status: 'offline',
-            avatarColor: 'bg-amber-500'
-        },
-    ];
-
-    // Handle Profile -> Chat Navigation
+    // Auth Check
     React.useEffect(() => {
-        if (initialPatientId) {
-            const targetChat = chats.find(c => c.patientId === initialPatientId);
-            if (targetChat) {
-                setActiveChat(targetChat.id);
+        const unsubAuth = auth.onAuthStateChanged(user => {
+            if (user) setCurrentUser(user);
+        });
+        return () => unsubAuth();
+    }, []);
+
+    // 1. Fetch Conversations (Real-time)
+    React.useEffect(() => {
+        if (!currentUser) return;
+        setLoadingChats(true);
+        const q = query(
+            collection(db, 'chats'),
+            where('participants', 'array-contains', currentUser.uid),
+            orderBy('updatedAt', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const fetchedChats = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                // Helper for display logic
+                patient: doc.data().patientName, // Mapped for UI
+                time: doc.data().updatedAt?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'New',
+                avatarColor: doc.data().avatarColor || 'bg-stone-700'
+            }));
+            setChats(fetchedChats);
+            setLoadingChats(false);
+        });
+
+        return () => unsubscribe();
+    }, [currentUser]);
+
+    // 1b. Fetch All Patients (To show as potential chats)
+    React.useEffect(() => {
+        if (!currentUser) return;
+        // In a real app, you might filter by assigned doctor. For now, fetch all.
+        const q = query(collection(db, 'patients'), orderBy("createdAt", "desc"));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const fetchedPatients = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setPatients(fetchedPatients);
+        });
+        return () => unsubscribe();
+    }, [currentUser]);
+
+    // 2. Handle Profile -> Chat Navigation (Dynamic Creation)
+    React.useEffect(() => {
+        const handleInitialPatient = async () => {
+            if (!initialPatientId || !currentUser || loadingChats) return;
+
+            // Normalize input
+            const patientObj = typeof initialPatientId === 'object' ? initialPatientId : null;
+            if (!patientObj) return;
+
+            // Check if chat already exists
+            const existingChat = chats.find(c => c.patientId === patientObj.id);
+
+            if (existingChat) {
+                setActiveChat(existingChat.id);
+            } else {
+                // Check if we already have a temp chat selected
+                const tempId = `temp_${patientObj.id}`;
+                if (activeChat !== tempId) {
+                    setActiveChat(tempId);
+                }
             }
-        }
-    }, [initialPatientId]);
-
-    // Filter Logic
-    const filteredChats = chats.filter(chat =>
-        chat.patient.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const activeChatData = chats.find(c => c.id === activeChat);
-
-    // Mock Data: Active Thread Messages
-    const [messages, setMessages] = useState([
-        { id: 1, sender: 'doctor', text: 'Hello Sarah, how are you feeling today?', time: '10:00 AM' },
-        { id: 2, sender: 'patient', text: 'Much better, the fever has gone down.', time: '10:05 AM' },
-        { id: 3, sender: 'doctor', text: 'That is great news. Did you get the blood work done?', time: '10:06 AM' },
-        {
-            id: 4,
-            sender: 'patient',
-            text: 'Yes, here is the report.',
-            type: 'file',
-            fileName: 'lab_report_024.pdf',
-            hasInsight: true,
-            time: '10:10 AM'
-        }
-    ]);
-
-    // Mock AI Insight Data
-    const mockInsight = {
-        id: 'insight_88392',
-        patientName: 'Sarah Williams',
-        confidenceScore: 0.94,
-        extractedData: {
-            diagnosis: ['Acute Bacterial Infection', 'Dehydration'],
-            vitals: [
-                { type: 'WBC', value: '14.2', unit: 'K/uL' },
-                { type: 'Hemoglobin', value: '13.5', unit: 'g/dL' }
-            ],
-            medications: [
-                { name: 'Amoxicillin', dosage: '500mg', freq: 'BID' }
-            ]
-        }
-    };
-
-    const handleSendMessage = async (e) => {
-        e.preventDefault();
-        if (!messageInput.trim()) return;
-
-        const newMsgRaw = {
-            id: messages.length + 1,
-            sender: 'doctor',
-            text: messageInput,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
 
-        const updatedMessages = [...messages, newMsgRaw];
-        setMessages(updatedMessages);
-        setMessageInput('');
+        handleInitialPatient();
+    }, [initialPatientId, currentUser, chats, loadingChats]); // key dependency loadingChats
 
-        // Trigger AI Reply
+    // 3. Fetch Messages for Active Chat
+    React.useEffect(() => {
+        if (!activeChat) return;
+
+        // If activeChat is a "temporary" ID (e.g. starts with 'temp_'), we don't fetch messages yet.
+        // But our logic above creates real chats immediately on selection, so activeChat should always be a real ID eventually.
+        // However, if the user clicks a "potential chat" from the list, we need to handle that click to Create the chat.
+
+        // Wait, if activeChat is real, fetch messages
+        if (!activeChat.startsWith('temp_')) {
+            const msgsRef = collection(db, `chats/${activeChat}/messages`);
+            const q = query(msgsRef, orderBy('createdAt', 'asc'));
+
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                const fetchedMsgs = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    time: doc.data().createdAt?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }));
+                setMessages(fetchedMsgs);
+            });
+            return () => unsubscribe();
+        } else {
+            setMessages([]); // Clear messages for temp chat
+        }
+    }, [activeChat]);
+
+    // 4. Send Message
+    const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (!messageInput.trim() || !activeChat || !currentUser) return;
+
+        let targetChatId = activeChat;
+
+        // If it's a temp chat, create it first
+        if (activeChat.startsWith('temp_')) {
+            const tempPatientId = activeChat.replace('temp_', '');
+
+            // Try to find patient details in our list, OR use the initialPatientId if it matches
+            let targetPatient = patients.find(p => p.id === tempPatientId);
+
+            // Fallback to initialPatientId if it matches the temp ID (handles race condition where patients aren't loaded)
+            if (!targetPatient && initialPatientId && initialPatientId.id === tempPatientId) {
+                targetPatient = initialPatientId;
+            }
+
+            if (!targetPatient) {
+                console.error("Unknown patient for chat creation");
+                return;
+            }
+
+            try {
+                const newChatRef = await addDoc(collection(db, 'chats'), {
+                    patientId: targetPatient.id,
+                    doctorId: currentUser.uid,
+                    participants: [currentUser.uid],
+                    patientName: targetPatient.name,
+                    condition: targetPatient.condition || 'General Care',
+                    status: 'offline',
+                    lastMsg: messageInput, // First message
+                    unread: 0,
+                    updatedAt: serverTimestamp(),
+                    avatarColor: 'bg-emerald-500'
+                });
+                targetChatId = newChatRef.id;
+                setActiveChat(targetChatId); // Switch to real ID
+            } catch (err) {
+                console.error("Error creating chat on send:", err);
+                return;
+            }
+        }
+
+        const text = messageInput;
+        setMessageInput(''); // Optimistic clear
+
         try {
-            // Show typing indicator or just wait
-            // For now, let's just wait a bit purely for realism, then call API
-            // Ideally we'd have a 'typing' state
-
-            const response = await fetch('http://127.0.0.1:5001/api/chat/patient-reply', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    history: updatedMessages,
-                    patientContext: activeChatData
-                })
+            // Add Message
+            await addDoc(collection(db, `chats/${targetChatId}/messages`), {
+                text: text,
+                sender: 'doctor',
+                senderId: currentUser.uid,
+                createdAt: serverTimestamp(),
+                type: 'text'
             });
 
-            const data = await response.json();
+            // Update Chat Meta (Last Message)
+            const chatRef = doc(db, 'chats', targetChatId);
+            await updateDoc(chatRef, {
+                lastMsg: text,
+                updatedAt: serverTimestamp(),
+            });
 
-            if (data.reply) {
-                setMessages(prev => [...prev, {
-                    id: prev.length + 1,
-                    sender: 'patient',
-                    text: data.reply,
-                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                }]);
-            }
-        } catch (error) {
-            console.error("Failed to get patient reply:", error);
+        } catch (err) {
+            console.error("Failed to send message:", err);
         }
     };
 
     const openInsightReview = () => {
-        setSelectedInsight(mockInsight);
-        setIsInsightModalOpen(true);
+        console.log("Insight review not integrated with live data yet.");
     };
 
     const navigateToProfile = (chatData) => {
@@ -164,6 +213,54 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         };
         onNavigateToPatient(patientObj);
     };
+
+    // Derived State: Combine Active Chats + Potential Chats (Patients)
+    const allChats = React.useMemo(() => {
+        // 1. Existing Chats
+        const combined = [...chats];
+        const existingPatientIds = new Set(chats.map(c => c.patientId));
+
+        // 2. Patients without Chats (Potential)
+        patients.forEach(p => {
+            if (!existingPatientIds.has(p.id)) {
+                combined.push({
+                    id: `temp_${p.id}`, // Temporary ID
+                    patientId: p.id,
+                    patient: p.name,
+                    patientName: p.name,
+                    condition: p.condition || 'General Care',
+                    lastMsg: 'Start a conversation...',
+                    time: '',
+                    unread: 0,
+                    status: p.status === 'Active' ? 'online' : 'offline', // simplified mapping
+                    avatarColor: 'bg-stone-700', // Default
+                    isTemp: true
+                });
+            }
+        });
+        return combined;
+    }, [chats, patients]);
+
+    const filteredChats = allChats.filter(chat =>
+        chat.patient?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Resolving activeChatData with fallback
+    let activeChatData = allChats.find(c => c.id === activeChat);
+
+    // Fallback: If activeChat matches initialPatientId's temp ID, but not in allChats (e.g. patients not loaded), construct it
+    if (!activeChatData && activeChat && initialPatientId && activeChat === `temp_${initialPatientId.id}`) {
+        activeChatData = {
+            id: activeChat,
+            patientId: initialPatientId.id,
+            patient: initialPatientId.name,
+            patientName: initialPatientId.name,
+            condition: initialPatientId.condition || 'General Care',
+            status: 'offline',
+            avatarColor: 'bg-stone-700',
+            isTemp: true
+        };
+    }
 
     return (
         <div className="flex h-[calc(100vh-6rem)] gap-6 animate-in fade-in duration-500">

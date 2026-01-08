@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Activity, Calendar, FileText, Pill, Microscope,
-    AlertCircle, Clock, File, Download, Search, MessageSquare, Loader
+    AlertCircle, Clock, File, Download, Search, MessageSquare, Loader, Droplets
 } from 'lucide-react';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -26,15 +26,15 @@ const ClinicalHeader = ({ patient, onBack, onOpenChat }) => (
                     <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
                         {patient.name}
                         <span className={`px-3 py-1 rounded-full text-xs font-bold border ${patient.status === 'Critical' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
-                            {patient.status}
+                            {patient.status || 'Stable'}
                         </span>
                     </h1>
                     <div className="flex items-center gap-4 text-sm text-stone-400 mt-1 font-mono font-bold uppercase tracking-wider">
-                        <span>ID: {patient.id}</span>
+                        <span>ID: {patient.id?.slice(0, 8) || 'N/A'}</span>
                         <span>•</span>
-                        <span>{patient.age} Yrs / {patient.gender}</span>
+                        <span>{patient.age || '--'} Yrs / {patient.gender || '--'}</span>
                         <span>•</span>
-                        <span>Blood: O+</span>
+                        <span>Blood: {patient.bloodType || '--'}</span>
                     </div>
                 </div>
             </div>
@@ -50,10 +50,9 @@ const ClinicalHeader = ({ patient, onBack, onOpenChat }) => (
                         // alert("DEBUG: Open Chat Clicked " + patient.id); // Uncomment for hard debug
                         console.log("Attempting to open chat for:", patient.id);
                         if (onOpenChat) {
-                            onOpenChat();
+                            onOpenChat(patient); // Pass full object
                         } else {
                             console.error("onOpenChat prop is missing!");
-                            alert("Error: Chat function not connected.");
                         }
                     }}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black uppercase tracking-widest text-xs shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95 cursor-pointer relative z-50 transition-all"
@@ -65,14 +64,18 @@ const ClinicalHeader = ({ patient, onBack, onOpenChat }) => (
                 <div className="h-8 w-px bg-white/10 mx-2 hidden md:block"></div>
 
                 <div className="hidden md:flex gap-3">
-                    <div className="px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                        <AlertCircle size={16} />
-                        Allergy: Penicillin
-                    </div>
-                    <div className="px-4 py-2 rounded-xl bg-stone-900 border border-white/5 text-stone-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                        <Activity size={16} />
-                        Diabetic (Type 2)
-                    </div>
+                    {patient.allergies && (
+                        <div className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <AlertCircle size={16} />
+                            Allergy: {patient.allergies}
+                        </div>
+                    )}
+                    {patient.condition && (
+                        <div className="px-4 py-2 rounded-xl bg-stone-900 border border-white/5 text-stone-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <Activity size={16} />
+                            {patient.condition}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
@@ -127,31 +130,42 @@ const TimelineItem = ({ date, title, type, doctor, details, delay, data }) => (
     </motion.div>
 );
 
-const DocumentGrid = () => (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {[1, 2, 3, 4, 5].map((i) => (
-            <motion.div
-                key={i}
-                whileHover={{ y: -8 }}
-                className="aspect-[3/4] rounded-2xl bg-stone-900 border border-white/5 hover:border-amber-500/30 flex flex-col items-center justify-center gap-4 group cursor-pointer transition-all p-4"
-            >
-                <div className="w-16 h-20 bg-stone-800 rounded-xl flex items-center justify-center shadow-inner group-hover:bg-amber-500/10 transition-colors">
-                    <FileText size={32} className="text-stone-600 group-hover:text-amber-500" />
-                </div>
-                <div className="text-center w-full">
-                    <p className="text-[11px] font-bold text-white truncate w-full group-hover:text-amber-400 transition-colors">Blood_Work_Oct.pdf</p>
-                    <p className="text-[9px] font-black text-stone-600 uppercase tracking-widest mt-1">12 Oct 2023 • 2.4 MB</p>
-                </div>
-            </motion.div>
-        ))}
-    </div>
-);
+const DocumentGrid = ({ records }) => {
+    // Filter only records with file URLs
+    const docs = records.filter(r => r.fileUrl);
+
+    if (docs.length === 0) return (
+        <div className="text-center py-20 text-stone-600">
+            <p className="text-xs uppercase tracking-widest">No documents found</p>
+        </div>
+    );
+
+    return (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {docs.map((doc, i) => (
+                <motion.div
+                    key={doc.id}
+                    whileHover={{ y: -8 }}
+                    onClick={() => window.open(doc.fileUrl, '_blank')}
+                    className="aspect-[3/4] rounded-2xl bg-stone-900 border border-white/5 hover:border-amber-500/30 flex flex-col items-center justify-center gap-4 group cursor-pointer transition-all p-4"
+                >
+                    <div className="w-16 h-20 bg-stone-800 rounded-xl flex items-center justify-center shadow-inner group-hover:bg-amber-500/10 transition-colors">
+                        <FileText size={32} className="text-stone-600 group-hover:text-amber-500" />
+                    </div>
+                    <div className="text-center w-full">
+                        <p className="text-[11px] font-bold text-white truncate w-full group-hover:text-amber-400 transition-colors">{doc.fileName || 'Document'}</p>
+                        <p className="text-[9px] font-black text-stone-600 uppercase tracking-widest mt-1">{doc.date}</p>
+                    </div>
+                </motion.div>
+            ))}
+        </div>
+    );
+};
 
 const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
-
 
     useEffect(() => {
         if (!patient?.id) return;
@@ -173,7 +187,22 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
         });
 
         return () => unsubscribe();
-    }, [patient?.id, db]);
+    }, [patient?.id]);
+
+    // Derived Data
+    const latestVitalsRecord = records.find(r => r.vitals);
+    const latestVitals = latestVitalsRecord?.vitals || {};
+
+    // Find all unique medications mentioned in records
+    // This is a naive extraction. In a real app, meds would be a separate collection or strictly structured.
+    // Here we'll look for records of type 'prescription' or records with 'medications' array.
+    const medicationRecords = records
+        .filter(r => r.medications && Array.isArray(r.medications))
+        .flatMap(r => r.medications);
+
+    // Deduplicate meds by name
+    const activeMeds = Array.from(new Map(medicationRecords.map(m => [m.name, m])).values());
+
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: Activity },
@@ -188,9 +217,7 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
             <ClinicalHeader
                 patient={patient}
                 onBack={onBack}
-                onOpenChat={() => {
-                    if (onOpenChat) onOpenChat(patient?.id);
-                }}
+                onOpenChat={onOpenChat}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -217,26 +244,28 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                         })}
                     </div>
 
-                    {/* Quick Vitals Summary */}
+                    {/* Quick Vitals Summary (Dynamic) */}
                     <div className="glass-card p-8 rounded-3xl bg-gradient-to-br from-[#1c1917] to-[#0c0a05] border border-stone-800 shadow-[inset_0_0_30px_-15px_rgba(245,158,11,0.15)] space-y-5 animated-border">
                         <h3 className="text-[10px] font-black text-stone-600 uppercase tracking-widest mb-4">Current Vitals</h3>
                         <div className="flex justify-between items-end pb-2 border-b border-stone-800">
                             <span className="text-stone-400 text-xs font-bold font-mono tracking-tighter">BP</span>
-                            <span className="text-xl font-bold text-white">120/80</span>
+                            <span className="text-xl font-bold text-white">{latestVitals.bp || '--/--'}</span>
                         </div>
                         <div className="flex justify-between items-end pb-2 border-b border-stone-800">
                             <span className="text-stone-400 text-xs font-bold font-mono tracking-tighter">Heart Rate</span>
-                            <span className="text-xl font-bold text-amber-500">72 <span className="text-[10px] text-stone-600 ml-1">bpm</span></span>
+                            <span className="text-xl font-bold text-amber-500">{latestVitals.heartRate || '--'} <span className="text-[10px] text-stone-600 ml-1">bpm</span></span>
                         </div>
                         <div className="flex justify-between items-end pb-2 border-b border-stone-800">
                             <span className="text-stone-400 text-xs font-bold font-mono tracking-tighter">Temp</span>
-                            <span className="text-xl font-bold text-white">98.6 <span className="text-[10px] text-stone-600 ml-1">°F</span></span>
+                            <span className="text-xl font-bold text-white">{latestVitals.temperature || '--'} <span className="text-[10px] text-stone-600 ml-1">°F</span></span>
                         </div>
                         <div className="flex justify-between items-end">
                             <span className="text-stone-400 text-xs font-bold font-mono tracking-tighter">SpO2</span>
-                            <span className="text-xl font-bold text-amber-400 font-mono">98%</span>
+                            <span className="text-xl font-bold text-amber-400 font-mono">{latestVitals.spo2 || '--'}%</span>
                         </div>
-                        <p className="text-[9px] font-black text-stone-600 text-right mt-2 uppercase tracking-widest grayscale opacity-50">Last updated: 20 mins ago</p>
+                        <p className="text-[9px] font-black text-stone-600 text-right mt-2 uppercase tracking-widest grayscale opacity-50">
+                            {latestVitalsRecord ? `Updated: ${latestVitalsRecord.date}` : 'No recent data'}
+                        </p>
                     </div>
                 </div>
 
@@ -268,14 +297,14 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                                                 <Pill size={16} className="text-amber-500" /> Active Medications
                                             </h3>
                                             <ul className="space-y-4">
-                                                <li className="flex justify-between text-sm p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-amber-500/20 transition-all cursor-default">
-                                                    <span className="text-white font-bold">Metformin</span>
-                                                    <span className="text-stone-400 font-medium">500mg • BID</span>
-                                                </li>
-                                                <li className="flex justify-between text-sm p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-amber-500/20 transition-all cursor-default">
-                                                    <span className="text-white font-bold">Lisinopril</span>
-                                                    <span className="text-stone-400 font-medium">10mg • OD</span>
-                                                </li>
+                                                {activeMeds.length > 0 ? activeMeds.map((med, idx) => (
+                                                    <li key={idx} className="flex justify-between text-sm p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-amber-500/20 transition-all cursor-default">
+                                                        <span className="text-white font-bold">{med.name}</span>
+                                                        <span className="text-stone-400 font-medium">{med.dosage} • {med.freq}</span>
+                                                    </li>
+                                                )) : (
+                                                    <li className="text-stone-500 text-xs italic">No active medications recorded.</li>
+                                                )}
                                             </ul>
                                         </div>
                                         <div className="glass-card p-8 rounded-3xl bg-stone-900 border border-white/5">
@@ -339,7 +368,7 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                                             <UploadIcon />
                                         </button>
                                     </div>
-                                    <DocumentGrid />
+                                    <DocumentGrid records={records} />
                                 </div>
                             )}
 
@@ -359,6 +388,7 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
         </div>
     );
 };
+
 
 // Helper for 'Upload' icon since lucide might not have 'UploadIcon' directly named that way in my mental map, using generic
 const UploadIcon = () => (

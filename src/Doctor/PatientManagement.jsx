@@ -5,8 +5,8 @@ import { auth, db } from '../firebase';
 import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 import PatientWorkspace from './PatientWorkspace';
 
-const PatientManagement = () => {
-    const [selectedPatient, setSelectedPatient] = useState(null);
+const PatientManagement = ({ onViewPatient }) => {
+    // const [selectedPatient, setSelectedPatient] = useState(null); // Removed internal state
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -36,10 +36,10 @@ const PatientManagement = () => {
         return () => unsubscribe();
     }, []);
 
-    // If a patient is selected, render the Workspace instead of the table
-    if (selectedPatient) {
-        return <PatientWorkspace patient={selectedPatient} onBack={() => setSelectedPatient(null)} />;
-    }
+    // Removed internal toggle
+    // if (selectedPatient) {
+    //    return <PatientWorkspace patient={selectedPatient} onBack={() => setSelectedPatient(null)} />;
+    // }
 
     return (
         <motion.div
@@ -114,7 +114,7 @@ const PatientManagement = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     whileHover={{ scale: 1.005, backgroundColor: "rgba(255,255,255,0.08)" }}
                                     transition={{ delay: i * 0.05 }}
-                                    onClick={() => setSelectedPatient(p)} // Drill down
+                                    onClick={() => onViewPatient && onViewPatient(p)} // Drill down via Parent
                                     className="hover:bg-white/5 transition-colors group cursor-pointer border-b border-transparent hover:border-emerald-500/20"
                                 >
                                     <td className="px-6 py-4 font-mono text-slate-500 hover:text-emerald-400 transition-colors">{p.id}</td>
