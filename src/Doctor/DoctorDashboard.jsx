@@ -5,7 +5,7 @@ import {
     Microscope, Siren, LayoutDashboard, Search, ArrowRight,
     Stethoscope, FileText, Settings, HelpCircle
 } from 'lucide-react';
-import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, query, onSnapshot, orderBy, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import Header from '../components/Header';
 import StatCard from '../components/StatCard';
@@ -145,7 +145,7 @@ const ViewHeader = ({ icon: Icon, title, description }) => (
     </div>
 );
 
-const DashboardOverview = ({ onAddRecord, onViewOversight }) => (
+const DashboardOverview = ({ onAddRecord, onViewOversight, patientCount, actionCount }) => (
     <>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10 relative z-10">
             {[
@@ -206,7 +206,7 @@ const DashboardOverview = ({ onAddRecord, onViewOversight }) => (
             <StatCard
                 icon={<Users size={28} />}
                 label="Total Patients"
-                value="124"
+                value={patientCount}
                 color="bg-amber-500/10 text-amber-500 border border-amber-500/20"
                 change="12% Growth"
                 className="!h-full"
@@ -226,7 +226,7 @@ const DashboardOverview = ({ onAddRecord, onViewOversight }) => (
                 <StatCard
                     icon={<ClipboardList size={28} />}
                     label="Action Required"
-                    value="5"
+                    value={actionCount}
                     color="bg-rose-500/10 text-rose-500 border border-rose-500/20"
                     change="Pending Review"
                     className="!h-full relative z-10"
@@ -348,11 +348,15 @@ const DoctorDashboard = ({ user }) => {
     const [activeOversightModal, setActiveOversightModal] = useState(null); // 'patients', 'schedule', 'actions', 'vitals'
     const [unreadNotifications, setUnreadNotifications] = useState(3); // Demo: Start with 3 unread
 
+    // New State for Dashboard Stats
+    const [actionCount, setActionCount] = useState(0);
+
     // Managed Patient State - Synced with Firestore
     const [patients, setPatients] = useState([]);
 
     // Fetch patients from Firestore
     useEffect(() => {
+        // Patients Query
         const q = query(collection(db, "patients"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const patientsList = [];
@@ -362,8 +366,24 @@ const DoctorDashboard = ({ user }) => {
             setPatients(patientsList);
         });
 
-        return () => unsubscribe();
-    }, []);
+        // Action Required Query (Urgent Records)
+        let unsubUrgent = () => { };
+        if (user) {
+            const urgentQuery = query(
+                collection(db, 'medical_records'),
+                where('doctorId', '==', user.uid),
+                where('priority', '==', 'urgent')
+            );
+            unsubUrgent = onSnapshot(urgentQuery, (snapshot) => {
+                setActionCount(snapshot.docs.length);
+            });
+        }
+
+        return () => {
+            unsubscribe();
+            unsubUrgent();
+        };
+    }, [user]);
 
     const handleAddPatient = (newPatient) => {
         // Optimistic update not strictly needed with real-time listener, 
@@ -428,6 +448,8 @@ const DoctorDashboard = ({ user }) => {
                 <>
                     <ViewHeader icon={LayoutDashboard} title="Dashboard" description="Overview of clinical activities" />
                     <DashboardOverview
+                        patientCount={patients.length}
+                        actionCount={actionCount}
                         onAddRecord={(type) => {
                             if (type === 'prescription') setIsPrescriptionModalOpen(true);
                             if (type === 'lab') setIsLabRequestModalOpen(true);
