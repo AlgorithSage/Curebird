@@ -98,6 +98,7 @@ const AnalyzeDataModal = ({ isOpen, onClose, onNavigate }) => {
                     priority: 'urgent',
                     vitals: result.extracted_vitals,
                     findings: result.key_findings,
+                    medications: result.medication_adjustments,
                     createdAt: new Date()
                 });
 

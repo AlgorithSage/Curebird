@@ -4,7 +4,8 @@ import {
     FileText, Share2, Search,
     Plus, Clock,
     Pill, Clipboard, X,
-    Loader, ChevronRight
+    Loader, ChevronRight,
+    CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { collection, collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -165,13 +166,74 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                                             {selectedRecord.description}
                                         </div>
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center py-10 gap-4 text-stone-500">
-                                            <FileText size={48} className="opacity-20" />
-                                            <p>{selectedRecord.description || "No preview available."}</p>
-                                            {selectedRecord.fileUrl && (
-                                                <a href={selectedRecord.fileUrl} target="_blank" rel="noreferrer" className="text-amber-500 font-bold hover:underline">Download / View File</a>
+                                        <>
+                                            {selectedRecord.vitals && selectedRecord.findings ? (
+                                                <div className="space-y-6">
+                                                    {/* Summary Box */}
+                                                    <div className="p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/20">
+                                                        <h4 className="flex items-center gap-2 text-cyan-400 font-bold mb-2">
+                                                            <CheckCircle2 size={18} /> Analysis Summary
+                                                        </h4>
+                                                        <p className="text-cyan-100/80 text-sm leading-relaxed">
+                                                            {selectedRecord.description}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Vitals Grid */}
+                                                    <div>
+                                                        <h5 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-3">Extracted Vitals</h5>
+                                                        <div className="grid grid-cols-3 gap-3">
+                                                            {selectedRecord.vitals.map((vital, i) => (
+                                                                <div key={i} className="p-3 bg-white/5 rounded-lg border border-white/5 flex flex-col">
+                                                                    <span className="text-[10px] text-stone-500 uppercase font-bold">{vital.label}</span>
+                                                                    <span className="text-lg font-bold text-white">{vital.value}</span>
+                                                                    {vital.status === 'high' && <span className="text-[10px] text-red-400 font-bold flex items-center gap-1 mt-1"><AlertCircle size={10} /> High</span>}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Findings List */}
+                                                    <div>
+                                                        <h5 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-3">Key Clinical Findings</h5>
+                                                        <div className="space-y-2">
+                                                            {selectedRecord.findings.map((item, i) => (
+                                                                <div key={i} className="flex items-start gap-3 p-3 bg-stone-900/50 rounded-lg border border-white/5">
+                                                                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-2 shrink-0" />
+                                                                    <span className="text-sm text-stone-300 leading-relaxed">{item}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Medications (Optional) */}
+                                                    {selectedRecord.medications && (
+                                                        <div>
+                                                            <h5 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-3">Suggested Adjustments</h5>
+                                                            <div className="grid grid-cols-2 gap-3">
+                                                                {selectedRecord.medications.map((med, i) => (
+                                                                    <div key={i} className={`p-3 rounded-lg border flex flex-col ${med.action === 'Suspend' ? 'bg-red-500/10 border-red-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
+                                                                        <div className="flex justify-between items-start mb-1">
+                                                                            <span className="text-sm font-bold text-white">{med.name}</span>
+                                                                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${med.action === 'Suspend' ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'}`}>{med.action}</span>
+                                                                        </div>
+                                                                        <span className="text-xs text-stone-500">{med.dose}</span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col items-center justify-center py-10 gap-4 text-stone-500">
+                                                    <FileText size={48} className="opacity-20" />
+                                                    <p>{selectedRecord.description || "No preview available."}</p>
+                                                    {selectedRecord.fileUrl && (
+                                                        <a href={selectedRecord.fileUrl} target="_blank" rel="noreferrer" className="text-amber-500 font-bold hover:underline">Download / View File</a>
+                                                    )}
+                                                </div>
                                             )}
-                                        </div>
+                                        </>
                                     )}
                                 </div>
                             </div>
