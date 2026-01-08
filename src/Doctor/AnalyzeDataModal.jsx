@@ -5,11 +5,15 @@ import {
     Loader2, Search, AlertCircle, ArrowRight
 } from 'lucide-react';
 
-const AnalyzeDataModal = ({ isOpen, onClose }) => {
+import { auth, db } from '../firebase';
+import { addDoc, collection } from 'firebase/firestore';
+
+const AnalyzeDataModal = ({ isOpen, onClose, onNavigate }) => {
     const [dragActive, setDragActive] = useState(false);
     const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [result, setResult] = useState(null);
 
     // Handle Drag Events
@@ -72,6 +76,47 @@ const AnalyzeDataModal = ({ isOpen, onClose }) => {
                 });
             }, 2500); // Analysis simulation time
         }, 1500); // Upload simulation time
+    };
+
+    const handleAddToRecord = async () => {
+        setSaving(true);
+
+        try {
+            const currentUser = auth.currentUser;
+            if (currentUser && result) {
+                // Save to Firestore
+                // We use a subcollection pattern or root collection based on MedicalRecordManager's collectionGroup query
+                // Here we create a root-level 'medical_records' document for simplicity/visibility
+                await addDoc(collection(db, 'medical_records'), {
+                    doctorId: currentUser.uid,
+                    doctorName: currentUser.displayName || 'Dr. Sohan Ghosh',
+                    patientName: 'Sarah Connor', // Hardcoded for Demo Flow
+                    type: 'lab_report',
+                    title: 'AI Clinical Analysis Report',
+                    description: result.summary,
+                    date: new Date().toISOString().split('T')[0],
+                    priority: 'urgent',
+                    vitals: result.extracted_vitals,
+                    findings: result.key_findings,
+                    createdAt: new Date()
+                });
+
+                // Small delay for UX
+                setTimeout(() => {
+                    setSaving(false);
+                    onClose();
+                    if (onNavigate) {
+                        onNavigate('medical_records');
+                    }
+                }, 1000);
+            } else {
+                setSaving(false); // Handle case where user isn't logged in (shouldn't happen in this flow)
+            }
+        } catch (error) {
+            console.error("Error saving record:", error);
+            setSaving(false);
+            // Optionally show error state
+        }
     };
 
     if (!isOpen) return null;
@@ -239,11 +284,21 @@ const AnalyzeDataModal = ({ isOpen, onClose }) => {
 
                                                 <div className="pt-8 mt-6 border-t border-dashed border-stone-800/50">
                                                     <button
-                                                        onClick={onClose}
-                                                        className="w-full py-4 bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold text-lg rounded-2xl transition-all shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/20 hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
+                                                        onClick={handleAddToRecord}
+                                                        disabled={saving}
+                                                        className="w-full py-4 bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold text-lg rounded-2xl transition-all shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/20 hover:-translate-y-0.5 flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
                                                     >
-                                                        Add to Patient Record
-                                                        <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                                                        {saving ? (
+                                                            <>
+                                                                <Loader2 className="animate-spin" size={20} />
+                                                                Saving to Medical Records...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                Add to Patient Record
+                                                                <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                                                            </>
+                                                        )}
                                                     </button>
                                                 </div>
                                             </div>

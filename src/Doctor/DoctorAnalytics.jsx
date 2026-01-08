@@ -125,7 +125,7 @@ const StatCard = ({ label, value, sub, icon: Icon, colorClass, accentColor = 'am
     );
 };
 
-const DoctorAnalytics = ({ onNavigateToPatient }) => {
+const DoctorAnalytics = ({ onNavigateToPatient, onNavigate }) => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
@@ -155,7 +155,11 @@ const DoctorAnalytics = ({ onNavigateToPatient }) => {
             </div>
 
             <AIReportModal isOpen={isReportModalOpen} onClose={() => setIsReportModalOpen(false)} />
-            <AnalyzeDataModal isOpen={isAnalyzeModalOpen} onClose={() => setIsAnalyzeModalOpen(false)} />
+            <AnalyzeDataModal
+                isOpen={isAnalyzeModalOpen}
+                onClose={() => setIsAnalyzeModalOpen(false)}
+                onNavigate={onNavigate}
+            />
 
             {/* Top Stats Row - Using Semantic Tints on Amber Base */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

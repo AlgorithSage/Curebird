@@ -6,7 +6,7 @@ import {
     Pill, Clipboard, X,
     Loader, ChevronRight
 } from 'lucide-react';
-import { collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, collectionGroup, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
@@ -61,10 +61,11 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
         let unsubscribe = () => { };
 
         if (currentUser) {
+            // Simplify query to avoid compilation index requirements for the demo
+            // We'll sort client-side
             const recordsQuery = query(
-                collectionGroup(db, 'medical_records'),
-                where('doctorId', '==', currentUser.uid),
-                orderBy('date', 'desc')
+                collection(db, 'medical_records'),
+                where('doctorId', '==', currentUser.uid)
             );
 
             unsubscribe = onSnapshot(recordsQuery,
@@ -74,16 +75,25 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                         ...doc.data()
                     }));
 
+                    // Client-side sort by date (descending)
+                    fetchedRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
+
                     if (fetchedRecords.length > 0) {
                         setRecords(fetchedRecords);
                     } else {
-                        setRecords(getMockRecords());
+                        // Keep mocks if truly empty, or maybe we should show empty state?
+                        // For now, let's append mocks if empty so the UI isn't blank, 
+                        // OR just setRecords(fetchedRecords) if we want to trust the DB.
+                        // Let's mix them or just prefer DB. 
+                        // Since user wants to see their NEW record, if we show mocks when fetch is empty, that's fine.
+                        // But if fetch has 1 record (the new one), we show that.
+                        setRecords(fetchedRecords);
                     }
                     setLoading(false);
                 },
                 (err) => {
-                    console.error("Firestore CollectionGroup Error:", err);
-                    setRecords(getMockRecords());
+                    console.error("Firestore Error:", err);
+                    setRecords(getMockRecords()); // Fallback only on error
                     setLoading(false);
                 }
             );

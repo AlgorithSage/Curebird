@@ -449,7 +449,10 @@ const DoctorDashboard = ({ user }) => {
                 else if (type === 'emergency') setIsEmergencyModalOpen(true);
                 else setIsAddRecordModalOpen(true);
             }} />;
-            case 'analytics': return <DoctorAnalytics onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }} />;
+            case 'analytics': return <DoctorAnalytics
+                onNavigate={handleNavigate}
+                onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
+            />;
             case 'messages': return <DoctorChat
                 initialPatientId={targetChatPatientId} // Pass target ID
                 onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
