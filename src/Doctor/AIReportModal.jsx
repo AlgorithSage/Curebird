@@ -99,9 +99,9 @@ const AIReportModal = ({ isOpen, onClose }) => {
                                 </div>
                             ) : (
                                 /* --- REPORT VIEW --- */
-                                <div className="flex flex-col h-full">
+                                <div className="flex flex-col h-full min-h-0">
                                     {/* Header */}
-                                    <div className="p-8 border-b border-white/5 flex justify-between items-start bg-gradient-to-b from-amber-500/5 to-transparent">
+                                    <div className="p-8 border-b border-white/5 flex justify-between items-start bg-gradient-to-b from-amber-500/5 to-transparent shrink-0">
                                         <div>
                                             <div className="flex items-center gap-3 mb-2">
                                                 <span className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
@@ -118,7 +118,7 @@ const AIReportModal = ({ isOpen, onClose }) => {
                                     </div>
 
                                     {/* Scrollable Content */}
-                                    <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8">
+                                    <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pb-12 space-y-8 min-h-0">
 
                                         {/* 1. Key Performance Indicators */}
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -171,11 +171,15 @@ const AIReportModal = ({ isOpen, onClose }) => {
                                                 {[
                                                     "Review the 3 highlighted Critical Care Gap cases.",
                                                     "Approve the automated advisory blast for Respiratory patients.",
-                                                    "Schedule a staff review for Tuesday afternoon efficiency gaps."
+                                                    "Schedule a staff review for Tuesday afternoon efficiency gaps.",
+                                                    "Check inventory for Insulin supplies (Projected Low)."
                                                 ].map((action, i) => (
-                                                    <div key={i} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
-                                                        <div className="w-5 h-5 rounded-full border-2 border-stone-600 group-hover:border-amber-500 group-hover:bg-amber-500/20 transition-all" />
-                                                        <span className="text-sm text-stone-300 group-hover:text-white font-medium">{action}</span>
+                                                    <div key={i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
+                                                        {/* Premium Bullet Point */}
+                                                        <div className="relative mt-1.5 flex-shrink-0">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-stone-600 group-hover:bg-amber-400 group-hover:scale-125 group-hover:shadow-[0_0_8px_rgba(251,191,36,0.8)] transition-all duration-300" />
+                                                        </div>
+                                                        <span className="text-sm text-stone-300 group-hover:text-white font-medium leading-relaxed">{action}</span>
                                                     </div>
                                                 ))}
                                             </div>
