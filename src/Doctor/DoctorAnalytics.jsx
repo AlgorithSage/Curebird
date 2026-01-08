@@ -9,6 +9,7 @@ import {
     BrainCircuit, Clock, Stethoscope
 } from 'lucide-react';
 import AIReportModal from './AIReportModal';
+import AnalyzeDataModal from './AnalyzeDataModal';
 
 // --- Improved Mock Data ---
 
@@ -127,6 +128,7 @@ const StatCard = ({ label, value, sub, icon: Icon, colorClass, accentColor = 'am
 const DoctorAnalytics = ({ onNavigateToPatient }) => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
 
     const handleMouseMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -153,6 +155,7 @@ const DoctorAnalytics = ({ onNavigateToPatient }) => {
             </div>
 
             <AIReportModal isOpen={isReportModalOpen} onClose={() => setIsReportModalOpen(false)} />
+            <AnalyzeDataModal isOpen={isAnalyzeModalOpen} onClose={() => setIsAnalyzeModalOpen(false)} />
 
             {/* Top Stats Row - Using Semantic Tints on Amber Base */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -235,12 +238,15 @@ const DoctorAnalytics = ({ onNavigateToPatient }) => {
                     </div>
                     <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1 relative z-10">
                         {aiInsights.map((insight, i) => <InsightCard key={i} insight={insight} />)}
-                        <div className="p-4 rounded-xl border border-dashed border-slate-700 flex flex-col items-center text-center gap-2 text-slate-500 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors cursor-pointer group">
+                        <button
+                            onClick={() => setIsAnalyzeModalOpen(true)}
+                            className="w-full p-4 rounded-xl border border-dashed border-slate-700 flex flex-col items-center text-center gap-2 text-slate-500 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors cursor-pointer group"
+                        >
                             <div className="p-2 rounded-full bg-slate-800 group-hover:bg-cyan-500/20 transition-colors">
                                 <Stethoscope size={20} />
                             </div>
                             <span className="text-xs font-bold uppercase tracking-wider">Analyze New Data</span>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>
