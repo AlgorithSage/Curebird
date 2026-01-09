@@ -9,3 +9,5 @@ pandas
 requests
 pytesseract
 groq
+PyMuPDF
+cerebras_cloud_sdk
