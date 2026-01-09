@@ -248,7 +248,7 @@ const DashboardOverview = ({ onAddRecord, onViewOversight, patientCount, actionC
 
 
 
-const PatientSearchLanding = ({ onSelectPatient, patients = [] }) => {
+const PatientSearchLanding = ({ onSelectPatient, patients = [], onAddPatientClick }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const results = searchTerm
@@ -319,6 +319,15 @@ const PatientSearchLanding = ({ onSelectPatient, patients = [] }) => {
                             </motion.div>
                         )}
                     </AnimatePresence>
+                </div>
+
+                <div className="flex justify-center pt-8">
+                    <button
+                        onClick={onAddPatientClick}
+                        className="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] flex items-center gap-2 uppercase tracking-wide text-sm"
+                    >
+                        Add Patient
+                    </button>
                 </div>
             </motion.div>
         </div>
@@ -425,7 +434,7 @@ const DoctorDashboard = ({ user }) => {
                     />
                 );
             }
-            return <PatientSearchLanding onSelectPatient={setWorkspacePatient} patients={patients} />;
+            return <PatientSearchLanding onSelectPatient={setWorkspacePatient} patients={patients} onAddPatientClick={() => setIsAddPatientModalOpen(true)} />;
         }
 
         // 2. Appointment Manager (Sub-views)
