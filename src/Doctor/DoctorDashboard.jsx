@@ -475,6 +475,7 @@ const DoctorDashboard = ({ user }) => {
                 onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
             />;
             case 'notifications': return <DoctorNotifications
+                patients={patients}
                 onNavigate={handleNavigate}
                 onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
             />;

@@ -15,75 +15,98 @@ const NOTIFICATION_CATEGORIES = [
     { id: 'system', label: 'System', icon: Activity, color: 'text-slate-400' }
 ];
 
-const MOCK_NOTIFICATIONS = [
-    {
-        id: 1,
-        type: 'urgent',
-        title: 'Critical Vitals Alert - Sarah Jenkins',
-        message: 'Patient detected with irregular heart rhythm (Arrhythmia) exceeding threshold.',
-        time: '10 mins ago',
-        read: false,
-        action: 'Review Vitals',
-        target: 'patient_workspace',
-        patientData: { id: 'P-101', name: 'Sarah Jenkins', condition: 'Arrhythmia', age: 45, gender: 'Female' }
-    },
-    {
-        id: 2,
-        type: 'ai',
-        title: 'Drug Interaction Warning',
-        message: 'Potential interaction detected between prescribed Amoxicillin and recent Lisinopril refill.',
-        time: '35 mins ago',
-        read: false,
-        action: 'Review Prescription',
-        target: 'medical_records',
-        patientData: { id: 'P-102', name: 'James Wilson', condition: 'Hypertension', age: 52, gender: 'Male' }
-    },
-    {
-        id: 3,
-        type: 'messages',
-        title: 'New Message from James Wilson',
-        message: 'Dr. Smith, I am feeling slight dizziness after the new medication.',
-        time: '1 hour ago',
-        read: true,
-        action: 'Reply',
-        target: 'messages',
-        patientData: { id: 'P-102', name: 'James Wilson', condition: 'Hypertension', age: 52, gender: 'Male' }
-    },
-    {
-        id: 4,
-        type: 'results',
-        title: 'Lab Results Ready - Blood Panel',
-        message: 'Comprehensive Metabolic Panel results are available for review.',
-        time: '2 hours ago',
-        read: false,
-        action: 'View Report',
-        target: 'medical_records'
-    },
-    {
-        id: 5,
-        type: 'urgent',
-        title: 'Appointment Cancellation',
-        message: 'Michael Brown cancelled the 3:00 PM consultation.',
-        time: '3 hours ago',
-        read: true,
-        action: 'View Schedule',
-        target: 'appointments_schedule'
-    },
-    {
-        id: 6,
-        type: 'system',
-        title: 'System Maintenance Scheduled',
-        message: 'Routine maintenance is scheduled for Sunday at 2:00 AM EST.',
-        time: '5 hours ago',
-        read: true,
-        action: 'Details',
-        target: 'dashboard'
-    }
-];
 
-export default function DoctorNotifications({ onNavigate, onNavigateToPatient }) {
+
+export default function DoctorNotifications({ onNavigate, onNavigateToPatient, patients = [] }) {
     const [activeTab, setActiveTab] = useState('all');
-    const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+    const [notifications, setNotifications] = useState([]);
+
+    // Generate notifications based on live patients
+    React.useEffect(() => {
+        if (patients.length === 0) {
+            setNotifications([
+                {
+                    id: 'sys-1',
+                    type: 'system',
+                    title: 'System Maintenance Scheduled',
+                    message: 'Routine maintenance is scheduled for Sunday at 2:00 AM EST.',
+                    time: '5 hours ago',
+                    read: true,
+                    action: 'Details',
+                    target: 'dashboard'
+                }
+            ]);
+            return;
+        }
+
+        const newNotifications = patients.slice(0, 5).map((patient, index) => {
+            // Deterministic assignment of notification types based on index
+            if (index === 0) {
+                return {
+                    id: `urgent-${patient.id}`,
+                    type: 'urgent',
+                    title: `Critical Vitals Alert - ${patient.name}`,
+                    message: `Patient detected with irregular heart rhythm (Arrhythmia) exceeding threshold.`,
+                    time: '10 mins ago',
+                    read: false,
+                    action: 'Review Vitals',
+                    target: 'patient_workspace',
+                    patientData: patient
+                };
+            } else if (index === 1) {
+                return {
+                    id: `ai-${patient.id}`,
+                    type: 'ai',
+                    title: 'Drug Interaction Warning',
+                    message: `Potential interaction detected for ${patient.name} between prescribed medication and recent refill.`,
+                    time: '35 mins ago',
+                    read: false,
+                    action: 'Review Prescription',
+                    target: 'medical_records',
+                    patientData: patient
+                };
+            } else if (index === 2) {
+                return {
+                    id: `msg-${patient.id}`,
+                    type: 'messages',
+                    title: `New Message from ${patient.name}`,
+                    message: 'Dr., I am feeling slight dizziness after the new medication.',
+                    time: '1 hour ago',
+                    read: true,
+                    action: 'Reply',
+                    target: 'messages',
+                    patientData: patient
+                };
+            } else {
+                return {
+                    id: `lab-${patient.id}`,
+                    type: 'results',
+                    title: 'Lab Results Ready - Blood Panel',
+                    message: `Comprehensive Metabolic Panel results for ${patient.name} are available for review.`,
+                    time: '2 hours ago',
+                    read: false,
+                    action: 'View Report',
+                    target: 'medical_records',
+                    patientData: patient
+                };
+            }
+        });
+
+        // Add System Notification
+        newNotifications.push({
+            id: 'sys-main',
+            type: 'system',
+            title: 'System Maintenance Scheduled',
+            message: 'Routine maintenance is scheduled for Sunday at 2:00 AM EST.',
+            time: '5 hours ago',
+            read: true,
+            action: 'Details',
+            target: 'dashboard'
+        });
+
+        setNotifications(newNotifications);
+
+    }, [patients]);
 
     const filteredNotifications = notifications.filter(n => {
         const matchesTab = activeTab === 'all' || n.type === activeTab;
