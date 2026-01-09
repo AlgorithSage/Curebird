@@ -12,6 +12,7 @@ import {
   Printer,
   FileText,
   X,
+  Camera,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { collection, addDoc } from "firebase/firestore";
@@ -42,6 +43,69 @@ const CureAnalyzer = ({
   const [showTypeSelect, setShowTypeSelect] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [showDigitalCopy, setShowDigitalCopy] = useState(false);
+
+  // Camera State
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = React.useRef(null);
+  const [stream, setStream] = useState(null);
+
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setStream(mediaStream);
+      setShowCamera(true);
+      setError('');
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      setError("Could not access camera. Please check permissions.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setShowCamera(false);
+  };
+
+  const captureImage = () => {
+    if (!videoRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob((blob) => {
+      const file = new File([blob], `captured_document_${Date.now()}.jpg`, { type: "image/jpeg" });
+      setSelectedFile(file);
+      setAnalysisResult(null);
+      setError('');
+      setIsSaved(false);
+      setIsDocSaved(false);
+      setShowSavePrompt(false);
+      setShowTypeSelect(false);
+      stopCamera();
+    }, 'image/jpeg', 0.95);
+  };
+
+  React.useEffect(() => {
+    if (showCamera && videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [showCamera, stream]);
+
+  React.useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -323,35 +387,66 @@ const CureAnalyzer = ({
             </h2>
 
             <div className="flex-grow flex items-center justify-center w-full z-10">
-              <label
-                htmlFor="dropzone-file"
-                className="relative flex flex-col items-center justify-center w-full h-72 border border-dashed border-slate-700 bg-slate-800/20 rounded-2xl cursor-pointer hover:border-amber-500/60 hover:bg-slate-800/40 transition-all duration-500 group/drop overflow-hidden"
-              >
-                {/* Scanning Line Animation */}
-                <div className="absolute inset-0 w-full h-1 bg-amber-500/30 blur-sm top-0 group-hover/drop:animate-[scan_2s_ease-in-out_infinite]"></div>
+              {!showCamera ? (
+                <label
+                  htmlFor="dropzone-file"
+                  className="relative flex flex-col items-center justify-center w-full h-72 border border-dashed border-slate-700 bg-slate-800/20 rounded-2xl cursor-pointer hover:border-amber-500/60 hover:bg-slate-800/40 transition-all duration-500 group/drop overflow-hidden"
+                >
+                  {/* Scanning Line Animation */}
+                  <div className="absolute inset-0 w-full h-1 bg-amber-500/30 blur-sm top-0 group-hover/drop:animate-[scan_2s_ease-in-out_infinite]"></div>
 
-                <div className="flex flex-col items-center justify-center pt-5 pb-6 transition-transform duration-300 group-hover/drop:scale-105">
-                  <div className="p-5 rounded-2xl bg-slate-900 border border-slate-700 mb-4 group-hover/drop:border-amber-500/50 group-hover/drop:shadow-[0_0_30px_rgba(245,158,11,0.2)] transition-all">
-                    <UploadCloud className="w-12 h-12 text-slate-400 group-hover/drop:text-amber-400 transition-colors" />
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6 transition-transform duration-300 group-hover/drop:scale-105">
+                    <div className="p-5 rounded-2xl bg-slate-900 border border-slate-700 mb-4 group-hover/drop:border-amber-500/50 group-hover/drop:shadow-[0_0_30px_rgba(245,158,11,0.2)] transition-all">
+                      <UploadCloud className="w-12 h-12 text-slate-400 group-hover/drop:text-amber-400 transition-colors" />
+                    </div>
+                    <p className="mb-2 text-base text-slate-300 font-medium">
+                      <span className="text-amber-400 font-bold underline decoration-amber-500/30 underline-offset-4">
+                        Click to upload
+                      </span>{" "}
+                      or drag file
+                    </p>
+                    <p className="text-xs text-slate-500 font-mono mb-4">
+                      SUPPORTED: PNG, JPG, GIF (MAX 10MB)
+                    </p>
+
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        startCamera();
+                      }}
+                      className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-600 hover:bg-amber-500/20 hover:border-amber-500/50 hover:text-amber-400 text-slate-300 transition-all flex items-center gap-2 text-sm font-bold z-20"
+                    >
+                      <Camera size={16} /> Use Camera
+                    </button>
                   </div>
-                  <p className="mb-2 text-base text-slate-300 font-medium">
-                    <span className="text-amber-400 font-bold underline decoration-amber-500/30 underline-offset-4">
-                      Click to upload
-                    </span>{" "}
-                    or drag file
-                  </p>
-                  <p className="text-xs text-slate-500 font-mono">
-                    SUPPORTED: PNG, JPG, GIF (MAX 10MB)
-                  </p>
+                  <input
+                    id="dropzone-file"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              ) : (
+                <div className="relative w-full h-72 bg-black rounded-2xl overflow-hidden border border-amber-500/30 flex flex-col items-center justify-center group/camera">
+                  <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4 z-20">
+                    <button
+                      onClick={stopCamera}
+                      className="bg-red-500/80 hover:bg-red-600 text-white px-6 py-2 rounded-full font-bold backdrop-blur-sm transition-colors shadow-lg"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={captureImage}
+                      className="bg-emerald-500/80 hover:bg-emerald-600 text-white px-8 py-2 rounded-full font-bold backdrop-blur-sm transition-colors flex items-center gap-2 shadow-lg shadow-emerald-500/20"
+                    >
+                      <Camera size={18} /> Capture
+                    </button>
+                  </div>
                 </div>
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-              </label>
+              )}
             </div>
 
             {selectedFile && (
@@ -674,6 +769,7 @@ const CureAnalyzer = ({
       </div>
 
       {/* Digital Copy Modal */}
+<<<<<<< HEAD
       {
         showDigitalCopy && analysisResult?.analysis?.digital_copy && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
@@ -731,13 +827,76 @@ const CureAnalyzer = ({
                     <span>Generated by Curebird AI</span>
                     <span>{new Date().toLocaleDateString()}</span>
                   </div>
+=======
+      {showDigitalCopy && analysisResult?.analysis?.digital_copy && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-amber-500/20">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
+                  <FileText size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Digital Transcript</h3>
+                  <p className="text-[10px] text-amber-600 uppercase tracking-widest font-black">AI-Generated Digitization</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handlePrint}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+                >
+                  <Printer size={16} /> Print Copy
+                </button>
+                <button
+                  onClick={() => setShowDigitalCopy(false)}
+                  className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-8 bg-white font-sans" style={{ color: 'black' }}>
+              <div className="max-w-3xl mx-auto">
+                {/* Digital Paper Header */}
+                <div className="border-b-2 border-amber-500 pb-6 mb-8 flex justify-between items-end">
+                  <div>
+                    <h1 className="text-2xl font-black text-slate-900 m-0 leading-none">DIGITAL TRANSCRIPT</h1>
+                    <p className="text-amber-600 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
+                  </div>
+                  <div className="text-right opacity-100">
+                    <div className="flex items-center justify-end gap-2 text-slate-900 font-bold">
+                      <img src={curebirdLogo} alt="Curebird Logo" className="h-10 w-auto" />
+                      <span className="text-xl">Curebird</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="prose max-w-none text-black [&_*]:text-black [&_p]:text-black [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_li]:text-black [&_strong]:text-black [&_td]:text-black [&_th]:text-black">
+                  <ReactMarkdown>
+                    {analysisResult.analysis.digital_copy}
+                  </ReactMarkdown>
+                </div>
+                {/* Footer */}
+                <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono uppercase tracking-widest">
+                  <span>Generated by Curebird AI</span>
+                  <span>{new Date().toLocaleDateString()}</span>
+>>>>>>> 4ad8cf98b08901f79d7cb2c094ed8a0dc0256b1a
                 </div>
               </div>
             </div>
           </div>
+<<<<<<< HEAD
         )
       }
     </div >
+=======
+        </div>
+      )}
+    </div>
+>>>>>>> 4ad8cf98b08901f79d7cb2c094ed8a0dc0256b1a
   );
 };
 
