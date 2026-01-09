@@ -138,24 +138,15 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
     // --- Derived Metrics from Live Data ---
     const totalPatients = patients.length;
 
-    // 1. Calculate Risk Stratification (Radar Chart)
-    // We scan patient conditions for keywords to categorize them.
+    // 1. Calculate Risk Stratification & Health Score
     const riskMap = {
-        'Hypertension': 0,
-        'Diabetes': 0,
-        'Cardiac': 0,
-        'Obesity': 0,
-        'Mobility': 0,
-        'Respiratory': 0
+        'Hypertension': 0, 'Diabetes': 0, 'Cardiac': 0, 'Obesity': 0, 'Mobility': 0, 'Respiratory': 0
     };
-
     let riskCount = 0;
     const criticalList = [];
 
     patients.forEach(p => {
         const condition = p.condition ? p.condition.toLowerCase() : '';
-
-        // Categorize for Radar
         if (condition.includes('hypertens') || condition.includes('blood pressure')) riskMap['Hypertension']++;
         if (condition.includes('diabet') || condition.includes('sugar') || condition.includes('insulin')) riskMap['Diabetes']++;
         if (condition.includes('cardiac') || condition.includes('heart') || condition.includes('arrhythmia')) riskMap['Cardiac']++;
@@ -163,7 +154,6 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         if (condition.includes('mobil') || condition.includes('arthrit') || condition.includes('joint')) riskMap['Mobility']++;
         if (condition.includes('respir') || condition.includes('lung') || condition.includes('asthma')) riskMap['Respiratory']++;
 
-        // Detect High Risk / Critical cases for watchlist
         if (condition.includes('critical') || condition.includes('urgent') || condition.includes('alert') || condition.includes('severe') || condition.includes('acute')) {
             riskCount++;
             criticalList.push(p);
@@ -171,7 +161,7 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
     });
 
     const derivedRadarData = [
-        { subject: 'Hypertension', A: riskMap['Hypertension'] * 20 + 50, fullMark: 150 }, // Scale up for demo visual
+        { subject: 'Hypertension', A: riskMap['Hypertension'] * 20 + 50, fullMark: 150 },
         { subject: 'Diabetes', A: riskMap['Diabetes'] * 20 + 50, fullMark: 150 },
         { subject: 'Cardiac', A: riskMap['Cardiac'] * 20 + 50, fullMark: 150 },
         { subject: 'Obesity', A: riskMap['Obesity'] * 20 + 50, fullMark: 150 },
@@ -179,21 +169,57 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         { subject: 'Respiratory', A: riskMap['Respiratory'] * 20 + 50, fullMark: 150 },
     ];
 
-    // 2. Critical Watchlist (Take top 3 critical, or fallback to recent if none marked critical)
     const finalWatchlist = criticalList.length > 0 ? criticalList.slice(0, 3) : patients.slice(0, 3);
+    const healthScore = totalPatients > 0 ? Math.round(((totalPatients - riskCount) / totalPatients) * 100) : 100;
+
+    // 2. Growth Trends (Live from createdAt)
+    const monthCounts = { 'Jan': 0, 'Feb': 0, 'Mar': 0, 'Apr': 0, 'May': 0, 'Jun': 0 };
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+    patients.forEach(p => {
+        if (p.createdAt && p.createdAt.toDate) {
+            const month = p.createdAt.toDate().toLocaleString('default', { month: 'short' });
+            if (monthCounts[month] !== undefined) monthCounts[month]++;
+        }
+    });
+
+    // Accumulate for growth curve
+    let runningTotal = 0;
+    const trendData = months.map(m => {
+        runningTotal += monthCounts[m];
+        // If empty (no dates), assume a baseline for demo or 0
+        const displayVal = runningTotal === 0 ? (totalPatients > 0 ? Math.round(totalPatients / 6) : 0) : runningTotal;
+        return {
+            month: m,
+            rate: displayVal,
+            projected: Math.round(displayVal * 1.2) // Target is 20% higher
+        };
+    });
+    // Force the last point to match actual total if dates are missing/parsing fails, just to be robust
+    if (trendData[5].rate === 0 && totalPatients > 0) trendData[5].rate = totalPatients;
 
 
-    // 3. Trends & Adherence (Simulated but dynamic based on total count)
-    // We simulate a slight fluctuation based on patient count to make it feel "live"
-    const adherenceRate = 85 + (totalPatients % 10);
-    const trendData = [
-        { month: 'Jan', rate: 45, projected: 65 },
-        { month: 'Feb', rate: 52, projected: 70 },
-        { month: 'Mar', rate: 48, projected: 68 },
-        { month: 'Apr', rate: 60, projected: 75 },
-        { month: 'May', rate: 55, projected: 72 },
-        { month: 'Jun', rate: adherenceRate - 10, projected: adherenceRate + 5 }, // Dynamic current month
-    ];
+    // 3. Clinic Load Heatmap (Last 28 Days Activity)
+    const heatmapBuckets = new Array(28).fill(0);
+    const now = new Date();
+    patients.forEach(p => {
+        if (p.createdAt && p.createdAt.toDate) {
+            const d = p.createdAt.toDate();
+            const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+            if (diffDays >= 0 && diffDays < 28) {
+                // Map to reverse bucket (0 is today, 27 is 28 days ago)
+                // We want 0 to be top left? Or bottom right? 
+                // Usually timeline goes left->right, top->bottom.
+                // Let's just fill based on index.
+                heatmapBuckets[27 - diffDays]++;
+            }
+        }
+    });
+
+    const heatmapData = heatmapBuckets.map((count, i) => ({
+        day: i + 1,
+        intensity: count > 2 ? 'high' : count > 0 ? 'medium' : 'low'
+    }));
 
 
     return (
@@ -222,12 +248,12 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                 onNavigate={onNavigate}
             />
 
-            {/* Top Stats Row - Using Semantic Tints on Amber Base */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <StatCard label="Total Patients" value={totalPatients} sub="+12%" icon={Users} colorClass="text-amber-400" accentColor="amber" />
-                <StatCard label="Avg. Adherence" value={`${adherenceRate}%`} sub="+2.4%" icon={Activity} colorClass="text-emerald-400" accentColor="emerald" />
-                <StatCard label="High Risk Cases" value={riskCount || criticalList.length} sub="Alert" icon={AlertTriangle} colorClass="text-rose-400" accentColor="rose" />
-                <StatCard label="Avg. Consult" value="18m" sub="-1m" icon={Clock} colorClass="text-sky-400" accentColor="sky" />
+            {/* KPI Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatCard label="Total Patients" value={totalPatients} sub="+12%" icon={Users} accentColor="emerald" />
+                <StatCard label="Avg. Health Score" value={`${healthScore}%`} sub={healthScore > 80 ? 'Good' : 'Review'} icon={Activity} accentColor="emerald" />
+                <StatCard label="High Risk Cases" value={riskCount || criticalList.length} sub="Alert" icon={AlertTriangle} accentColor="rose" />
+                <StatCard label="Avg. Consult" value="18m" sub="~-1m" icon={Clock} accentColor="sky" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -250,8 +276,8 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
 
                     <div className="flex justify-between items-center mb-8 relative z-10">
                         <div>
-                            <h3 className="text-2xl font-bold text-white tracking-tight">Adherence vs Projected</h3>
-                            <p className="text-sm text-stone-400 mt-1">Comparative analysis of treatment compliance.</p>
+                            <h3 className="text-2xl font-bold text-white tracking-tight">Patient Growth vs Projected</h3>
+                            <p className="text-sm text-stone-400 mt-1">Monthly patient enrollment tracking.</p>
                         </div>
                         <div className="flex gap-4">
                             <div className="flex items-center gap-2 text-xs font-bold text-amber-500 uppercase">
