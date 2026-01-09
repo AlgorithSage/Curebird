@@ -6,10 +6,12 @@ import {
 } from 'recharts';
 import {
     TrendingUp, Users, Activity, AlertTriangle, Calendar,
-    BrainCircuit, Clock, Stethoscope
+    BrainCircuit, Clock, Stethoscope, FileText
 } from 'lucide-react';
 import AIReportModal from './AIReportModal';
 import AnalyzeDataModal from './AnalyzeDataModal';
+import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 // --- Improved Mock Data ---
 
@@ -127,13 +129,61 @@ const StatCard = ({ label, value, sub, icon: Icon, colorClass, accentColor = 'am
 
 const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [selectedReport, setSelectedReport] = useState(null);
     const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
+    const [analyzedReports, setAnalyzedReports] = useState([]);
+    const [showAllReports, setShowAllReports] = useState(false);
 
     const handleMouseMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     };
+
+    const handleAnalysisComplete = (newReport) => {
+        // Optimistic update (optional, but wait for onSnapshot is better usually. 
+        // But since we want immediate feedback and snapshot might be slightly delayed or we want to force open current...)
+        // Actually, if we use onSnapshot, it will update automatically. 
+        // We just need to open the modal.
+        // We'll trust onSnapshot for the list, but we need to set selectedReport for the modal.
+        setSelectedReport(newReport);
+        setIsAnalyzeModalOpen(false);
+        setIsReportModalOpen(true);
+    };
+
+    // --- Persist: Live Fetch Analyzed Reports ---
+    React.useEffect(() => {
+        const fetchReports = async () => {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const q = query(
+                collection(db, 'medical_records'),
+                where('doctorId', '==', user.uid),
+                where('type', '==', 'lab_report'),
+                // orderBy('createdAt', 'desc') // Requires index, use client side sort for safety if no index
+            );
+
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                const reports = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        fileName: data.fileName || data.title || 'Document',
+                        summary: data.description || '',
+                        date: data.date,
+                        key_findings: data.findings || [],
+                        // ... map other fields if needed by AIReportModal
+                    };
+                });
+                // Client-side sort desc
+                reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+                setAnalyzedReports(reports);
+            });
+            return () => unsubscribe();
+        };
+        fetchReports();
+    }, []);
 
     // --- Derived Metrics from Live Data ---
     const totalPatients = patients.length;
@@ -234,18 +284,22 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                     <p className="text-slate-400 font-medium">Population health intelligence & operational metrics.</p>
                 </div>
                 <button
-                    onClick={() => setIsAIModalOpen(true)}
+                    onClick={() => setIsAnalyzeModalOpen(true)}
                     className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] flex items-center gap-2"
                 >
                     <BrainCircuit size={20} /> Generate AI Report
                 </button>
             </div>
 
-            <AIReportModal isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} />
+            <AIReportModal
+                isOpen={isReportModalOpen}
+                onClose={() => setIsReportModalOpen(false)}
+                report={selectedReport}
+            />
             <AnalyzeDataModal
                 isOpen={isAnalyzeModalOpen}
                 onClose={() => setIsAnalyzeModalOpen(false)}
-                onNavigate={onNavigate}
+                onAnalysisComplete={handleAnalysisComplete}
             />
 
             {/* KPI Grid */}
@@ -328,7 +382,38 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                         <h3 className="font-extrabold text-white text-2xl tracking-tight">AI Clinical Co-Pilot</h3>
                     </div>
                     <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1 relative z-10">
-                        {aiInsights.map((insight, i) => <InsightCard key={i} insight={insight} />)}
+                        {analyzedReports.length === 0 && (
+                            <div className="p-4 rounded-xl border border-dashed border-stone-800 text-center">
+                                <p className="text-xs text-stone-500 italic">No documents analyzed yet.</p>
+                            </div>
+                        )}
+                        {analyzedReports.slice(0, showAllReports ? undefined : 3).map((report, i) => (
+                            <div
+                                key={i}
+                                onClick={() => { setSelectedReport(report); setIsReportModalOpen(true); }}
+                                className="p-4 rounded-xl bg-[#0c0a09] border border-stone-800 hover:border-amber-500/50 hover:bg-amber-950/20 transition-all cursor-pointer group/card"
+                            >
+                                <div className="flex justify-between items-start mb-2">
+                                    <div className="p-2 rounded-lg bg-stone-900 text-amber-500 group-hover/card:bg-amber-500 group-hover/card:text-black transition-colors">
+                                        <FileText size={16} />
+                                    </div>
+                                    <span className="text-[10px] font-mono text-stone-500">{report.date}</span>
+                                </div>
+                                <h4 className="font-bold text-white text-sm mb-1 line-clamp-1">{report.fileName}</h4>
+                                <p className="text-[11px] text-stone-400 line-clamp-2 leading-relaxed">{report.summary}</p>
+                            </div>
+                        ))}
+
+                        {analyzedReports.length > 3 && (
+                            <button
+                                onClick={() => setShowAllReports(!showAllReports)}
+                                className="w-full py-2 text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-amber-500 transition-colors flex items-center justify-center gap-2"
+                            >
+                                {showAllReports ? 'Show Less' : `See ${analyzedReports.length - 3} More`}
+                                <div className={`w-1.5 h-1.5 border-r border-b border-current transform transition-transform ${showAllReports ? 'rotate-[225deg] mt-1' : 'rotate-45 -mt-1'}`}></div>
+                            </button>
+                        )}
+
                         <button
                             onClick={() => setIsAnalyzeModalOpen(true)}
                             className="w-full p-4 rounded-xl border border-dashed border-slate-700 flex flex-col items-center text-center gap-2 text-slate-500 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors cursor-pointer group"
