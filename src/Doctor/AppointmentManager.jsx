@@ -94,19 +94,43 @@ const ScheduleSlot = ({ time, status }) => (
 // --- Main Manager Component ---
 
 
-const AppointmentManager = ({ view = 'overview', onNavigate }) => {
+const AppointmentManager = ({ view = 'overview', onNavigate, patients = [] }) => {
     // view prop comes from sidebar: 'overview', 'requests', 'schedule'
 
-    // Interactive State (Initialized with Mock Data)
-    const [upcomingAppts, setUpcomingAppts] = useState([
-        { id: 1, patientName: "Sarah Connor", time: "10:30 AM", date: "Today", reason: "Follow-up", type: "video" },
-        { id: 2, patientName: "Kyle Reese", time: "02:00 PM", date: "Today", reason: "Trauma Review", type: "video" },
-    ]);
+    // Interactive State (Mapped from Live Patients)
+    // Interactive State (Mapped from Live Patients)
+    const baseUpcomingAppts = React.useMemo(() => {
+        // Take first 3 patients for "Today's Queue"
+        return patients.slice(0, 3).map((p, i) => ({
+            id: p.id,
+            patientName: p.name,
+            time: `${10 + i}:30 ${i < 2 ? 'AM' : 'PM'}`,
+            date: "Today",
+            reason: p.condition || "Follow-up",
+            type: "video"
+        }));
+    }, [patients]);
 
-    const [requests, setRequests] = useState([
-        { id: 3, patientName: "Marty McFly", time: "11:00 AM", date: "Tomorrow", reason: "Vertigo Symptoms", type: "video" },
-        { id: 4, patientName: "Emmett Brown", time: "04:30 PM", date: "Fri, 27 Oct", reason: "Lab Results", type: "video" },
-    ]);
+    // Use state for requests so they can be "approved/declined" locally for the demo
+    const [requests, setRequests] = useState([]);
+    const [approvedAppts, setApprovedAppts] = useState([]); // Store locally approved requests
+
+    const upcomingAppts = [...baseUpcomingAppts, ...approvedAppts];
+
+    React.useEffect(() => {
+        // Take next 2 patients for "Requests"
+        if (patients.length > 3) {
+            const reqs = patients.slice(3, 5).map((p, i) => ({
+                id: p.id,
+                patientName: p.name,
+                time: `${9 + i}:00 AM`,
+                date: "Tomorrow",
+                reason: p.condition || "General Consult",
+                type: "video"
+            }));
+            setRequests(reqs);
+        }
+    }, [patients]);
 
     // Scheduler State
     const [slots, setSlots] = useState([
@@ -137,7 +161,7 @@ const AppointmentManager = ({ view = 'overview', onNavigate }) => {
         else if (action === 'approve') {
             // Move from requests to upcoming
             setRequests(prev => prev.filter(r => r.id !== appt.id));
-            setUpcomingAppts(prev => [...prev, { ...appt, type: 'video', date: 'Today' }]); // Simplified for demo
+            setApprovedAppts(prev => [...prev, { ...appt, type: 'video', date: 'Today' }]); // Simplified for demo
         }
         else if (action === 'decline') {
             // Remove from requests

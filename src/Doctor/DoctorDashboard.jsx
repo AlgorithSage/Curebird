@@ -431,7 +431,7 @@ const DoctorDashboard = ({ user }) => {
         // 2. Appointment Manager (Sub-views)
         if (activeView.startsWith('appointments_') && activeView !== 'appointments_group') {
             const subView = activeView.split('_')[1]; // overview, requests, schedule
-            return <AppointmentManager view={subView} onNavigate={handleNavigate} />;
+            return <AppointmentManager view={subView} patients={patients} onNavigate={handleNavigate} />;
         }
 
         // 3. Fallback/Direct views
@@ -457,7 +457,7 @@ const DoctorDashboard = ({ user }) => {
                 setWorkspacePatient(p);
                 setActiveView('patient_workspace');
             }} />;
-            case 'appointments_group': return <AppointmentManager view="overview" onNavigate={handleNavigate} />;
+            case 'appointments_group': return <AppointmentManager view="overview" patients={patients} onNavigate={handleNavigate} />;
             case 'consultations': return <ConsultationWorkflow user={user} />;
             case 'medical_records': return <MedicalRecordManager user={user} onAddAction={(type) => {
                 if (type === 'prescription') setIsPrescriptionModalOpen(true);
