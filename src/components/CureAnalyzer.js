@@ -15,6 +15,7 @@ import {
   Camera,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm';
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { API_BASE_URL } from "../config";
@@ -817,7 +818,7 @@ const CureAnalyzer = ({
                     </div>
                   </div>
                   <div className="prose max-w-none text-black [&_*]:text-black [&_p]:text-black [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_li]:text-black [&_strong]:text-black [&_td]:text-black [&_th]:text-black">
-                    <ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {analysisResult.analysis.digital_copy}
                     </ReactMarkdown>
                   </div>
