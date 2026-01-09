@@ -467,6 +467,7 @@ const DoctorDashboard = ({ user }) => {
                 else setIsAddRecordModalOpen(true);
             }} />;
             case 'analytics': return <DoctorAnalytics
+                patients={patients}
                 onNavigate={handleNavigate}
                 onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
             />;
