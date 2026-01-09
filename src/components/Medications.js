@@ -20,7 +20,7 @@ const MedicationCard = ({ med, records }) => (
                 <p className="text-sm font-medium text-slate-300">{med.frequency}</p>
             </div>
             <div className="text-xs font-bold text-black bg-yellow-400 px-3 py-1 rounded-full shadow-lg shadow-yellow-400/20">
-                {med.dosage}
+                {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
             </div>
         </div>
 

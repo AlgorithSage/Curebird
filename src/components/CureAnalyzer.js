@@ -204,10 +204,9 @@ const CureAnalyzer = ({
                             <div style="font-size: 14px; font-weight: bold; color: #64748b;">CUREBIRD</div>
                         </div>
                     </div>
-                    ${
-                      document.getElementById("markdown-content-hidden")
-                        .innerHTML
-                    }
+                    ${document.getElementById("markdown-content-hidden")
+        .innerHTML
+      }
                     <div class="footer">
                         <p>Disclaimer: This is an AI-generated digitization. Please verify with the original document.</p>
                     </div>
@@ -504,7 +503,7 @@ const CureAnalyzer = ({
                         <Pill size={12} /> Pharmacy Data extract
                       </h4>
                       {(analysisResult.analysis?.medications || []).length >
-                      0 ? (
+                        0 ? (
                         <div className="space-y-3">
                           {analysisResult.analysis.medications.map((med, i) => (
                             <div
@@ -517,7 +516,7 @@ const CureAnalyzer = ({
                               </div>
                               <div className="flex gap-4 text-slate-500 font-mono text-xs">
                                 <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
-                                  DSG: {med.dosage}
+                                  DSG: {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
                                 </span>
                                 <span className="w-px h-full bg-slate-800"></span>
                                 <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
@@ -613,11 +612,10 @@ const CureAnalyzer = ({
               <button
                 disabled={!analysisResult}
                 onClick={handleSave}
-                className={`flex-1 py-4 rounded-xl font-bold text-white transition-all duration-500 shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_50px_rgba(14,165,233,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${
-                  isSaved
-                    ? "bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500"
-                    : "bg-gradient-to-r from-sky-500 via-blue-600 to-sky-500 bg-[length:200%_auto] hover:bg-right"
-                }`}
+                className={`flex-1 py-4 rounded-xl font-bold text-white transition-all duration-500 shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_50px_rgba(14,165,233,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isSaved
+                  ? "bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500"
+                  : "bg-gradient-to-r from-sky-500 via-blue-600 to-sky-500 bg-[length:200%_auto] hover:bg-right"
+                  }`}
               >
                 {isSaved ? (
                   <>
@@ -633,11 +631,10 @@ const CureAnalyzer = ({
               <button
                 disabled={!selectedFile}
                 onClick={handleDocSave}
-                className={`flex-1 py-4 rounded-xl font-bold text-black transition-all duration-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${
-                  isDocSaved
-                    ? "bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500 text-white"
-                    : "bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right"
-                }`}
+                className={`flex-1 py-4 rounded-xl font-bold text-black transition-all duration-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isDocSaved
+                  ? "bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500 text-white"
+                  : "bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right"
+                  }`}
               >
                 {isDocSaved ? (
                   <>
@@ -653,19 +650,21 @@ const CureAnalyzer = ({
           </div>
         </div>
       </div>
-      {isImportModalOpen && analysisResult && (
-        <ReviewImportModal
-          userId={user.uid}
-          analysisData={analysisResult.analysis}
-          db={db}
-          onClose={() => setIsImportModalOpen(false)}
-          onComplete={() => {
-            setIsImportModalOpen(false);
-            handleSave(); // Trigger save state update
-            // Maybe show toast?
-          }}
-        />
-      )}
+      {
+        isImportModalOpen && analysisResult && (
+          <ReviewImportModal
+            userId={user.uid}
+            analysisData={analysisResult.analysis}
+            db={db}
+            onClose={() => setIsImportModalOpen(false)}
+            onComplete={() => {
+              setIsImportModalOpen(false);
+              handleSave(); // Trigger save state update
+              // Maybe show toast?
+            }}
+          />
+        )
+      }
 
       {/* Hidden div for printing markdown content */}
       <div id="markdown-content-hidden" style={{ display: "none" }}>
@@ -675,68 +674,70 @@ const CureAnalyzer = ({
       </div>
 
       {/* Digital Copy Modal */}
-      {showDigitalCopy && analysisResult?.analysis?.digital_copy && (
-                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-amber-500/20">
-                        {/* Header */}
-                        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
-                                    <FileText size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-bold text-slate-900">Digital Transcript</h3>
-                                    <p className="text-[10px] text-amber-600 uppercase tracking-widest font-black">AI-Generated Digitization</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={handlePrint}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
-                                >
-                                    <Printer size={16} /> Print Copy
-                                </button>
-                                <button
-                                    onClick={() => setShowDigitalCopy(false)}
-                                    className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
-                                >
-                                    <X size={20} />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex-1 overflow-y-auto p-8 bg-white font-sans" style={{ color: 'black' }}>
-                            <div className="max-w-3xl mx-auto">
-                                {/* Digital Paper Header */}
-                                <div className="border-b-2 border-amber-500 pb-6 mb-8 flex justify-between items-end">
-                                    <div>
-                                        <h1 className="text-2xl font-black text-slate-900 m-0 leading-none">DIGITAL TRANSCRIPT</h1>
-                                        <p className="text-amber-600 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
-                                    </div>
-                                    <div className="text-right opacity-100">
-                                        <div className="flex items-center justify-end gap-2 text-slate-900 font-bold">
-                                            <img src={curebirdLogo} alt="Curebird Logo" className="h-10 w-auto" />
-                                            <span className="text-xl">Curebird</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="prose max-w-none text-black [&_*]:text-black [&_p]:text-black [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_li]:text-black [&_strong]:text-black [&_td]:text-black [&_th]:text-black">
-                                    <ReactMarkdown>
-                                        {analysisResult.analysis.digital_copy}
-                                    </ReactMarkdown>
-                                </div>
-                                 {/* Footer */}
-                                 <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono uppercase tracking-widest">
-                                    <span>Generated by Curebird AI</span>
-                                    <span>{new Date().toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+      {
+        showDigitalCopy && analysisResult?.analysis?.digital_copy && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-amber-500/20">
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
+                    <FileText size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900">Digital Transcript</h3>
+                    <p className="text-[10px] text-amber-600 uppercase tracking-widest font-black">AI-Generated Digitization</p>
+                  </div>
                 </div>
-      )}
-    </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePrint}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+                  >
+                    <Printer size={16} /> Print Copy
+                  </button>
+                  <button
+                    onClick={() => setShowDigitalCopy(false)}
+                    className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-8 bg-white font-sans" style={{ color: 'black' }}>
+                <div className="max-w-3xl mx-auto">
+                  {/* Digital Paper Header */}
+                  <div className="border-b-2 border-amber-500 pb-6 mb-8 flex justify-between items-end">
+                    <div>
+                      <h1 className="text-2xl font-black text-slate-900 m-0 leading-none">DIGITAL TRANSCRIPT</h1>
+                      <p className="text-amber-600 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
+                    </div>
+                    <div className="text-right opacity-100">
+                      <div className="flex items-center justify-end gap-2 text-slate-900 font-bold">
+                        <img src={curebirdLogo} alt="Curebird Logo" className="h-10 w-auto" />
+                        <span className="text-xl">Curebird</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="prose max-w-none text-black [&_*]:text-black [&_p]:text-black [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_li]:text-black [&_strong]:text-black [&_td]:text-black [&_th]:text-black">
+                    <ReactMarkdown>
+                      {analysisResult.analysis.digital_copy}
+                    </ReactMarkdown>
+                  </div>
+                  {/* Footer */}
+                  <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono uppercase tracking-widest">
+                    <span>Generated by Curebird AI</span>
+                    <span>{new Date().toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div >
   );
 };
 

@@ -228,7 +228,7 @@ const InsightReviewModal = ({ isOpen, onClose, insight, onApprove, onReject }) =
                                             <>
                                                 <div className="text-lg font-bold text-emerald-100">{med.name}</div>
                                                 <div className="flex gap-4 text-sm font-semibold text-emerald-500">
-                                                    <span>{med.dosage}</span>
+                                                    <span>{typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}</span>
                                                     <span>{med.freq}</span>
                                                 </div>
                                             </>

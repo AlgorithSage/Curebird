@@ -14,6 +14,23 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from groq_service import get_health_assistant
 from patient_chat_service import get_patient_service
+from cerebras_service import generate_medical_summary
+
+@app.route('/api/generate-summary', methods=['POST'])
+def generate_summary_route():
+    try:
+        data = request.get_json()
+        texts = data.get('texts', [])
+        file_urls = data.get('file_urls', [])
+        
+        if not texts and not file_urls:
+            return jsonify({'summary': "No content to summarize."})
+            
+        summary = generate_medical_summary(texts, file_urls=file_urls)
+        return jsonify({'summary': summary})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/disease-trends', methods=['GET'])
 def get_disease_trends():
@@ -94,12 +111,13 @@ def health_assistant_chat():
         
         user_message = data['message']
         conversation_id = data.get('conversation_id')
+        medical_context = data.get('medicalContext')
         
         # Get health assistant instance
         assistant = get_health_assistant()
         
         # Generate response
-        result = assistant.generate_response(user_message, conversation_id)
+        result = assistant.generate_response(user_message, conversation_id, medical_context)
         
         return jsonify(result)
     

@@ -74,7 +74,9 @@ const MedicationTimeline = ({ userId, db }) => {
                         {/* Left Info */}
                         <div className="w-32 min-w-[128px] text-right">
                             <p className="font-bold text-white text-sm truncate">{med.name}</p>
-                            <p className="text-emerald-500 text-xs">{med.dosage}</p>
+                            <p className="text-emerald-500 text-xs">
+                                {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
+                            </p>
                         </div>
 
                         {/* Bar */}

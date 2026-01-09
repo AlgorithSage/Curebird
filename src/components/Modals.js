@@ -103,7 +103,7 @@ const AnalysisResult = ({ result, onApply }) => (
                     <div className="space-y-2 mt-2">
                         {(result?.medications || []).map((med, i) => (
                             <p key={i} className="text-slate-300 text-sm font-mono bg-slate-700/50 p-1 rounded">
-                                &gt; {med.name} - {med.dosage} - {med.frequency}
+                                &gt; {med.name} - {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage} - {med.frequency}
                             </p>
                         ))}
                         <button onClick={onApply} className="text-sm text-sky-400 hover:text-sky-300 font-semibold mt-2">Auto-fill Medications</button>
