@@ -458,7 +458,7 @@ const DoctorDashboard = ({ user }) => {
                 setActiveView('patient_workspace');
             }} />;
             case 'appointments_group': return <AppointmentManager view="overview" patients={patients} onNavigate={handleNavigate} />;
-            case 'consultations': return <ConsultationWorkflow user={user} />;
+            case 'consultations': return <ConsultationWorkflow user={user} patients={patients} />;
             case 'medical_records': return <MedicalRecordManager user={user} onAddAction={(type) => {
                 if (type === 'prescription') setIsPrescriptionModalOpen(true);
                 else if (type === 'lab') setIsLabRequestModalOpen(true);

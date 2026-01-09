@@ -8,7 +8,7 @@ import {
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const TelehealthSession = ({ user }) => {
+const TelehealthSession = ({ user, patients = [] }) => {
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
     const [activeSideTab, setActiveSideTab] = useState('notes');
@@ -135,13 +135,23 @@ const TelehealthSession = ({ user }) => {
 
 
 
-    // Mock Data for Waiting Room / Queue
-    const [waitingQueue, setWaitingQueue] = useState([
-        { id: 1, name: "Suresh Raina", reason: "Chest Pain & Breathing Difficulty", urgency: "Critical", time: "2m ago" },
-        { id: 2, name: "Priya Sharma", reason: "High Fever (104°F)", urgency: "Urgent", time: "10m ago" },
-        { id: 3, name: "Rahul Verma", reason: "Follow-up: Diabetes", urgency: "Routine", time: "15m ago" },
-        { id: 4, name: "Anjali Gupta", reason: "Mild Skin Rash", urgency: "Routine", time: "25m ago" }
-    ]);
+    // Waiting Room / Queue (Live Data)
+    const [waitingQueue, setWaitingQueue] = useState([]);
+
+    useEffect(() => {
+        if (patients.length > 0) {
+            // Map live patients to waiting queue format
+            // Simulate urgency and time for demo purposes
+            const queue = patients.slice(0, 4).map((p, i) => ({
+                id: p.id,
+                name: p.name,
+                reason: p.condition || "General Consultation",
+                urgency: i === 0 ? "Critical" : (i === 1 ? "Urgent" : "Routine"),
+                time: `${(i + 1) * 5}m ago`
+            }));
+            setWaitingQueue(queue);
+        }
+    }, [patients]);
 
     const handleAccept = (id) => {
         alert(`Connecting to patient #${id}...`);
