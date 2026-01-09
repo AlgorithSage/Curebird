@@ -203,7 +203,7 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
                     "content": [
                         {
                             "type": "text", 
-                            "text": "Analyze this image. First, determine if it is a valid medical document (prescription, lab report, clinical notes, discharge summary) or medication packaging. If it is NOT a medical image, return strict JSON: {\"is_medical\": false}. If it IS a medical image, extract all detected medications (name, dosage, frequency) and any detected clinical conditions or diseases. Return JSON: {\"is_medical\": true, \"medications\": [{\"name\": \"...\", \"dosage\": \"...\", \"frequency\": \"...\"}], \"diseases\": [\"...\", \"...\"]}"
+                            "text": "Analyze this image. First, determine if it is a valid medical document (prescription, lab report, clinical notes, discharge summary) or medication packaging. If it is NOT a medical image, return strict JSON: {\"is_medical\": false}. If it IS a medical image, extract all detected medications (name, dosage, frequency) and any detected clinical conditions or diseases. ALSO, generate a 'digital_copy' field which contains a clean, professional Markdown representation of the ENTIRE document text as if it were typed out (use tables for meds/results if appropriate). Return JSON: {\"is_medical\": true, \"medications\": [...], \"diseases\": [...], \"digital_copy\": \"...markdown string...\"}"
                         },
                         {
                             "type": "image_url",
@@ -215,7 +215,7 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
                 }
             ],
             temperature=0.1,
-            max_tokens=1024,
+            max_tokens=2048,
             response_format={"type": "json_object"}
         )
         
@@ -225,11 +225,12 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
         return {
             "is_medical": structured_data.get("is_medical", True), # Default to true if missing to be safe, but prompt should catch it
             "medications": structured_data.get("medications", []),
-            "diseases": structured_data.get("diseases", []) or structured_data.get("conditions", [])
+            "diseases": structured_data.get("diseases", []) or structured_data.get("conditions", []),
+            "digital_copy": structured_data.get("digital_copy", "")
         }
     except Exception as e:
         print(f"VLM ERROR: {e}")
-        return {"is_medical": False, "medications": [], "diseases": []}
+        return {"is_medical": False, "medications": [], "diseases": [], "digital_copy": ""}
 
 def analyze_comprehensive(file_stream):
     """

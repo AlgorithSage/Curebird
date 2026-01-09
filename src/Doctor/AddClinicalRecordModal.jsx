@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { X, Upload, FileText, User, Calendar, AlertTriangle, CheckCircle, Loader } from 'lucide-react';
+import { X, Upload, FileText, User, Calendar, AlertTriangle, CheckCircle, Loader, Bot, Sparkles, Printer, Eye, RefreshCcw } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../firebase'; // Import auth from main firebase config
+import curebirdLogo from '../curebird_logo.png';
+import { API_BASE_URL } from '../config';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 const TabButton = ({ children, active, onClick, colorClass = "text-amber-400" }) => {
@@ -48,6 +51,12 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
+    // Digitization State
+    const [digitizing, setDigitizing] = useState(false);
+    const [digitizeError, setDigitizeError] = useState('');
+    const [digitalCopy, setDigitalCopy] = useState(null);
+    const [showDigitalPreview, setShowDigitalPreview] = useState(false);
+
     // Form State
     const [formData, setFormData] = useState({
         patientId: '',
@@ -76,7 +85,93 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
     const handleFileChange = (e) => {
         if (e.target.files[0]) {
             setFormData({ ...formData, file: e.target.files[0] });
+            // Reset digitization state on new file
+            setDigitalCopy(null);
+            setDigitizeError('');
         }
+    };
+
+    const handleDigitize = async () => {
+        if (!formData.file) return;
+
+        setDigitizing(true);
+        setDigitizeError('');
+        
+        const uploadData = new FormData();
+        uploadData.append('file', formData.file);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/analyzer/process`, {
+                method: 'POST',
+                body: uploadData,
+            });
+
+            if (!response.ok) throw new Error("Failed to process document");
+
+            const data = await response.json();
+            
+            if (data.analysis?.digital_copy) {
+               setDigitalCopy(data.analysis.digital_copy);
+               // Optionally prefill title if empty and available
+               if (!formData.title && data.summary) {
+                    setFormData(prev => ({...prev, description: prev.description || data.summary}));
+               }
+            } else {
+                throw new Error("No text could be extracted.");
+            }
+
+        } catch (err) {
+            console.error("Digitization failed:", err);
+            setDigitizeError(err.message || "Digitization failed");
+        } finally {
+            setDigitizing(false);
+        }
+    };
+
+    const handlePrintDigitalCopy = () => {
+        if (!digitalCopy) return;
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Medical Record Digital Copy</title>
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+                        body { font-family: 'Inter', sans-serif; line-height: 1.6; padding: 40px; max-width: 800px; margin: 0 auto; color: #000; }
+                        h1, h2, h3 { color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #cbd5e1; padding: 12px; text-align: left; color: #334155; }
+                        th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; }
+                        strong { color: #0f172a; }
+                        .header { margin-bottom: 40px; border-bottom: 2px solid #f59e0b; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+                        .footer { margin-top: 50px; font-size: 10px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div>
+                            <h1 style="margin:0; border:none; padding:0; font-size: 24px;">DIGITAL TRANSCRIPT</h1>
+                            <p style="margin:5px 0 0; color: #f59e0b; font-size: 12px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">Curebird Verified Record</p>
+                        </div>
+                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
+                            <img src="${window.location.origin + curebirdLogo}" alt="Curebird Logo" style="height: 40px; margin-bottom: 5px;" />
+                            <div style="font-size: 14px; font-weight: bold; color: #64748b;">CUREBIRD</div>
+                        </div>
+                    </div>
+                    <div class="content">
+                        ${document.getElementById('modal-markdown-hidden')?.innerHTML || ''}
+                    </div>
+                    <div class="footer">
+                        <p>Generated by Curebird AI • Verified Digitization</p>
+                    </div>
+                    <script>
+                        window.onload = function() { window.print(); }
+                    </script>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
     };
 
     const handleSubmit = async (e) => {
@@ -330,6 +425,90 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
                                     </div>
                                 )}
                             </div>
+                            
+                            {/* Hidden element for printing */}
+                            {/* Hidden element for printing */}
+                            <div id="modal-markdown-hidden" style={{ display: 'none' }}>
+                                <div className="prose prose-slate max-w-none text-black prose-headings:text-black prose-p:text-black prose-td:text-black prose-strong:text-black">
+                                     {digitalCopy && <ReactMarkdown>{digitalCopy}</ReactMarkdown>}
+                                </div>
+                            </div>
+
+                            {/* Digitization Actions (Only if file is selected) */}
+                            {formData.file && (
+                                <div className="bg-slate-900/50 rounded-xl p-4 border border-white/5 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <Sparkles size={16} className="text-amber-500" />
+                                            <span className="text-sm font-bold text-white">Smart Digitization</span>
+                                        </div>
+                                        {digitalCopy && (
+                                            <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded font-bold uppercase tracking-wider flex items-center gap-1">
+                                                <CheckCircle size={10} /> Ready
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {!digitalCopy ? (
+                                        <button
+                                            type="button"
+                                            onClick={handleDigitize}
+                                            disabled={digitizing}
+                                            className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-slate-800 hover:bg-amber-500/10 hover:text-amber-400 text-slate-400 border border-slate-700 hover:border-amber-500/50 transition-all text-xs font-bold uppercase tracking-wider group"
+                                        >
+                                            {digitizing ? (
+                                                <><Loader size={14} className="animate-spin" /> Processing...</>
+                                            ) : (
+                                                <><Bot size={14} /> Convert to Digital Text</>
+                                            )}
+                                        </button>
+                                    ) : (
+                                        <div className="flex gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowDigitalPreview(!showDigitalPreview)}
+                                                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-all text-xs font-bold uppercase tracking-wider"
+                                            >
+                                                <Eye size={14} /> {showDigitalPreview ? 'Hide Preview' : 'View Text'}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handlePrintDigitalCopy}
+                                                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-amber-500 text-black border border-amber-500 hover:bg-amber-400 transition-all text-xs font-bold uppercase tracking-wider"
+                                            >
+                                                <Printer size={14} /> Print
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleDigitize}
+                                                className="px-3 py-2.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white border border-slate-700 hover:bg-slate-700 transition-all"
+                                                title="Regenerate"
+                                            >
+                                                <RefreshCcw size={14} />
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {digitizeError && (
+                                        <div className="text-xs text-rose-400 font-medium bg-rose-500/10 p-2 rounded flex items-center gap-2">
+                                            <AlertTriangle size={12} /> {digitizeError}
+                                        </div>
+                                    )}
+
+                                    {/* Inline Preview */}
+                                    {showDigitalPreview && digitalCopy && (
+                                        <div className="mt-2 p-4 bg-white text-slate-900 rounded-lg max-h-60 overflow-y-auto border-l-4 border-amber-500 shadow-inner">
+                                            <div className="prose prose-slate max-w-none prose-sm 
+                                                prose-headings:text-slate-900 
+                                                prose-p:text-slate-800 
+                                                prose-strong:text-slate-900 
+                                                prose-td:text-slate-700">
+                                                <ReactMarkdown>{digitalCopy}</ReactMarkdown>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </form>
                     </div>
 
