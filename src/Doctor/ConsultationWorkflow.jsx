@@ -445,24 +445,37 @@ const TelehealthSession = ({ user, patients = [] }) => {
                     {activeSideTab === 'history' && (
                         <div className="flex flex-col h-full bg-transparent">
                             <h3 className="text-amber-500 font-bold uppercase tracking-widest text-xs mb-4 flex items-center gap-2">
-                                <Clock size={14} /> Patient History
+                                <Clock size={14} /> Recent Clinical Activity
                             </h3>
                             <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
-                                {[
-                                    { type: 'note', title: 'Follow-up Consultation', date: 'Oct 12, 2025', desc: 'Patient reported reduced symptoms. BP normal.' },
-                                    { type: 'rx', title: 'Prescription: Amoxicillin', date: 'Oct 12, 2025', desc: '500mg - BID for 7 days.' },
-                                    { type: 'lab', title: 'Lab Report: Blood Panel', date: 'Sep 28, 2025', desc: 'Hemoglobin levels improved. WNL.' },
-                                    { type: 'note', title: 'Initial Assessment', date: 'Sep 15, 2025', desc: 'Complaints of persistent fever and fatigue.' }
-                                ].map((item, idx) => (
-                                    <div key={idx} className="p-4 rounded-xl bg-[#0c0a05] border border-stone-800 hover:border-amber-500/30 transition-all group shadow-sm flex flex-col gap-1">
-                                        <div className="flex justify-between items-start">
-                                            <span className="text-[10px] font-black uppercase tracking-wider text-amber-500/70 border border-amber-500/10 px-1.5 py-0.5 rounded">{item.type}</span>
-                                            <span className="text-[10px] font-bold text-stone-500">{item.date}</span>
+                                {patients.length === 0 && (
+                                    <p className="text-xs text-stone-500 italic">No patient history found.</p>
+                                )}
+                                {patients.slice(0, 5).map((patient, idx) => {
+                                    // Deterministic "Mock" History based on patient index for demo
+                                    const types = ['note', 'rx', 'lab', 'emergency'];
+                                    const type = types[idx % 4];
+                                    let title = 'General Checkup';
+                                    let desc = 'Patient stable. Vitals within normal limits.';
+
+                                    if (type === 'rx') { title = 'Prescription: Ibuprofen'; desc = '400mg - TID for pain management.'; }
+                                    else if (type === 'lab') { title = 'Blood Panel Results'; desc = 'WBC count slightly elevated. Monitor.'; }
+                                    else if (type === 'emergency') { title = 'Emergency Admission'; desc = 'Admitted for acute respiratory distress.'; }
+
+                                    return (
+                                        <div key={patient.id} className="p-4 rounded-xl bg-[#0c0a05] border border-stone-800 hover:border-amber-500/30 transition-all group shadow-sm flex flex-col gap-1">
+                                            <div className="flex justify-between items-start">
+                                                <span className="text-[10px] font-black uppercase tracking-wider text-amber-500/70 border border-amber-500/10 px-1.5 py-0.5 rounded">{type}</span>
+                                                <span className="text-[10px] font-bold text-stone-500">Today</span>
+                                            </div>
+                                            <div className="flex justify-between items-baseline mt-1">
+                                                <h4 className="font-bold text-stone-200 text-xs truncate max-w-[70%]">{title}</h4>
+                                                <span className="text-[9px] text-stone-600 font-bold uppercase truncate max-w-[25%]">{patient.name}</span>
+                                            </div>
+                                            <p className="text-[10px] text-stone-400 leading-relaxed mt-0.5">{desc}</p>
                                         </div>
-                                        <h4 className="font-bold text-stone-200 text-xs mt-1">{item.title}</h4>
-                                        <p className="text-[10px] text-stone-400 leading-relaxed">{item.desc}</p>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
