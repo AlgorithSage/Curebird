@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^13.5.0",
     "firebase": "^12.2.1",
     "framer-motion": "^12.23.6",
+    "jspdf": "^4.0.0",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",

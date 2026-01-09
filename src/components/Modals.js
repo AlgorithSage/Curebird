@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Copy, AlertTriangle, Trash2, UploadCloud, Pill, Stethoscope, Loader } from 'lucide-react';
+import { X, Copy, AlertTriangle, Trash2, UploadCloud, Pill, Stethoscope, Loader, Camera } from 'lucide-react';
+import { jsPDF } from "jspdf";
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { deleteUser } from "firebase/auth";
@@ -123,6 +124,73 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisResult, setAnalysisResult] = useState(null);
     const [analysisError, setAnalysisError] = useState('');
+
+    // Camera states
+    const [showCamera, setShowCamera] = useState(false);
+    const videoRef = React.useRef(null);
+    const [stream, setStream] = useState(null);
+
+    useEffect(() => {
+        return () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, [stream]);
+
+    const startCamera = async () => {
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            setStream(mediaStream);
+            setShowCamera(true);
+        } catch (err) {
+            console.error("Error accessing camera:", err);
+            alert("Could not access camera. Please check permissions.");
+        }
+    };
+
+    const stopCamera = () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
+        }
+        setShowCamera(false);
+    };
+
+    const captureImage = () => {
+        if (!videoRef.current) return;
+
+        const video = videoRef.current;
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+        // Convert to PDF
+        const pdf = new jsPDF({
+            orientation: canvas.width > canvas.height ? 'l' : 'p',
+            unit: 'px',
+            format: [canvas.width, canvas.height]
+        });
+
+        pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
+        const pdfBlob = pdf.output('blob');
+
+        const file = new File([pdfBlob], `captured_prescription_${Date.now()}.pdf`, { type: "application/pdf" });
+
+        setFile(file);
+        stopCamera();
+    };
+
+    useEffect(() => {
+        if (showCamera && videoRef.current && stream) {
+            videoRef.current.srcObject = stream;
+        }
+    }, [showCamera, stream]);
 
     useEffect(() => {
         if (record) {
@@ -281,6 +349,31 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
                             <p className="text-xs text-slate-500 pt-2">{file ? file.name : (record?.fileUrl ? 'Existing document attached' : 'No file selected')}</p>
                         </div>
                     </div>
+
+                    {/* Camera Button */}
+                    {!showCamera && (
+                        <div className="flex justify-center">
+                            <button type="button" onClick={startCamera} className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg transition-colors border border-slate-600">
+                                <Camera size={20} />
+                                <span>Capture from Camera</span>
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Camera View */}
+                    {showCamera && (
+                        <div className="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-600">
+                            <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
+                            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
+                                <button type="button" onClick={stopCamera} className="bg-red-500/80 hover:bg-red-600 text-white px-4 py-2 rounded-full font-semibold backdrop-blur-sm transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="button" onClick={captureImage} className="bg-emerald-500/80 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-semibold backdrop-blur-sm transition-colors flex items-center gap-2">
+                                    <Camera size={18} /> Capture
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {uploadProgress > 0 && (
                         <div className="w-full bg-slate-800 rounded-full h-2.5 mt-2 overflow-hidden border border-white/5">
