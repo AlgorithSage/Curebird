@@ -73,12 +73,20 @@ const AppointmentCard = ({ appt, type, onAction }) => (
     </motion.div>
 );
 
-const ScheduleSlot = ({ time, status }) => (
+const ScheduleSlot = ({ time, status, patient }) => (
     <div className={`p-4 rounded-2xl border flex items-center justify-between transition-all cursor-pointer group ${status === 'booked' ? 'bg-amber-500/5 border-amber-500/20' :
         status === 'blocked' ? 'bg-stone-900/50 border-stone-800 border-dashed opacity-40' :
             'bg-stone-900/40 border-white/5 hover:border-amber-500/30 hover:bg-amber-500/5'
         }`}>
-        <span className={`text-sm font-mono font-bold ${status === 'booked' ? 'text-amber-500' : 'text-stone-400 group-hover:text-amber-200'}`}>{time}</span>
+        <div className="flex flex-col">
+            <span className={`text-sm font-mono font-bold ${status === 'booked' ? 'text-amber-500' : 'text-stone-400 group-hover:text-amber-200'}`}>{time}</span>
+            {status === 'booked' && patient && (
+                <span className="text-[10px] text-stone-500 font-medium truncate w-24" title={patient}>
+                    {patient}
+                </span>
+            )}
+        </div>
+
         {status === 'booked' ? (
             <span className="text-[10px] text-black bg-amber-500 px-3 py-1 rounded-lg font-black uppercase tracking-wider shadow-lg shadow-amber-500/20">Reserved</span>
         ) : status === 'blocked' ? (
@@ -132,21 +140,50 @@ const AppointmentManager = ({ view = 'overview', onNavigate, patients = [] }) =>
         }
     }, [patients]);
 
-    // Scheduler State
-    const [slots, setSlots] = useState([
-        { time: '09:00 AM', status: 'booked' },
-        { time: '09:30 AM', status: 'booked' },
-        { time: '10:00 AM', status: 'booked' },
-        { time: '10:30 AM', status: 'booked' },
-        { time: '11:00 AM', status: 'blocked' },
-        { time: '11:30 AM', status: 'blocked' },
-        { time: '12:00 PM', status: 'blocked' },
-        { time: '12:30 PM', status: 'blocked' },
-        { time: '01:00 PM', status: 'available' },
-        { time: '01:30 AM', status: 'available' },
-        { time: '02:00 PM', status: 'available' },
-        { time: '02:30 PM', status: 'available' },
-    ]);
+    const [extraSlots, setExtraSlots] = useState([]);
+
+    // Scheduler State (Dynamic)
+    const slots = React.useMemo(() => {
+        // Define standard daily slots
+        const baseTimes = [
+            '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM',
+            '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM',
+            '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM',
+            '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM'
+        ];
+
+        // Combine base times with any extra manually added slots
+        const allTimes = [...baseTimes, ...extraSlots.map(s => s.time)];
+
+        // Remove duplicates and sort (simple sort for strings works okay for HH:MM AM/PM for this demo, or we can just append)
+        // For simplicity, we just append extra slots at the end or keep logic simple.
+
+        return allTimes.map(time => {
+            // Check if this time matches any upcoming appointment
+            const bookedAppt = upcomingAppts.find(appt => appt.time === time);
+
+            if (bookedAppt) {
+                return {
+                    time,
+                    status: 'booked',
+                    patient: bookedAppt.patientName,
+                    id: bookedAppt.id
+                };
+            }
+
+            // Check if it's an extra slot (default to available)
+            const isExtra = extraSlots.find(s => s.time === time);
+            if (isExtra) return { time, status: 'available' };
+
+            // Mock some blocked slots for realism (e.g. Lunch)
+            if (time === '12:00 PM' || time === '12:30 PM') {
+                return { time, status: 'blocked' };
+            }
+
+            return { time, status: 'available' };
+        });
+    }, [upcomingAppts, extraSlots]);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Handlers
@@ -170,7 +207,7 @@ const AppointmentManager = ({ view = 'overview', onNavigate, patients = [] }) =>
     };
 
     const handleAddSlot = (timeString) => {
-        setSlots(prev => [...prev, { time: timeString, status: 'available' }]);
+        setExtraSlots(prev => [...prev, { time: timeString }]);
         setIsModalOpen(false);
     };
 
@@ -310,9 +347,9 @@ const AppointmentManager = ({ view = 'overview', onNavigate, patients = [] }) =>
                             ))}
                         </div>
 
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10 mb-6">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10 mb-6 transition-all">
                             {slots.map((s, i) => (
-                                <ScheduleSlot key={i} time={s.time} status={s.status} />
+                                <ScheduleSlot key={i} time={s.time} status={s.status} patient={s.patient} />
                             ))}
                         </div>
                     </motion.div>
