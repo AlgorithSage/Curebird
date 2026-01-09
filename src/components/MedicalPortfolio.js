@@ -321,6 +321,10 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                                             >
                                                                 <RecordCard
                                                                     record={record}
+                                                                    db={db}
+                                                                    userId={userId}
+                                                                    appId={appId}
+                                                                    storage={storage}
                                                                     onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }}
                                                                     onDelete={() => { setRecordToDelete(record.id); setIsDeleteModalOpen(true); }}
                                                                 />

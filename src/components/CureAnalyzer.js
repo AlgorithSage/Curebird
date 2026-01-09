@@ -13,6 +13,7 @@ import {
   FileText,
   X,
   Camera,
+  Edit,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
@@ -44,6 +45,9 @@ const CureAnalyzer = ({
   const [showTypeSelect, setShowTypeSelect] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [showDigitalCopy, setShowDigitalCopy] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempContent, setTempContent] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   // Camera State
   const [showCamera, setShowCamera] = useState(false);
@@ -124,6 +128,7 @@ const CureAnalyzer = ({
   };
 
   const performSave = async (recordType, details = {}) => {
+    setIsSaving(true);
     try {
       const storageRef = ref(
         storage,
@@ -150,6 +155,7 @@ const CureAnalyzer = ({
                 fileType: selectedFile.type,
                 storagePath: storageRef.fullPath,
                 createdAt: new Date(),
+                digital_copy: analysisResult?.analysis?.digital_copy,
               };
               await addDoc(
                 collection(
@@ -170,6 +176,8 @@ const CureAnalyzer = ({
     } catch (err) {
       console.error("Error saving document:", err);
       setError("Failed to save document. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -282,6 +290,27 @@ const CureAnalyzer = ({
             </html>
         `);
     printWindow.document.close();
+  };
+
+  const startEditing = () => {
+    setTempContent(analysisResult.analysis.digital_copy);
+    setIsEditing(true);
+  };
+
+  const saveEdit = () => {
+    setAnalysisResult(prev => ({
+      ...prev,
+      analysis: {
+        ...prev.analysis,
+        digital_copy: tempContent
+      }
+    }));
+    setIsEditing(false);
+  };
+
+  const cancelEdit = () => {
+    setIsEditing(false);
+    setTempContent("");
   };
 
   return (
@@ -732,14 +761,19 @@ const CureAnalyzer = ({
               </button>
 
               <button
-                disabled={!selectedFile}
+                disabled={!selectedFile || isSaving}
                 onClick={handleDocSave}
                 className={`flex-1 py-4 rounded-xl font-bold text-black transition-all duration-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isDocSaved
                   ? "bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500 text-white"
                   : "bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right"
                   }`}
               >
-                {isDocSaved ? (
+                {isSaving ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    SAVING...
+                  </>
+                ) : isDocSaved ? (
                   <>
                     <FileCheck size={18} /> DOCUMENT UPLOADED
                   </>
@@ -793,18 +827,43 @@ const CureAnalyzer = ({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={handlePrint}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
-                  >
-                    <Printer size={16} /> Print Copy
-                  </button>
-                  <button
-                    onClick={() => setShowDigitalCopy(false)}
-                    className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
-                  >
-                    <X size={20} />
-                  </button>
+                  {!isEditing ? (
+                    <>
+                      <button
+                        onClick={startEditing}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs uppercase tracking-wider hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                      >
+                        <Edit size={16} /> Edit
+                      </button>
+                      <button
+                        onClick={handlePrint}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+                      >
+                        <Printer size={16} /> Print Copy
+                      </button>
+                      <button
+                        onClick={() => setShowDigitalCopy(false)}
+                        className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
+                      >
+                        <X size={20} />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={cancelEdit}
+                        className="px-4 py-2 rounded-lg bg-slate-200 text-slate-600 font-bold text-xs uppercase tracking-wider hover:bg-slate-300 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={saveEdit}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20"
+                      >
+                        <Check size={16} /> Save Changes
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -824,10 +883,55 @@ const CureAnalyzer = ({
                       </div>
                     </div>
                   </div>
-                  <div className="prose max-w-none text-black [&_*]:text-black [&_p]:text-black [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_li]:text-black [&_strong]:text-black [&_td]:text-black [&_th]:text-black">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {analysisResult.analysis.digital_copy}
-                    </ReactMarkdown>
+                  {/* Actual Markdown Content - Forcing Colors with Inline Styles */}
+                  <div className="markdown-content text-left" style={{ textAlign: 'left', color: '#000000' }}>
+                    <style>{`
+                          .markdown-content * {
+                              color: #000000 !important;
+                              opacity: 1 !important;
+                              text-align: left !important;
+                          }
+                          .markdown-content strong {
+                              font-weight: 800 !important;
+                              color: #000000 !important;
+                          }
+                          .markdown-content li {
+                              color: #000000 !important;
+                          }
+                          .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+                              color: #000000 !important;
+                              font-weight: 800 !important;
+                          }
+                          .markdown-content table {
+                              width: 100%;
+                              border-collapse: collapse;
+                              margin: 1em 0;
+                          }
+                          .markdown-content th, .markdown-content td {
+                              border: 1px solid #cbd5e1;
+                              padding: 8px;
+                              color: #000 !important;
+                          }
+                          .markdown-content th {
+                              background-color: #f1f5f9;
+                              font-weight: bold;
+                          }
+                      `}</style>
+                    <div className="prose prose-sm max-w-none text-black">
+                      {isEditing ? (
+                        <textarea
+                          value={tempContent}
+                          onChange={(e) => setTempContent(e.target.value)}
+                          className="w-full h-[60vh] p-4 rounded-xl border border-slate-300 bg-slate-50 font-mono text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none shadow-inner"
+                          placeholder="Edit markdown content..."
+                          style={{ color: '#000000' }}
+                        />
+                      ) : (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {analysisResult.analysis.digital_copy}
+                        </ReactMarkdown>
+                      )}
+                    </div>
                   </div>
                   {/* Footer */}
                   <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono uppercase tracking-widest">

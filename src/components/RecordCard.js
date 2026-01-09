@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { ref, getDownloadURL } from 'firebase/storage';
+import { doc, updateDoc } from 'firebase/firestore';
 import curebirdLogo from '../curebird_logo.png';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Stethoscope, Hospital, Pill, HeartPulse, Trash2, Edit, ExternalLink, Printer, X, Eye } from 'lucide-react';
+import { FileText, Stethoscope, Hospital, Pill, HeartPulse, Trash2, Edit, ExternalLink, Printer, X, Eye, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-const RecordCard = ({ record, storage, onEdit, onDelete }) => {
+const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) => {
     const ICONS = {
         prescription: <Pill className="text-rose-400" />,
         test_report: <FileText className="text-fuchsia-400" />,
@@ -33,6 +34,33 @@ const RecordCard = ({ record, storage, onEdit, onDelete }) => {
 
     const [isLoadingFile, setIsLoadingFile] = useState(false);
     const [showDigitalModal, setShowDigitalModal] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [tempContent, setTempContent] = useState("");
+
+    const startEditing = () => {
+        setTempContent(record.digital_copy);
+        setIsEditing(true);
+    };
+
+    const cancelEdit = () => {
+        setIsEditing(false);
+        setTempContent("");
+    };
+
+    const saveEdit = async () => {
+        if (!db || !userId || !appId) return;
+        try {
+            const recordRef = doc(db, `artifacts/${appId}/users/${userId}/medical_records`, record.id);
+            await updateDoc(recordRef, {
+                digital_copy: tempContent
+            });
+            setIsEditing(false);
+            // The snapshot listener in parent will update the UI automatically
+        } catch (error) {
+            console.error("Error updating digital copy:", error);
+            alert("Failed to save changes. Please try again.");
+        }
+    };
 
     const handlePrint = () => {
         const printContent = record.digital_copy;
@@ -175,18 +203,43 @@ const RecordCard = ({ record, storage, onEdit, onDelete }) => {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <button
-                                        onClick={handlePrint}
-                                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
-                                    >
-                                        <Printer size={16} /> Print Copy
-                                    </button>
-                                    <button
-                                        onClick={() => setShowDigitalModal(false)}
-                                        className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
-                                    >
-                                        <X size={20} />
-                                    </button>
+                                    {!isEditing ? (
+                                        <>
+                                            <button
+                                                onClick={startEditing}
+                                                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs uppercase tracking-wider hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                                            >
+                                                <Edit size={16} /> Edit
+                                            </button>
+                                            <button
+                                                onClick={handlePrint}
+                                                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+                                            >
+                                                <Printer size={16} /> Print Copy
+                                            </button>
+                                            <button
+                                                onClick={() => setShowDigitalModal(false)}
+                                                className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
+                                            >
+                                                <X size={20} />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={cancelEdit}
+                                                className="px-4 py-2 rounded-lg bg-slate-200 text-slate-600 font-bold text-xs uppercase tracking-wider hover:bg-slate-300 transition-colors"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                onClick={saveEdit}
+                                                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20"
+                                            >
+                                                <Check size={16} /> Save Changes
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
 
@@ -207,11 +260,55 @@ const RecordCard = ({ record, storage, onEdit, onDelete }) => {
                                         </div>
                                     </div>
 
-                                    {/* Actual Markdown Content - Forcing Colors */}
-                                    <div className="prose max-w-none text-black [&_*]:text-black [&_p]:text-black [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_li]:text-black [&_strong]:text-black [&_td]:text-black [&_th]:text-black">
-                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                            {record.digital_copy}
-                                        </ReactMarkdown>
+                                    {/* Actual Markdown Content - Forcing Colors with Inline Styles */}
+                                    <div className="markdown-content text-left" style={{ textAlign: 'left', color: '#000000' }}>
+                                        <style>{`
+                                            .markdown-content * {
+                                                color: #000000 !important;
+                                                opacity: 1 !important;
+                                                text-align: left !important;
+                                            }
+                                            .markdown-content strong {
+                                                font-weight: 800 !important;
+                                                color: #000000 !important;
+                                            }
+                                            .markdown-content li {
+                                                color: #000000 !important;
+                                            }
+                                            .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+                                                color: #000000 !important;
+                                                font-weight: 800 !important;
+                                            }
+                                            .markdown-content table {
+                                                width: 100%;
+                                                border-collapse: collapse;
+                                                margin: 1em 0;
+                                            }
+                                            .markdown-content th, .markdown-content td {
+                                                border: 1px solid #cbd5e1;
+                                                padding: 8px;
+                                                color: #000 !important;
+                                            }
+                                            .markdown-content th {
+                                                background-color: #f1f5f9;
+                                                font-weight: bold;
+                                            }
+                                        `}</style>
+                                        <div className="prose prose-sm max-w-none text-black">
+                                            {isEditing ? (
+                                                <textarea
+                                                    value={tempContent}
+                                                    onChange={(e) => setTempContent(e.target.value)}
+                                                    className="w-full h-[60vh] p-4 rounded-xl border border-slate-300 bg-slate-50 font-mono text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none shadow-inner"
+                                                    placeholder="Edit markdown content..."
+                                                    style={{ color: '#000000' }}
+                                                />
+                                            ) : (
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                    {record.digital_copy}
+                                                </ReactMarkdown>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Footer */}
