@@ -62,7 +62,7 @@ const RecordCard = ({ record, storage, onEdit, onDelete }) => {
                                 <p style="margin:5px 0 0; color: #64748b; font-size: 12px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">Curebird Verified Record</p>
                             </div>
                             <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
-                        <img src="${window.location.origin + curebirdLogo}" alt="Curebird Logo" style="height: 40px; margin-bottom: 5px;" />
+                        <img src="${window.location.origin}/favicon.ico" alt="Curebird Logo" style="height: 40px; margin-bottom: 5px;" />
                         <div style="font-size: 14px; font-weight: bold; color: #64748b;">CUREBIRD</div>
                     </div>
                 </div>
@@ -161,29 +161,29 @@ const RecordCard = ({ record, storage, onEdit, onDelete }) => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-[#1c1605] border border-amber-500/20 w-full max-w-4xl h-[85vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden"
+                            className="bg-white border border-amber-500/20 w-full max-w-4xl h-[85vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden"
                         >
                             {/* Header */}
-                            <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-white/5">
+                            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-amber-500/20 rounded-lg text-amber-500">
+                                    <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
                                         <FileText size={20} />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold text-white">Digital Transcript</h3>
-                                        <p className="text-[10px] text-amber-500/60 uppercase tracking-widest font-black">AI-Generated Digitization</p>
+                                        <h3 className="text-lg font-bold text-slate-900">Digital Transcript</h3>
+                                        <p className="text-[10px] text-amber-600 uppercase tracking-widest font-black">AI-Generated Digitization</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <button
                                         onClick={handlePrint}
-                                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors"
+                                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
                                     >
                                         <Printer size={16} /> Print Copy
                                     </button>
                                     <button
                                         onClick={() => setShowDigitalModal(false)}
-                                        className="p-2 text-stone-500 hover:text-white rounded-full hover:bg-white/10 transition-all"
+                                        className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
                                     >
                                         <X size={20} />
                                     </button>
@@ -199,9 +199,9 @@ const RecordCard = ({ record, storage, onEdit, onDelete }) => {
                                             <h1 className="text-2xl font-black text-slate-900 m-0 leading-none">DIGITAL TRANSCRIPT</h1>
                                             <p className="text-amber-600 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
                                         </div>
-                                        <div className="text-right opacity-50">
-                                            <div className="flex items-center justify-end gap-2 text-slate-400 font-bold">
-                                                <img src={curebirdLogo} alt="Curebird Logo" className="h-8 w-auto opacity-70" />
+                                        <div className="text-right opacity-100">
+                                            <div className="flex items-center justify-end gap-2 text-slate-900 font-bold">
+                                                <img src="/favicon.ico" alt="Curebird Logo" className="h-10 w-auto" />
                                                 <span className="text-xl">Curebird</span>
                                             </div>
                                         </div>

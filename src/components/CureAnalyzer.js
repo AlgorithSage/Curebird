@@ -265,7 +265,7 @@ const CureAnalyzer = ({
                             <p style="margin:5px 0 0; color: #f59e0b; font-size: 12px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">Curebird Verified Record</p>
                         </div>
                         <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
-                            <img src="${window.location.origin + curebirdLogo}" alt="Curebird Logo" style="height: 40px; margin-bottom: 5px;" />
+                            <img src="${window.location.origin}/favicon.ico" alt="Curebird Logo" style="height: 40px; margin-bottom: 5px;" />
                             <div style="font-size: 14px; font-weight: bold; color: #64748b;">CUREBIRD</div>
                         </div>
                     </div>
@@ -704,7 +704,14 @@ const CureAnalyzer = ({
               </div>
             )}
 
-            <div className="mt-8 flex gap-4">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <button
+                disabled={!analysisResult?.analysis?.digital_copy}
+                onClick={() => setShowDigitalCopy(true)}
+                className="py-4 rounded-xl font-bold text-white bg-gradient-to-r from-violet-600 via-purple-600 to-violet-600 bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-[0_0_30px_rgba(124,58,237,0.3)] hover:shadow-[0_0_50px_rgba(124,58,237,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm"
+              >
+                <FileText size={18} /> View Digital
+              </button>
               <button
                 disabled={!analysisResult}
                 onClick={handleSave}
@@ -812,7 +819,7 @@ const CureAnalyzer = ({
                     </div>
                     <div className="text-right opacity-100">
                       <div className="flex items-center justify-end gap-2 text-slate-900 font-bold">
-                        <img src={curebirdLogo} alt="Curebird Logo" className="h-10 w-auto" />
+                        <img src="/favicon.ico" alt="Curebird Logo" className="h-10 w-auto" />
                         <span className="text-xl">Curebird</span>
                       </div>
                     </div>
