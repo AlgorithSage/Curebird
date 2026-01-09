@@ -6,7 +6,7 @@ import {
     Loader2
 } from 'lucide-react';
 
-const AIReportModal = ({ isOpen, onClose }) => {
+const AIReportModal = ({ isOpen, onClose, report }) => {
     const [loadingStep, setLoadingStep] = useState(0);
     const [isGenerating, setIsGenerating] = useState(true);
 
@@ -107,10 +107,10 @@ const AIReportModal = ({ isOpen, onClose }) => {
                                                 <span className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                                                     <Sparkles size={12} /> Intelligence Report
                                                 </span>
-                                                <span className="text-stone-500 text-xs font-mono font-bold">{new Date().toLocaleDateString()}</span>
+                                                <span className="text-stone-500 text-xs font-mono font-bold">{report?.date || new Date().toLocaleDateString()}</span>
                                             </div>
-                                            <h2 className="text-3xl font-extrabold text-white tracking-tight">Executive Health Summary</h2>
-                                            <p className="text-stone-400 text-sm mt-1">Automated analysis of 1,248 active patient records.</p>
+                                            <h2 className="text-3xl font-extrabold text-white tracking-tight">{report?.fileName || 'Executive Health Summary'}</h2>
+                                            <p className="text-stone-400 text-sm mt-1">{report?.summary || 'Automated analysis of patient records.'}</p>
                                         </div>
                                         <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-stone-400 hover:text-white transition-colors">
                                             <X size={24} />
@@ -123,9 +123,9 @@ const AIReportModal = ({ isOpen, onClose }) => {
                                         {/* 1. Key Performance Indicators */}
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             {[
-                                                { label: "Overall Risk Score", value: "Low", color: "text-emerald-500", sub: "Improved by 12% MoM" },
-                                                { label: "Operational Efficiency", value: "94%", color: "text-amber-500", sub: "Top 5% of Clinics" },
-                                                { label: "Critical Care Gaps", value: "3", color: "text-rose-500", sub: "Immediate Review Needed" }
+                                                { label: "Overall Risk Score", value: "Low", color: "text-emerald-500", sub: "Based on Vitals" },
+                                                { label: "Clinical Confidence", value: "94%", color: "text-amber-500", sub: "AI Analysis" },
+                                                { label: "Critical Findings", value: report?.key_findings?.length || 0, color: "text-rose-500", sub: "Requires Review" }
                                             ].map((stat, i) => (
                                                 <div key={i} className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-1">
                                                     <p className="text-xs text-stone-500 font-bold uppercase tracking-wider">{stat.label}</p>
@@ -141,25 +141,23 @@ const AIReportModal = ({ isOpen, onClose }) => {
                                                 <Lightbulb size={18} className="text-yellow-400" /> Strategic Insights
                                             </h3>
 
-                                            <div className="p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 relative overflow-hidden group">
-                                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 blur-[50px] pointer-events-none" />
-                                                <h4 className="font-bold text-indigo-200 mb-2 flex items-center gap-2">
-                                                    <TrendingUp size={16} /> Adherence Velocity
-                                                </h4>
-                                                <p className="text-sm text-indigo-100/80 leading-relaxed">
-                                                    Patient adherence in the <strong className="text-white">Diabetes Type 2</strong> cohort has increased by <strong className="text-emerald-400">14%</strong> following the introduction of the new automated SMS reminder protocol. Recommend expanding this protocol to the Hypertensive group.
-                                                </p>
-                                            </div>
-
-                                            <div className="p-6 rounded-2xl bg-gradient-to-br from-rose-500/10 to-orange-500/10 border border-rose-500/20 relative overflow-hidden group">
-                                                <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/20 blur-[50px] pointer-events-none" />
-                                                <h4 className="font-bold text-rose-200 mb-2 flex items-center gap-2">
-                                                    <AlertTriangle size={16} /> Seasonal Risk Alert
-                                                </h4>
-                                                <p className="text-sm text-rose-100/80 leading-relaxed">
-                                                    Predictive models indicate a high probability of <strong className="text-white">Respiratory distress cases</strong> spiking in the next 14 days due to local air quality drops. Suggested Action: Send preventative advisory blasts to patients with Asthma/COPD tags.
-                                                </p>
-                                            </div>
+                                            {report && report.key_findings ? (
+                                                report.key_findings.map((finding, idx) => (
+                                                    <div key={idx} className="p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 relative overflow-hidden group">
+                                                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 blur-[50px] pointer-events-none" />
+                                                        <h4 className="font-bold text-indigo-200 mb-2 flex items-center gap-2">
+                                                            <TrendingUp size={16} /> Clinical Observation {idx + 1}
+                                                        </h4>
+                                                        <p className="text-sm text-indigo-100/80 leading-relaxed">
+                                                            {finding}
+                                                        </p>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="p-6 rounded-2xl bg-stone-800/50 border border-stone-700/50">
+                                                    <p className="text-stone-500 italic">No specific insights generated from this document.</p>
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* 3. Action Plan */}

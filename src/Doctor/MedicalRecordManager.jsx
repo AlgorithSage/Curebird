@@ -32,7 +32,7 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                 title: 'Telehealth Session Note',
                 description: 'Patient presented with mild chest discomfort. BP 120/80. Recommended rest and hydration. Scheduled follow-up in 2 days.',
                 date: new Date().toISOString().split('T')[0],
-                patientName: 'Sarah Connor',
+                patientName: 'Demo Patient',
                 doctorName: propUser?.displayName || 'Sohan Ghosh',
                 priority: 'urgent',
                 vitals: { bp: '120/80', heartRate: '72', spo2: '98' }
@@ -43,7 +43,7 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                 title: 'Amoxicillin 500mg',
                 description: 'Take one capsule three times a day for 7 days.',
                 date: '2023-10-26',
-                patientName: 'Sarah Connor',
+                patientName: 'Demo Patient',
                 doctorName: propUser?.displayName || 'Sohan Ghosh',
                 priority: 'routine'
             },
@@ -53,7 +53,7 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                 title: 'Complete Blood Count (CBC)',
                 description: 'Hemoglobin: 14.5 g/dL, WBC: 6.5, Platelets: 250k. All values within normal range.',
                 date: '2023-10-25',
-                patientName: 'Sarah Connor',
+                patientName: 'Demo Patient',
                 doctorName: propUser?.displayName || 'Sohan Ghosh',
                 priority: 'routine'
             }

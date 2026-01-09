@@ -8,7 +8,8 @@ import {
 import { auth, db } from '../firebase';
 import { addDoc, collection } from 'firebase/firestore';
 
-const AnalyzeDataModal = ({ isOpen, onClose, onNavigate }) => {
+const AnalyzeDataModal = (props) => {
+    const { isOpen, onClose, onNavigate, onAnalysisComplete } = props;
     const [dragActive, setDragActive] = useState(false);
     const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
@@ -90,9 +91,10 @@ const AnalyzeDataModal = ({ isOpen, onClose, onNavigate }) => {
                 await addDoc(collection(db, 'medical_records'), {
                     doctorId: currentUser.uid,
                     doctorName: currentUser.displayName || 'Dr. Sohan Ghosh',
-                    patientName: 'Sarah Connor', // Hardcoded for Demo Flow
+                    patientName: props.patientName || 'General Record',
                     type: 'lab_report',
                     title: 'AI Clinical Analysis Report',
+                    fileName: files[0]?.name || 'Uploaded Document',
                     description: result.summary,
                     date: new Date().toISOString().split('T')[0],
                     priority: 'urgent',
@@ -105,6 +107,14 @@ const AnalyzeDataModal = ({ isOpen, onClose, onNavigate }) => {
                 // Small delay for UX
                 setTimeout(() => {
                     setSaving(false);
+                    if (onAnalysisComplete) {
+                        onAnalysisComplete({
+                            ...result,
+                            id: Date.now(),
+                            fileName: files[0]?.name || 'Uploaded Document',
+                            date: new Date().toISOString().split('T')[0]
+                        });
+                    }
                     onClose();
                     if (onNavigate) {
                         onNavigate('medical_records');
