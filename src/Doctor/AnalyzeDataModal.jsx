@@ -45,38 +45,54 @@ const AnalyzeDataModal = (props) => {
         }
     };
 
-    const handleFiles = (fileList) => {
+    const handleFiles = async (fileList) => {
         const newFiles = Array.from(fileList);
         setFiles(prev => [...prev, ...newFiles]);
 
-        // Simulate "Auto-Analysis" Trigger
+        if (newFiles.length === 0) return;
+
+        // Start Process
         setUploading(true);
-        setTimeout(() => {
+
+        // Prepare Upload
+        const formData = new FormData();
+        formData.append('file', newFiles[0]);
+
+        try {
+            // Artificial delay for upload feel (optional, but good for UX)
+            await new Promise(resolve => setTimeout(resolve, 1500));
             setUploading(false);
             setAnalyzing(true);
-            setTimeout(() => {
-                setAnalyzing(false);
-                setResult({
-                    status: 'Complete',
-                    summary: 'Comprehensive analysis of the uploaded PDF indicates a positive response to the current treatment plan, though some electrolytic imbalances persist.',
-                    extracted_vitals: [
-                        { label: 'Blood Pressure', value: '128/82 mmHg', status: 'normal' },
-                        { label: 'Heart Rate', value: '78 bpm', status: 'normal' },
-                        { label: 'Potassium', value: '5.2 mmol/L', status: 'high' }
-                    ],
-                    key_findings: [
-                        'Lipid profile shows significant improvement (LDL down 15%).',
-                        'Kidney function markers (eGFR) remain stable at 58 mL/min.',
-                        'Patient self-reported mild dizziness in the mornings.'
-                    ],
-                    recommendation: 'Continue current statin dosage. Schedule follow-up for electrolyte panel in 2 weeks.',
-                    medication_adjustments: [
-                        { name: 'Lisinopril', action: 'Maintain', dose: '10mg' },
-                        { name: 'Potassium Suppl.', action: 'Suspend', dose: 'N/A' }
-                    ]
-                });
-            }, 2500); // Analysis simulation time
-        }, 1500); // Upload simulation time
+
+            // Call Backend Analysis (Gemini 2.0 Flash)
+            const response = await fetch('http://localhost:5001/api/analyze-report', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Analysis failed');
+
+            const data = await response.json();
+
+            setResult({
+                ...data, // Contains summary, extracted_vitals, key_findings, etc.
+                status: 'Complete'
+            });
+
+        } catch (error) {
+            console.error("Analysis Error:", error);
+            // Fallback for safety or notify user
+            setResult({
+                status: 'Error',
+                summary: "We couldn't process this document. Please ensure it is a clear medical image.",
+                extracted_vitals: [],
+                key_findings: ["Analysis failed."],
+                recommendation: "Please try uploading again.",
+                medication_adjustments: []
+            });
+        } finally {
+            setAnalyzing(false);
+        }
     };
 
     const handleAddToRecord = async () => {
@@ -247,6 +263,7 @@ const AnalyzeDataModal = (props) => {
                                                 <div className="p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/20">
                                                     <h4 className="flex items-center gap-2 text-cyan-400 font-bold mb-2">
                                                         <CheckCircle2 size={18} /> Analysis Complete
+                                                        <span className="text-[10px] bg-indigo-900/50 px-2 py-0.5 rounded text-indigo-300 ml-2">Powered by Llama 4 Vision</span>
                                                     </h4>
                                                     <p className="text-cyan-100/80 text-sm leading-relaxed">
                                                         {result.summary}
@@ -279,7 +296,7 @@ const AnalyzeDataModal = (props) => {
 
                                                 {/* Medication Adjustments */}
                                                 <div>
-                                                    <h5 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-3">Suggested Adjustments</h5>
+                                                    <h5 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-3">Medications & Treatment Plan</h5>
                                                     <div className="grid grid-cols-2 gap-3">
                                                         {result.medication_adjustments.map((med, i) => (
                                                             <div key={i} className={`p-3 rounded-lg border flex flex-col ${med.action === 'Suspend' ? 'bg-red-500/10 border-red-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>

@@ -16,9 +16,9 @@ class GeminiHealthAssistant:
         
         genai.configure(api_key=api_key)
         
-        # Use Gemini 2.0 Flash (available for this key)
+        # Use Gemini 2.5 Flash (Available Model)
         self.model = genai.GenerativeModel(
-            model_name='gemini-2.0-flash',
+            model_name='gemini-2.5-flash',
             generation_config={
                 'temperature': 0.7,
                 'top_p': 0.95,
@@ -28,19 +28,19 @@ class GeminiHealthAssistant:
             safety_settings=[
                 {
                     "category": "HARM_CATEGORY_HARASSMENT",
-                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                    "threshold": "BLOCK_NONE"
                 },
                 {
                     "category": "HARM_CATEGORY_HATE_SPEECH",
-                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                    "threshold": "BLOCK_NONE"
                 },
                 {
                     "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                    "threshold": "BLOCK_NONE"
                 },
                 {
                     "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                    "threshold": "BLOCK_NONE"
                 }
             ]
         )
@@ -166,6 +166,60 @@ Remember: You are an informational assistant, not a replacement for professional
                 'error': str(e)
             }
     
+    def analyze_clinical_document(self, file_stream):
+        """
+        Analyze a clinical document (PDF/Image) and return structured clinical data.
+        """
+        try:
+            import PIL.Image
+            
+            # Load image from stream
+            image = PIL.Image.open(file_stream)
+            
+            prompt = """
+            You are an expert Clinical AI Assistant. Analyze this medical document (lab report, discharge summary, or prescription) and extract the following structured data in strict JSON format.
+            
+            Output Format:
+            {
+                "summary": "Key clinical summary (2 sentences max)",
+                "extracted_vitals": [
+                    {"label": "Parameter Name", "value": "Value Unit", "status": "normal/high/low/critical"}
+                ],
+                "key_findings": [
+                    "Finding 1", "Finding 2"
+                ],
+                "medication_adjustments": [
+                    {"name": "Drug Name", "action": "Start/Stop/Continue/Adjust", "dose": "Dosage Info"}
+                ],
+                "recommendation": "Clinical recommendation or next steps"
+            }
+            
+            If specific data (like vitals) is missing, omit it or leave empty. 
+            Ensure 'status' is inferred based on standard medical ranges if not explicitly stated.
+            """
+            
+            response = self.model.generate_content([prompt, image])
+            
+            # Extract JSON from response
+            text = response.text
+            # Clean up potential markdown code blocks
+            if text.startswith('```json'):
+                text = text[7:]
+            if text.endswith('```'):
+                text = text[:-3]
+                
+            return json.loads(text.strip())
+            
+        except Exception as e:
+            print(f"Gemini Analysis Error: {e}")
+            return {
+                "summary": f"Analysis failed: {str(e)[:100]}...", # return error for debug
+                "extracted_vitals": [],
+                "key_findings": ["Unable to process document.", "Details: " + str(e)],
+                "recommendation": "Manual review required.",
+                "medication_adjustments": []
+            }
+
     def clear_conversation(self, conversation_id):
         """Clear a specific conversation history."""
         if conversation_id in self.conversations:

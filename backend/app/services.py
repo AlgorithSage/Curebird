@@ -178,6 +178,76 @@ def perform_ocr(file_stream):
         print(f"OCR ERROR: Failed to perform extraction: {e}")
         return ""
 
+def analyze_clinical_groq(file_stream):
+    """
+    Analyze clinical document using Groq Llama 3.2 Vision with strict JSON schema.
+    Fallback for when Gemini is unavailable.
+    """
+    try:
+        api_key = os.getenv('GROQ_API_KEY')
+        if not api_key:
+            raise ValueError("Groq API key missing")
+            
+        client = Groq(api_key=api_key)
+        
+        # Encode image
+        file_stream.seek(0)
+        base64_image = base64.b64encode(file_stream.read()).decode('utf-8')
+        
+        prompt = """
+        You are a Senior Chief Medical Officer. Analyze this medical document with extreme attention to detail.
+        
+        Extract the following structured data in EXACT JSON format:
+        {
+            "summary": "Detailed clinical summary of the patient's condition, history, and current visit reason. Include specific complaints and duration.",
+            "extracted_vitals": [
+                {"label": "Vital Name (e.g. BP, HR, Temp)", "value": "Value with unit", "status": "normal/high/low/critical"}
+            ],
+            "key_findings": [
+                "List EVERY SINGLE diagnosis, disease history, and symptom mentioned (e.g. 'GerD 8yr', 'Asthma', 'Allergy to X'). Be comprehensive."
+            ],
+            "medication_adjustments": [
+                {"name": "Medication Name", "action": "Prescribed/Continued", "dose": "Dosage & Frequency (e.g. 10mg BD)"}
+            ],
+            "recommendation": "Clinical plan and follow-up instructions."
+        }
+        
+        CRITICAL RULES:
+        1. Capture ALL medications listed in the 'Rx' or 'Treatment' section.
+        2. Capture ALL past history and current diagnoses in 'key_findings'.
+        3. If a vital is missing, do not invent it.
+        4. Return ONLY valid JSON.
+        """
+        
+        completion = client.chat.completions.create(
+            model="meta-llama/llama-4-maverick-17b-128e-instruct",
+            messages=[
+                {
+                    "role": "user", 
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                    ]
+                }
+            ],
+            temperature=0.1,
+            max_tokens=2048,
+            response_format={"type": "json_object"}
+        )
+        
+        content = completion.choices[0].message.content
+        return json.loads(content)
+        
+    except Exception as e:
+        print(f"Groq Analysis Error: {e}")
+        return {
+            "summary": "Analysis failed (Groq fallback).",
+            "extracted_vitals": [],
+            "key_findings": [f"Error: {str(e)}"],
+            "recommendation": "Please check API configuration.",
+            "medication_adjustments": []
+        }
+
 def analyze_with_vlm(file_stream, custom_api_key=None):
     """
     Directly analyze medical report images using Groq VLM.

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 import traceback
-from gemini_service import get_health_assistant
+from gemini_service import get_health_assistant as get_gemini_assistant
 
 app = Blueprint('health_routes', __name__)
 
@@ -36,13 +36,16 @@ def analyze_report():
             return jsonify({"error": "No file selected for uploading"}), 400
 
         if file:
-            # New Step: Direct VLM Analysis (OCR + Extraction in one pass)
-            analysis_results = services.analyze_with_vlm(file.stream)
+            # Clinical Analysis using Groq Llama 3.2 (Fallback for Gemini)
+            # assistant = get_gemini_assistant()
+            # analysis_results = assistant.analyze_clinical_document(file.stream)
             
-            return jsonify({
-                "raw_text": "Extracted via VLM", # VLM combines text and analysis
-                "analysis": analysis_results
-            })
+            analysis_results = services.analyze_clinical_groq(file.stream)
+            
+            # Add status field for frontend compatibility
+            analysis_results['status'] = 'Complete'
+            
+            return jsonify(analysis_results)
             
     except Exception as e:
         traceback.print_exc()
