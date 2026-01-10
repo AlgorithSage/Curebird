@@ -60,7 +60,7 @@ const TypingIndicator = () => (
     </motion.div>
 );
 
-const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db, appId }) => {
+const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db, appId, initialContext }) => {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -87,16 +87,25 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
         // Load disease context
         fetchDiseaseContext();
 
-        // Fetch and Summarize Recent Records
-        fetchAndSummarizeRecords();
-
-        // Add welcome message
-        setMessages([{
-            text: `Hello ${user?.firstName ? `**${user.firstName}**` : 'there'}! Welcome to **Cure AI**. I provide secure, expert-level medical insights and health guidance powered by advanced intelligence. How can I support your wellness today?`,
-            isUser: false,
-            timestamp: new Date().toISOString()
-        }]);
-    }, []);
+        if (initialContext) {
+            // Case 1: Context injected from Analyzer
+            setMedicalSummary(initialContext);
+            setMessages([{
+                text: `**Analysis Loaded.** I have the context of your uploaded document. Ask me anything about the medicines, diagnosis, or side effects mentioned in it.`,
+                isUser: false,
+                timestamp: new Date().toISOString()
+            }]);
+        } else {
+            // Case 2: Default Load (Fetch recent records)
+            fetchAndSummarizeRecords();
+            // Add welcome message
+            setMessages([{
+                text: `Hello ${user?.firstName ? `**${user.firstName}**` : 'there'}! Welcome to **Cure AI**. I provide secure, expert-level medical insights and health guidance powered by advanced intelligence. How can I support your wellness today?`,
+                isUser: false,
+                timestamp: new Date().toISOString()
+            }]);
+        }
+    }, [initialContext]);
 
     const fetchDiseaseContext = async () => {
         try {

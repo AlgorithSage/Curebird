@@ -42,6 +42,12 @@ export default function App() {
     const [authError, setAuthError] = useState(null);
     const [activeView, setActiveView] = useState('Dashboard');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [chatContext, setChatContext] = useState(null); // New state for passing context to Chat
+
+    const handleAskAI = (context) => {
+        setChatContext(context);
+        setActiveView('Cure AI');
+    };
 
     useEffect(() => {
         let profileUnsubscribe = null;
@@ -125,7 +131,8 @@ export default function App() {
             onLogout: handleLogout,
             onLoginClick: () => setIsAuthModalOpen(true),
             onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen),
-            onNavigate: setActiveView
+            onNavigate: setActiveView,
+            onAskAI: handleAskAI // Pass handler to all pages
         };
 
         switch (activeView) {
@@ -136,7 +143,7 @@ export default function App() {
             case 'Cure Tracker': return <CureTracker {...pageProps} />;
             case 'Cure Analyzer': return <CureAnalyzer {...pageProps} />;
             case 'Cure Stat': return <CureStat {...pageProps} />;
-            case 'Cure AI': return <CureAI {...pageProps} />;
+            case 'Cure AI': return <CureAI {...pageProps} initialContext={chatContext} />; // Pass context to Chat
             case 'Settings': return <Settings {...pageProps} />;
             case 'Contact': return <Contact {...pageProps} db={db} />;
             case 'Terms': return <TermsOfService {...pageProps} />;

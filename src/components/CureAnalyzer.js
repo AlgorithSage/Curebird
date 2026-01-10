@@ -34,6 +34,7 @@ const CureAnalyzer = ({
   onLoginClick,
   onToggleSidebar,
   onNavigate,
+  onAskAI,
 }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
@@ -179,6 +180,33 @@ const CureAnalyzer = ({
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleAskAIClick = () => {
+    if (!analysisResult?.analysis) return;
+
+    const analysis = analysisResult.analysis;
+    const medList = analysis.medications?.map(m =>
+      `- ${m.name} (${m.dosage}, ${m.frequency}) ${m.is_corrected ? '[Verified]' : ''}`
+    ).join('\n') || 'None';
+
+    const diseaseList = analysis.diseases?.join(', ') || 'None';
+
+    const context = `
+    CURRENT DOCUMENT CONTEXT:
+    User has uploaded a medical document.
+    
+    Analysis Results:
+    - Identified Conditions: ${diseaseList}
+    - Medications Found:
+    ${medList}
+    
+    Original Summary: ${analysisResult.summary}
+    
+    Please answer general questions based on this document.
+    `;
+
+    onAskAI(context);
   };
 
   const handleManualSave = (type) => {
@@ -760,7 +788,7 @@ const CureAnalyzer = ({
               </div>
             )}
 
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <button
                 disabled={!analysisResult?.analysis?.digital_copy}
                 onClick={() => setShowDigitalCopy(true)}
@@ -768,6 +796,15 @@ const CureAnalyzer = ({
               >
                 <FileText size={18} /> View Digital
               </button>
+
+              <button
+                disabled={!analysisResult}
+                onClick={handleAskAIClick}
+                className="py-4 rounded-xl font-bold text-white bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-[0_0_30px_rgba(244,63,94,0.3)] hover:shadow-[0_0_50px_rgba(244,63,94,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm"
+              >
+                <Bot size={18} /> Ask Cure AI
+              </button>
+
               <button
                 disabled={!analysisResult}
                 onClick={handleSave}
