@@ -9,3 +9,4 @@ Pillow
 pytesseract
 gunicorn
 pymupdf
+cerebras_cloud_sdk
