@@ -187,7 +187,7 @@ const CureAnalyzer = ({
 
     const analysis = analysisResult.analysis;
     const medList = analysis.medications?.map(m =>
-      `- ${m.name} (${m.dosage}, ${m.frequency}) ${m.is_corrected ? '[Verified]' : ''}`
+      `- ${m.name || m.medicine_name || m.input || 'Unknown Medicine'} (Dosage: ${typeof m.dosage === 'object' ? (m.dosage.dosage || JSON.stringify(m.dosage)) : (m.dosage || 'N/A')}, Freq: ${m.frequency || 'N/A'}) ${m.is_corrected ? '[Verified]' : ''}`
     ).join('\n') || 'None';
 
     const diseaseList = analysis.diseases?.join(', ') || 'None';
