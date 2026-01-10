@@ -214,6 +214,76 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                     </div>
                 </section>
 
+                {/* 3. CORE INTELLIGENCE MODULES (New Promotional Section) */}
+                <section className="py-24 px-6 max-w-7xl mx-auto relative">
+                    <div className="absolute inset-0 bg-blue-500/5 blur-[100px] rounded-full pointer-events-none"></div>
+
+                    <div className="text-center mb-20 relative z-10">
+                        <h2 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">
+                            Power Under the Hood
+                        </h2>
+                        <p className="text-slate-400 text-xl max-w-2xl mx-auto">
+                            CureBird isn't just an app; it's a <span className="text-white font-bold">Quad-Core AI Feature System</span> designed to act as your primary health defense system.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8 relative z-10">
+                        {[
+                            {
+                                title: "CureAnalyzer™",
+                                subtitle: "Triple-Core Extraction",
+                                desc: "Upload any messy prescription. Our 3-stage AI pipeline extracts, validates, and auto-corrects every medication name against global medical databases.",
+                                icon: <ScanEye size={40} className="text-sky-400" />,
+                                color: "border-sky-500/30",
+                                bg: "bg-sky-500/10"
+                            },
+                            {
+                                title: "CureStat™",
+                                subtitle: "Vitals & Environment",
+                                desc: "A live dashboard correlating your real-time heart rate and SpO2 with local AQI and pollen data to predict respiratory risks before they happen.",
+                                icon: <Activity size={40} className="text-emerald-400" />,
+                                color: "border-emerald-500/30",
+                                bg: "bg-emerald-500/10"
+                            },
+                            {
+                                title: "Cure AI Coach",
+                                subtitle: "24/7 Senior Consultant",
+                                desc: "Not just a chatbot. Context-aware intelligence that knows your specific allergies and history, offering personalized pharmacological advice.",
+                                icon: <Bot size={40} className="text-amber-400" />,
+                                color: "border-amber-500/30",
+                                bg: "bg-amber-500/10"
+                            },
+                            {
+                                title: "Secure Vault",
+                                subtitle: "Longitudinal History",
+                                desc: "Bank-grade encrypted storage that creates a searchable, chronological timeline of your entire medical life. Never lose a lab report again.",
+                                icon: <Database size={40} className="text-purple-400" />,
+                                color: "border-purple-500/30",
+                                bg: "bg-purple-500/10"
+                            }
+                        ].map((item, idx) => (
+                            <div key={idx} className="group relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
+                                <div className={`glass-card h-full p-8 flex flex-col items-start gap-6 hover:border-opacity-100 transition-all duration-300 ${item.color}`}>
+                                    <div className={`p-4 rounded-2xl ${item.bg} border border-white/5 shadow-[0_0_30px_rgba(0,0,0,0.3)] group-hover:scale-110 transition-transform duration-500`}>
+                                        {item.icon}
+                                    </div>
+                                    <div>
+                                        <div className="text-xs font-bold tracking-widest text-slate-500 mb-2 uppercase">{item.subtitle}</div>
+                                        <h3 className="text-3xl font-bold text-slate-100 mb-3 group-hover:text-white transition-colors">{item.title}</h3>
+                                        <p className="text-slate-400 text-lg leading-relaxed group-hover:text-slate-300 transition-colors">
+                                            {item.desc}
+                                        </p>
+                                    </div>
+                                    <div className="mt-auto pt-6 flex items-center text-sm font-bold text-slate-500 group-hover:text-amber-400 transition-colors">
+                                        LEARN MORE <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
                 {/* 3. DEEP DIVE CONTENT (H2 -> H3) - For SEO Authority */}
                 <section className="py-24 px-6 max-w-4xl mx-auto text-slate-300 space-y-12">
                     <div className="prose prose-invert prose-lg max-w-none">
