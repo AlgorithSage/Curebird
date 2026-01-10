@@ -728,28 +728,7 @@ const CureAnalyzer = ({
               )}
             </div>
 
-            {/* Save Prompt Dialog */}
-            {showSavePrompt && analysisResult && (
-              <div className="mt-4 mb-2 p-4 rounded-xl bg-slate-800/80 border border-sky-500/30 flex items-center justify-between gap-4 animate-in fade-in slide-in-from-top-2 shadow-lg backdrop-blur-md">
-                <p className="text-sm font-semibold text-sky-100">
-                  Do you want to save the Analysis of Document?
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setIsImportModalOpen(true)}
-                    className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 transition-colors shadow-[0_0_10px_rgba(16,185,129,0.3)]"
-                  >
-                    Import Data
-                  </button>
-                  <button
-                    onClick={handleSave}
-                    className="px-3 py-1.5 rounded-lg bg-sky-500 text-white text-xs font-bold hover:bg-sky-400 transition-colors shadow-[0_0_10px_rgba(14,165,233,0.3)]"
-                  >
-                    Save Record
-                  </button>
-                </div>
-              </div>
-            )}
+
 
             {/* Manual Type Selection Dialog */}
             {showTypeSelect && (
