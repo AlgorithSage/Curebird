@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Upload, FileText, User, Calendar, AlertTriangle, CheckCircle, Loader, Bot, Sparkles, Printer, Eye, RefreshCcw } from 'lucide-react';
+import { X, Upload, FileText, User, Calendar, AlertTriangle, CheckCircle, Loader, Bot, Sparkles, Printer, Eye, RefreshCcw, UserPlus } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -61,12 +61,18 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
     const [formData, setFormData] = useState({
         patientId: '',
         title: '',
+        diagnosis: '',
+        vitals: '',
         type: 'consultation_note',
         description: '',
         date: new Date().toISOString().split('T')[0],
         priority: 'routine',
         file: null
     });
+
+    // Patient Search/Autofill State
+    const [patientSearchQuery, setPatientSearchQuery] = useState('');
+    const [showPatientSuggestions, setShowPatientSuggestions] = useState(false);
 
     const recordTypes = [
         { id: 'consultation_note', label: 'Consultation Note' },
@@ -82,50 +88,163 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
         { id: 'critical', label: 'Critical', color: 'text-rose-400' }
     ];
 
-    const handleFileChange = (e) => {
+    const [autofilling, setAutofilling] = useState(false);
+
+    const handleFileChange = async (e) => {
         if (e.target.files[0]) {
-            setFormData({ ...formData, file: e.target.files[0] });
-            // Reset digitization state on new file
+            const file = e.target.files[0];
+            setFormData(prev => ({ ...prev, file: file }));
             setDigitalCopy(null);
             setDigitizeError('');
+
+            // Trigger Smart Autofill
+            await handleAutofill(file);
         }
     };
 
-    const handleDigitize = async () => {
-        if (!formData.file) return;
-
-        setDigitizing(true);
-        setDigitizeError('');
-        
+    const handleAutofill = async (file) => {
+        setAutofilling(true);
         const uploadData = new FormData();
-        uploadData.append('file', formData.file);
+        uploadData.append('file', file);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/analyzer/process`, {
+            // Use the robust analysis endpoint
+            const response = await fetch(`${API_BASE_URL}/api/analyze-report`, {
                 method: 'POST',
                 body: uploadData,
             });
 
-            if (!response.ok) throw new Error("Failed to process document");
-
+            if (!response.ok) throw new Error("Autofill analysis failed");
             const data = await response.json();
-            
-            if (data.analysis?.digital_copy) {
-               setDigitalCopy(data.analysis.digital_copy);
-               // Optionally prefill title if empty and available
-               if (!formData.title && data.summary) {
-                    setFormData(prev => ({...prev, description: prev.description || data.summary}));
-               }
-            } else {
-                throw new Error("No text could be extracted.");
+
+            // --- Intelligent Mapping Logic ---
+            let newData = { ...formData, file: file }; // specific spread to keep file
+
+            // 1. Diagnosis & Vitals Mapping
+            if (data.key_findings && data.key_findings.length > 0) {
+                // Enhanced Diagnosis Inference: Join top 2 findings or use as is
+                newData.diagnosis = data.key_findings.slice(0, 2).join(", ");
             }
 
-        } catch (err) {
-            console.error("Digitization failed:", err);
-            setDigitizeError(err.message || "Digitization failed");
+            if (data.extracted_vitals && data.extracted_vitals.length > 0) {
+                // Format Vitals as string
+                newData.vitals = data.extracted_vitals.map(v => `${v.label}: ${v.value}`).join(", ");
+            }
+
+            // 2. Description & Summary
+            let fullDescription = data.summary || "";
+            if (data.medication_adjustments && data.medication_adjustments.length > 0) {
+                fullDescription += "\n\nMedications:\n• " + data.medication_adjustments.map(m => `${m.name} (${m.action})`).join("\n• ");
+            }
+            if (fullDescription) newData.description = fullDescription;
+
+            // 2. Title Inference
+            if (data.title && data.title !== "Clinical Document" && data.title !== "Analyzed Report") {
+                newData.title = data.title;
+            } else if (data.fileName) {
+                // Clean up filename for a decent title
+                newData.title = data.fileName.replace(/\.[^/.]+$/, "").split('_').join(' ').split('-').join(' ');
+            }
+
+            // 3. Date Extraction
+            if (data.date) {
+                newData.date = data.date;
+            }
+
+            // 4. Type Context Inference
+            const textContext = (data.summary + " " + (data.title || "")).toLowerCase();
+            if (textContext.includes("prescription") || textContext.includes("rx") || textContext.includes("medication")) newData.type = 'prescription';
+            else if (textContext.includes("lab") || textContext.includes("blood") || textContext.includes("panel") || textContext.includes("test")) newData.type = 'lab_report';
+            else if (textContext.includes("referral") || textContext.includes("letter")) newData.type = 'referral';
+            else if (textContext.includes("vital") || textContext.includes("measurement")) newData.type = 'vitals_log';
+
+            // 5. Priority Inference
+            if (textContext.includes("emergency") || textContext.includes("critical") || textContext.includes("severe") || textContext.includes("immediately")) newData.priority = 'critical';
+            else if (textContext.includes("urgent") || textContext.includes("acute") || textContext.includes("asap")) newData.priority = 'urgent';
+
+            // 6. Patient Identification (Smart Match or New)
+
+            // Strategy: 1. API Field -> 2. Regex Extraction (Aggressive) -> 3. Context Search
+            let extractedName = data.patient_name || data.patientName;
+
+            if (!extractedName && fullDescription) {
+                // Stricter Regex: Enforce Capitalized Words (Title Case) to avoid capturing sentences like "patient with multiple..."
+                // Removed /i flag to ensure we only capture Proper Nouns
+                const namePatterns = [
+                    /patient,?\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})(?=[,\.]|\s+is|\s+has|\s+who|\s+was)/,  // "The patient, John Doe," or "patient John Doe is"
+                    /name\s*:\s*([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})/,                                       // "Name: John Doe"
+                    /([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3}),?\s+(?:is\s+)?(?:a|an)?\s*\d+\s*-?\s*year/         // "John Doe, 20-year-old"
+                ];
+
+                for (let pattern of namePatterns) {
+                    const match = fullDescription.match(pattern);
+                    if (match) {
+                        // Extra check: exclude common false positive words even if capitalized at start of sentence
+                        const candidate = match[1];
+                        const invalidWords = ["The", "A", "An", "This", "Patient", "With"];
+                        if (!invalidWords.includes(candidate.split(' ')[0])) {
+                            extractedName = candidate;
+                            console.log("Extracted Name via Regex:", extractedName);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (extractedName) {
+                // Formatting: Capitalize first letters
+                const rawName = extractedName.trim();
+                setPatientSearchQuery(rawName); // Pre-fill input with extracted name
+
+                if (patients && patients.length > 0) {
+                    const matchedPatient = patients.find(p => p.name.toLowerCase().includes(rawName.toLowerCase()));
+                    if (matchedPatient) {
+                        newData.patientId = matchedPatient.id;
+                        setPatientSearchQuery(matchedPatient.name); // Normalize to existing record name
+                    } else {
+                        newData.patientId = ''; // Reset ID to indicate new patient creation needed
+                    }
+                }
+            } else if (patients && patients.length > 0) {
+                // Fallback: Try finding name in text context if API didn't return explicit field
+                const matchedPatient = patients.find(p => textContext.includes(p.name.toLowerCase()));
+                if (matchedPatient) {
+                    newData.patientId = matchedPatient.id;
+                    setPatientSearchQuery(matchedPatient.name);
+                }
+            }
+
+            setFormData(newData);
+
+            // Also set digital copy if available from this endpoint (it might be in a different format, but let's try)
+            // The previous endpoint returned data.analysis.digital_copy. This one returns summary etc.
+            // We can treat the summary as the digital copy for now or leave it null.
+
+        } catch (error) {
+            console.error("Autofill error:", error);
+            // Fail silently on autofill, let user type manually
         } finally {
-            setDigitizing(false);
+            setAutofilling(false);
         }
+    };
+
+    const handleDigitize = async () => {
+        // ... (Keep existing handleDigitize if user wants explicit full OCR later, or we can leave it)
+        // For now, I'll perform a simplified version or just return since we did autofill.
+        // But the user might want the specific 'Digital Transcript' feature.
+        // I will largely leave the original logic available but the button calls this.
+        if (!formData.file) return;
+        setDigitizing(true);
+        setDigitizeError('');
+        const uploadData = new FormData();
+        uploadData.append('file', formData.file);
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/analyzer/process`, { method: 'POST', body: uploadData });
+            if (!response.ok) throw new Error("Digitization failed");
+            const data = await response.json();
+            if (data.analysis?.digital_copy) setDigitalCopy(data.analysis.digital_copy);
+        } catch (err) { setDigitizeError(err.message); }
+        finally { setDigitizing(false); }
     };
 
     const handlePrintDigitalCopy = () => {
@@ -181,7 +300,37 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
         setSuccess(false);
 
         try {
-            if (!formData.patientId) throw new Error("Please select a patient.");
+            // NEW: Auto-Create Patient Feature
+            if (!formData.patientId && patientSearchQuery) {
+                // Determine First/Last name roughly
+                const nameParts = patientSearchQuery.trim().split(' ');
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(' ') || '';
+
+                const newPatientRef = await addDoc(collection(db, "patients"), {
+                    name: patientSearchQuery.trim(),
+                    firstName: firstName,
+                    lastName: lastName,
+                    age: 0, // Default/Unknown
+                    gender: 'Unknown',
+                    dob: new Date().toISOString().split('T')[0], // Default to today
+                    bloodType: 'Unknown',
+                    condition: formData.diagnosis || 'Undiagnosed',
+                    status: 'Stable',
+                    allergies: 'None',
+                    phone: '',
+                    email: '',
+                    address: '',
+                    lastVisit: 'Just now',
+                    createdAt: serverTimestamp(),
+                    doctorId: user?.uid || auth.currentUser?.uid
+                });
+
+                // Use the new ID
+                formData.patientId = newPatientRef.id;
+            }
+
+            if (!formData.patientId) throw new Error("Please select or enter a patient name.");
             if (!formData.title) throw new Error("Please enter a record title.");
 
             let fileUrl = '';
@@ -212,12 +361,14 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
             await addDoc(patientRecordRef, {
                 type: formData.type,
                 title: formData.title,
+                diagnosis: formData.diagnosis || '',
+                vitals: formData.vitals || '',
                 description: formData.description,
                 date: formData.date,
                 doctorId: user?.uid || auth.currentUser?.uid,
                 doctorName: user?.name || user?.displayName || auth.currentUser?.displayName || 'Dr. Curebird',
                 patientId: formData.patientId,
-                patientName: patients.find(p => p.id === formData.patientId)?.name || 'Unknown Patient',
+                patientName: patientSearchQuery || patients.find(p => p.id === formData.patientId)?.name || 'Unknown Patient',
                 priority: formData.priority,
                 fileUrl,
                 fileName,
@@ -231,12 +382,15 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
                 setFormData({
                     patientId: '',
                     title: '',
+                    diagnosis: '',
+                    vitals: '',
                     type: 'consultation_note',
                     description: '',
                     date: new Date().toISOString().split('T')[0],
                     priority: 'routine',
                     file: null
                 });
+                setPatientSearchQuery(''); // Reset search input
                 setSuccess(false);
             }, 1500);
 
@@ -300,19 +454,49 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-3">
                                     <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Patient Name</label>
-                                    <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all font-sans">
-                                        <User className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
-                                        <select
-                                            value={formData.patientId}
-                                            onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
-                                            className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-base text-white appearance-none cursor-pointer"
+                                    <div className="relative">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-600 z-10" size={20} />
+                                        <input
+                                            type="text"
+                                            placeholder="Search or Enter New Patient..."
+                                            value={patientSearchQuery}
+                                            onChange={(e) => {
+                                                setPatientSearchQuery(e.target.value);
+                                                setFormData({ ...formData, patientId: '' }); // Clear ID on type
+                                                setShowPatientSuggestions(true);
+                                            }}
+                                            onFocus={() => setShowPatientSuggestions(true)}
+                                            onBlur={() => setTimeout(() => setShowPatientSuggestions(false), 200)}
+                                            className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] pl-12 pr-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
                                             required
-                                        >
-                                            <option value="" disabled className="bg-stone-900">Choose Patient...</option>
-                                            {patients.map(p => (
-                                                <option key={p.id} value={p.id} className="bg-stone-900">{p.name} (ID: {p.id.slice(0, 6)})</option>
-                                            ))}
-                                        </select>
+                                        />
+
+                                        {/* Suggestions Dropdown */}
+                                        {showPatientSuggestions && patientSearchQuery && (
+                                            <div className="absolute top-[110%] left-0 w-full bg-[#0f0b05] border border-white/10 rounded-xl shadow-2xl z-50 max-h-48 overflow-y-auto custom-scrollbar">
+                                                {patients.filter(p => p.name.toLowerCase().includes(patientSearchQuery.toLowerCase())).length > 0 ? (
+                                                    patients.filter(p => p.name.toLowerCase().includes(patientSearchQuery.toLowerCase())).map(p => (
+                                                        <div
+                                                            key={p.id}
+                                                            onClick={() => {
+                                                                setPatientSearchQuery(p.name);
+                                                                setFormData({ ...formData, patientId: p.id });
+                                                                setShowPatientSuggestions(false);
+                                                            }}
+                                                            className="px-5 py-3 hover:bg-white/5 cursor-pointer text-sm text-stone-300 hover:text-white transition-colors flex items-center justify-between"
+                                                        >
+                                                            <span>{p.name}</span>
+                                                            {p.id === formData.patientId && <CheckCircle size={14} className="text-amber-500" />}
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div className="px-5 py-3 text-xs text-amber-500/70 font-bold uppercase tracking-wider flex items-center gap-2">
+                                                        <UserPlus size={14} />
+                                                        <span>New Patient will be created</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -372,22 +556,46 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
                                 </div>
                             </div>
 
-                            {/* Row 3: Title */}
+                            {/* Row 3: Title & Diagnosis */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-4">
+                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Clinical Title</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Annual Cardiovascular Assessment"
+                                        value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                        className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] px-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-4">
+                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Primary Diagnosis</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Hypertension, Type 2 Diabetes"
+                                        value={formData.diagnosis || ''}
+                                        onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })}
+                                        className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] px-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Row 4: Medical Parameters (Vitals) */}
                             <div className="space-y-4">
-                                <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Clinical Title</label>
+                                <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Medical Parameters (Vitals)</label>
                                 <input
                                     type="text"
-                                    placeholder="e.g. Annual Cardiovascular Assessment"
-                                    value={formData.title}
-                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    placeholder="e.g. BP: 120/80, HR: 72 bpm, SpO2: 98%"
+                                    value={formData.vitals || ''}
+                                    onChange={(e) => setFormData({ ...formData, vitals: e.target.value })}
                                     className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] px-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
-                                    required
                                 />
                             </div>
 
-                            {/* Row 4: Description */}
+                            {/* Row 5: Detailed Observations */}
                             <div className="space-y-4">
-                                <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Clinical Details</label>
+                                <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Clinical Details & Observations</label>
                                 <textarea
                                     rows={5}
                                     placeholder="Enter full clinical observations, symptoms, and assessments..."
@@ -414,6 +622,17 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
                                         {formData.file ? formData.file.name : 'Click to Upload or Drag & Drop'}
                                     </p>
                                     <p className="text-[10px] text-stone-700 uppercase tracking-widest mt-1 font-black">PDF, JPG, PNG up to 10MB</p>
+
+                                    {/* Autofill Overlay */}
+                                    {autofilling && (
+                                        <div className="absolute inset-0 bg-stone-900/90 rounded-2xl flex flex-col items-center justify-center z-30 transition-all backdrop-blur-sm border border-amber-500/20">
+                                            <div className="relative">
+                                                <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+                                                <Sparkles size={20} className="text-amber-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                                            </div>
+                                            <p className="text-amber-500 font-bold text-xs uppercase tracking-widest mt-3 animate-pulse">AI Autofilling Details...</p>
+                                        </div>
+                                    )}
                                 </div>
                                 {loading && uploadProgress > 0 && (
                                     <div className="w-full h-1 bg-stone-950/50 rounded-full overflow-hidden mt-2">
@@ -425,12 +644,12 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
                                     </div>
                                 )}
                             </div>
-                            
+
                             {/* Hidden element for printing */}
                             {/* Hidden element for printing */}
                             <div id="modal-markdown-hidden" style={{ display: 'none' }}>
                                 <div className="prose prose-slate max-w-none text-black prose-headings:text-black prose-p:text-black prose-td:text-black prose-strong:text-black">
-                                     {digitalCopy && <ReactMarkdown>{digitalCopy}</ReactMarkdown>}
+                                    {digitalCopy && <ReactMarkdown>{digitalCopy}</ReactMarkdown>}
                                 </div>
                             </div>
 

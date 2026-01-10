@@ -17,6 +17,17 @@ const AnalyzeDataModal = (props) => {
     const [saving, setSaving] = useState(false);
     const [result, setResult] = useState(null);
 
+    // Reset state when modal opens
+    React.useEffect(() => {
+        if (isOpen) {
+            setFiles([]);
+            setResult(null);
+            setUploading(false);
+            setAnalyzing(false);
+            setSaving(false);
+        }
+    }, [isOpen]);
+
     // Handle Drag Events
     const handleDrag = (e) => {
         e.preventDefault();

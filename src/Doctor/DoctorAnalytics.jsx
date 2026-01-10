@@ -6,11 +6,11 @@ import {
 } from 'recharts';
 import {
     TrendingUp, Users, Activity, AlertTriangle, Calendar,
-    BrainCircuit, Clock, Stethoscope, FileText
+    BrainCircuit, Clock, Stethoscope, FileText, Trash2
 } from 'lucide-react';
 import AIReportModal from './AIReportModal';
 import AnalyzeDataModal from './AnalyzeDataModal';
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 // --- Improved Mock Data ---
@@ -137,9 +137,20 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         // Actually, if we use onSnapshot, it will update automatically. 
         // We just need to open the modal.
         // We'll trust onSnapshot for the list, but we need to set selectedReport for the modal.
-        setSelectedReport(newReport);
-        setIsAnalyzeModalOpen(false);
         setIsReportModalOpen(true);
+    };
+
+    // Handle Delete Report
+    const handleDeleteReport = async (e, reportId) => {
+        e.stopPropagation();
+        if (window.confirm("Are you sure you want to delete this analysis report?")) {
+            try {
+                await deleteDoc(doc(db, 'medical_records', reportId));
+            } catch (error) {
+                console.error("Error deleting report:", error);
+                alert("Failed to delete report.");
+            }
+        }
     };
 
     // --- Persist: Live Fetch Analyzed Reports ---
@@ -406,7 +417,7 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                             <div
                                 key={i}
                                 onClick={() => { setSelectedReport(report); setIsReportModalOpen(true); }}
-                                className="p-4 rounded-xl bg-[#0c0a09] border border-stone-800 hover:border-amber-500/50 hover:bg-amber-950/20 transition-all cursor-pointer group/card"
+                                className="p-4 rounded-xl bg-[#0c0a09] border border-stone-800 hover:border-amber-500/50 hover:bg-amber-950/20 transition-all cursor-pointer group/card relative pr-10"
                             >
                                 <div className="flex justify-between items-start mb-2">
                                     <div className="p-2 rounded-lg bg-stone-900 text-amber-500 group-hover/card:bg-amber-500 group-hover/card:text-black transition-colors">
@@ -416,6 +427,15 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                                 </div>
                                 <h4 className="font-bold text-white text-sm mb-1 line-clamp-1">{report.fileName}</h4>
                                 <p className="text-[11px] text-stone-400 line-clamp-2 leading-relaxed">{report.summary}</p>
+
+                                {/* Delete Button */}
+                                <button
+                                    onClick={(e) => handleDeleteReport(e, report.id)}
+                                    className="absolute right-2 top-2 p-2 rounded-lg text-stone-600 hover:text-red-500 hover:bg-red-500/10 transition-all opacity-0 group-hover/card:opacity-100 z-20"
+                                    title="Delete Report"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
                             </div>
                         ))}
 
