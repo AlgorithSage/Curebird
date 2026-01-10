@@ -169,7 +169,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                         <div className="grid lg:grid-cols-2 gap-16 items-center">
                             <div className="space-y-12">
                                 <article className="flex gap-6 group">
-                                    <div className="text-5xl font-black text-amber-500/10 group-hover:text-amber-500/20 transition-colors">01</div>
+                                    <div className="text-5xl font-black text-amber-500/80 group-hover:text-amber-400 transition-colors drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">01</div>
                                     <div>
                                         <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Create Your Digital Twin</h3>
                                         <p className="text-slate-400 text-lg">
@@ -179,7 +179,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 </article>
 
                                 <article className="flex gap-6 group">
-                                    <div className="text-5xl font-black text-amber-500/10 group-hover:text-amber-500/20 transition-colors">02</div>
+                                    <div className="text-5xl font-black text-amber-500/80 group-hover:text-amber-400 transition-colors drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">02</div>
                                     <div>
                                         <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Zero-Entry Digitization</h3>
                                         <p className="text-slate-400 text-lg">
@@ -189,7 +189,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 </article>
 
                                 <article className="flex gap-6 group">
-                                    <div className="text-5xl font-black text-amber-500/10 group-hover:text-amber-500/20 transition-colors">03</div>
+                                    <div className="text-5xl font-black text-amber-500/80 group-hover:text-amber-400 transition-colors drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">03</div>
                                     <div>
                                         <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Doctor Collaboration</h3>
                                         <p className="text-slate-400 text-lg">
