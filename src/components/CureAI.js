@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Trash2, TrendingUp, MessageSquare, Brain, ShieldCheck } from 'lucide-react';
+import { Send, Bot, User, Trash2, TrendingUp, MessageSquare, Brain, ShieldCheck, Sparkles, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import Header from './Header';
@@ -60,12 +60,15 @@ const TypingIndicator = () => (
     </motion.div>
 );
 
-const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db, appId }) => {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [conversationId, setConversationId] = useState(null);
     const [diseaseContext, setDiseaseContext] = useState([]);
+    // New state for Cerebras Summary
+    const [medicalSummary, setMedicalSummary] = useState(null);
+    const [isSummaryLoading, setIsSummaryLoading] = useState(false);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -84,6 +87,9 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) =
         // Load disease context
         fetchDiseaseContext();
 
+        // Fetch and Summarize Recent Records
+        fetchAndSummarizeRecords();
+
         // Add welcome message
         setMessages([{
             text: `Hello ${user?.firstName ? `**${user.firstName}**` : 'there'}! Welcome to **Cure AI**. I provide secure, expert-level medical insights and health guidance powered by advanced intelligence. How can I support your wellness today?`,
@@ -101,6 +107,51 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) =
             }
         } catch (error) {
             console.error('Error fetching disease context:', error);
+        }
+    };
+
+    const fetchAndSummarizeRecords = async () => {
+        if (!user || !db || !appId) return;
+        setIsSummaryLoading(true);
+        try {
+            const { collection, query, orderBy, limit, getDocs } = await import('firebase/firestore');
+
+            const recordsRef = collection(db, `artifacts/${appId}/users/${user.uid}/medical_records`);
+            const q = query(recordsRef, orderBy('date', 'desc'), limit(5));
+            const querySnapshot = await getDocs(q);
+
+            const records = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            if (records.length > 0) {
+                // Extract text and file URLs for summary
+                const textsToSummarize = records.map(r => {
+                    const type = r.type || 'Medical Record';
+                    const date = r.date?.toDate ? r.date.toDate().toLocaleDateString() : 'Unknown Date';
+                    const content = r.summary || r.digital_copy || r.diagnosis || 'No text content available.';
+                    return `Date: ${date}\nType: ${type}\nMetadata Content: ${content}`;
+                });
+
+                const fileUrls = records.map(r => r.fileUrl).filter(url => url);
+
+                // Call Backend to Summarize using Cerebras + Deep Analysis
+                const response = await fetch(`${API_BASE_URL}/api/generate-summary`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        texts: textsToSummarize,
+                        file_urls: fileUrls
+                    })
+                });
+
+                const data = await response.json();
+                if (data.summary) {
+                    setMedicalSummary(data.summary);
+                }
+            }
+        } catch (error) {
+            console.error("Error generating medical summary:", error);
+        } finally {
+            setIsSummaryLoading(false);
         }
     };
 
@@ -125,7 +176,8 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) =
                 },
                 body: JSON.stringify({
                     message: inputMessage,
-                    conversation_id: conversationId
+                    conversation_id: conversationId,
+                    medicalContext: medicalSummary // Pass the summary context to the chat
                 })
             });
 
@@ -234,6 +286,43 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) =
                     </div>
                 </div>
             </div>
+
+            {/* Recent Medical Context Section (Cerebras AI Powered) */}
+            {(medicalSummary || isSummaryLoading) && (
+                <div className="mb-6 px-2">
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-2xl border border-amber-500/20 p-6 relative overflow-hidden shadow-xl"
+                    >
+                        <div className="flex items-start gap-4">
+                            <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400">
+                                <Sparkles size={24} />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-lg font-bold text-amber-100 mb-2 flex items-center gap-2">
+                                    Recent Medical Context
+                                    <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/20">AI Generated</span>
+                                </h3>
+
+                                {isSummaryLoading ? (
+                                    <div className="space-y-2 animate-pulse">
+                                        <div className="h-4 bg-slate-700/50 rounded w-full"></div>
+                                        <div className="h-4 bg-slate-700/50 rounded w-5/6"></div>
+                                        <div className="h-4 bg-slate-700/50 rounded w-4/6"></div>
+                                    </div>
+                                ) : (
+                                    <div className="text-slate-300 text-sm leading-relaxed">
+                                        {medicalSummary}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        {/* Background Decoration */}
+                        <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
+                    </motion.div>
+                </div>
+            )}
 
             <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 mt-2 min-h-0 relative z-10 pb-2">
                 {/* Main Chat Area - Premium Glass Console */}

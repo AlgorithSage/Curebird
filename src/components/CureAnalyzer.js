@@ -13,8 +13,10 @@ import {
   FileText,
   X,
   Camera,
+  Edit,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm';
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { API_BASE_URL } from "../config";
@@ -43,6 +45,9 @@ const CureAnalyzer = ({
   const [showTypeSelect, setShowTypeSelect] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [showDigitalCopy, setShowDigitalCopy] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempContent, setTempContent] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   // Camera State
   const [showCamera, setShowCamera] = useState(false);
@@ -123,6 +128,7 @@ const CureAnalyzer = ({
   };
 
   const performSave = async (recordType, details = {}) => {
+    setIsSaving(true);
     try {
       const storageRef = ref(
         storage,
@@ -149,6 +155,7 @@ const CureAnalyzer = ({
                 fileType: selectedFile.type,
                 storagePath: storageRef.fullPath,
                 createdAt: new Date(),
+                digital_copy: analysisResult?.analysis?.digital_copy,
               };
               await addDoc(
                 collection(
@@ -169,6 +176,8 @@ const CureAnalyzer = ({
     } catch (err) {
       console.error("Error saving document:", err);
       setError("Failed to save document. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -264,7 +273,7 @@ const CureAnalyzer = ({
                             <p style="margin:5px 0 0; color: #f59e0b; font-size: 12px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">Curebird Verified Record</p>
                         </div>
                         <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
-                            <img src="${window.location.origin + curebirdLogo}" alt="Curebird Logo" style="height: 40px; margin-bottom: 5px;" />
+                            <img src="${window.location.origin}/favicon.ico" alt="Curebird Logo" style="height: 40px; margin-bottom: 5px;" />
                             <div style="font-size: 14px; font-weight: bold; color: #64748b;">CUREBIRD</div>
                         </div>
                     </div>
@@ -281,6 +290,27 @@ const CureAnalyzer = ({
             </html>
         `);
     printWindow.document.close();
+  };
+
+  const startEditing = () => {
+    setTempContent(analysisResult.analysis.digital_copy);
+    setIsEditing(true);
+  };
+
+  const saveEdit = () => {
+    setAnalysisResult(prev => ({
+      ...prev,
+      analysis: {
+        ...prev.analysis,
+        digital_copy: tempContent
+      }
+    }));
+    setIsEditing(false);
+  };
+
+  const cancelEdit = () => {
+    setIsEditing(false);
+    setTempContent("");
   };
 
   return (
@@ -611,7 +641,7 @@ const CureAnalyzer = ({
                               </div>
                               <div className="flex gap-4 text-slate-500 font-mono text-xs">
                                 <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
-                                  DSG: {med.dosage}
+                                  DSG: {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
                                 </span>
                                 <span className="w-px h-full bg-slate-800"></span>
                                 <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
@@ -703,7 +733,14 @@ const CureAnalyzer = ({
               </div>
             )}
 
-            <div className="mt-8 flex gap-4">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <button
+                disabled={!analysisResult?.analysis?.digital_copy}
+                onClick={() => setShowDigitalCopy(true)}
+                className="py-4 rounded-xl font-bold text-white bg-gradient-to-r from-violet-600 via-purple-600 to-violet-600 bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-[0_0_30px_rgba(124,58,237,0.3)] hover:shadow-[0_0_50px_rgba(124,58,237,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm"
+              >
+                <FileText size={18} /> View Digital
+              </button>
               <button
                 disabled={!analysisResult}
                 onClick={handleSave}
@@ -724,14 +761,19 @@ const CureAnalyzer = ({
               </button>
 
               <button
-                disabled={!selectedFile}
+                disabled={!selectedFile || isSaving}
                 onClick={handleDocSave}
                 className={`flex-1 py-4 rounded-xl font-bold text-black transition-all duration-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isDocSaved
                   ? "bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500 text-white"
                   : "bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right"
                   }`}
               >
-                {isDocSaved ? (
+                {isSaving ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    SAVING...
+                  </>
+                ) : isDocSaved ? (
                   <>
                     <FileCheck size={18} /> DOCUMENT UPLOADED
                   </>
@@ -745,19 +787,21 @@ const CureAnalyzer = ({
           </div>
         </div>
       </div>
-      {isImportModalOpen && analysisResult && (
-        <ReviewImportModal
-          userId={user.uid}
-          analysisData={analysisResult.analysis}
-          db={db}
-          onClose={() => setIsImportModalOpen(false)}
-          onComplete={() => {
-            setIsImportModalOpen(false);
-            handleSave(); // Trigger save state update
-            // Maybe show toast?
-          }}
-        />
-      )}
+      {
+        isImportModalOpen && analysisResult && (
+          <ReviewImportModal
+            userId={user.uid}
+            analysisData={analysisResult.analysis}
+            db={db}
+            onClose={() => setIsImportModalOpen(false)}
+            onComplete={() => {
+              setIsImportModalOpen(false);
+              handleSave(); // Trigger save state update
+              // Maybe show toast?
+            }}
+          />
+        )
+      }
 
       {/* Hidden div for printing markdown content */}
       <div id="markdown-content-hidden" style={{ display: "none" }}>
@@ -767,67 +811,141 @@ const CureAnalyzer = ({
       </div>
 
       {/* Digital Copy Modal */}
-      {showDigitalCopy && analysisResult?.analysis?.digital_copy && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-amber-500/20">
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
-                  <FileText size={20} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">Digital Transcript</h3>
-                  <p className="text-[10px] text-amber-600 uppercase tracking-widest font-black">AI-Generated Digitization</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handlePrint}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
-                >
-                  <Printer size={16} /> Print Copy
-                </button>
-                <button
-                  onClick={() => setShowDigitalCopy(false)}
-                  className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-8 bg-white font-sans" style={{ color: 'black' }}>
-              <div className="max-w-3xl mx-auto">
-                {/* Digital Paper Header */}
-                <div className="border-b-2 border-amber-500 pb-6 mb-8 flex justify-between items-end">
-                  <div>
-                    <h1 className="text-2xl font-black text-slate-900 m-0 leading-none">DIGITAL TRANSCRIPT</h1>
-                    <p className="text-amber-600 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
+      {
+        showDigitalCopy && analysisResult?.analysis?.digital_copy && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-amber-500/20">
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
+                    <FileText size={20} />
                   </div>
-                  <div className="text-right opacity-100">
-                    <div className="flex items-center justify-end gap-2 text-slate-900 font-bold">
-                      <img src={curebirdLogo} alt="Curebird Logo" className="h-10 w-auto" />
-                      <span className="text-xl">Curebird</span>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900">Digital Transcript</h3>
+                    <p className="text-[10px] text-amber-600 uppercase tracking-widest font-black">AI-Generated Digitization</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {!isEditing ? (
+                    <>
+                      <button
+                        onClick={startEditing}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs uppercase tracking-wider hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                      >
+                        <Edit size={16} /> Edit
+                      </button>
+                      <button
+                        onClick={handlePrint}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-xs uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+                      >
+                        <Printer size={16} /> Print Copy
+                      </button>
+                      <button
+                        onClick={() => setShowDigitalCopy(false)}
+                        className="p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-200 transition-all"
+                      >
+                        <X size={20} />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={cancelEdit}
+                        className="px-4 py-2 rounded-lg bg-slate-200 text-slate-600 font-bold text-xs uppercase tracking-wider hover:bg-slate-300 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={saveEdit}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20"
+                      >
+                        <Check size={16} /> Save Changes
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-8 bg-white font-sans" style={{ color: 'black' }}>
+                <div className="max-w-3xl mx-auto">
+                  {/* Digital Paper Header */}
+                  <div className="border-b-2 border-amber-500 pb-6 mb-8 flex justify-between items-end">
+                    <div>
+                      <h1 className="text-2xl font-black text-slate-900 m-0 leading-none">DIGITAL TRANSCRIPT</h1>
+                      <p className="text-amber-600 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
+                    </div>
+                    <div className="text-right opacity-100">
+                      <div className="flex items-center justify-end gap-2 text-slate-900 font-bold">
+                        <img src="/favicon.ico" alt="Curebird Logo" className="h-10 w-auto" />
+                        <span className="text-xl">Curebird</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="prose max-w-none text-black [&_*]:text-black [&_p]:text-black [&_h1]:text-black [&_h2]:text-black [&_h3]:text-black [&_li]:text-black [&_strong]:text-black [&_td]:text-black [&_th]:text-black">
-                  <ReactMarkdown>
-                    {analysisResult.analysis.digital_copy}
-                  </ReactMarkdown>
-                </div>
-                {/* Footer */}
-                <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono uppercase tracking-widest">
-                  <span>Generated by Curebird AI</span>
-                  <span>{new Date().toLocaleDateString()}</span>
+                  {/* Actual Markdown Content - Forcing Colors with Inline Styles */}
+                  <div className="markdown-content text-left" style={{ textAlign: 'left', color: '#000000' }}>
+                    <style>{`
+                          .markdown-content * {
+                              color: #000000 !important;
+                              opacity: 1 !important;
+                              text-align: left !important;
+                          }
+                          .markdown-content strong {
+                              font-weight: 800 !important;
+                              color: #000000 !important;
+                          }
+                          .markdown-content li {
+                              color: #000000 !important;
+                          }
+                          .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+                              color: #000000 !important;
+                              font-weight: 800 !important;
+                          }
+                          .markdown-content table {
+                              width: 100%;
+                              border-collapse: collapse;
+                              margin: 1em 0;
+                          }
+                          .markdown-content th, .markdown-content td {
+                              border: 1px solid #cbd5e1;
+                              padding: 8px;
+                              color: #000 !important;
+                          }
+                          .markdown-content th {
+                              background-color: #f1f5f9;
+                              font-weight: bold;
+                          }
+                      `}</style>
+                    <div className="prose prose-sm max-w-none text-black">
+                      {isEditing ? (
+                        <textarea
+                          value={tempContent}
+                          onChange={(e) => setTempContent(e.target.value)}
+                          className="w-full h-[60vh] p-4 rounded-xl border border-slate-300 bg-slate-50 font-mono text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none shadow-inner"
+                          placeholder="Edit markdown content..."
+                          style={{ color: '#000000' }}
+                        />
+                      ) : (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {analysisResult.analysis.digital_copy}
+                        </ReactMarkdown>
+                      )}
+                    </div>
+                  </div>
+                  {/* Footer */}
+                  <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono uppercase tracking-widest">
+                    <span>Generated by Curebird AI</span>
+                    <span>{new Date().toLocaleDateString()}</span>
+                  </div>
+
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
+
     </div>
   );
 };

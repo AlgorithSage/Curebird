@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, X } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { ShieldAlert } from 'lucide-react';
 
 const SOSButton = ({ onClick }) => {
     return (

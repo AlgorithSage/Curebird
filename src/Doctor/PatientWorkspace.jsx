@@ -300,7 +300,9 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                                                 {activeMeds.length > 0 ? activeMeds.map((med, idx) => (
                                                     <li key={idx} className="flex justify-between text-sm p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-amber-500/20 transition-all cursor-default">
                                                         <span className="text-white font-bold">{med.name}</span>
-                                                        <span className="text-stone-400 font-medium">{med.dosage} • {med.freq}</span>
+                                                        <span className="text-stone-400 font-medium">
+                                                            {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage} • {med.freq}
+                                                        </span>
                                                     </li>
                                                 )) : (
                                                     <li className="text-stone-500 text-xs italic">No active medications recorded.</li>

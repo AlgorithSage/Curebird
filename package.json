@@ -6,6 +6,7 @@
     "@craco/craco": "^7.1.0",
     "@emailjs/browser": "^4.4.1",
     "@lottiefiles/dotlottie-react": "^0.17.12",
+    "@tailwindcss/typography": "^0.5.19",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -20,9 +21,10 @@
     "react-dom": "^19.1.0",
     "react-helmet-async": "^2.0.5",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^6.28.0",
+    "react-router-dom": "^6.30.3",
     "react-scripts": "5.0.1",
     "recharts": "^2.15.4",
+    "remark-gfm": "^4.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

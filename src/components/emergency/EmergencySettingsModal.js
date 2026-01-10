@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Save, AlertTriangle, UserPlus, Phone, Droplet } from 'lucide-react';
+import { X, Save, AlertTriangle, UserPlus, Droplet } from 'lucide-react';
 import { doc, updateDoc } from 'firebase/firestore';
 
 const EmergencySettingsModal = ({ user, db, onClose, currentData = {} }) => {

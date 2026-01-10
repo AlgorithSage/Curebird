@@ -152,7 +152,7 @@ Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
         # Default to 70B for everything else to be safe with clinical queries
         return self.MODEL_70B
 
-    def generate_response(self, user_message, conversation_id=None):
+    def generate_response(self, user_message, conversation_id=None, medical_context=None):
         """Generate response with retry logic and model fallback."""
         ist = timezone(timedelta(hours=5, minutes=30))
         
@@ -164,6 +164,15 @@ Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
             self.conversations[conversation_id] = [
                 {"role": "system", "content": self.create_system_prompt()}
             ]
+        
+        # Inject medical context if provided and not already present
+        if medical_context:
+            context_exists = any("PATIENT MEDICAL CONTEXT" in msg.get('content', '') for msg in self.conversations[conversation_id])
+            if not context_exists:
+                self.conversations[conversation_id].append({
+                    "role": "system", 
+                    "content": f"PATIENT MEDICAL CONTEXT (Use this to personalized answers):\n{medical_context}"
+                })
         
         # Add user message to history
         self.conversations[conversation_id].append({"role": "user", "content": user_message})

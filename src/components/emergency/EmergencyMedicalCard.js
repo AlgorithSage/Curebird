@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+
 import { Phone, Users, Droplet, AlertTriangle, ShieldAlert } from 'lucide-react';
 
 const EmergencyMedicalCard = ({ user }) => {
