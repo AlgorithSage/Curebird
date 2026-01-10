@@ -67,6 +67,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
         description: '',
         date: new Date().toISOString().split('T')[0],
         priority: 'routine',
+        medications: [],
         file: null
     });
 
@@ -82,6 +83,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                 description: '',
                 date: new Date().toISOString().split('T')[0],
                 priority: 'routine',
+                medications: [],
                 file: null
             });
             setPatientSearchQuery('');
@@ -156,8 +158,27 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
             }
 
             // 2. Description & Summary
+            // 2. Description & Summary
             let fullDescription = summary;
-            if (data.medication_adjustments && data.medication_adjustments.length > 0) {
+
+            // Capture structured medications for Active Meds workspace
+            if (data.medications && Array.isArray(data.medications) && data.medications.length > 0) {
+                newData.medications = data.medications;
+
+                // Append to description if not present
+                if (!fullDescription.includes("Medications:")) {
+                    fullDescription += "\n\nMedications:\n• " + data.medications.map(m => `${m.name} ${m.dosage || ''} ${m.frequency || ''}`).join("\n• ");
+                }
+            } else if (data.medication_adjustments && data.medication_adjustments.length > 0) {
+                // FALLBACK: Map legacy adjustments to new medications structure
+                console.log("Using fallback medication adjustments");
+                newData.medications = data.medication_adjustments.map(adj => ({
+                    name: adj.name,
+                    dosage: adj.dose || adj.dosage || 'As prescribed',
+                    frequency: 'See instructions', // defaulting since adjustment might not have freq separated
+                    status: 'Active'
+                }));
+
                 fullDescription += "\n\nMedications:\n• " + data.medication_adjustments.map(m => `${m.name} (${m.action})`).join("\n• ");
             }
             if (fullDescription) newData.description = fullDescription;
@@ -412,6 +433,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                 patientId: formData.patientId,
                 patientName: patientSearchQuery || patients.find(p => p.id === formData.patientId)?.name || 'Unknown Patient',
                 priority: formData.priority,
+                medications: formData.medications || [],
                 fileUrl,
                 fileName,
                 createdAt: serverTimestamp(),
@@ -447,6 +469,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                     description: '',
                     date: new Date().toISOString().split('T')[0],
                     priority: 'routine',
+                    medications: [],
                     file: null
                 });
                 setPatientSearchQuery('');

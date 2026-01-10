@@ -207,6 +207,9 @@ def analyze_clinical_groq(file_stream):
             "key_findings": [
                 "List EVERY SINGLE diagnosis, disease history, and symptom mentioned (e.g. 'GerD 8yr', 'Asthma', 'Allergy to X'). Be comprehensive."
             ],
+            "medications": [
+                {"name": "Medication Name", "dosage": "Dosage (e.g. 500mg)", "frequency": "Frequency (e.g. BD, 1-0-1)", "duration": "Duration if mentioned"}
+            ],
             "medication_adjustments": [
                 {"name": "Medication Name", "action": "Prescribed/Continued", "dose": "Dosage & Frequency (e.g. 10mg BD)"}
             ],
