@@ -164,7 +164,9 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                         summary: data.description || '',
                         date: data.date,
                         key_findings: data.findings || [],
-                        // ... map other fields if needed by AIReportModal
+                        medication_adjustments: data.medications || [],
+                        extracted_vitals: data.vitals || [],
+                        recommendation: data.recommendation || '',
                     };
                 });
                 // FILTER OUT LEGACY HARDCODED RECORDS (Aggressive by Title & Content)

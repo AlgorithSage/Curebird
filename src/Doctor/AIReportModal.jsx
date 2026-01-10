@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     BrainCircuit, X, FileText, CheckCircle2,
-    TrendingUp, AlertTriangle, Lightbulb, Download, Share2, Sparkles,
-    Loader2
+    TrendingUp, Lightbulb, Download, Share2, Sparkles,
+    CheckCircle, Pill, AlertCircle, Activity
 } from 'lucide-react';
 
 const AIReportModal = ({ isOpen, onClose, report }) => {
@@ -13,13 +13,14 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
     // Simulation of AI Analysis Steps
     useEffect(() => {
         if (isOpen) {
+            // If report is already fully "analyzed" (has findings), we can skip generation or make it fast
             setIsGenerating(true);
             setLoadingStep(0);
 
             const steps = [
-                () => setLoadingStep(1), // "Analyzing Population Trends..."
-                () => setLoadingStep(2), // "Correlating Risk Factors..."
-                () => setLoadingStep(3), // "Synthesizing Clinical Insights..."
+                () => setLoadingStep(1),
+                () => setLoadingStep(2),
+                () => setLoadingStep(3),
                 () => {
                     setIsGenerating(false);
                     setLoadingStep(4);
@@ -29,7 +30,7 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
             // Execute sequence
             let delay = 0;
             steps.forEach((step, index) => {
-                delay += 1200; // 1.2s per step
+                delay += 800; // Faster generation for viewing existing
                 setTimeout(step, delay);
             });
         }
@@ -37,10 +38,10 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
 
     // Loading State UI
     const loadingMessages = [
-        "Initializing Analytic Engine...",
-        "Analyzing 1,248 Patient Records...",
-        "Correlating Multi-Variable Risk Factors...",
-        "Finalizing Executive Summary..."
+        "Retrieving Clinical Data...",
+        "Validating AI Insights...",
+        "Correlating Medical History...",
+        "Preparing Intelligence Report..."
     ];
 
     if (!isOpen) return null;
@@ -55,7 +56,7 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[60]"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
                     />
 
                     {/* Modal */}
@@ -65,29 +66,24 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none"
                     >
-                        <div className="bg-[#0c0a09] w-full max-w-4xl max-h-[90vh] rounded-[2rem] border border-amber-500/20 shadow-[0_0_50px_rgba(245,158,11,0.15)] flex flex-col overflow-hidden pointer-events-auto relative">
-
-                            {/* Decorative Top Glow */}
-                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-50" />
+                        <div className="bg-[#0c0a09] w-full max-w-4xl max-h-[90vh] rounded-[2rem] border border-stone-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden pointer-events-auto relative">
 
                             {/* --- LOADING VIEW --- */}
                             {isGenerating ? (
-                                <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[500px]">
+                                <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[500px] relative overflow-hidden">
+                                    <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
                                     <div className="relative mb-8">
                                         <div className="absolute inset-0 bg-amber-500/20 blur-xl rounded-full animate-pulse" />
                                         <div className="relative bg-black/40 p-6 rounded-full border border-amber-500/30 backdrop-blur-xl">
                                             <BrainCircuit size={64} className="text-amber-500 animate-pulse" />
                                         </div>
-                                        {/* Spinning Ring */}
-                                        <div className="absolute inset-0 border-t-2 border-r-2 border-amber-500/50 rounded-full animate-spin" />
                                     </div>
 
-                                    <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">AI Generation in Progress</h3>
+                                    <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Retrieving Analysis</h3>
                                     <p className="text-amber-500/80 font-mono text-sm uppercase tracking-widest mb-8">
                                         {loadingMessages[loadingStep] || "Processing..."}
                                     </p>
 
-                                    {/* Progress Bar */}
                                     <div className="w-64 h-1 bg-stone-800 rounded-full overflow-hidden">
                                         <motion.div
                                             className="h-full bg-amber-500"
@@ -98,136 +94,131 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
                                     </div>
                                 </div>
                             ) : (
-                                /* --- REPORT VIEW --- */
+                                /* --- REPORT VIEW (Matching AnalyzeDataModal) --- */
                                 <div className="flex flex-col h-full min-h-0">
                                     {/* Header */}
-                                    <div className="p-8 border-b border-white/5 flex justify-between items-start bg-gradient-to-b from-amber-500/5 to-transparent shrink-0">
-                                        <div>
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <span className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                                                    <Sparkles size={12} /> Intelligence Report
-                                                </span>
-                                                <span className="text-stone-500 text-xs font-mono font-bold">{report?.date || new Date().toLocaleDateString()}</span>
-                                            </div>
-                                            <h2 className="text-3xl font-extrabold text-white tracking-tight">{report?.fileName || 'Executive Health Summary'}</h2>
-                                            <p className="text-stone-400 text-sm mt-1">{report?.summary || 'Automated analysis of patient records.'}</p>
+                                    <div className="p-6 border-b border-stone-800 flex justify-between items-center bg-stone-900/50">
+                                        <div className="flex items-center gap-3">
+                                            <FileText size={20} className="text-stone-400" />
+                                            <h2 className="text-lg font-bold text-white tracking-tight">{report?.fileName || 'Clinical Report'}</h2>
                                         </div>
                                         <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-stone-400 hover:text-white transition-colors">
-                                            <X size={24} />
+                                            <X size={20} />
                                         </button>
                                     </div>
 
-                                    {/* Scrollable Content */}
-                                    <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pb-12 space-y-8 min-h-0">
+                                    {/* Content Scroll */}
+                                    <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8 bg-[#0c0a09]">
 
-                                        {/* 1. Key Performance Indicators */}
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            {[
-                                                { label: "Overall Risk Score", value: "Low", color: "text-emerald-500", sub: "Based on Vitals" },
-                                                { label: "Clinical Confidence", value: "94%", color: "text-amber-500", sub: "AI Analysis" },
-                                                { label: "Critical Findings", value: report?.key_findings?.length || 0, color: "text-rose-500", sub: "Requires Review" }
-                                            ].map((stat, i) => (
-                                                <div key={i} className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col gap-1">
-                                                    <p className="text-xs text-stone-500 font-bold uppercase tracking-wider">{stat.label}</p>
-                                                    <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
-                                                    <p className="text-[10px] text-stone-400 font-medium">{stat.sub}</p>
-                                                </div>
-                                            ))}
+                                        {/* 1. Analysis Complete Badge & Summary */}
+                                        <div className="p-6 rounded-2xl bg-[#091011] border border-[#112a28] relative overflow-hidden">
+                                            {/* Glow */}
+                                            <div className="absolute top-0 right-0 w-64 h-64 bg-[#14b8a6]/5 blur-3xl pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
+
+                                            <div className="flex items-center gap-3 mb-4 relative z-10">
+                                                <CheckCircle size={20} className="text-[#2dd4bf]" />
+                                                <h3 className="text-lg font-bold text-[#2dd4bf] tracking-tight">Analysis Complete</h3>
+                                                <span className="px-2 py-0.5 rounded-md bg-[#1d283a] border border-[#303f57] text-[#60a5fa] text-[10px] font-black uppercase tracking-wider">
+                                                    Powered by Llama 4 Vision
+                                                </span>
+                                            </div>
+                                            <p className="text-slate-300 leading-relaxed max-w-3xl relative z-10 text-[15px]">
+                                                {report?.summary || "Analysis complete. Review findings below."}
+                                            </p>
                                         </div>
 
-                                        {/* 2. Executive Insights Section */}
-                                        <div className="space-y-4">
-                                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                                <Lightbulb size={18} className="text-yellow-400" /> Strategic Insights
-                                            </h3>
-
-                                            {report && report.key_findings ? (
-                                                report.key_findings.map((finding, idx) => (
-                                                    <div key={idx} className="p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 relative overflow-hidden group">
-                                                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 blur-[50px] pointer-events-none" />
-                                                        <h4 className="font-bold text-indigo-200 mb-2 flex items-center gap-2">
-                                                            <TrendingUp size={16} /> Clinical Observation {idx + 1}
-                                                        </h4>
-                                                        <p className="text-sm text-indigo-100/80 leading-relaxed">
-                                                            {finding}
-                                                        </p>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <div className="p-6 rounded-2xl bg-stone-800/50 border border-stone-700/50">
-                                                    <p className="text-stone-500 italic">No specific insights generated from this document.</p>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* 3. Action Plan */}
+                                        {/* 2. Key Clinical Findings */}
                                         <div>
-                                            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                                                <CheckCircle2 size={18} className="text-emerald-500" /> Recommended Actions
-                                            </h3>
+                                            <h3 className="text-xs font-black text-stone-500 uppercase tracking-widest mb-4">Key Clinical Findings</h3>
                                             <div className="space-y-3">
-                                                {[
-                                                    "Review the 3 highlighted Critical Care Gap cases.",
-                                                    "Approve the automated advisory blast for Respiratory patients.",
-                                                    "Schedule a staff review for Tuesday afternoon efficiency gaps.",
-                                                    "Check inventory for Insulin supplies (Projected Low)."
-                                                ].map((action, i) => (
-                                                    <div key={i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10 group">
-                                                        {/* Premium Bullet Point */}
-                                                        <div className="relative mt-1.5 flex-shrink-0">
-                                                            <div className="w-1.5 h-1.5 rounded-full bg-stone-600 group-hover:bg-amber-400 group-hover:scale-125 group-hover:shadow-[0_0_8px_rgba(251,191,36,0.8)] transition-all duration-300" />
+                                                {report?.key_findings && report.key_findings.length > 0 ? (
+                                                    report.key_findings.map((finding, idx) => (
+                                                        <div key={idx} className="flex items-start gap-4 p-4 rounded-xl bg-stone-900/50 border border-white/5 hover:border-amber-500/20 transition-colors group">
+                                                            <div className="mt-1.5 w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.6)] group-hover:scale-125 transition-transform" />
+                                                            <p className="text-slate-200 text-sm leading-relaxed">{finding}</p>
                                                         </div>
-                                                        <span className="text-sm text-stone-300 group-hover:text-white font-medium leading-relaxed">{action}</span>
-                                                    </div>
-                                                ))}
+                                                    ))
+                                                ) : (
+                                                    <div className="p-4 rounded-xl bg-stone-900 border border-stone-800 text-stone-500 italic text-sm">No specific findings extracted.</div>
+                                                )}
                                             </div>
                                         </div>
 
-                                    </div>
-
-                                    {/* Footer Content */}
-                                    <div className="p-6 border-t border-white/5 bg-black/40 backdrop-blur-md flex justify-between items-center shrink-0">
-                                        <p className="text-[10px] text-stone-600 font-mono">
-                                            Generated by CureAI Neural Engine v4.2 • HIPAA Compliant
-                                        </p>
-                                        <div className="flex gap-3">
-                                            <button
-                                                onClick={() => {
-                                                    navigator.clipboard.writeText(`CureAI Executive Summary - ${new Date().toLocaleDateString()}\n\nRisk Score: Low\nOperational Efficiency: 94%\nCritical Gaps: 3\n\n- Adherence up 14% in Diabetes cohort\n- Seasonal Risk Alert: Respiratory distress spike expected.`);
-                                                    // Assuming a global toast or alert would be better, but avoiding dependency complexity for now, using simple Alert style or if Toast is available.
-                                                    // Since we know ToastContext exists, let's try to use it if passed, but to be safe and "functional" without refactoring the parent, we'll change the button text temporarily.
-                                                    const btn = document.getElementById('share-btn-text');
-                                                    if (btn) {
-                                                        const original = btn.innerText;
-                                                        btn.innerText = "Copied!";
-                                                        setTimeout(() => btn.innerText = original, 2000);
-                                                    }
-                                                }}
-                                                className="px-4 py-2 rounded-lg bg-stone-800 text-stone-300 text-xs font-bold hover:bg-stone-700 transition-colors flex items-center gap-2"
-                                            >
-                                                <Share2 size={14} /> <span id="share-btn-text">Share</span>
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    const btn = document.getElementById('export-btn-text');
-                                                    const icon = document.getElementById('export-icon');
-                                                    if (btn && icon) {
-                                                        const originalOriginal = btn.innerText;
-                                                        btn.innerText = "Downloading...";
-                                                        icon.classList.add('animate-bounce');
-
-                                                        setTimeout(() => {
-                                                            btn.innerText = "Saved to Device";
-                                                            icon.classList.remove('animate-bounce');
-                                                            setTimeout(() => btn.innerText = originalOriginal, 2000);
-                                                        }, 1500);
-                                                    }
-                                                }}
-                                                className="px-5 py-2 rounded-lg bg-amber-500 text-black text-xs font-black uppercase tracking-wide hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20 flex items-center gap-2"
-                                            >
-                                                <Download id="export-icon" size={14} /> <span id="export-btn-text">Export PDF</span>
-                                            </button>
+                                        {/* 3. Medications & Adjustments */}
+                                        <div>
+                                            <h3 className="text-xs font-black text-stone-500 uppercase tracking-widest mb-4">Medications & Treatment Plan</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {report?.medication_adjustments && report.medication_adjustments.length > 0 ? (
+                                                    report.medication_adjustments.map((med, idx) => (
+                                                        <div key={idx} className="p-5 rounded-xl bg-[#0b1812] border border-[#133626] relative overflow-hidden group">
+                                                            <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                                                                <Pill size={48} className="text-emerald-500" />
+                                                            </div>
+                                                            <div className="relative z-10">
+                                                                <div className="flex justify-between items-start mb-2">
+                                                                    <h4 className="font-bold text-white text-base">{med.name}</h4>
+                                                                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-md ${med.action === 'Stop' ? 'bg-rose-500/20 text-rose-400' :
+                                                                            med.action === 'Increase' ? 'bg-amber-500/20 text-amber-400' :
+                                                                                'bg-emerald-500/20 text-emerald-400'
+                                                                        }`}>
+                                                                        {med.action || 'Prescribed'}
+                                                                    </span>
+                                                                </div>
+                                                                <p className="text-stone-400 text-xs mb-3 font-mono">{med.dosage} • {med.frequency}</p>
+                                                                <p className="text-emerald-400/80 text-xs leading-relaxed border-t border-emerald-500/10 pt-3">
+                                                                    {med.reason}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div className="col-span-full p-6 rounded-xl bg-stone-900 border border-stone-800 text-center">
+                                                        <div className="inline-flex p-3 rounded-full bg-stone-800 text-stone-600 mb-3">
+                                                            <Pill size={20} />
+                                                        </div>
+                                                        <p className="text-stone-500 text-sm">No specific medication adjustments found.</p>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
+
+                                        {/* 4. Extracted Vitals (Optional) */}
+                                        {report?.extracted_vitals && report.extracted_vitals.length > 0 && (
+                                            <div>
+                                                <h3 className="text-xs font-black text-stone-500 uppercase tracking-widest mb-4">Extracted Vitals</h3>
+                                                <div className="flex flex-wrap gap-4">
+                                                    {report.extracted_vitals.map((vital, idx) => (
+                                                        <div key={idx} className="flex items-center gap-3 p-3 pr-5 rounded-xl bg-indigo-500/5 border border-indigo-500/10">
+                                                            <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+                                                                <Activity size={16} />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider">{vital.vital}</p>
+                                                                <p className="text-white font-mono font-bold">{vital.value} <span className="text-stone-500 text-xs font-normal">{vital.unit}</span></p>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Footer / Actions */}
+                                        <div className="flex justify-end gap-3 pt-8 border-t border-stone-800">
+                                            <div className="flex gap-3">
+                                                <button
+                                                    onClick={() => navigator.clipboard.writeText(report?.summary || "")}
+                                                    className="px-4 py-2 rounded-xl bg-stone-900 border border-white/5 text-stone-400 hover:text-white hover:border-white/10 transition-all text-xs font-bold uppercase tracking-wide flex items-center gap-2"
+                                                >
+                                                    <Share2 size={16} /> Copy Summary
+                                                </button>
+                                                <button
+                                                    className="px-5 py-2 rounded-xl bg-amber-500 text-black text-xs font-black uppercase tracking-wide hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20 flex items-center gap-2"
+                                                >
+                                                    <Download size={16} /> Export PDF
+                                                </button>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             )}
