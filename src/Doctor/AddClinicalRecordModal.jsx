@@ -42,7 +42,7 @@ const TabButton = ({ children, active, onClick, colorClass = "text-amber-400" })
     );
 };
 
-const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
+const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecordAdded }) => {
     // Firebase instances
     const storage = getStorage();
 
@@ -69,6 +69,27 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
         priority: 'routine',
         file: null
     });
+
+    // Reset when opening
+    React.useEffect(() => {
+        if (isOpen) {
+            setFormData({
+                patientId: '',
+                title: '',
+                diagnosis: '',
+                vitals: '',
+                type: 'consultation_note',
+                description: '',
+                date: new Date().toISOString().split('T')[0],
+                priority: 'routine',
+                file: null
+            });
+            setPatientSearchQuery('');
+            setSuccess(false);
+            setError('');
+            setLoading(false);
+        }
+    }, [isOpen]);
 
     // Patient Search/Autofill State
     const [patientSearchQuery, setPatientSearchQuery] = useState('');
@@ -377,8 +398,25 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
             });
 
             setSuccess(true);
+
+            // Construct patient object for navigation
+            const patientObj = patients.find(p => p.id === formData.patientId) || {
+                id: formData.patientId,
+                name: patientSearchQuery.trim(),
+                status: 'Stable', // Default for new
+                firstName: patientSearchQuery.trim().split(' ')[0],
+                lastName: patientSearchQuery.trim().split(' ').slice(1).join(' ') || '',
+                age: 0,
+                gender: 'Unknown',
+                bloodType: 'Unknown'
+            };
+
             setTimeout(() => {
                 onClose();
+                // Navigate to workspace
+                if (onRecordAdded) onRecordAdded(patientObj);
+
+                // FORCE COMPLETE RESET
                 setFormData({
                     patientId: '',
                     title: '',
@@ -390,10 +428,9 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
                     priority: 'routine',
                     file: null
                 });
-                setPatientSearchQuery(''); // Reset search input
+                setPatientSearchQuery('');
                 setSuccess(false);
-            }, 1500);
-
+            }, 1000);
         } catch (err) {
             console.error("Error adding record:", err);
             setError(err.message || "Failed to add record.");
@@ -420,7 +457,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
                     initial={{ scale: 0.95, opacity: 0, y: 30 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.95, opacity: 0, y: 30 }}
-                    className="relative w-full h-full max-w-4xl bg-[#1c1605] rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] shadow-[0_0_50px_rgba(0,0,0,0.5),inset_0_0_120px_rgba(245,158,11,0.08)] border border-amber-500/20"
+                    className="relative w-full max-w-4xl bg-[#1c1605] rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] shadow-[0_0_50px_rgba(0,0,0,0.5),inset_0_0_120px_rgba(245,158,11,0.08)] border border-amber-500/20"
                 >
                     {/* Premium Vibrant Amber Backdrop */}
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,_rgba(251,191,36,0.12),_transparent_60%),_radial-gradient(circle_at_75%_75%,_rgba(217,119,6,0.08),_transparent_60%)] pointer-events-none" />
@@ -728,11 +765,23 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user }) => {
                                     )}
                                 </div>
                             )}
+
+                            {/* Inline Save Button (Backup) */}
+                            <div className="pt-4 pb-2">
+                                <button
+                                    type="submit"
+                                    disabled={loading || success}
+                                    className="w-full py-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
+                                >
+                                    {loading ? <Loader size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+                                    {loading ? 'Saving...' : 'Save Record'}
+                                </button>
+                            </div>
                         </form>
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="p-8 border-t-2 border-amber-500/20 bg-black/40 flex items-center justify-between font-sans">
+                    <div className="p-8 border-t-2 border-amber-500/20 bg-[#1c1605] flex items-center justify-between font-sans shrink-0 z-50 shadow-[0_-20px_40px_rgba(0,0,0,0.5)]">
                         {error && (
                             <div className="flex items-center gap-2 text-rose-400 text-xs font-black uppercase tracking-widest">
                                 <AlertTriangle size={14} />

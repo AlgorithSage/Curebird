@@ -521,6 +521,10 @@ const DoctorDashboard = ({ user }) => {
                 onClose={() => setIsAddRecordModalOpen(false)}
                 patients={patients}
                 user={user}
+                onRecordAdded={(patient) => {
+                    setWorkspacePatient(patient);
+                    setActiveView('patient_workspace');
+                }}
             />
 
             <AddPatientModal
