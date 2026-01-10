@@ -302,16 +302,196 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
         print(f"VLM ERROR: {e}")
         return {"is_medical": False, "medications": [], "diseases": [], "digital_copy": ""}
 
+def verify_and_correct_medical_data(extracted_data):
+    """
+    CORE 2: FEEDBACK AI (Llama 3.3 70B Versatile)
+    
+    This layer acts as a 'Senior Medical Auditor'.
+    It takes the raw extraction and uses deep medical knowledge to correct OCR errors.
+    """
+    try:
+        api_key = os.getenv('GROQ_API_KEY')
+        if not api_key:
+            return extracted_data 
+
+        client = Groq(api_key=api_key)
+        
+        # 1. Construct the context for the AI
+        diseases_context = ", ".join(extracted_data.get('diseases', []))
+        if not diseases_context:
+            diseases_context = "Not specifically detected, infer from medications if possible."
+            
+        medications_json = json.dumps(extracted_data.get('medications', []))
+        
+        system_prompt = """
+        You are Curebird’s Clinical Feedback & Validation AI.
+
+        Your job is to receive OCR-extracted medical text from prescriptions and convert it into a medically correct, verified, and structured form.
+
+        You MUST act like a combination of:
+        • A physician (disease & symptom reasoning)
+        • A pharmacist (drug names, salts, alternatives)
+        • A medical data validator (guideline-based logic)
+
+        You must NEVER hallucinate or invent drugs or diseases.
+        If something is unclear, mark it as "uncertain" instead of guessing.
+
+        ------------------------------------
+        YOUR TASKS
+        ------------------------------------
+
+        You will receive OCR-extracted text which may contain:
+        • Misspelled disease names
+        • Wrong or garbled drug names
+        • Incomplete information
+        • Formatting errors
+
+        You must:
+
+        1) Identify all diseases and symptoms
+        2) Correct disease names using standard medical terminology (ICD / SNOMED style)
+        3) Identify all medicines
+        4) Correct medicine names. **CRITICAL: If the input appears to be a Brand Name (e.g. 'Lonazep', 'Stamol'), the 'corrected' output MUST remain that Brand Name (spelling fixed). Do NOT replace a Brand Name with its Generic Name.**
+        5) Validate whether each medicine is medically appropriate for the disease
+        6) If not appropriate, flag it
+        7) For each medicine, provide therapeutically equivalent alternatives (same salt or same drug class)
+        8) Estimate confidence for each correction
+        9) Produce structured JSON output only
+
+        You must reason using globally accepted medical practice guidelines (WHO, ICMR, NICE, FDA-style logic).
+
+        ------------------------------------
+        ------------------------------------
+        ------------------------------------
+        CORRECTION RULES
+        ------------------------------------
+
+        • **Brand Name Priority**: If OCR says "cenzep", and you identify it as "Lonazep", output "Lonazep". Do NOT output "Clonazepam" as the main name.
+        • If a medicine name does not exist, use fuzzy matching + disease context to find the closest real medicine.
+        
+        **UNIVERSAL PHONETIC RECONSTRUCTION ENGINE (Applies to ALL drugs):**
+        1. **Principle**: OCR usually captures the "shape" or "sound" of the word but messes up specific letters.
+        2. **Action**: For EVERY unrecognized input string:
+           a. "Sound it out" phonetically.
+           b. Look at the **Identified Diseases**.
+           c. Search your internal database of **Indian & Global Brand Names** for a match that:
+              - Sounds/looks similar to the input.
+              - Is a standard treatment for the identified disease.
+        3. **Example Logic (Mental Model)**: 
+           - Input "Stamol" + Disease "Hypertension" -> Match found: "Stamlo" (Amlodipine).
+           - Input "Zylor" + Disease "Gout" -> Match found: "Zyloric".
+           - Input "Trazodic" + Disease "Anxiety" -> Match found: "Trazodone" or Brand "Trazonil".
+
+        **ALTERNATIVES GENERATION RULES:**
+        1. **Real-World Brands**: When suggesting alternatives, do NOT just list Generics. Suggest **Market-Leading Brand Names** available in pharmacies (e.g. for 'Stamlo', suggest 'Amlokind', 'Amlopres').
+        2. **Exact Match**: Ensure the alternative has the EXACT same active salt and mechanism.
+        3. **Availability**: Prioritize brands that are widely distributed in the Indian/Global market.
+        
+        • If a disease name does not exist, use symptom context to infer the correct medical term.
+        • If multiple possibilities exist, list them and mark confidence accordingly.
+        • Never invent new drugs or diseases.
+
+        ------------------------------------
+        OUTPUT FORMAT (MANDATORY)
+        ------------------------------------
+
+        Return ONLY valid JSON in this exact format:
+
+        {
+          "diseases": [
+            {
+              "input": "<raw OCR disease>",
+              "corrected": "<standard medical disease name>",
+              "confidence": 0.95
+            }
+          ],
+          "medicines": [
+            {
+              "input": "<raw OCR drug>",
+              "corrected": "<Corrected BRAND NAME if input was Brand, or Generic if input was Generic>",
+              "dosage": "<preserve original dosage or correct if obvious>",
+              "frequency": "<preserve original frequency>",
+              "salt_or_composition": "<active ingredient / generic name>",
+              "valid_for_disease": true,
+              "alternatives": ["<equivalent drug 1>", "<equivalent drug 2>"],
+              "confidence": 0.95,
+              "is_corrected": true
+            }
+          ],
+          "warnings": [
+            "<any safety or mismatch warning>"
+          ]
+        }
+
+        ------------------------------------
+        BEHAVIORAL RULES
+        ------------------------------------
+
+        • Be extremely strict.
+        • Do not simplify.
+        • Do not explain in natural language.
+        • Do not output anything outside JSON.
+        • When unsure, say "uncertain".
+        """
+        
+        user_prompt = f"""
+        AUDIT THIS EXTRACTION:
+        
+        Context (Diseases): {diseases_context}
+        Raw Medications: {medications_json}
+        """
+        
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.1, 
+            max_tokens=2048,
+            response_format={"type": "json_object"}
+        )
+        
+        result_json = json.loads(completion.choices[0].message.content)
+        
+        # Merge back into a clean structure for the frontend
+        final_meds = []
+        for med in result_json.get('medicines', []):
+            final_meds.append({
+                "name": med.get('corrected', med.get('input')),
+                "dosage": med.get('dosage', ''),
+                "frequency": med.get('frequency', ''),
+                "alternatives": med.get('alternatives', []),
+                "is_corrected": med.get('is_corrected', False),
+                # Storing extra metadata if needed for future
+                "confidence": med.get('confidence'),
+                "valid": med.get('valid_for_disease')
+            })
+            
+        # Update extracted data with corrected values
+        extracted_data['medications'] = final_meds
+        
+        corrected_diseases = [d.get('corrected') for d in result_json.get('diseases', [])]
+        if corrected_diseases:
+            extracted_data['diseases'] = corrected_diseases
+            
+        return extracted_data
+
+    except Exception as e:
+        print(f"FEEDBACK AI ERROR: {e}")
+        return extracted_data # Return original on error
+
 def analyze_comprehensive(file_stream):
     """
-    Step 1: Extract data using VLM.
-    Step 2: Explain extraction results using a smaller LLM for crisp summary.
+    Step 1: Extract data using VLM (Core 1).
+    Step 2: Verify & Correct using Feedback AI (Core 2 - Llama 70B).
+    Step 3: Explain results (Core 3 - Summary).
     """
     try:
         # Use dedicated analyzer key if available
         analyzer_key = os.getenv('GROQ_API_KEY_ANALYZER') or os.getenv('GROQ_API_KEY')
         
-        # Phase 1: Structured Extraction
+        # Phase 1: Structured Extraction (Core 1)
         extracted_data = analyze_with_vlm(file_stream, custom_api_key=analyzer_key)
         
         # Guardrail: Check if it's medical
@@ -320,24 +500,30 @@ def analyze_comprehensive(file_stream):
                 "analysis": {"medications": [], "diseases": []},
                 "summary": "Please upload a valid medical document (e.g., prescription, lab report, or doctor's notes). I am programmed to only analyze medical records and cannot process non-medical images."
             }
+            
+        # Phase 2: Feedback & Correction Loop (Core 2)
+        # This is where we fix the 'cenzep' -> 'Lonazep' errors
+        print("--- Engaging Core 2: Feedback AI ---")
+        verified_data = verify_and_correct_medical_data(extracted_data)
         
-        # Phase 2: User-friendly Summary
+        # Phase 3: User-friendly Summary (Core 3)
         client = Groq(api_key=analyzer_key)
         
         summary_prompt = f"""
         You are a friendly medical interpreter for a patient.
-        Given the following technical extraction from a medical document, provide a very crisp, short, and empathetic summary in simple terms.
+        Given the following medically verified data, provide a very crisp, short, and empathetic summary.
         
-        Technical Data:
-        Diseases/Conditions: {', '.join(extracted_data['diseases'])}
-        Medications: {json.dumps(extracted_data['medications'])}
+        Validated Data:
+        Diseases/Conditions: {', '.join(verified_data['diseases'])}
+        Medications: {json.dumps(verified_data['medications'])}
         
         Instructions:
         - Explain clinical terms (e.g., 'CAD' becomes 'heart artery blockage').
+        - If corrections were made by the system (e.g. spelling fixed), mention that the AI verified the prescription.
         - Be encouraging but professional.
         - Maximum 3-4 bullet points.
         - End with a small disclaimer.
-        - If no data was found, say 'No specific medical details were clearly detected in the image.'
+        - Reference the 'Alternatives' if available, saying 'Generic alternatives have been identified'.
         """
         
         summary_completion = client.chat.completions.create(
@@ -350,7 +536,7 @@ def analyze_comprehensive(file_stream):
         summary_text = summary_completion.choices[0].message.content
         
         return {
-            "analysis": extracted_data,
+            "analysis": verified_data,
             "summary": summary_text
         }
         

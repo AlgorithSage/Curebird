@@ -633,21 +633,48 @@ const CureAnalyzer = ({
                           {analysisResult.analysis.medications.map((med, i) => (
                             <div
                               key={i}
-                              className="flex items-center justify-between text-slate-300 text-sm bg-slate-900 border border-slate-700 p-4 rounded-xl hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)] transition-all group/med"
+                              className="flex flex-col text-slate-300 text-sm bg-slate-900 border border-slate-700 p-4 rounded-xl hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)] transition-all group/med"
                             >
-                              <div className="font-bold text-emerald-400 group-hover/med:text-emerald-300 flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                                {med.name}
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="font-bold text-emerald-400 group-hover/med:text-emerald-300 flex items-center gap-2">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                                  {med.name}
+                                  {med.is_corrected && (
+                                    <span className="flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                                      <Check size={10} /> Verified
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex gap-4 text-slate-500 font-mono text-xs">
+                                  <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
+                                    DSG: {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
+                                  </span>
+                                  <span className="w-px h-full bg-slate-800"></span>
+                                  <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
+                                    FRQ: {med.frequency}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex gap-4 text-slate-500 font-mono text-xs">
-                                <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
-                                  DSG: {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
-                                </span>
-                                <span className="w-px h-full bg-slate-800"></span>
-                                <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
-                                  FRQ: {med.frequency}
-                                </span>
-                              </div>
+
+                              {/* Alternative Medications Section */}
+                              {med.alternatives && med.alternatives.length > 0 && (
+                                <div className="mt-2 pl-4 border-l-2 border-slate-800">
+                                  <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">
+                                    Approved Alternatives:
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {med.alternatives.map((alt, idx) => (
+                                      <span
+                                        key={idx}
+                                        className="text-xs bg-slate-800/50 text-slate-400 px-2 py-1 rounded hover:bg-slate-800 hover:text-sky-400 transition-colors cursor-help"
+                                        title="Generic/Alternative Option"
+                                      >
+                                        {alt}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
