@@ -305,9 +305,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
                         className="bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-2xl border border-amber-500/20 p-6 relative overflow-hidden shadow-xl"
                     >
                         <div className="flex items-start gap-4">
-                            <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400">
-                                <Sparkles size={24} />
-                            </div>
+
                             <div className="flex-1">
                                 <h3 className="text-lg font-bold text-amber-100 mb-2 flex items-center gap-2">
                                     Recent Medical Context

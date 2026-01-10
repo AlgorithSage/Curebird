@@ -85,7 +85,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                 <motion.div
                     initial="hidden"
                     animate="visible"
-                    className="relative z-10 flex flex-col items-center glass px-6 py-12 sm:p-20 rounded-[2.5rem] shadow-[0_0_80px_rgba(56,189,248,0.15)] w-full max-w-4xl border border-white/10"
+                    className="glass-card relative z-10 flex flex-col items-center px-6 py-12 sm:p-20 w-full max-w-4xl"
                 >
                     {/* Logo & Title */}
                     <motion.div custom={0} variants={textVariants} className="flex flex-col sm:flex-row items-center gap-8 mb-10">

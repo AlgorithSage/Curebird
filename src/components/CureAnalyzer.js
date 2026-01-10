@@ -187,7 +187,7 @@ const CureAnalyzer = ({
 
     const analysis = analysisResult.analysis;
     const medList = analysis.medications?.map(m =>
-      `- ${m.name} (${m.dosage}, ${m.frequency}) ${m.is_corrected ? '[Verified]' : ''}`
+      `- ${m.name || m.medicine_name || m.input || 'Unknown Medicine'} (Dosage: ${typeof m.dosage === 'object' ? (m.dosage.dosage || JSON.stringify(m.dosage)) : (m.dosage || 'N/A')}, Freq: ${m.frequency || 'N/A'}) ${m.is_corrected ? '[Verified]' : ''}`
     ).join('\n') || 'None';
 
     const diseaseList = analysis.diseases?.join(', ') || 'None';
@@ -666,7 +666,7 @@ const CureAnalyzer = ({
                               <div className="flex items-center justify-between mb-2">
                                 <div className="font-bold text-emerald-400 group-hover/med:text-emerald-300 flex items-center gap-2">
                                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                                  {med.name}
+                                  {med.name || med.medicine_name || med.input || "Unknown Medicine"}
                                   {med.is_corrected && (
                                     <span className="flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30">
                                       <Check size={10} /> Verified

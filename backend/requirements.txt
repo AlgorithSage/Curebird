@@ -1,0 +1,12 @@
+flask
+flask-cors
+python-dotenv
+requests
+groq
+google-generativeai
+pandas
+Pillow
+pytesseract
+gunicorn
+pymupdf
+cerebras_cloud_sdk
