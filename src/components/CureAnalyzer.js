@@ -825,7 +825,7 @@ const CureAnalyzer = ({
               </button>
 
               <button
-                disabled={!selectedFile || isSaving}
+                disabled={!selectedFile || isSaving || !analysisResult}
                 onClick={handleDocSave}
                 className={`flex-1 py-4 rounded-xl font-bold text-black transition-all duration-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isDocSaved
                   ? "bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500 text-white"
