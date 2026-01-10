@@ -201,8 +201,49 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
     // This is a naive extraction. In a real app, meds would be a separate collection or strictly structured.
     // Here we'll look for records of type 'prescription' or records with 'medications' array.
     const medicationRecords = records
-        .filter(r => r.medications && Array.isArray(r.medications))
-        .flatMap(r => r.medications);
+        .flatMap(r => {
+            // Priority 1: Modern Structured Array
+            if (r.medications && Array.isArray(r.medications) && r.medications.length > 0) {
+                return r.medications;
+            }
+
+            // Priority 2: Legacy Description Parsing (Backfill)
+            if (r.description && (r.description.includes('Medications:') || r.description.includes('•'))) {
+                const meds = [];
+                // Look for lines starting with bullet points or explicitly under a Medications header
+                const lines = r.description.split('\n');
+                let inMedsSection = false;
+
+                for (let line of lines) {
+                    const trimmed = line.trim();
+                    if (trimmed.toLowerCase().includes('medications:')) {
+                        inMedsSection = true;
+                        continue;
+                    }
+                    if (inMedsSection || trimmed.startsWith('•') || trimmed.startsWith('-')) {
+                        // Regex to capture Name + (Action/Dosage)
+                        // Example: "• Aspirin (Prescribed)" or "• Metformin 500mg"
+                        const match = trimmed.match(/^[•\-]?\s*([A-Za-z0-9\s\/\.]+)(\((.*?)\)|$)/);
+                        if (match && match[1] && match[1].length > 3) {
+                            const name = match[1].trim();
+                            // Filter out common non-med words if loose matching
+                            if (!['patient', 'diagnosis', 'plan', 'history'].includes(name.toLowerCase())) {
+                                meds.push({
+                                    name: name,
+                                    dosage: match[3] || 'Legacy Record',
+                                    freq: 'See Notes',
+                                    status: 'Active (Legacy)'
+                                });
+                            }
+                        }
+                    }
+                    // Stop if hitting another section (loose heuristic)
+                    if (inMedsSection && trimmed === '') inMedsSection = false;
+                }
+                return meds;
+            }
+            return [];
+        });
 
     // Deduplicate meds by name
     const activeMeds = Array.from(new Map(medicationRecords.map(m => [m.name, m])).values());
@@ -388,11 +429,43 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
 
                             {/* Fallbacks */}
                             {activeTab === 'medications' && (
-                                <div className="flex flex-col items-center justify-center h-[500px] text-stone-700">
-                                    <div className="p-8 rounded-full bg-stone-900 border border-white/5 mb-8">
-                                        <Pill size={64} className="opacity-10" />
+                                <div className="space-y-6 p-8">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xl font-bold text-white uppercase tracking-tight flex items-center gap-3">
+                                            <Pill size={24} className="text-amber-500" /> Active Prescriptions
+                                        </h3>
+                                        <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest bg-stone-900 border border-white/5 px-3 py-1.5 rounded-lg">
+                                            Total: {activeMeds.length}
+                                        </span>
                                     </div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest">Medication history expansion pending.</p>
+
+                                    {activeMeds.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {activeMeds.map((med, idx) => (
+                                                <div key={idx} className="glass-card p-6 rounded-2xl bg-stone-900/50 border border-white/5 hover:border-amber-500/20 transition-all group">
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <span className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">{med.name}</span>
+                                                        <span className="text-[10px] font-black bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20 uppercase tracking-wider">Active</span>
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <p className="text-sm text-stone-400 font-medium flex items-center gap-2">
+                                                            <span className="text-xs uppercase tracking-widest opacity-50 w-16">Dosage:</span>
+                                                            {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
+                                                        </p>
+                                                        <p className="text-sm text-stone-400 font-medium flex items-center gap-2">
+                                                            <span className="text-xs uppercase tracking-widest opacity-50 w-16">Freq:</span>
+                                                            {med.frequency || med.freq || 'As directed'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center py-20 text-stone-700">
+                                            <Pill size={48} className="mb-4 opacity-20" />
+                                            <p className="text-xs font-black uppercase tracking-widest">No active medications found in records.</p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </motion.div>
