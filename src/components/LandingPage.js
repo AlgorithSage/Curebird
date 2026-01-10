@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeartPulse, LogIn, Dna, Pill, Stethoscope, Syringe, Activity, Globe, Shield, ShieldCheck, Zap, CheckCircle, ArrowRight, Play, Pause, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, ScanEye, Database } from 'lucide-react';
+import { HeartPulse, LogIn, Dna, Pill, Stethoscope, Syringe, Activity, Globe, Shield, ShieldCheck, Zap, CheckCircle, ArrowRight, Play, Pause, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, ScanEye, Database, MessageSquare, Microscope } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from './SEO';
 
@@ -233,7 +233,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 title: "CureAnalyzer™",
                                 subtitle: "Triple-Core Extraction",
                                 desc: "Upload any messy prescription. Our 3-stage AI pipeline extracts, validates, and auto-corrects every medication name against global medical databases.",
-                                icon: <ScanEye size={40} className="text-sky-400" />,
+                                icon: <Bot size={40} className="text-sky-400" />,
                                 color: "border-sky-500/30",
                                 bg: "bg-sky-500/10"
                             },
@@ -249,15 +249,15 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 title: "Cure AI Coach",
                                 subtitle: "24/7 Senior Consultant",
                                 desc: "Not just a chatbot. Context-aware intelligence that knows your specific allergies and history, offering personalized pharmacological advice.",
-                                icon: <Bot size={40} className="text-amber-400" />,
+                                icon: <MessageSquare size={40} className="text-amber-400" />,
                                 color: "border-amber-500/30",
                                 bg: "bg-amber-500/10"
                             },
                             {
-                                title: "Secure Vault",
-                                subtitle: "Longitudinal History",
-                                desc: "Bank-grade encrypted storage that creates a searchable, chronological timeline of your entire medical life. Never lose a lab report again.",
-                                icon: <Database size={40} className="text-purple-400" />,
+                                title: "Cure Tracker",
+                                subtitle: "Pathology Analysis",
+                                desc: "Track disease progression over time. Upload reports to visualize trends in your blood work and biomarkers with clinical precision.",
+                                icon: <Microscope size={40} className="text-purple-400" />,
                                 color: "border-purple-500/30",
                                 bg: "bg-purple-500/10"
                             }

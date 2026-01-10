@@ -14,6 +14,9 @@ import {
   X,
   Camera,
   Edit,
+  ScanEye,
+  BrainCircuit,
+  Sparkles,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
@@ -364,19 +367,23 @@ const CureAnalyzer = ({
           <Bot size={16} /> CORE FEATURE
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+        <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight drop-shadow-lg">
           Cure Intelligence{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
             Analyzer
           </span>
         </h1>
 
+
+
         <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
           Upload any complex prescription or medical report. Our{" "}
-          <span className="text-amber-400 font-semibold">Dual-Core AI</span>{" "}
-          will instantly extract the technical data and translate it into a
+          <span className="text-amber-400 font-semibold">Triple-Core AI</span>{" "}
+          (Vision OCR, Reasoning Verification, & Summary Synthesis) will instantly extract the technical data and translate it into a
           simple, easy-to-understand summary just for you.
         </p>
+
+
 
         <div className="flex justify-center gap-8 mt-8 opacity-70">
           <div className="flex flex-col items-center gap-2">
