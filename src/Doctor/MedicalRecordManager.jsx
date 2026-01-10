@@ -79,8 +79,12 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                     // Client-side sort by date (descending)
                     fetchedRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                    if (fetchedRecords.length > 0) {
-                        setRecords(fetchedRecords);
+                    // FILTER OUT LEGACY HARDCODED RECORDS (Aggressive by Title)
+                    // We renamed new ones to 'Smart Clinical Analysis', so we can safely hide this old title.
+                    const cleanRecords = fetchedRecords.filter(r => r.title !== 'AI Clinical Analysis Report');
+
+                    if (cleanRecords.length > 0) {
+                        setRecords(cleanRecords);
                     } else {
                         // Keep mocks if truly empty, or maybe we should show empty state?
                         // For now, let's append mocks if empty so the UI isn't blank, 
@@ -88,7 +92,7 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                         // Let's mix them or just prefer DB. 
                         // Since user wants to see their NEW record, if we show mocks when fetch is empty, that's fine.
                         // But if fetch has 1 record (the new one), we show that.
-                        setRecords(fetchedRecords);
+                        setRecords(cleanRecords);
                     }
                     setLoading(false);
                 },

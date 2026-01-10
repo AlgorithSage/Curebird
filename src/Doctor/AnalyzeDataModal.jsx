@@ -109,7 +109,7 @@ const AnalyzeDataModal = (props) => {
                     doctorName: currentUser.displayName || 'Dr. Sohan Ghosh',
                     patientName: props.patientName || 'General Record',
                     type: 'lab_report',
-                    title: 'AI Clinical Analysis Report',
+                    title: 'Smart Clinical Analysis',
                     fileName: files[0]?.name || 'Uploaded Document',
                     description: result.summary,
                     date: new Date().toISOString().split('T')[0],

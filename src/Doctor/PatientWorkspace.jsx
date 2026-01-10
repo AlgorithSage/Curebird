@@ -179,7 +179,11 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                 id: doc.id,
                 ...doc.data()
             }));
-            setRecords(fetched);
+
+            // FILTER OUT LEGACY HARDCODED RECORDS (Aggressive by Title)
+            const cleanRecords = fetched.filter(r => r.title !== 'AI Clinical Analysis Report');
+
+            setRecords(cleanRecords);
             setLoading(false);
         }, (err) => {
             console.error("Error fetching patient records:", err);
@@ -329,22 +333,27 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                                             <Loader size={48} className="animate-spin mb-6 opacity-30" />
                                             <p className="text-[10px] font-black uppercase tracking-widest">Loading clinical timeline...</p>
                                         </div>
-                                    ) : records.length > 0 ? (
+                                    ) : records.filter(rec =>
+                                        !rec.title?.includes("AI Clinical Analysis Report") &&
+                                        !rec.description?.includes("Comprehensive analysis")
+                                    ).length > 0 ? (
                                         <div className="max-w-4xl mx-auto space-y-2">
-                                            {records.map((rec, i) => (
-                                                <TimelineItem
-                                                    key={rec.id}
-                                                    delay={i * 0.1}
-                                                    date={rec.date}
-                                                    title={rec.title}
-                                                    type={rec.type === 'consultation_note' ? 'Diagnosis' :
-                                                        rec.type === 'prescription' ? 'Prescription' :
-                                                            rec.type === 'lab_report' ? 'Lab' : 'General'}
-                                                    doctor={rec.doctorName || 'Doctor'}
-                                                    details={rec.description}
-                                                    data={rec}
-                                                />
-                                            ))}
+                                            {records
+                                                .filter(rec => !rec.title?.includes("AI Clinical Analysis Report") && !rec.description?.includes("Comprehensive analysis"))
+                                                .map((rec, i) => (
+                                                    <TimelineItem
+                                                        key={rec.id}
+                                                        delay={i * 0.1}
+                                                        date={rec.date}
+                                                        title={rec.title}
+                                                        type={rec.type === 'consultation_note' ? 'Diagnosis' :
+                                                            rec.type === 'prescription' ? 'Prescription' :
+                                                                rec.type === 'lab_report' ? 'Lab' : 'General'}
+                                                        doctor={rec.doctorName || 'Doctor'}
+                                                        details={rec.description}
+                                                        data={rec}
+                                                    />
+                                                ))}
                                         </div>
                                     ) : (
                                         <div className="flex flex-col items-center justify-center py-32 text-stone-700">
@@ -370,7 +379,10 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                                             <UploadIcon />
                                         </button>
                                     </div>
-                                    <DocumentGrid records={records} />
+                                    <DocumentGrid records={records.filter(rec =>
+                                        !rec.title?.includes("AI Clinical Analysis Report") &&
+                                        !rec.description?.includes("Comprehensive analysis")
+                                    )} />
                                 </div>
                             )}
 

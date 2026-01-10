@@ -167,9 +167,16 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                         // ... map other fields if needed by AIReportModal
                     };
                 });
+                // FILTER OUT LEGACY HARDCODED RECORDS (Aggressive by Title & Content)
+                // This ensures "AI Clinical Co-Pilot" doesn't show the old junk.
+                const cleanReports = reports.filter(r =>
+                    !r.fileName.includes("AI Clinical Analysis Report") && // fileName maps to data.title/fileName
+                    !r.summary?.toLowerCase().includes("comprehensive analysis")
+                );
+
                 // Client-side sort desc
-                reports.sort((a, b) => new Date(b.date) - new Date(a.date));
-                setAnalyzedReports(reports);
+                cleanReports.sort((a, b) => new Date(b.date) - new Date(a.date));
+                setAnalyzedReports(cleanReports);
             });
             return () => unsubscribe();
         };
