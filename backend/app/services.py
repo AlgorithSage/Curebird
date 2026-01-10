@@ -199,6 +199,7 @@ def analyze_clinical_groq(file_stream):
         
         Extract the following structured data in EXACT JSON format:
         {
+            "patient_name": "Full Name of Patient (e.g. John Doe). Look for 'Name:', 'Patient:', 'Mr/Ms/Mrs'. Return empty string if not found.",
             "summary": "Detailed clinical summary of the patient's condition, history, and current visit reason. Include specific complaints and duration.",
             "extracted_vitals": [
                 {"label": "Vital Name (e.g. BP, HR, Temp)", "value": "Value with unit", "status": "normal/high/low/critical"}
@@ -209,7 +210,8 @@ def analyze_clinical_groq(file_stream):
             "medication_adjustments": [
                 {"name": "Medication Name", "action": "Prescribed/Continued", "dose": "Dosage & Frequency (e.g. 10mg BD)"}
             ],
-            "recommendation": "Clinical plan and follow-up instructions."
+            "recommendation": "Clinical plan and follow-up instructions.",
+            "digital_copy": "A clean, professional Markdown representation of the ENTIRE document text as if it were typed out. Include all headers, footers, and patient details."
         }
         
         CRITICAL RULES:
@@ -273,7 +275,7 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
                     "content": [
                         {
                             "type": "text", 
-                            "text": "Analyze this image. First, determine if it is a valid medical document (prescription, lab report, clinical notes, discharge summary) or medication packaging. If it is NOT a medical image, return strict JSON: {\"is_medical\": false}. If it IS a medical image, extract all detected medications (name, dosage, frequency) and any detected clinical conditions or diseases. ALSO, generate a 'digital_copy' field which contains a clean, professional Markdown representation of the ENTIRE document text as if it were typed out. IMPORTANT: Use Markdown tables for medications calling for strict formatting (e.g. | Medication | Dosage | Frequency | \\n |---|---|---| \\n | Name | ... | ... |). Ensure newlines are preserved. Return JSON: {\"is_medical\": true, \"medications\": [...], \"diseases\": [...], \"digital_copy\": \"...markdown string...\"}"
+                            "text": "Analyze this image. First, determine if it is a valid medical document (prescription, lab report, clinical notes, discharge summary) or medication packaging. If it is NOT a medical image, return strict JSON: {\"is_medical\": false}. If it IS a medical image, extract all detected medications (name, dosage, frequency) and any detected clinical conditions or diseases. CRITICALLY: Extract the 'patient_name' if visible (look for 'Name:', 'Patient:', 'Mr/Ms/Mrs'). ALSO, generate a 'digital_copy' field which contains a clean, professional Markdown representation of the ENTIRE document text as if it were typed out. IMPORTANT: Use Markdown tables for medications calling for strict formatting. Return JSON: {\"is_medical\": true, \"patient_name\": \"...\", \"medications\": [...], \"diseases\": [...], \"digital_copy\": \"...markdown string...\"}"
                         },
                         {
                             "type": "image_url",
@@ -293,7 +295,8 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
         structured_data = json.loads(raw_response)
         
         return {
-            "is_medical": structured_data.get("is_medical", True), # Default to true if missing to be safe, but prompt should catch it
+            "is_medical": structured_data.get("is_medical", True),
+            "patient_name": structured_data.get("patient_name", ""),
             "medications": structured_data.get("medications", []),
             "diseases": structured_data.get("diseases", []) or structured_data.get("conditions", []),
             "digital_copy": structured_data.get("digital_copy", "")

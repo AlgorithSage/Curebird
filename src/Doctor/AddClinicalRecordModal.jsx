@@ -136,7 +136,10 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
             });
 
             if (!response.ok) throw new Error("Autofill analysis failed");
-            const data = await response.json();
+            const rawData = await response.json();
+            const data = rawData.analysis || rawData; // Handle nested structure
+            const summary = rawData.summary || data.summary || "";
+            const fullText = data.digital_copy || summary; // Prefer full text for regex
 
             // --- Intelligent Mapping Logic ---
             let newData = { ...formData, file: file }; // specific spread to keep file
@@ -153,7 +156,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
             }
 
             // 2. Description & Summary
-            let fullDescription = data.summary || "";
+            let fullDescription = summary;
             if (data.medication_adjustments && data.medication_adjustments.length > 0) {
                 fullDescription += "\n\nMedications:\n• " + data.medication_adjustments.map(m => `${m.name} (${m.action})`).join("\n• ");
             }
@@ -185,16 +188,34 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
 
             // 6. Patient Identification (Smart Match or New)
 
-            // Strategy: 1. API Field -> 2. Regex Extraction (Aggressive) -> 3. Context Search
+            // Strategy: 1. API Field -> 2. Key Findings Scan -> 3. Regex Extraction
             let extractedName = data.patient_name || data.patientName;
 
-            if (!extractedName && fullDescription) {
-                // Stricter Regex: Enforce Capitalized Words (Title Case) to avoid capturing sentences like "patient with multiple..."
-                // Removed /i flag to ensure we only capture Proper Nouns
+            // Deep Search: content scan
+            if (!extractedName && data.key_findings) {
+                const nameFinding = data.key_findings.find(f => /name|patient/i.test(f));
+                if (nameFinding) {
+                    // Look for "Name: John Doe" pattern
+                    const match = nameFinding.match(/(?:name|patient)\s*[:\-]?\s*([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/i);
+                    if (match) extractedName = match[1];
+                }
+            }
+
+            if (!extractedName && fullText) {
+                // Stricter Regex: Enforce Capitalized Words (Title Case)
                 const namePatterns = [
-                    /patient,?\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})(?=[,\.]|\s+is|\s+has|\s+who|\s+was)/,  // "The patient, John Doe," or "patient John Doe is"
-                    /name\s*:\s*([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})/,                                       // "Name: John Doe"
-                    /([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3}),?\s+(?:is\s+)?(?:a|an)?\s*\d+\s*-?\s*year/         // "John Doe, 20-year-old"
+                    // Label based (High Confidence)
+                    /patient,?\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})(?=[,\.]|\s+is|\s+has|\s+who|\s+was)/,
+                    /name\s*:\s*([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})/,
+
+                    // Honorifics (Mr. John Doe)
+                    /(?:Mr\.|Ms\.|Mrs\.|Dr\.|Master|Miss)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})/,
+
+                    // Clinical Context (John Doe presented with...)
+                    /(?:^|\.\s+)([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})\s+(?:is\s+)?(?:a\s+)?(?:\d+\s*[-]?\s*year)?\s*(?:old)?\s*(?:male|female|man|woman|boy|girl)?\s*(?:who)?\s*(?:presented|complained|reported|visited|suffering|diagnosed)/i,
+
+                    // Age Context (John Doe, 20-year-old)
+                    /([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3}),?\s+(?:is\s+)?(?:a|an)?\s*\d+\s*-?\s*year/
                 ];
 
                 for (let pattern of namePatterns) {
