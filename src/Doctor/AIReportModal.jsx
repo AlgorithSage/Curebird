@@ -13,7 +13,6 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
     // Simulation of AI Analysis Steps
     useEffect(() => {
         if (isOpen) {
-            // If report is already fully "analyzed" (has findings), we can skip generation or make it fast
             setIsGenerating(true);
             setLoadingStep(0);
 
@@ -27,7 +26,6 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
                 }
             ];
 
-            // Execute sequence
             let delay = 0;
             steps.forEach((step, index) => {
                 delay += 800; // Faster generation for viewing existing
@@ -94,7 +92,7 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
                                     </div>
                                 </div>
                             ) : (
-                                /* --- REPORT VIEW (Matching AnalyzeDataModal) --- */
+                                /* --- REPORT VIEW --- */
                                 <div className="flex flex-col h-full min-h-0">
                                     {/* Header */}
                                     <div className="p-6 border-b border-stone-800 flex justify-between items-center bg-stone-900/50">
@@ -110,31 +108,31 @@ const AIReportModal = ({ isOpen, onClose, report }) => {
                                     {/* Content Scroll */}
                                     <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8 bg-[#0c0a09]">
 
-                                        {/* 1. Analysis Complete Badge & Summary */}
-                                        <div className="p-6 rounded-2xl bg-[#091011] border border-[#112a28] relative overflow-hidden">
+                                        {/* 1. Analysis Complete Badge & Summary - VIBRANT CYAN BLUE ACCENT */}
+                                        <div className="p-6 rounded-2xl bg-cyan-900/20 border border-cyan-400/30 relative overflow-hidden shadow-[0_0_30px_rgba(34,211,238,0.1)]">
                                             {/* Glow */}
-                                            <div className="absolute top-0 right-0 w-64 h-64 bg-[#14b8a6]/5 blur-3xl pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
+                                            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/10 blur-[80px] pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
 
                                             <div className="flex items-center gap-3 mb-4 relative z-10">
-                                                <CheckCircle size={20} className="text-[#2dd4bf]" />
-                                                <h3 className="text-lg font-bold text-[#2dd4bf] tracking-tight">Analysis Complete</h3>
-                                                <span className="px-2 py-0.5 rounded-md bg-[#1d283a] border border-[#303f57] text-[#60a5fa] text-[10px] font-black uppercase tracking-wider">
+                                                <CheckCircle size={20} className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
+                                                <h3 className="text-lg font-bold text-cyan-400 tracking-tight drop-shadow-sm">Analysis Complete</h3>
+                                                <span className="px-2 py-0.5 rounded-md bg-cyan-950/60 border border-cyan-400/30 text-cyan-300 text-[10px] font-black uppercase tracking-wider shadow-sm">
                                                     Powered by Llama 4 Vision
                                                 </span>
                                             </div>
-                                            <p className="text-slate-300 leading-relaxed max-w-3xl relative z-10 text-[15px]">
+                                            <p className="text-cyan-100/90 leading-relaxed max-w-3xl relative z-10 text-[15px] font-medium">
                                                 {report?.summary || "Analysis complete. Review findings below."}
                                             </p>
                                         </div>
 
-                                        {/* 2. Key Clinical Findings */}
+                                        {/* 2. Key Clinical Findings - AMBER THEME (Kept Amber to integrate with global theme) */}
                                         <div>
                                             <h3 className="text-xs font-black text-stone-500 uppercase tracking-widest mb-4">Key Clinical Findings</h3>
                                             <div className="space-y-3">
                                                 {report?.key_findings && report.key_findings.length > 0 ? (
                                                     report.key_findings.map((finding, idx) => (
                                                         <div key={idx} className="flex items-start gap-4 p-4 rounded-xl bg-stone-900/50 border border-white/5 hover:border-amber-500/20 transition-colors group">
-                                                            <div className="mt-1.5 w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.6)] group-hover:scale-125 transition-transform" />
+                                                            <div className="mt-1.5 w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)] group-hover:scale-125 transition-transform" />
                                                             <p className="text-slate-200 text-sm leading-relaxed">{finding}</p>
                                                         </div>
                                                     ))

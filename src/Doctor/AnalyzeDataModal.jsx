@@ -174,7 +174,7 @@ const AnalyzeDataModal = (props) => {
                             <div className="p-6 border-b border-white/5 flex justify-between items-center bg-stone-900/50">
                                 <div>
                                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                                        <Search className="text-cyan-400" size={20} /> Analyze New Data
+                                        <Search className="text-amber-500" size={20} /> Analyze New Data
                                     </h2>
                                     <p className="text-stone-400 text-xs mt-1">Upload patient records, lab results, or imaging for instant AI triage.</p>
                                 </div>
@@ -259,13 +259,19 @@ const AnalyzeDataModal = (props) => {
                                             /* 3. Results State */
                                             <div className="flex-1 animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
 
-                                                {/* Summary Box */}
-                                                <div className="p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/20">
-                                                    <h4 className="flex items-center gap-2 text-cyan-400 font-bold mb-2">
-                                                        <CheckCircle2 size={18} /> Analysis Complete
-                                                        <span className="text-[10px] bg-indigo-900/50 px-2 py-0.5 rounded text-indigo-300 ml-2">Powered by Llama 4 Vision</span>
-                                                    </h4>
-                                                    <p className="text-cyan-100/80 text-sm leading-relaxed">
+                                                {/* Summary Box - VIBRANT CYAN BLUE ACCENT */}
+                                                <div className="p-6 rounded-2xl bg-cyan-900/20 border border-cyan-400/30 relative overflow-hidden shadow-[0_0_30px_rgba(34,211,238,0.1)]">
+                                                    {/* Glow */}
+                                                    <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/10 blur-[80px] pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
+
+                                                    <div className="flex items-center gap-3 mb-4 relative z-10">
+                                                        <CheckCircle2 size={20} className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
+                                                        <h3 className="text-lg font-bold text-cyan-400 tracking-tight drop-shadow-sm">Analysis Complete</h3>
+                                                        <span className="px-2 py-0.5 rounded-md bg-cyan-950/60 border border-cyan-400/30 text-cyan-300 text-[10px] font-black uppercase tracking-wider shadow-sm">
+                                                            Powered by Llama 4 Vision
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-cyan-100/90 leading-relaxed max-w-3xl relative z-10 text-[15px] font-medium">
                                                         {result.summary}
                                                     </p>
                                                 </div>
@@ -287,7 +293,7 @@ const AnalyzeDataModal = (props) => {
                                                     <div className="space-y-2">
                                                         {result.key_findings.map((item, i) => (
                                                             <div key={i} className="flex items-start gap-3 p-3 bg-stone-900/50 rounded-lg border border-white/5">
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-2 shrink-0" />
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
                                                                 <span className="text-sm text-stone-300 leading-relaxed">{item}</span>
                                                             </div>
                                                         ))}
