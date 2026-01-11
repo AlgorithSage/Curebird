@@ -168,11 +168,12 @@ const ShareProfile = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNav
                     ) : (
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 relative z-10">
                             <div className="bg-black/40 rounded-2xl p-6 border border-amber-500/30 relative">
-                                <div className="absolute top-4 right-4">
-                                    <CircularTimer targetDate={expiryTime} />
-                                </div>
 
-                                <div className="flex flex-col items-center gap-6 mt-4">
+                                <div className="flex flex-col items-center gap-6">
+                                    <div className="mb-2">
+                                        <CircularTimer targetDate={expiryTime} />
+                                    </div>
+
                                     {/* Link Display */}
                                     <div className="w-full">
                                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block pl-1">Share Link</label>
