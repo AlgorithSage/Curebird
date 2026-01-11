@@ -152,9 +152,50 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                 newData.diagnosis = data.key_findings.slice(0, 2).join(", ");
             }
 
+            // Vitals Extraction Strategy: Structured -> Text Fallback
+            const vMap = {};
+            let foundVitals = false;
+
+            // 1. Try Structured Data
             if (data.extracted_vitals && data.extracted_vitals.length > 0) {
-                // Format Vitals as string
-                newData.vitals = data.extracted_vitals.map(v => `${v.label}: ${v.value}`).join(", ");
+                data.extracted_vitals.forEach(v => {
+                    const label = v.label.toLowerCase();
+                    if (label.includes('bp') || label.includes('blood')) vMap.bp = v.value;
+                    else if (label.includes('heart') || label.includes('pulse') || label.includes('hr')) vMap.heartRate = v.value;
+                    else if (label.includes('temp')) vMap.temperature = v.value;
+                    else if (label.includes('spo2') || label.includes('o2')) vMap.spo2 = v.value;
+                });
+                foundVitals = true;
+            }
+
+            // 2. Fallback: Scan Text (Summary/Key Findings) if structured failed or incomplete
+            if (!foundVitals || Object.keys(vMap).length < 2) {
+                const combinedText = (summary + " " + (data.key_findings || []).join(" ")).toLowerCase();
+
+                // BP Parsing
+                if (!vMap.bp) {
+                    const bpMatch = combinedText.match(/bp[:\s-]*(\d+\/\d+)/i) || combinedText.match(/(\d{2,3}\/\d{2,3})\s*mmhg/i);
+                    if (bpMatch) vMap.bp = bpMatch[1];
+                }
+                // HR Parsing
+                if (!vMap.heartRate) {
+                    const hrMatch = combinedText.match(/(?:hr|heart rate|pulse)[:\s-]*(\d+)/i) || combinedText.match(/(\d+)\s*bpm/i);
+                    if (hrMatch) vMap.heartRate = hrMatch[1];
+                }
+                // Temp Parsing
+                if (!vMap.temperature) {
+                    const tempMatch = combinedText.match(/(?:temp|temperature)[:\s-]*(\d+\.?\d*)/i) || combinedText.match(/(\d+\.?\d*)\s*(?:f|c)\b/i);
+                    if (tempMatch) vMap.temperature = tempMatch[1];
+                }
+                // SpO2 Parsing
+                if (!vMap.spo2) {
+                    const spo2Match = combinedText.match(/(?:spo2|o2)[:\s-]*(\d+)/i) || combinedText.match(/(\d+)%/);
+                    if (spo2Match) vMap.spo2 = spo2Match[1];
+                }
+            }
+
+            if (Object.keys(vMap).length > 0) {
+                newData.vitals = vMap;
             }
 
             // 2. Description & Summary

@@ -194,8 +194,37 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
     }, [patient?.id]);
 
     // Derived Data
+    // Derived Data
     const latestVitalsRecord = records.find(r => r.vitals);
-    const latestVitals = latestVitalsRecord?.vitals || {};
+
+    // Robust Vitals Parsing
+    const getVitalsObject = (record) => {
+        if (!record || !record.vitals) return {};
+
+        // If already structured object (legacy or future proofing)
+        if (typeof record.vitals === 'object' && !Array.isArray(record.vitals)) {
+            return record.vitals;
+        }
+
+        // Parse String Format: "BP: 120/80, HR: 72 bpm, SpO2: 98%"
+        const v = {};
+        const str = String(record.vitals);
+
+        // Regex extractors
+        const bpMatch = str.match(/(?:BP|Blood Pressure|B\.P|Systolic)[^0-9]*(\d+\s*[\/-]\s*\d+)/i);
+        const hrMatch = str.match(/(?:HR|Heart Rate|Pulse|Rate)[^0-9]*(\d+)/i);
+        const tempMatch = str.match(/(?:Temp|Temperature|T)[^0-9]*(\d+(?:\.\d+)?)/i);
+        const spo2Match = str.match(/(?:SpO2|O2|Oxygen|Sat)[^0-9]*(\d+)/i);
+
+        if (bpMatch) v.bp = bpMatch[1];
+        if (hrMatch) v.heartRate = hrMatch[1];
+        if (tempMatch) v.temperature = tempMatch[1];
+        if (spo2Match) v.spo2 = spo2Match[1];
+
+        return v;
+    };
+
+    const latestVitals = getVitalsObject(latestVitalsRecord);
 
     // Find all unique medications mentioned in records
     // This is a naive extraction. In a real app, meds would be a separate collection or strictly structured.
