@@ -206,7 +206,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                     <Activity size={180} className="text-amber-500/80 mb-8 animate-pulse drop-shadow-[0_0_50px_rgba(245,158,11,0.5)]" />
                                     <h4 className="text-3xl font-bold text-white mb-4">Live Vitals Dashboard</h4>
                                     <p className="text-slate-400 max-w-sm">
-                                        Tracking <span className="text-emerald-400">Heart Rate</span>, <span className="text-blue-400">SpO2</span>, and <span className="text-purple-400">Stress Levels</span> in real-time via wearable integration.
+                                        Tracking <span className="text-emerald-400">Health Metrics</span>, <span className="text-blue-400">Disease Risks</span>, and <span className="text-purple-400">Vital Trends</span> via <span className="text-slate-200 font-semibold">AI-powered medical profiling</span>.
                                     </p>
                                 </div>
                             </div>

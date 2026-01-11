@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, FileText, Calendar, Pill, Settings, HeartPulse, Bot, Activity, X, MessageSquare, Mail, Shield, ScrollText, Microscope } from 'lucide-react';
+import { LayoutDashboard, FileText, Calendar, Pill, Settings, HeartPulse, Bot, Activity, X, MessageSquare, Mail, Shield, ScrollText, Microscope, Stethoscope } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 
 const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user }) => {
@@ -26,6 +26,7 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user }) => {
                 { name: 'Cure Analyzer', icon: Bot },
                 { name: 'Cure Stat', icon: Activity },
                 { name: 'Cure AI', icon: MessageSquare },
+                { name: 'Doctor Access', icon: Stethoscope },
             ]
         },
         {

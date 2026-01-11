@@ -30,6 +30,8 @@ import TermsOfService from './components/TermsOfService';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import Contact from './components/Contact';
 import LoadingScreen from './components/LoadingScreen';
+import ShareProfile from './components/ShareProfile';
+import DoctorPublicView from './components/DoctorPublicView';
 
 const formatDate = (date) => date?.toDate ? date.toDate().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ') : '');
@@ -48,6 +50,16 @@ export default function App() {
         setChatContext(context);
         setActiveView('Cure AI');
     };
+
+
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const shareToken = params.get('share');
+        if (shareToken) {
+            setPublicView('doctor_view');
+        }
+    }, []);
 
     useEffect(() => {
         let profileUnsubscribe = null;
@@ -144,6 +156,7 @@ export default function App() {
             case 'Cure Analyzer': return <CureAnalyzer {...pageProps} />;
             case 'Cure Stat': return <CureStat {...pageProps} />;
             case 'Cure AI': return <CureAI {...pageProps} initialContext={chatContext} />; // Pass context to Chat
+            case 'Doctor Access': return <ShareProfile {...pageProps} />;
             case 'Settings': return <Settings {...pageProps} />;
             case 'Contact': return <Contact {...pageProps} db={db} />;
             case 'Terms': return <TermsOfService {...pageProps} />;
@@ -179,6 +192,17 @@ export default function App() {
                         {publicView === 'terms' && <TermsOfService onBack={() => setPublicView(null)} />}
                         {publicView === 'privacy' && <PrivacyPolicy onBack={() => setPublicView(null)} />}
                         {publicView === 'contact' && <Contact onBack={() => setPublicView(null)} db={db} />}
+                        {publicView === 'doctor_view' && (
+                            <DoctorPublicView
+                                db={db}
+                                appId={appId}
+                                shareToken={new URLSearchParams(window.location.search).get('share')}
+                                onBack={() => {
+                                    setPublicView(null);
+                                    window.history.replaceState({}, document.title, "/");
+                                }}
+                            />
+                        )}
 
                         {!publicView && (
                             <LandingPage
