@@ -286,7 +286,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
                                 <div className="mb-6 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2 group-hover:scale-105 transition-transform">
                                     <Activity size={14} className="text-emerald-400" />
-                                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Global Stats</span>
+                                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">National Stats</span>
                                 </div>
                                 <h3 className="text-3xl font-bold text-white mb-4">
                                     Cure <span className="text-emerald-400">Stat</span>
