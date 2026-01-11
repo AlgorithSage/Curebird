@@ -3,34 +3,75 @@ import { Share2, Link, QrCode, Clock, Copy, Check, ShieldCheck, UserCog, Timer }
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import Header from './Header';
 
-const CountdownTimer = ({ targetDate }) => {
-    const [timeLeft, setTimeLeft] = React.useState('');
+const CircularTimer = ({ targetDate, totalDuration = 3600 }) => {
+    const [timeLeft, setTimeLeft] = React.useState({ minutes: 0, seconds: 0, totalSeconds: 0 });
 
     React.useEffect(() => {
         const interval = setInterval(() => {
             if (!targetDate) return;
             const now = new Date();
-            const diff = targetDate - now;
+            const diff = (targetDate - now) / 1000;
 
             if (diff <= 0) {
-                setTimeLeft('EXPIRED');
+                setTimeLeft({ minutes: 0, seconds: 0, totalSeconds: 0 });
                 clearInterval(interval);
                 return;
             }
 
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            setTimeLeft(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+            const minutes = Math.floor(diff / 60);
+            const seconds = Math.floor(diff % 60);
+            setTimeLeft({ minutes, seconds, totalSeconds: diff });
         }, 1000);
 
         return () => clearInterval(interval);
     }, [targetDate]);
 
+    // SVG Layout
+    const size = 120;
+    const strokeWidth = 8;
+    const center = size / 2;
+    const radius = size / 2 - strokeWidth / 2;
+    const circumference = 2 * Math.PI * radius;
+
+    const progress = Math.min(timeLeft.totalSeconds / totalDuration, 1);
+    const strokeDashoffset = circumference - (progress * circumference);
+
     return (
-        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20 flex items-center gap-2 animate-pulse">
-            <Timer size={12} className="animate-pulse" />
-            Expires in <span className="font-mono text-sm">{timeLeft}</span>
-        </span>
+        <div className="relative flex flex-col items-center justify-center">
+            <svg width={size} height={size} className="transform -rotate-90">
+                {/* Background Track */}
+                <circle
+                    cx={center}
+                    cy={center}
+                    r={radius}
+                    fill="transparent"
+                    stroke="rgba(255, 255, 255, 0.1)"
+                    strokeWidth={strokeWidth}
+                />
+                {/* Progress Circle */}
+                <circle
+                    cx={center}
+                    cy={center}
+                    r={radius}
+                    fill="transparent"
+                    stroke="#f59e0b" // Amber-500
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    className="transition-all duration-1000 ease-linear"
+                />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Remaining</span>
+                <span className="text-2xl font-bold font-mono text-white leading-tight">
+                    {timeLeft.minutes}m
+                </span>
+                <span className="text-sm font-bold font-mono text-slate-300">
+                    {timeLeft.seconds}s
+                </span>
+            </div>
+        </div>
     );
 };
 
@@ -127,8 +168,8 @@ const ShareProfile = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNav
                     ) : (
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 relative z-10">
                             <div className="bg-black/40 rounded-2xl p-6 border border-amber-500/30 relative">
-                                <div className="absolute top-3 right-3">
-                                    <CountdownTimer targetDate={expiryTime} />
+                                <div className="absolute top-4 right-4">
+                                    <CircularTimer targetDate={expiryTime} />
                                 </div>
 
                                 <div className="flex flex-col items-center gap-6 mt-4">
