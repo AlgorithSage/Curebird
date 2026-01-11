@@ -1,7 +1,38 @@
 import React, { useState } from 'react';
-import { Share2, Link, QrCode, Clock, Copy, Check, ShieldCheck, UserCog } from 'lucide-react';
+import { Share2, Link, QrCode, Clock, Copy, Check, ShieldCheck, UserCog, Timer } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import Header from './Header';
+
+const CountdownTimer = ({ targetDate }) => {
+    const [timeLeft, setTimeLeft] = React.useState('');
+
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            if (!targetDate) return;
+            const now = new Date();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                setTimeLeft('EXPIRED');
+                clearInterval(interval);
+                return;
+            }
+
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            setTimeLeft(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [targetDate]);
+
+    return (
+        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20 flex items-center gap-2 animate-pulse">
+            <Timer size={12} className="animate-pulse" />
+            Expires in <span className="font-mono text-sm">{timeLeft}</span>
+        </span>
+    );
+};
 
 const ShareProfile = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [loading, setLoading] = useState(false);
@@ -96,10 +127,8 @@ const ShareProfile = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNav
                     ) : (
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 relative z-10">
                             <div className="bg-black/40 rounded-2xl p-6 border border-amber-500/30 relative">
-                                <div className="absolute top-3 right-3 flex items-center gap-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20 flex items-center gap-1">
-                                        <Clock size={10} /> Expires {expiryTime?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
+                                <div className="absolute top-3 right-3">
+                                    <CountdownTimer targetDate={expiryTime} />
                                 </div>
 
                                 <div className="flex flex-col items-center gap-6 mt-4">

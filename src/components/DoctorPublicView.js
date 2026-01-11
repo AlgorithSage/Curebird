@@ -8,6 +8,31 @@ const DoctorPublicView = ({ db, appId, shareToken, onBack }) => {
     const [error, setError] = useState(null);
     const [patientData, setPatientData] = useState(null);
     const [records, setRecords] = useState([]);
+    const [expiryTime, setExpiryTime] = useState(null);
+    const [timeLeft, setTimeLeft] = useState(null);
+
+    // Timer Logic
+    useEffect(() => {
+        if (!expiryTime) return;
+
+        const timer = setInterval(() => {
+            const now = new Date();
+            const diff = expiryTime - now;
+
+            if (diff <= 0) {
+                setTimeLeft("EXPIRED");
+                clearInterval(timer);
+                alert("Session Expired");
+                window.location.reload();
+            } else {
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                setTimeLeft(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+            }
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [expiryTime]);
 
     useEffect(() => {
         const fetchSharedData = async () => {
@@ -22,9 +47,12 @@ const DoctorPublicView = ({ db, appId, shareToken, onBack }) => {
 
                 const linkData = linkSnap.data();
                 const now = new Date();
-                if (linkData.expiresAt.toDate() < now) {
+                const expiresAt = linkData.expiresAt.toDate();
+
+                if (expiresAt < now) {
                     throw new Error("This access link has expired.");
                 }
+                setExpiryTime(expiresAt);
 
                 const userId = linkData.userId;
 
@@ -102,7 +130,9 @@ const DoctorPublicView = ({ db, appId, shareToken, onBack }) => {
                     </div>
                     <div className="text-right hidden sm:block">
                         <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Access Expires In</p>
-                        <p className="text-sm font-mono font-bold text-slate-700">59:20</p>
+                        <p className={`text-sm font-mono font-bold ${timeLeft === 'EXPIRED' || (parseInt(timeLeft?.split(':')[0]) < 5) ? 'text-red-500 animate-pulse' : 'text-slate-700'}`}>
+                            {timeLeft || '--:--'}
+                        </p>
                     </div>
                 </div>
             </header>
