@@ -111,6 +111,75 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [], user }) => {
         }
     };
 
+    // --- SMART AUTOFILL LOGIC ---
+    const [uploading, setUploading] = useState(false);
+
+    const handleFileUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploading(true);
+        setError('');
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('http://localhost:5001/api/analyze-report', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Failed to analyze document');
+
+            const data = await response.json();
+
+            // Autofill Logic
+            if (data.medications && data.medications.length > 0) {
+                const mappedMeds = data.medications.map(m => ({
+                    name: m.name,
+                    dosage: m.dosage || 'As prescribed',
+                    frequency: mapFrequency(m.frequency),
+                    route: 'Oral',
+                    duration: m.duration || '7 Days',
+                    instructions: ''
+                }));
+                setMedications(mappedMeds);
+            }
+
+            if (data.key_findings && data.key_findings.length > 0) {
+                // Heuristic: Use first finding or join top 2
+                setDiagnosis(data.key_findings.slice(0, 2).join(", ") || data.summary || '');
+            }
+
+            // Attempt Patient Match
+            if (data.patient_name) {
+                const normalizedSearch = data.patient_name.toLowerCase();
+                const match = patients.find(p => p.name.toLowerCase().includes(normalizedSearch) || normalizedSearch.includes(p.name.toLowerCase()));
+                if (match) setPatientId(match.id);
+            }
+
+            setSuccess(true); // reusing success state for visual feedback of "Autofill Complete"
+            setTimeout(() => setSuccess(false), 2000);
+
+        } catch (err) {
+            console.error("Autofill Error:", err);
+            setError("Could not autofill from document. Please enter manually.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const mapFrequency = (freqRaw) => {
+        if (!freqRaw) return 'QD';
+        const f = freqRaw.toLowerCase();
+        if (f.includes('twice') || f.includes('bid') || f.includes('1-0-1')) return 'BID';
+        if (f.includes('thrice') || f.includes('tid') || f.includes('1-1-1')) return 'TID';
+        if (f.includes('four') || f.includes('qid')) return 'QID';
+        if (f.includes('needed') || f.includes('prn')) return 'PRN';
+        return 'QD';
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -168,6 +237,36 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [], user }) => {
                         {/* Content */}
                         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar relative z-10">
                             <form id="prescription-form" onSubmit={handleSubmit} className="space-y-8">
+
+                                {/* SMART UPLOAD BANNER */}
+                                <div className="relative group/upload">
+                                    <input
+                                        type="file"
+                                        accept="image/*,.pdf"
+                                        onChange={handleFileUpload}
+                                        disabled={uploading}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 disabled:cursor-not-allowed"
+                                    />
+                                    <div className={`p-6 rounded-2xl border-2 border-dashed transition-all flex items-center justify-center gap-4 ${uploading ? 'border-amber-500/50 bg-amber-500/10' : 'border-stone-800 bg-stone-900/40 hover:border-amber-500/30 hover:bg-stone-900/60'}`}>
+                                        <div className={`p-3 rounded-full ${uploading ? 'bg-amber-500/20 text-amber-400 animate-pulse' : 'bg-stone-800 text-stone-400 group-hover/upload:text-amber-500 group-hover/upload:bg-amber-500/10'} transition-colors`}>
+                                            {uploading ? <Loader size={24} className="animate-spin" /> : <Plus size={24} />}
+                                        </div>
+                                        <div className="text-left">
+                                            {uploading ? (
+                                                <>
+                                                    <p className="text-sm font-bold text-amber-400">Analyzing Document...</p>
+                                                    <p className="text-xs text-amber-500/60">Extracting Patient & Meds</p>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <p className="text-sm font-bold text-stone-300 group-hover/upload:text-white transition-colors">Smart Autofill from Image</p>
+                                                    <p className="text-xs text-stone-500 group-hover/upload:text-stone-400 transition-colors">Upload a physical Rx to auto-populate fields</p>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Patient Selection */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-3">

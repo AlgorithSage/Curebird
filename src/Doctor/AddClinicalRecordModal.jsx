@@ -174,22 +174,22 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
 
                 // BP Parsing
                 if (!vMap.bp) {
-                    const bpMatch = combinedText.match(/bp[:\s-]*(\d+\/\d+)/i) || combinedText.match(/(\d{2,3}\/\d{2,3})\s*mmhg/i);
-                    if (bpMatch) vMap.bp = bpMatch[1];
+                    const bpMatch = combinedText.match(/(?:bp|blood pressure|b\.p|systolic|sys)[^0-9]*(\d{2,3}[\/-]\d{2,3})/i) || combinedText.match(/(\d{2,3}[\/-]\d{2,3})\s*mmhg/i);
+                    if (bpMatch) vMap.bp = bpMatch[1].replace(/\s/g, '');
                 }
                 // HR Parsing
                 if (!vMap.heartRate) {
-                    const hrMatch = combinedText.match(/(?:hr|heart rate|pulse)[:\s-]*(\d+)/i) || combinedText.match(/(\d+)\s*bpm/i);
+                    const hrMatch = combinedText.match(/(?:hr|heart rate|pulse|rate)[^0-9]*(\d{2,3})/i) || combinedText.match(/(\d{2,3})\s*bpm/i);
                     if (hrMatch) vMap.heartRate = hrMatch[1];
                 }
                 // Temp Parsing
                 if (!vMap.temperature) {
-                    const tempMatch = combinedText.match(/(?:temp|temperature)[:\s-]*(\d+\.?\d*)/i) || combinedText.match(/(\d+\.?\d*)\s*(?:f|c)\b/i);
+                    const tempMatch = combinedText.match(/(?:temp|temperature|t)[^0-9]*(\d{2,3}(?:\.\d+)?)/i) || combinedText.match(/(\d{2,3}(?:\.\d+)?)\s*(?:°|deg)?(?:f|c)\b/i);
                     if (tempMatch) vMap.temperature = tempMatch[1];
                 }
                 // SpO2 Parsing
                 if (!vMap.spo2) {
-                    const spo2Match = combinedText.match(/(?:spo2|o2)[:\s-]*(\d+)/i) || combinedText.match(/(\d+)%/);
+                    const spo2Match = combinedText.match(/(?:spo2|o2|oxygen|sat)[^0-9]*(\d{2,3})/i) || combinedText.match(/(\d{2,3})%/);
                     if (spo2Match) vMap.spo2 = spo2Match[1];
                 }
             }

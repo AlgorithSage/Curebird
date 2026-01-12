@@ -244,12 +244,13 @@ def analyze_clinical_groq(file_stream):
         return json.loads(content)
         
     except Exception as e:
-        print(f"Groq Analysis Error: {e}")
+        print(f"Groq Analysis Error (CRITICAL): {e}")
+        # Return a cleaner error to frontend
         return {
-            "summary": "Analysis failed (Groq fallback).",
+            "summary": "Analysis failed. Please try again or enter details manually.",
             "extracted_vitals": [],
-            "key_findings": [f"Error: {str(e)}"],
-            "recommendation": "Please check API configuration.",
+            "key_findings": [f"System Error: {str(e)}"],
+            "recommendation": "Manual entry required.",
             "medication_adjustments": []
         }
 
@@ -271,7 +272,7 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
         
         # 3. Call Groq VLM
         completion = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            model="meta-llama/llama-4-maverick-17b-128e-instruct",
             messages=[
                 {
                     "role": "user",
@@ -305,7 +306,7 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
             "digital_copy": structured_data.get("digital_copy", "")
         }
     except Exception as e:
-        print(f"VLM ERROR: {e}")
+        print(f"VLM ERROR (CRITICAL): {e}")
         return {"is_medical": False, "medications": [], "diseases": [], "digital_copy": ""}
 
 def verify_and_correct_medical_data(extracted_data):

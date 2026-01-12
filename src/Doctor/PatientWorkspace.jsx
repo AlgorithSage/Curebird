@@ -180,10 +180,10 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                 ...doc.data()
             }));
 
-            // FILTER OUT LEGACY HARDCODED RECORDS (Aggressive by Title)
-            const cleanRecords = fetched.filter(r => r.title !== 'AI Clinical Analysis Report');
+            // Do not filter out potential legacy records, we need them for vitals backfill
+            // const cleanRecords = fetched.filter(r => r.title !== 'AI Clinical Analysis Report');
 
-            setRecords(cleanRecords);
+            setRecords(fetched);
             setLoading(false);
         }, (err) => {
             console.error("Error fetching patient records:", err);
@@ -194,37 +194,76 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
     }, [patient?.id]);
 
     // Derived Data
-    // Derived Data
     const latestVitalsRecord = records.find(r => r.vitals);
 
-    // Robust Vitals Parsing
-    const getVitalsObject = (record) => {
-        if (!record || !record.vitals) return {};
+    // ROBUST VITALS SCANNER (Deep Search & Aggregation)
+    const getDeepScannedVitals = () => {
+        // Sort records by date descending (newest first)
+        const sortedRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        // If already structured object (legacy or future proofing)
-        if (typeof record.vitals === 'object' && !Array.isArray(record.vitals)) {
-            return record.vitals;
+        const aggregatedVitals = {};
+
+        for (const record of sortedRecords) {
+            // Stop if we have all 4 vitals
+            if (aggregatedVitals.bp && aggregatedVitals.heartRate && aggregatedVitals.temperature && aggregatedVitals.spo2) break;
+
+            // 1. EXTRACT FROM STRUCTURED OBJECT
+            if (record.vitals && typeof record.vitals === 'object' && !Array.isArray(record.vitals)) {
+                if (!aggregatedVitals.bp && record.vitals.bp) aggregatedVitals.bp = record.vitals.bp;
+                if (!aggregatedVitals.heartRate && record.vitals.heartRate) aggregatedVitals.heartRate = record.vitals.heartRate;
+                if (!aggregatedVitals.temperature && record.vitals.temperature) aggregatedVitals.temperature = record.vitals.temperature;
+                if (!aggregatedVitals.spo2 && record.vitals.spo2) aggregatedVitals.spo2 = record.vitals.spo2;
+            }
+
+            // 2. TEXT SCANNING (Fallback)
+            let textToScan = '';
+            // If vitals is a string, append it. If object, we already mined it above.
+            if (typeof record.vitals === 'string') textToScan += record.vitals + ' ';
+            textToScan += (record.description || '') + ' ' + (record.summary || '');
+
+            const text = textToScan.toLowerCase();
+            const parsed = parseVitalsString(text);
+
+            // Fill missing slots
+            if (!aggregatedVitals.bp && parsed.bp) aggregatedVitals.bp = parsed.bp;
+            if (!aggregatedVitals.heartRate && parsed.heartRate) aggregatedVitals.heartRate = parsed.heartRate;
+            if (!aggregatedVitals.temperature && parsed.temperature) aggregatedVitals.temperature = parsed.temperature;
+            if (!aggregatedVitals.spo2 && parsed.spo2) aggregatedVitals.spo2 = parsed.spo2;
         }
 
-        // Parse String Format: "BP: 120/80, HR: 72 bpm, SpO2: 98%"
+        return aggregatedVitals;
+    };
+
+    const parseVitalsString = (str) => {
         const v = {};
-        const str = String(record.vitals);
 
-        // Regex extractors
-        const bpMatch = str.match(/(?:BP|Blood Pressure|B\.P|Systolic)[^0-9]*(\d+\s*[\/-]\s*\d+)/i);
-        const hrMatch = str.match(/(?:HR|Heart Rate|Pulse|Rate)[^0-9]*(\d+)/i);
-        const tempMatch = str.match(/(?:Temp|Temperature|T)[^0-9]*(\d+(?:\.\d+)?)/i);
-        const spo2Match = str.match(/(?:SpO2|O2|Oxygen|Sat)[^0-9]*(\d+)/i);
+        // 1. BP: Aggressive Match for "120/80" pattern even without label
+        // Must be 2-3 digits / 2-3 digits. Avoids dates like 1/1/2024.
+        const bpMatch = str.match(/(?:bp|press|sys)[^0-9]*(\d{2,3}\s*[\/-]\s*\d{2,3})/i) ||
+            str.match(/\b(\d{2,3}\s*[\/-]\s*\d{2,3})\s*mmhg/i) ||
+            str.match(/\b(1[0-9]{2}|[9]\d)\s*[\/-]\s*([4-9]\d|1\d{2})\b/); // Heuristic: 90-199 / 40-199
 
-        if (bpMatch) v.bp = bpMatch[1];
+        // 2. HR: Look for 'bpm' or explicit label
+        const hrMatch = str.match(/(?:hr|heart rate|pulse|rate)[^0-9]*(\d{2,3})/i) || str.match(/(\d{2,3})\s*bpm/i);
+
+        // 3. Temp: Look for 'F'/'C' or explicit label
+        const tempMatch = str.match(/(?:temp|t)[^0-9]*(\d{2,3}(?:\.\d+)?)/i) || str.match(/(\d{2,3}(?:\.\d+)?)\s*(?:°|deg)?(?:f|c)\b/i);
+
+        // 4. SpO2: Look for '%' or explicit label
+        const spo2Match = str.match(/(?:spo2|o2|sat)[^0-9]*(\d{2,3})/i) || str.match(/(\d{2,3})%/);
+
+        if (bpMatch) v.bp = bpMatch[1].replace(/\s/g, '');
         if (hrMatch) v.heartRate = hrMatch[1];
         if (tempMatch) v.temperature = tempMatch[1];
         if (spo2Match) v.spo2 = spo2Match[1];
 
+        // Sanity Check: Don't return crazy values
+        if (v.spo2 && parseInt(v.spo2) > 100) delete v.spo2;
+
         return v;
     };
 
-    const latestVitals = getVitalsObject(latestVitalsRecord);
+    const latestVitals = getDeepScannedVitals();
 
     // Find all unique medications mentioned in records
     // This is a naive extraction. In a real app, meds would be a separate collection or strictly structured.
@@ -474,7 +513,7 @@ const PatientWorkspace = ({ patient, onBack, onOpenChat, onAddAction }) => {
                                                 <div key={idx} className="glass-card p-6 rounded-2xl bg-stone-900/50 border border-white/5 hover:border-amber-500/20 transition-all group">
                                                     <div className="flex justify-between items-start mb-2">
                                                         <span className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">{med.name}</span>
-                                                        <span className="text-[10px] font-black bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20 uppercase tracking-wider">Active</span>
+                                                        <span className="text-stone-400 text-xs font-bold font-mono tracking-tighter opacity-50 flex items-center gap-1"><Clock size={10} /> {med.status || 'Active'}</span>
                                                     </div>
                                                     <div className="space-y-1">
                                                         <p className="text-sm text-stone-400 font-medium flex items-center gap-2">
