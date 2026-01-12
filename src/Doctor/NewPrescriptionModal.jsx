@@ -238,35 +238,6 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [], user }) => {
                         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar relative z-10">
                             <form id="prescription-form" onSubmit={handleSubmit} className="space-y-8">
 
-                                {/* SMART UPLOAD BANNER */}
-                                <div className="relative group/upload">
-                                    <input
-                                        type="file"
-                                        accept="image/*,.pdf"
-                                        onChange={handleFileUpload}
-                                        disabled={uploading}
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 disabled:cursor-not-allowed"
-                                    />
-                                    <div className={`p-6 rounded-2xl border-2 border-dashed transition-all flex items-center justify-center gap-4 ${uploading ? 'border-amber-500/50 bg-amber-500/10' : 'border-stone-800 bg-stone-900/40 hover:border-amber-500/30 hover:bg-stone-900/60'}`}>
-                                        <div className={`p-3 rounded-full ${uploading ? 'bg-amber-500/20 text-amber-400 animate-pulse' : 'bg-stone-800 text-stone-400 group-hover/upload:text-amber-500 group-hover/upload:bg-amber-500/10'} transition-colors`}>
-                                            {uploading ? <Loader size={24} className="animate-spin" /> : <Plus size={24} />}
-                                        </div>
-                                        <div className="text-left">
-                                            {uploading ? (
-                                                <>
-                                                    <p className="text-sm font-bold text-amber-400">Analyzing Document...</p>
-                                                    <p className="text-xs text-amber-500/60">Extracting Patient & Meds</p>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <p className="text-sm font-bold text-stone-300 group-hover/upload:text-white transition-colors">Smart Autofill from Image</p>
-                                                    <p className="text-xs text-stone-500 group-hover/upload:text-stone-400 transition-colors">Upload a physical Rx to auto-populate fields</p>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
                                 {/* Patient Selection */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-3">
@@ -389,6 +360,57 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [], user }) => {
                                         ))}
                                     </div>
                                 </div>
+
+                                {/* Smart Autofill Button */}
+                                <div className="relative group/upload w-full mt-2">
+                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/20 to-amber-600/20 rounded-2xl opacity-0 group-hover/upload:opacity-100 transition-opacity duration-500 blur-md" />
+
+                                    <div className="relative overflow-hidden rounded-2xl bg-[#0c0a09] transition-all duration-300 group-hover/upload:transform group-hover/upload:-translate-y-0.5 group-hover/upload:shadow-2xl">
+                                        <input
+                                            type="file"
+                                            accept="image/*,.pdf"
+                                            onChange={handleFileUpload}
+                                            disabled={uploading}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30 disabled:cursor-not-allowed"
+                                        />
+
+                                        <div className={`
+                                            relative p-5 border-2 border-dashed transition-all duration-300 flex items-center justify-center gap-4 group-hover/upload:border-amber-500/60
+                                            ${uploading
+                                                ? 'border-amber-500/50 bg-amber-950/20'
+                                                : 'border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/15'
+                                            }
+                                            rounded-2xl
+                                        `}>
+                                            {/* Animated Background Scan Effect */}
+                                            {!uploading && <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(245,158,11,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-shimmer opacity-0 group-hover/upload:opacity-100 pointer-events-none rounded-2xl" />}
+
+                                            {/* Centered Content Wrapper */}
+                                            <div className="flex items-center gap-4 opacity-100 transition-opacity">
+                                                {/* Icon Box */}
+                                                <div className={`
+                                                    w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-500
+                                                    ${uploading
+                                                        ? 'bg-amber-500 text-black rotate-180'
+                                                        : 'bg-amber-500/25 text-amber-500 group-hover/upload:bg-amber-500/40 group-hover/upload:shadow-[0_0_20px_rgba(245,158,11,0.3)]'
+                                                    }
+                                                `}>
+                                                    {uploading ? <Loader size={18} className="animate-spin" /> : <Plus size={18} />}
+                                                </div>
+
+                                                {/* Text Content */}
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-bold text-amber-100 group-hover/upload:text-white transition-colors tracking-wide leading-none">
+                                                        Smart Autofill from Image
+                                                    </span>
+                                                    <span className="text-[11px] text-amber-500/80 group-hover/upload:text-amber-500 transition-colors mt-1 font-medium">
+                                                        Upload a physical Rx to auto-populate fields
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
 
@@ -422,9 +444,9 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [], user }) => {
                             </div>
                         </div>
                     </div>
-                </motion.div>
-            </div>
-        </AnimatePresence>
+                </motion.div >
+            </div >
+        </AnimatePresence >
     );
 };
 
