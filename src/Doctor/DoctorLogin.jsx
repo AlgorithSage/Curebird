@@ -137,7 +137,7 @@ export default function DoctorLogin({ onSwitchToSignup }) {
             </button>
 
             <p className="mt-6 text-center text-slate-400 text-sm">
-      Need a doctor account?{' '}
+                Need a doctor account?{' '}
                 <button onClick={onSwitchToSignup} className="font-semibold text-amber-400 hover:text-amber-300 ml-1 transition-colors">
                     Sign Up
                 </button>

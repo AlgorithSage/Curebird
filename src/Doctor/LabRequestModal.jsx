@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Microscope, CheckCircle, AlertTriangle, Loader, User, FileText, Upload } from 'lucide-react';
+import { X, Microscope, CheckCircle, AlertTriangle, Loader, User, FileText, Upload, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -51,6 +51,7 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
     const [instructions, setInstructions] = useState('');
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
+    const [analyzing, setAnalyzing] = useState(false);
 
     const categories = ['Blood Work', 'Imaging', 'Cardinal', 'Biopsy'];
     const urgencyLevels = [
@@ -59,9 +60,52 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
         { id: 'stat', label: 'STAT', color: 'text-rose-500' }
     ];
 
-    const handleFileChange = (e) => {
-        if (e.target.files[0]) {
-            setFile(e.target.files[0]);
+    const handleFileChange = async (e) => {
+        const selectedFile = e.target.files[0];
+        if (!selectedFile) return;
+
+        setFile(selectedFile);
+        setAnalyzing(true);
+        setError('');
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            const response = await fetch('http://localhost:5001/api/analyze-report', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Failed to analyze document');
+
+            const data = await response.json();
+
+            // Autofill Logic
+            // 1. Patient Match
+            if (data.patient_name) {
+                const normalizedSearch = data.patient_name.toLowerCase();
+                const match = patients.find(p => p.name.toLowerCase().includes(normalizedSearch) || normalizedSearch.includes(p.name.toLowerCase()));
+                if (match) setPatientId(match.id);
+            }
+
+            // 2. Test Name (Use Key Findings or Summary)
+            if (data.key_findings && data.key_findings.length > 0) {
+                setTestName(data.key_findings[0]);
+            } else if (data.summary) {
+                setTestName(data.summary.substring(0, 50));
+            }
+
+            // 3. Instructions (Use Recommendations)
+            if (data.recommendations && data.recommendations.length > 0) {
+                setInstructions(data.recommendations.join('\n'));
+            }
+
+        } catch (err) {
+            console.error("Autofill Error:", err);
+            // Don't block the user, just log it. They can still fill manually.
+        } finally {
+            setAnalyzing(false);
         }
     };
 
@@ -290,6 +334,17 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
                                             {file ? file.name : 'Click to Upload Report'}
                                         </p>
                                         <p className="text-[11px] text-amber-500/50 group-hover:text-amber-500/70 transition-colors mt-1 font-medium relative z-10">PDF, JPG, PNG up to 10MB</p>
+
+                                        {/* Autofill Overlay */}
+                                        {analyzing && (
+                                            <div className="absolute inset-0 bg-stone-900/90 rounded-2xl flex flex-col items-center justify-center z-30 transition-all backdrop-blur-sm border border-amber-500/20">
+                                                <div className="relative">
+                                                    <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+                                                    <Sparkles size={20} className="text-amber-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                                                </div>
+                                                <p className="text-amber-500 font-bold text-xs uppercase tracking-widest mt-3 animate-pulse">AI Extracting Data...</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </form>
