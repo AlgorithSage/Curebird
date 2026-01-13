@@ -9,9 +9,9 @@ import { API_BASE_URL } from '../config';
 
 const ModalWrapper = ({ onClose, children }) => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4" onClick={onClose}>
-        <motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}
-            className="bg-slate-900 border border-slate-700 rounded-lg shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+        className="fixed inset-0 bg-black/70 backdrop-blur-md flex justify-center items-center z-50 p-4" onClick={onClose}>
+        <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+            className="glass-card w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden !p-0" onClick={(e) => e.stopPropagation()}>
             {children}
         </motion.div>
     </motion.div>
@@ -57,14 +57,14 @@ export const AppointmentFormModal = ({ onClose, appointment, userId, appId, db }
 
     return (
         <ModalWrapper onClose={onClose}>
-            <div className="flex justify-between items-center p-5 border-b border-slate-700">
+            <div className="flex justify-between items-center p-5 border-b border-amber-500/10 bg-black/20">
                 <h2 className="text-xl font-semibold text-white">{appointment ? 'Edit' : 'Add'} Appointment</h2>
                 <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={24} /></button>
             </div>
             <form onSubmit={handleSave} className="p-6 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white" required />
-                    <select name="status" value={formData.status || 'upcoming'} onChange={handleInputChange} className="w-full p-2 border bg-slate-800 border-slate-600 rounded-md text-white">
+                    <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-500" required />
+                    <select name="status" value={formData.status || 'upcoming'} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all appearance-none cursor-pointer">
                         <option value="upcoming">Upcoming</option>
                         <option value="completed">Completed</option>
                         <option value="cancelled">Cancelled</option>
@@ -72,9 +72,9 @@ export const AppointmentFormModal = ({ onClose, appointment, userId, appId, db }
                 </div>
                 <input type="text" name="doctorName" placeholder="Doctor's Name" value={formData.doctorName || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white" required />
                 <input type="text" name="hospitalName" placeholder="Hospital/Clinic Name" value={formData.hospitalName || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white" required />
-                <textarea name="reason" placeholder="Reason for visit..." value={formData.reason || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white h-24 resize-none"></textarea>
-                <div className="flex justify-end pt-4 border-t border-slate-700">
-                    <button type="button" onClick={onClose} className="bg-slate-700 border border-slate-600 text-slate-200 px-4 py-2 rounded-lg mr-2 hover:bg-slate-600">Cancel</button>
+                <textarea name="reason" placeholder="Reason for visit..." value={formData.reason || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 h-24 resize-none focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-500"></textarea>
+                <div className="flex justify-end pt-4 border-t border-amber-500/10 gap-3">
+                    <button type="button" onClick={onClose} className="bg-black/30 border border-amber-500/10 text-slate-300 px-4 py-2 rounded-xl hover:bg-amber-500/10 transition-colors font-medium">Cancel</button>
                     <button type="submit" className="bg-amber-500 text-black px-4 py-2 rounded-lg hover:bg-amber-400 font-semibold transition-colors">
                         {appointment ? 'Update' : 'Save'} Appointment
                     </button>
@@ -319,29 +319,29 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
 
     return (
         <ModalWrapper onClose={onClose}>
-            <div className="flex justify-between items-center p-5 border-b border-slate-700 flex-shrink-0">
+            <div className="flex justify-between items-center p-5 border-b border-amber-500/10 bg-black/20 flex-shrink-0">
                 <h2 className="text-xl font-semibold text-white">{record ? 'Edit' : 'Add'} Medical Record</h2>
                 <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={24} /></button>
             </div>
             <form onSubmit={handleSave} className="p-6 space-y-4 overflow-y-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white" required />
-                    <select name="type" value={type} onChange={(e) => setType(e.target.value)} className="w-full p-2 border bg-slate-800 border-slate-600 rounded-md text-white">
-                        <option value="prescription">Prescription</option><option value="test_report">Test Report</option><option value="diagnosis">Diagnosis</option>
-                        <option value="admission">Hospital Admission</option><option value="ecg">ECG</option>
+                    <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all" required />
+                    <select name="type" value={type} onChange={(e) => setType(e.target.value)} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all appearance-none cursor-pointer">
+                        <option value="prescription" className="bg-slate-900">Prescription</option><option value="test_report" className="bg-slate-900">Test Report</option><option value="diagnosis" className="bg-slate-900">Diagnosis</option>
+                        <option value="admission" className="bg-slate-900">Hospital Admission</option><option value="ecg" className="bg-slate-900">ECG</option>
                     </select>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" name="doctorName" placeholder="Doctor's Name" value={formData.doctorName || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white" required />
-                    <input type="text" name="hospitalName" placeholder="Hospital/Clinic Name" value={formData.hospitalName || ''} onChange={handleInputChange} className="w-full p-2 border bg-transparent border-slate-600 rounded-md text-white" required />
+                    <input type="text" name="doctorName" placeholder="Doctor's Name" value={formData.doctorName || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-500" required />
+                    <input type="text" name="hospitalName" placeholder="Hospital/Clinic Name" value={formData.hospitalName || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-500" required />
                 </div>
 
-                <div className="pt-4 border-t border-slate-700 space-y-4">
-                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-600 border-dashed rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors">
+                <div className="pt-4 border-t border-amber-500/10 space-y-4">
+                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-amber-500/20 border-dashed rounded-2xl bg-black/20 hover:bg-black/30 transition-colors group">
                         <div className="space-y-1 text-center">
-                            <UploadCloud className="mx-auto h-12 w-12 text-sky-400 mb-2" />
-                            <div className="flex text-sm text-slate-400">
-                                <label htmlFor="file-upload" className="relative cursor-pointer bg-sky-500/10 px-4 py-2 rounded-lg font-bold text-sky-400 hover:bg-sky-500/20 border border-sky-500/30 transition-all">
+                            <UploadCloud className="mx-auto h-12 w-12 text-amber-500/60 group-hover:text-amber-400 transition-colors mb-2 drop-shadow-lg" />
+                            <div className="flex text-sm text-slate-400 justify-center">
+                                <label htmlFor="file-upload" className="relative cursor-pointer bg-amber-500/5 px-4 py-2 rounded-xl font-bold text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 transition-all shadow-lg">
                                     <span>{file ? 'Change File' : 'Upload PDF or Image'}</span>
                                     <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="application/pdf,image/*" />
                                 </label>
@@ -408,9 +408,9 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
                     )}
                 </AnimatePresence>
 
-                <div className="flex justify-end pt-6 border-t border-slate-700 gap-3">
-                    <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-white/5 transition-colors font-bold">Cancel</button>
-                    <button type="submit" className="px-8 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:hover:shadow-none" disabled={isSaving || isAnalyzing}>
+                <div className="flex justify-end pt-6 border-t border-amber-500/10 gap-3">
+                    <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-xl border border-amber-500/10 text-slate-300 hover:bg-amber-500/5 transition-colors font-bold">Cancel</button>
+                    <button type="submit" className="px-8 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:hover:shadow-none" disabled={isSaving || isAnalyzing}>
                         {isSaving ? 'Cloud Syncing...' : 'Save Record'}
                     </button>
                 </div>

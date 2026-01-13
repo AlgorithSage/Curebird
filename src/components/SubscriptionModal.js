@@ -26,12 +26,12 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                 'Cure Tracker Analysis',
                 'Cure Stat Vitals',
                 'Cure Analyzer AI',
-                'Cure AI Coach'
+                'Cure AI'
             ]
         },
         {
             name: 'Basic',
-            price: '₹499',
+            price: '₹59',
             period: '/month',
             description: 'Advanced tracking & stats',
             icon: Zap,
@@ -49,7 +49,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
         },
         {
             name: 'Premium',
-            price: '₹999',
+            price: '₹99',
             period: '/month',
             description: 'Full AI Suite & Analytics',
             icon: Crown,
