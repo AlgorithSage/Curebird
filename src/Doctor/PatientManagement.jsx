@@ -9,6 +9,7 @@ const PatientManagement = ({ onViewPatient }) => {
     // const [selectedPatient, setSelectedPatient] = useState(null); // Removed internal state
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Fetch Patients Live
     React.useEffect(() => {
@@ -66,6 +67,8 @@ const PatientManagement = ({ onViewPatient }) => {
                         <input
                             type="text"
                             placeholder="Search patients..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-900/80 border border-slate-700/50 text-slate-200 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all placeholder:text-slate-600 backdrop-blur-xl"
                         />
                     </div>
@@ -99,51 +102,68 @@ const PatientManagement = ({ onViewPatient }) => {
                                     </div>
                                 </td>
                             </tr>
-                        ) : patients.length === 0 ? (
-                            <tr>
-                                <td colSpan="7" className="px-6 py-20 text-center text-slate-500">
-                                    <p className="font-bold text-lg mb-2">No patients assigned.</p>
-                                    <p className="text-xs uppercase tracking-widest opacity-60">Add a patient to begin tracking.</p>
-                                </td>
-                            </tr>
-                        ) : (
-                            patients.map((p, i) => (
-                                <motion.tr
-                                    key={p.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    whileHover={{ scale: 1.005, backgroundColor: "rgba(255,255,255,0.08)" }}
-                                    transition={{ delay: i * 0.05 }}
-                                    onClick={() => onViewPatient && onViewPatient(p)} // Drill down via Parent
-                                    className="hover:bg-white/5 transition-colors group cursor-pointer border-b border-transparent hover:border-emerald-500/20"
-                                >
-                                    <td className="px-6 py-4 font-mono text-slate-500 hover:text-emerald-400 transition-colors">{p.id}</td>
-                                    <td className="px-6 py-4">
-                                        <div className="font-medium text-white group-hover:text-emerald-300 transition-colors">{p.name}</div>
+                        ) : (() => {
+                            const filteredPatients = patients.filter(p =>
+                                p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                p.id?.toLowerCase().includes(searchQuery.toLowerCase())
+                            );
+
+                            return filteredPatients.length === 0 ? (
+                                <tr>
+                                    <td colSpan="7" className="px-6 py-20 text-center text-slate-500">
+                                        <p className="font-bold text-lg mb-2">
+                                            {searchQuery ? `No matches for "${searchQuery}"` : "No patients assigned."}
+                                        </p>
+                                        <p className="text-xs uppercase tracking-widest opacity-60">
+                                            {searchQuery ? "Try a different search term." : "Add a patient to begin tracking."}
+                                        </p>
                                     </td>
-                                    <td className="px-6 py-4 text-slate-400">{p.age} yrs / {p.gender}</td>
-                                    <td className="px-6 py-4 text-slate-300">{p.condition}</td>
-                                    <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                </tr>
+                            ) : (
+                                filteredPatients.map((p, i) => (
+                                    <motion.tr
+                                        key={p.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        whileHover={{ scale: 1.005, backgroundColor: "rgba(255,255,255,0.08)" }}
+                                        transition={{ delay: i * 0.05 }}
+                                        onClick={() => onViewPatient && onViewPatient(p)} // Drill down via Parent
+                                        className="hover:bg-white/5 transition-colors group cursor-pointer border-b border-transparent hover:border-emerald-500/20"
+                                    >
+                                        <td className="px-6 py-4 font-mono text-slate-500 hover:text-emerald-400 transition-colors">{p.id}</td>
+                                        <td className="px-6 py-4">
+                                            <div className="font-medium text-white group-hover:text-emerald-300 transition-colors">{p.name}</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-slate-400">{p.age} yrs / {p.gender}</td>
+                                        <td className="px-6 py-4 text-slate-300">{p.condition}</td>
+                                        <td className="px-6 py-4">
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                                             ${p.status === 'Critical' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
-                                                p.status === 'Stable' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
-                                                    'bg-amber-500/20 text-amber-300 border border-amber-500/30'}`}>
-                                            {p.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-500">{p.lastVisit}</td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
-                                            <FileText size={18} />
-                                        </button>
-                                    </td>
-                                </motion.tr>
-                            ))
-                        )}
+                                                    p.status === 'Stable' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                                                        'bg-amber-500/20 text-amber-300 border border-amber-500/30'}`}>
+                                                {p.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-slate-500">{p.lastVisit}</td>
+                                        <td className="px-6 py-4 text-right">
+                                            <button className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
+                                                <FileText size={18} />
+                                            </button>
+                                        </td>
+                                    </motion.tr>
+                                ))
+                            );
+                        })()}
                     </tbody>
                 </table>
                 <div className="p-4 border-t border-white/5 bg-black/20 text-center text-xs text-slate-500 mt-auto">
-                    {loading ? 'Syncing...' : `Showing ${patients.length} assigned patients`}
+                    {loading ? 'Syncing...' : (() => {
+                        const filtered = patients.filter(p =>
+                            p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            p.id?.toLowerCase().includes(searchQuery.toLowerCase())
+                        );
+                        return `Showing ${filtered.length} of ${patients.length} patients`;
+                    })()}
                 </div>
             </div>
         </motion.div>
