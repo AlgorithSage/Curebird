@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Activity, CheckCircle, AlertTriangle, Loader, User, Droplets, Thermometer, Wind, Monitor } from 'lucide-react';
+import { X, Activity, CheckCircle, AlertTriangle, Loader, User, Droplets, Thermometer, Wind, Monitor, Upload, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../firebase';
@@ -8,6 +8,8 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
+    const [analyzing, setAnalyzing] = useState(false);
+    const [file, setFile] = useState(null);
 
     const [patientId, setPatientId] = useState('');
     const [vitals, setVitals] = useState({
@@ -19,6 +21,61 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
         spO2: '',
         weight: ''
     });
+
+    const handleFileChange = async (e) => {
+        const selectedFile = e.target.files[0];
+        if (!selectedFile) return;
+
+        setFile(selectedFile);
+        setAnalyzing(true);
+        setError('');
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            const response = await fetch('http://localhost:5001/api/analyze-report', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Failed to analyze document');
+
+            const data = await response.json();
+
+            // Autofill Logic
+            // 1. Patient Match
+            if (data.patient_name) {
+                const normalizedSearch = data.patient_name.toLowerCase();
+                const match = patients.find(p => p.name.toLowerCase().includes(normalizedSearch) || normalizedSearch.includes(p.name.toLowerCase()));
+                if (match) setPatientId(match.id);
+            }
+
+            // 2. Map Vitals
+            const newVitals = { ...vitals };
+
+            if (data.blood_pressure) {
+                const parts = data.blood_pressure.split('/');
+                if (parts.length === 2) {
+                    newVitals.systolic = parts[0].trim();
+                    newVitals.diastolic = parts[1].trim();
+                }
+            }
+            if (data.heart_rate) newVitals.heartRate = data.heart_rate.replace(/\D/g, '');
+            if (data.respiratory_rate) newVitals.respiratoryRate = data.respiratory_rate.replace(/\D/g, '');
+            if (data.temperature) newVitals.temperature = data.temperature.replace(/[^\d.]/g, '');
+            if (data.oxygen_saturation) newVitals.spO2 = data.oxygen_saturation.replace(/\D/g, '');
+            if (data.weight) newVitals.weight = data.weight.replace(/[^\d.]/g, '');
+
+            setVitals(newVitals);
+
+        } catch (err) {
+            console.error("Autofill Error:", err);
+            // Don't block user
+        } finally {
+            setAnalyzing(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -59,6 +116,7 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                 onClose();
                 setPatientId('');
                 setVitals({ temperature: '', systolic: '', diastolic: '', heartRate: '', respiratoryRate: '', spO2: '', weight: '' });
+                setFile(null);
                 setSuccess(false);
             }, 1500);
 
@@ -172,6 +230,40 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                                     <VitalInput icon={Wind} label="Resp. Rate" value={vitals.respiratoryRate} onChange={(v) => setVitals({ ...vitals, respiratoryRate: v })} placeholder="16" unit="BPM" />
                                     <VitalInput icon={Monitor} label="SpO2 Level" value={vitals.spO2} onChange={(v) => setVitals({ ...vitals, spO2: v })} placeholder="98" unit="%" />
                                     <VitalInput icon={Activity} label="Body Weight" value={vitals.weight} onChange={(v) => setVitals({ ...vitals, weight: v })} placeholder="70" unit="KG" />
+                                </div>
+
+                                {/* Row 4: File Upload (Ultra-Subtle Amber Theme) */}
+                                <div className="space-y-3">
+                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-widest ml-1">Auto-Extract from Device Report</label>
+                                    <div className="relative border-2 border-dashed border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 cursor-pointer relative group">
+                                        <input
+                                            type="file"
+                                            onChange={handleFileChange}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                                        />
+
+                                        {/* Shimmer Effect */}
+                                        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(245,158,11,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-shimmer opacity-0 group-hover:opacity-100 pointer-events-none rounded-2xl" />
+
+                                        <div className="w-10 h-10 flex items-center justify-center bg-amber-500/10 text-amber-500 rounded-full transition-all duration-500 mb-3 group-hover:bg-amber-500/20 group-hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] relative z-10">
+                                            {analyzing ? <Loader size={18} className="animate-spin" /> : <Upload size={18} />}
+                                        </div>
+                                        <p className="text-sm font-bold text-amber-500/90 group-hover:text-amber-500 transition-colors tracking-wide leading-none relative z-10">
+                                            {file ? file.name : 'Upload Vitals Sheet'}
+                                        </p>
+                                        <p className="text-[11px] text-amber-500/50 group-hover:text-amber-500/70 transition-colors mt-1 font-medium relative z-10">JPG, PNG, PDF</p>
+
+                                        {/* Autofill Overlay */}
+                                        {analyzing && (
+                                            <div className="absolute inset-0 bg-stone-900/90 rounded-2xl flex flex-col items-center justify-center z-30 transition-all backdrop-blur-sm border border-amber-500/20">
+                                                <div className="relative">
+                                                    <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+                                                    <Sparkles size={20} className="text-amber-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                                                </div>
+                                                <p className="text-amber-500 font-bold text-xs uppercase tracking-widest mt-3 animate-pulse">AI Scanning Vitals...</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </form>
                         </div>
