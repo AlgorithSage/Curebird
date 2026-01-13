@@ -620,7 +620,8 @@ const DoctorDashboard = ({ user }) => {
                     onLogout={handleLogout}
                     onAddClick={() => setIsAddRecordModalOpen(true)}
                     onToggleSidebar={() => setSidebarOpen(true)}
-                    onNotificationClick={() => setActiveView('notifications')}
+                    onNotificationClick={() => handleNavigate('notifications')}
+                    alerts={Array(unreadNotifications).fill({ title: 'New Alert' })}
                     onNavigate={handleNavigate}
                     navItems={[
                         { name: 'Dashboard', id: 'dashboard', icon: <LayoutDashboard size={20} /> },

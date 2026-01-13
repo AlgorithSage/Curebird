@@ -118,7 +118,7 @@ const NotificationDropdown = ({ alerts, onClose }) => {
 };
 
 // This Header component is now fully responsive
-const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate, alerts = [], navItems: propNavItems = [] }) => {
+const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate, onNotificationClick, alerts = [], navItems: propNavItems = [] }) => {
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -238,7 +238,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                 <Share2 size={18} />
                             </button>
                             <div className="relative relative-notif-container">
-                                <button onClick={() => setIsNotifOpen(!isNotifOpen)} className="p-2 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white relative">
+                                <button onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)} className="p-2 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white relative">
                                     <Bell size={18} />
                                     {alerts.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>}
                                 </button>
