@@ -317,11 +317,21 @@ const MedicalRecordManager = ({ onAddAction, user: propUser }) => {
                         )}
 
                         {records
-                            .filter(rec => activeTab === 'overview' ||
-                                (activeTab === 'notes' && rec.type === 'consultation_note') ||
-                                (activeTab === 'prescriptions' && rec.type === 'prescription') ||
-                                (activeTab === 'reports' && rec.type === 'lab_report')
-                            )
+                            .filter(rec => {
+                                const matchesTab = activeTab === 'overview' ||
+                                    (activeTab === 'notes' && rec.type === 'consultation_note') ||
+                                    (activeTab === 'prescriptions' && rec.type === 'prescription') ||
+                                    (activeTab === 'reports' && rec.type === 'lab_report');
+
+                                const searchLower = searchTerm.toLowerCase();
+                                const matchesSearch = !searchTerm ||
+                                    rec.title?.toLowerCase().includes(searchLower) ||
+                                    rec.patientName?.toLowerCase().includes(searchLower) ||
+                                    rec.id?.toLowerCase().includes(searchLower) ||
+                                    rec.description?.toLowerCase().includes(searchLower);
+
+                                return matchesTab && matchesSearch;
+                            })
                             .map((rec, i) => (
                                 <motion.div
                                     key={rec.id}
