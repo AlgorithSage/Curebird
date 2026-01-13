@@ -32,6 +32,8 @@ import Contact from './components/Contact';
 import LoadingScreen from './components/LoadingScreen';
 import ShareProfile from './components/ShareProfile';
 import DoctorPublicView from './components/DoctorPublicView';
+import SubscriptionModal from './components/SubscriptionModal';
+import FamilyProfile from './components/FamilyProfile';
 
 const formatDate = (date) => date?.toDate ? date.toDate().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ') : '');
@@ -45,6 +47,7 @@ export default function App() {
     const [activeView, setActiveView] = useState('Dashboard');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [chatContext, setChatContext] = useState(null); // New state for passing context to Chat
+    const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
     const handleAskAI = (context) => {
         setChatContext(context);
@@ -82,9 +85,20 @@ export default function App() {
                             // But since we update both, Firestore update will trigger this.
                             setUser(fullUser);
 
+
                             if (userData.isProfileComplete === false) {
                                 setIsAuthModalOpen(true);
                             }
+
+                            // Check for New User / Subscription Prompt
+                            // If user is new (no subscriptionData) or specific flag is missing
+                            // For this mock, we'll check if 'hasSeenSubscription' is false/undefined
+                            if (!userData.hasSeenSubscription) {
+                                setTimeout(() => setIsSubscriptionModalOpen(true), 1500); // Slight delay after login
+                                // In a real app, we would update this flag ONLY after they interact or close the modal
+                                // For now, we'll just open it.
+                            }
+
                         } else {
                             // No profile yet
                             setUser(currentUser);
@@ -144,7 +158,8 @@ export default function App() {
             onLoginClick: () => setIsAuthModalOpen(true),
             onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen),
             onNavigate: setActiveView,
-            onAskAI: handleAskAI // Pass handler to all pages
+            onAskAI: handleAskAI, // Pass handler to all pages
+            onSubscribeClick: () => setIsSubscriptionModalOpen(true) // Pass trigger
         };
 
         switch (activeView) {
@@ -161,6 +176,7 @@ export default function App() {
             case 'Contact': return <Contact {...pageProps} db={db} />;
             case 'Terms': return <TermsOfService {...pageProps} />;
             case 'Privacy': return <PrivacyPolicy {...pageProps} />;
+            case 'Family Profile': return <FamilyProfile {...pageProps} />;
             default: return <MedicalPortfolio {...pageProps} />;
         }
     };
@@ -182,6 +198,7 @@ export default function App() {
                             isOpen={isSidebarOpen}
                             onClose={() => setIsSidebarOpen(false)}
                             user={user} // Pass updated user with profile data
+                            onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
                         />
                         <main className="w-full min-h-screen transition-all duration-300">
                             {renderActiveView()}
@@ -217,6 +234,7 @@ export default function App() {
                                         setIsAuthModalOpen(true);
                                     }
                                 }}
+                                onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
                             />
                         )}
                     </>
@@ -237,6 +255,16 @@ export default function App() {
                             onGoogleSignIn={handleGoogleSignIn}
                             capitalize={capitalize}
                             error={authError}
+                        />
+                    )}
+                    {isSubscriptionModalOpen && (
+                        <SubscriptionModal
+                            isOpen={isSubscriptionModalOpen}
+                            onClose={() => setIsSubscriptionModalOpen(false)}
+                            onSubscribe={(tier) => {
+                                console.log("Subscribed to:", tier);
+                                // Here we would update the user record in Firestore
+                            }}
                         />
                     )}
                 </AnimatePresence>

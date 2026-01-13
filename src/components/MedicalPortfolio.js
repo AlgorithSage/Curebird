@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, query, orderBy, getDocs, limit, where } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, X, ChevronUp, Bell, Activity } from 'lucide-react';
+import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, X, ChevronUp, Bell, Activity, Crown } from 'lucide-react';
 import { AnalysisService } from '../services/AnalysisService';
 
 import Header from './Header';
@@ -14,13 +14,10 @@ import { SkeletonDashboard, SkeletonCard } from './SkeletonLoaders';
 import DashboardOverview from './DashboardOverview';
 
 import HeroSection from './HeroSection';
-import EmergencySettingsModal from './emergency/EmergencySettingsModal';
-import EmergencyMedicalCard from './emergency/EmergencyMedicalCard';
-import SOSButton from './emergency/SOSButton';
 
 
 
-const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar, onNavigate, onSubscribeClick }) => {
 
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -30,8 +27,6 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     const [recordToDelete, setRecordToDelete] = useState(null);
     const [editingRecord, setEditingRecord] = useState(null);
     const [activeTypeFilter, setActiveTypeFilter] = useState(null); // Default to null (collapsed)
-    const [isEmergencySetupOpen, setIsEmergencySetupOpen] = useState(false);
-    const [isSOSActive, setIsSOSActive] = useState(false);
 
     // Phase 8: Health Score & Alerts
     const [healthScore, setHealthScore] = useState({ score: 100, grade: 'A', deductions: [] });
@@ -208,6 +203,29 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                         />
                     </div>
 
+                    {/* Premium Banner */}
+                    <div className="mb-8 px-2 sm:px-6">
+                        <motion.div
+                            whileHover={{ scale: 1.01 }}
+                            onClick={onSubscribeClick}
+                            className="bg-gradient-to-r from-amber-600 to-amber-800 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between shadow-xl cursor-pointer border border-amber-400/30 relative overflow-hidden group"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                            <div className="flex items-center gap-4 z-10">
+                                <div className="p-3 bg-white/10 rounded-full text-amber-200">
+                                    <Crown size={32} />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white">Upgrade to Premium</h3>
+                                    <p className="text-amber-100/80">Get AI-powered insights, full report analysis, and 24/7 health coaching.</p>
+                                </div>
+                            </div>
+                            <button className="mt-4 md:mt-0 bg-white text-amber-900 px-6 py-2 rounded-full font-bold shadow-lg hover:bg-amber-50 transition-colors z-10">
+                                View Plans
+                            </button>
+                        </motion.div>
+                    </div>
+
                     {isLoading ? <SkeletonDashboard /> : (
                         <>
                             {/* Standard Stat Cards for Dashboard Overview */}
@@ -368,42 +386,9 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                 </>
             </main>
 
-            {/* SOS System */}
-            <SOSButton onClick={() => setIsSOSActive(true)} />
+            {/* SOS System Removed */}
 
             <AnimatePresence>
-                {/* Emergency Lock Screen Mode */}
-                {isSOSActive && (
-                    <div className="fixed inset-0 z-[70] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-6">
-                        <div className="w-full max-w-md h-[90vh] relative">
-                            <button
-                                onClick={() => setIsSOSActive(false)}
-                                className="absolute -top-12 right-0 text-white/50 hover:text-white"
-                            >
-                                <X size={32} />
-                            </button>
-                            <EmergencyMedicalCard user={user} />
-
-                            <div className="mt-8 text-center">
-                                <button
-                                    onClick={() => { setIsSOSActive(false); setIsEmergencySetupOpen(true); }}
-                                    className="text-white/40 text-xs hover:text-white underline underline-offset-4"
-                                >
-                                    Edit Emergency Profile
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {isEmergencySetupOpen && (
-                    <EmergencySettingsModal
-                        user={user}
-                        db={db}
-                        onClose={() => setIsEmergencySetupOpen(false)}
-                        currentData={user?.emergencyProfile}
-                    />
-                )}
 
                 {isFormModalOpen && <RecordFormModal onClose={() => setIsFormModalOpen(false)} record={editingRecord} userId={user?.uid} appId={appId} db={db} storage={storage} />}
                 {isShareModalOpen && <ShareModal onClose={() => setIsShareModalOpen(false)} userId={userId} />}

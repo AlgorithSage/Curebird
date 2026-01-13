@@ -1,8 +1,8 @@
 import React from 'react';
-import { LayoutDashboard, FileText, Calendar, Pill, Settings, HeartPulse, Bot, Activity, X, MessageSquare, Mail, Shield, ScrollText, Microscope, Stethoscope } from 'lucide-react';
+import { LayoutDashboard, FileText, Calendar, Settings, Activity, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 
-const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user }) => {
+const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) => {
 
     const menuGroups = [
         {
@@ -16,23 +16,25 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user }) => {
             title: "Health Management",
             items: [
                 { name: 'Appointments', icon: Calendar },
-                { name: 'Medications', icon: Pill },
+                { name: 'Medications', icon: Activity },
             ]
         },
         {
             title: "Core Features",
             items: [
-                { name: 'Cure Tracker', icon: Microscope },
-                { name: 'Cure Analyzer', icon: Bot },
+                { name: 'Cure Tracker', icon: Activity },
+                { name: 'Cure Analyzer', icon: Activity },
                 { name: 'Cure Stat', icon: Activity },
                 { name: 'Cure AI', icon: MessageSquare },
-                { name: 'Doctor Access', icon: Stethoscope },
+                { name: 'Doctor Access', icon: Activity },
             ]
         },
         {
             title: "Account",
             items: [
                 { name: 'Settings', icon: Settings },
+                { name: 'Family Profile', icon: Users },
+                { name: 'Subscription', icon: Crown, isAction: true }, // Special Action Item
                 { name: 'Contact', icon: Mail },
                 { name: 'Terms', icon: ScrollText },
                 { name: 'Privacy', icon: Shield },
@@ -97,8 +99,13 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user }) => {
                                         <li key={item.name}>
                                             <button
                                                 onClick={() => {
-                                                    onNavigate(item.name);
-                                                    onClose(); // Close sidebar on mobile after navigation
+                                                    if (item.isAction) {
+                                                        if (item.name === 'Subscription') onSubscribeClick();
+                                                        onClose();
+                                                    } else {
+                                                        onNavigate(item.name);
+                                                        onClose(); // Close sidebar on mobile after navigation
+                                                    }
                                                 }}
                                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 group ${activeView === item.name
                                                     ? 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 text-amber-500 border border-amber-500/30'
@@ -109,6 +116,11 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user }) => {
                                                     <Icon size={20} />
                                                 </span>
                                                 <span className="font-bold tracking-wide text-sm">{item.name}</span>
+                                                {item.badge && (
+                                                    <span className="ml-2 text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">
+                                                        {item.badge}
+                                                    </span>
+                                                )}
                                                 {activeView === item.name && (
                                                     <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500"></div>
                                                 )}

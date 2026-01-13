@@ -70,7 +70,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative w-full bg-gradient-to-br from-slate-900/80 to-slate-800/90 backdrop-blur-2xl border border-white/5 rounded-2xl sm:rounded-3xl p-6 sm:p-12 lg:p-16 overflow-hidden shadow-2xl group"
+                className="relative w-full bg-white/5 backdrop-blur-3xl rounded-2xl sm:rounded-3xl p-6 sm:p-12 lg:p-16 overflow-hidden shadow-2xl group"
             >
                 {/* Background Grid Pattern */}
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] sm:bg-[size:60px_60px] opacity-30 z-0 pointer-events-none"></div>
@@ -159,34 +159,49 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="glass-card w-full !p-6 !rounded-3xl flex items-center justify-between gap-4 mb-8"
+                                    className="relative w-full overflow-hidden rounded-[2rem] p-6 mb-8 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-3xl border border-white/10 shadow-2xl group"
                                 >
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <HeartPulse size={14} className="text-indigo-400" />
-                                            <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Curebird Health Index</span>
-                                        </div>
-                                        <div className="flex items-baseline gap-1">
-                                            <span className="text-5xl font-black text-white">{healthScore.score}</span>
-                                            <span className="text-sm text-slate-500 font-bold">/100</span>
-                                        </div>
-                                        <p className="text-[10px] text-slate-400 max-w-[200px] leading-tight mt-1">
-                                            Based on log consistency, adherence, and stability.
-                                        </p>
-                                    </div>
+                                    {/* Dynamic Background Glow based on Grade */}
+                                    <div className={`absolute -right-10 -top-10 w-40 h-40 rounded-full blur-[60px] opacity-40 transition-colors duration-1000 ${healthScore.grade === 'A' ? 'bg-emerald-500' : healthScore.grade === 'B' ? 'bg-amber-500' : 'bg-red-500'}`} />
+                                    <div className="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-blue-500/20 blur-[60px] opacity-30" />
 
-                                    <div className="flex flex-col items-end gap-2">
-                                        <div className="bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 flex items-center gap-2">
-                                            <span className="text-[10px] text-slate-500 uppercase font-bold">Tier</span>
-                                            <span className={`text-lg font-black ${healthScore.grade === 'A' ? 'text-emerald-400' : healthScore.grade === 'B' ? 'text-amber-400' : 'text-rose-400'}`}>
-                                                {healthScore.grade}
-                                            </span>
-                                        </div>
-                                        {healthScore.deductions.length === 0 && (
-                                            <div className="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded font-bold border border-emerald-500/20">
-                                                Excellent Stability
+                                    <div className="relative z-10 flex items-center justify-between">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2 text-slate-300">
+                                                <Activity size={16} className={`${healthScore.grade === 'A' ? 'text-emerald-400' : healthScore.grade === 'B' ? 'text-amber-400' : 'text-red-400'}`} />
+                                                <span className="text-sm font-semibold tracking-wide">Your Health Score</span>
                                             </div>
-                                        )}
+
+                                            <div className="flex items-baseline gap-2 mt-2">
+                                                <span className="text-6xl font-bold text-white tracking-tight">
+                                                    {healthScore.score}
+                                                </span>
+                                                <span className="text-lg text-slate-400 font-medium">/100</span>
+                                            </div>
+
+                                            <p className="text-xs text-slate-400 mt-2 font-medium max-w-[220px] leading-relaxed">
+                                                {healthScore.grade === 'A'
+                                                    ? "You're doing great! Keep maintaining your streak."
+                                                    : healthScore.grade === 'B'
+                                                        ? "Good progress. A few improvements can get you to A."
+                                                        : "Let's focus on consistency to improve your score."}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex flex-col items-center gap-3">
+                                            <div className={`
+                                                relative w-16 h-16 flex items-center justify-center rounded-2xl rotate-3 shadow-lg transition-transform hover:rotate-6
+                                                ${healthScore.grade === 'A' ? 'bg-gradient-to-br from-emerald-400 to-emerald-600' :
+                                                    healthScore.grade === 'B' ? 'bg-gradient-to-br from-amber-400 to-orange-500' :
+                                                        'bg-gradient-to-br from-red-400 to-red-600'}
+                                            `}>
+                                                <div className="absolute inset-0 bg-white/20 blur-sm rounded-2xl" />
+                                                <span className="relative text-3xl font-black text-white drop-shadow-md">
+                                                    {healthScore.grade}
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Tier</span>
+                                        </div>
                                     </div>
                                 </motion.div>
                             )}

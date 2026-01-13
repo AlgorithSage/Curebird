@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeartPulse, LogIn, Dna, Pill, Stethoscope, Syringe, Activity, Globe, Shield, ShieldCheck, Zap, CheckCircle, ArrowRight, Play, Pause, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, ScanEye, Database, MessageSquare, Microscope } from 'lucide-react';
+import { HeartPulse, LogIn, Dna, Pill, Stethoscope, Syringe, Activity, Globe, Shield, ShieldCheck, Zap, CheckCircle, ArrowRight, Play, Pause, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, ScanEye, Database, MessageSquare, Microscope, Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from './SEO';
 
@@ -43,7 +43,7 @@ const FloatingIcon = ({ icon, className, duration, delay }) => (
     </motion.div>
 );
 
-const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClick }) => {
+const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClick, onSubscribeClick }) => {
     const [isMobile, setIsMobile] = React.useState(false);
 
     React.useEffect(() => {
@@ -114,6 +114,13 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                             <LogIn size={24} />
                             Get Started
                         </button>
+                        <button
+                            onClick={onSubscribeClick}
+                            className="mt-4 sm:ml-4 sm:mt-10 inline-flex items-center gap-2 text-white border border-amber-500/50 px-8 py-4 rounded-full hover:bg-amber-500/10 transition-all font-bold text-lg backdrop-blur-sm"
+                        >
+                            <Crown size={24} className="text-amber-500" />
+                            View Plans
+                        </button>
                     </motion.div>
                 </motion.div>
             </header>
@@ -136,7 +143,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                         {[
                             {
                                 icon: <ShieldCheck size={48} className="text-emerald-400" />,
-                                title: "Bank-Grade HIPAA Security",
+                                title: "Bank-Grade HIPAA Security (epHI)",
                                 desc: "Your health data is your property. We secure it with AES-256 encryption and strict access controls. You decide who sees your records—whether it's for 5 minutes or 5 years."
                             },
                             {
