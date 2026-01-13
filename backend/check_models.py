@@ -1,16 +1,32 @@
-
 import os
-import google.generativeai as genai
+from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
-api_key = os.getenv('GEMINI_API_KEY')
-genai.configure(api_key=api_key)
 
-print("Listing available models...")
-try:
-    for m in genai.list_models():
-        if 'generateContent' in m.supported_generation_methods:
-            print(m.name)
-except Exception as e:
-    print(f"Error: {e}")
+keys = {
+    "GROQ_API_KEY_VISION": os.getenv('GROQ_API_KEY_VISION'),
+    "GROQ_API_KEY": os.getenv('GROQ_API_KEY')
+}
+
+for name, key in keys.items():
+    print(f"\n--- Testing Key: {name} ---")
+    if not key:
+        print("  [Missing]")
+        continue
+        
+    print(f"  Key: {key[:5]}...{key[-4:]}")
+    client = Groq(api_key=key)
+    
+    try:
+        models = client.models.list()
+        vision_found = False
+        for m in models.data:
+            if 'vision' in m.id:
+                print(f"  [AVAILABLE] {m.id}")
+                vision_found = True
+        
+        if not vision_found:
+            print("  [NO VISION MODELS FOUND]")
+    except Exception as e:
+        print(f"  [ERROR] {e}")

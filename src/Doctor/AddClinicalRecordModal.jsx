@@ -152,9 +152,50 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                 newData.diagnosis = data.key_findings.slice(0, 2).join(", ");
             }
 
+            // Vitals Extraction Strategy: Structured -> Text Fallback
+            const vMap = {};
+            let foundVitals = false;
+
+            // 1. Try Structured Data
             if (data.extracted_vitals && data.extracted_vitals.length > 0) {
-                // Format Vitals as string
-                newData.vitals = data.extracted_vitals.map(v => `${v.label}: ${v.value}`).join(", ");
+                data.extracted_vitals.forEach(v => {
+                    const label = v.label.toLowerCase();
+                    if (label.includes('bp') || label.includes('blood')) vMap.bp = v.value;
+                    else if (label.includes('heart') || label.includes('pulse') || label.includes('hr')) vMap.heartRate = v.value;
+                    else if (label.includes('temp')) vMap.temperature = v.value;
+                    else if (label.includes('spo2') || label.includes('o2')) vMap.spo2 = v.value;
+                });
+                foundVitals = true;
+            }
+
+            // 2. Fallback: Scan Text (Summary/Key Findings) if structured failed or incomplete
+            if (!foundVitals || Object.keys(vMap).length < 2) {
+                const combinedText = (summary + " " + (data.key_findings || []).join(" ")).toLowerCase();
+
+                // BP Parsing
+                if (!vMap.bp) {
+                    const bpMatch = combinedText.match(/(?:bp|blood pressure|b\.p|systolic|sys)[^0-9]*(\d{2,3}[\/-]\d{2,3})/i) || combinedText.match(/(\d{2,3}[\/-]\d{2,3})\s*mmhg/i);
+                    if (bpMatch) vMap.bp = bpMatch[1].replace(/\s/g, '');
+                }
+                // HR Parsing
+                if (!vMap.heartRate) {
+                    const hrMatch = combinedText.match(/(?:hr|heart rate|pulse|rate)[^0-9]*(\d{2,3})/i) || combinedText.match(/(\d{2,3})\s*bpm/i);
+                    if (hrMatch) vMap.heartRate = hrMatch[1];
+                }
+                // Temp Parsing
+                if (!vMap.temperature) {
+                    const tempMatch = combinedText.match(/(?:temp|temperature|t)[^0-9]*(\d{2,3}(?:\.\d+)?)/i) || combinedText.match(/(\d{2,3}(?:\.\d+)?)\s*(?:°|deg)?(?:f|c)\b/i);
+                    if (tempMatch) vMap.temperature = tempMatch[1];
+                }
+                // SpO2 Parsing
+                if (!vMap.spo2) {
+                    const spo2Match = combinedText.match(/(?:spo2|o2|oxygen|sat)[^0-9]*(\d{2,3})/i) || combinedText.match(/(\d{2,3})%/);
+                    if (spo2Match) vMap.spo2 = spo2Match[1];
+                }
+            }
+
+            if (Object.keys(vMap).length > 0) {
+                newData.vitals = vMap;
             }
 
             // 2. Description & Summary
@@ -690,19 +731,23 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                             {/* Row 5: File Upload */}
                             <div className="space-y-3">
                                 <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Attachment (Optional)</label>
-                                <div className="relative border-2 border-dashed border-white/[0.05] group-hover:border-amber-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all bg-slate-950/20 cursor-pointer relative group">
+                                <div className="relative border-2 border-dashed border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 cursor-pointer relative group">
                                     <input
                                         type="file"
                                         onChange={handleFileChange}
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                                     />
-                                    <div className="p-3 bg-stone-900 rounded-full text-stone-500 group-hover:text-amber-500 transition-all mb-3">
-                                        <Upload size={22} />
+
+                                    {/* Shimmer Effect */}
+                                    <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(245,158,11,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-shimmer opacity-0 group-hover:opacity-100 pointer-events-none rounded-2xl" />
+
+                                    <div className="w-10 h-10 flex items-center justify-center bg-amber-500/10 text-amber-500 rounded-full transition-all duration-500 mb-3 group-hover:bg-amber-500/20 group-hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] relative z-10">
+                                        <Upload size={18} />
                                     </div>
-                                    <p className="text-sm text-stone-400 font-bold tracking-tight">
+                                    <p className="text-sm font-bold text-amber-500/90 group-hover:text-amber-500 transition-colors tracking-wide leading-none relative z-10">
                                         {formData.file ? formData.file.name : 'Click to Upload or Drag & Drop'}
                                     </p>
-                                    <p className="text-[10px] text-stone-700 uppercase tracking-widest mt-1 font-black">PDF, JPG, PNG up to 10MB</p>
+                                    <p className="text-[11px] text-amber-500/50 group-hover:text-amber-500/70 transition-colors mt-1 font-medium relative z-10">PDF, JPG, PNG up to 10MB</p>
 
                                     {/* Autofill Overlay */}
                                     {autofilling && (

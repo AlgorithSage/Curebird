@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, Microscope, CheckCircle, AlertTriangle, Loader, User, FileText } from 'lucide-react';
+import { X, Microscope, CheckCircle, AlertTriangle, Loader, User, FileText, Upload, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db, auth, storage } from '../firebase';
 
 const ModalTabButton = ({ children, active, onClick, colorClass = "text-amber-400" }) => {
     const mouseX = useMotionValue(0);
@@ -48,6 +49,9 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
     const [testName, setTestName] = useState('');
     const [urgency, setUrgency] = useState('routine');
     const [instructions, setInstructions] = useState('');
+    const [file, setFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [analyzing, setAnalyzing] = useState(false);
 
     const categories = ['Blood Work', 'Imaging', 'Cardinal', 'Biopsy'];
     const urgencyLevels = [
@@ -55,6 +59,55 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
         { id: 'urgent', label: 'Urgent', color: 'text-amber-400' },
         { id: 'stat', label: 'STAT', color: 'text-rose-500' }
     ];
+
+    const handleFileChange = async (e) => {
+        const selectedFile = e.target.files[0];
+        if (!selectedFile) return;
+
+        setFile(selectedFile);
+        setAnalyzing(true);
+        setError('');
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            const response = await fetch('http://localhost:5001/api/analyze-report', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Failed to analyze document');
+
+            const data = await response.json();
+
+            // Autofill Logic
+            // 1. Patient Match
+            if (data.patient_name) {
+                const normalizedSearch = data.patient_name.toLowerCase();
+                const match = patients.find(p => p.name.toLowerCase().includes(normalizedSearch) || normalizedSearch.includes(p.name.toLowerCase()));
+                if (match) setPatientId(match.id);
+            }
+
+            // 2. Test Name (Use Key Findings or Summary)
+            if (data.key_findings && data.key_findings.length > 0) {
+                setTestName(data.key_findings[0]);
+            } else if (data.summary) {
+                setTestName(data.summary.substring(0, 50));
+            }
+
+            // 3. Instructions (Use Recommendations)
+            if (data.recommendations && data.recommendations.length > 0) {
+                setInstructions(data.recommendations.join('\n'));
+            }
+
+        } catch (err) {
+            console.error("Autofill Error:", err);
+            // Don't block the user, just log it. They can still fill manually.
+        } finally {
+            setAnalyzing(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -68,6 +121,29 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
 
             const patientName = patients.find(p => p.id === patientId)?.name || 'Unknown Patient';
 
+            let fileUrl = '';
+            let fileName = '';
+
+            if (file) {
+                setUploading(true);
+                const storageRef = ref(storage, `lab_reports/${patientId}/${Date.now()}_${file.name}`);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+
+                await new Promise((resolve, reject) => {
+                    uploadTask.on(
+                        'state_changed',
+                        () => { },
+                        (error) => reject(error),
+                        async () => {
+                            fileUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                            fileName = file.name;
+                            resolve();
+                        }
+                    );
+                });
+                setUploading(false);
+            }
+
             await addDoc(collection(db, `users/${patientId}/medical_records`), {
                 type: 'lab_report',
                 title: `Lab Request: ${testName}`,
@@ -75,6 +151,8 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
                 testName,
                 urgency,
                 instructions,
+                fileUrl,
+                fileName,
                 date: new Date().toISOString().split('T')[0],
                 doctorId: user?.uid || auth.currentUser?.uid,
                 doctorName: user?.name || user?.displayName || auth.currentUser?.displayName || 'Dr. Curebird',
@@ -234,6 +312,40 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
                                         onChange={(e) => setInstructions(e.target.value)}
                                         className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-2xl py-5 px-6 text-base text-white placeholder-stone-800 outline-none transition-all custom-scrollbar resize-none leading-relaxed font-medium"
                                     />
+                                </div>
+
+                                {/* Row 4: File Upload (Ultra-Subtle Amber Theme) */}
+                                <div className="space-y-3">
+                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Attach External Report (Optional)</label>
+                                    <div className="relative border-2 border-dashed border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 cursor-pointer relative group">
+                                        <input
+                                            type="file"
+                                            onChange={handleFileChange}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                                        />
+
+                                        {/* Shimmer Effect */}
+                                        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(245,158,11,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-shimmer opacity-0 group-hover:opacity-100 pointer-events-none rounded-2xl" />
+
+                                        <div className="w-10 h-10 flex items-center justify-center bg-amber-500/10 text-amber-500 rounded-full transition-all duration-500 mb-3 group-hover:bg-amber-500/20 group-hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] relative z-10">
+                                            {uploading ? <Loader size={18} className="animate-spin" /> : <Upload size={18} />}
+                                        </div>
+                                        <p className="text-sm font-bold text-amber-500/90 group-hover:text-amber-500 transition-colors tracking-wide leading-none relative z-10">
+                                            {file ? file.name : 'Click to Upload Report'}
+                                        </p>
+                                        <p className="text-[11px] text-amber-500/50 group-hover:text-amber-500/70 transition-colors mt-1 font-medium relative z-10">PDF, JPG, PNG up to 10MB</p>
+
+                                        {/* Autofill Overlay */}
+                                        {analyzing && (
+                                            <div className="absolute inset-0 bg-stone-900/90 rounded-2xl flex flex-col items-center justify-center z-30 transition-all backdrop-blur-sm border border-amber-500/20">
+                                                <div className="relative">
+                                                    <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+                                                    <Sparkles size={20} className="text-amber-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                                                </div>
+                                                <p className="text-amber-500 font-bold text-xs uppercase tracking-widest mt-3 animate-pulse">AI Extracting Data...</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </form>
                         </div>
