@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutDashboard, Users, Calendar, ClipboardList, FileText,
     BarChart2, Bell, Settings, Shield, HelpCircle, LogOut, X,
-    Stethoscope, ChevronDown, Siren
+    Stethoscope, ChevronDown, Siren, Copy, Check
 } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 
@@ -84,7 +84,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
     );
 };
 
-const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unreadCount }) => {
+const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unreadCount, user }) => {
 
     // Manage expanded states for groups
     const [expandedGroups, setExpandedGroups] = useState({ appointments: true }); // Default open for demo
@@ -231,8 +231,31 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unre
                             ))}
                         </div>
 
-                        {/* Footer */}
-                        <div className="p-6 border-t border-amber-500/10 bg-emerald-950/10 backdrop-blur-md">
+                        {/* Doctor ID & Footer */}
+                        <div className="p-4 border-t border-amber-500/10 bg-emerald-950/10 backdrop-blur-md space-y-3">
+                            {/* ID Card */}
+                            <div className="bg-black/40 rounded-xl p-3 border border-white/5 relative group">
+                                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">My Doctor ID</p>
+                                <div className="flex items-center justify-between gap-2">
+                                    <code className="text-xs font-mono text-amber-500 truncate max-w-[160px]">
+                                        {user?.uid || 'Loading...'}
+                                    </code>
+                                    <button 
+                                        onClick={() => {
+                                            if(user?.uid) {
+                                                navigator.clipboard.writeText(user.uid);
+                                                // Optional: visual feedback handled by parent or just toggle icon locally if converted to component
+                                                // For now, simple console log or assume user knows
+                                            }
+                                        }}
+                                        className="text-slate-500 hover:text-amber-500 transition-colors"
+                                        title="Copy ID"
+                                    >
+                                        <Copy size={14} />
+                                    </button>
+                                </div>
+                            </div>
+
                             <button
                                 onClick={onLogout}
                                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all font-medium hover:backdrop-blur-sm"

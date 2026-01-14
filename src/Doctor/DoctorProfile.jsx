@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Shield, Stethoscope, Mail, Phone, Award, ToggleLeft, ToggleRight } from 'lucide-react';
+import { User, Shield, Stethoscope, Mail, Phone, Award, ToggleLeft, ToggleRight, Copy } from 'lucide-react';
 
 const DoctorProfile = ({ user }) => {
     const [isOnline, setIsOnline] = useState(true);
@@ -60,6 +60,35 @@ const DoctorProfile = ({ user }) => {
                             </div>
                         )}
                     </button>
+                </div>
+            </div>
+
+            {/* DOCTOR CONNECT ID BANNER */}
+            <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative bg-[#0c0a09] border border-amber-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-amber-500/10 rounded-xl text-amber-500 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                            <Shield size={32} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-white tracking-tight">Doctor Connect ID</h3>
+                            <p className="text-stone-400 text-sm">Share this unique ID with patients to establish a secure connection.</p>
+                        </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 w-full md:w-auto bg-black/40 p-2 pr-3 rounded-xl border border-white/5 group-hover:border-amber-500/30 transition-colors">
+                        <code className="flex-1 md:flex-none text-center font-mono text-lg font-bold text-amber-400 tracking-wider px-6">
+                            {user.uid}
+                        </code>
+                        <button 
+                            onClick={() => navigator.clipboard.writeText(user.uid)}
+                            className="p-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg transition-colors shadow-lg hover:shadow-amber-500/25 active:scale-95"
+                            title="Copy ID"
+                        >
+                            <Copy size={20} />
+                        </button>
+                    </div>
                 </div>
             </div>
 

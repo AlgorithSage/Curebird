@@ -25,6 +25,7 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user, onSubscribeCli
                 { name: 'Cure Tracker', icon: Activity },
                 { name: 'Cure Analyzer', icon: Activity },
                 { name: 'Cure Stat', icon: Activity },
+                { name: 'Messages', icon: MessageSquare }, // New Chat Bridge
                 { name: 'Cure AI', icon: MessageSquare },
                 { name: 'Doctor Access', icon: Activity },
             ]

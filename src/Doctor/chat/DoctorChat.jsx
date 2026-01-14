@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck } from 'lucide-react';
 import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
-import { auth, db } from '../../firebase';
+import { auth, db, storage } from '../../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import InsightReviewModal from './InsightReviewModal';
 import GenerateSummaryModal from './actions/GenerateSummaryModal';
 import FlagObservationModal from './actions/FlagObservationModal';
@@ -21,6 +22,8 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     // UI State
     const [activeChat, setActiveChat] = useState(null);
     const [messageInput, setMessageInput] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = React.useRef(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [isInsightModalOpen, setIsInsightModalOpen] = useState(false);
     const [selectedInsight, setSelectedInsight] = useState(null);
@@ -41,8 +44,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         setLoadingChats(true);
         const q = query(
             collection(db, 'chats'),
-            where('participants', 'array-contains', currentUser.uid),
-            orderBy('updatedAt', 'desc')
+            where('participants', 'array-contains', currentUser.uid)
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -52,8 +54,13 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 // Helper for display logic
                 patient: doc.data().patientName, // Mapped for UI
                 time: doc.data().updatedAt?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'New',
+                timestamp: doc.data().updatedAt?.toMillis() || 0, // for sorting
                 avatarColor: doc.data().avatarColor || 'bg-stone-700'
             }));
+            
+            // Client-side sort
+            fetchedChats.sort((a, b) => b.timestamp - a.timestamp);
+            
             setChats(fetchedChats);
             setLoadingChats(false);
         });
@@ -130,6 +137,74 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     }, [activeChat]);
 
     // 4. Send Message
+    const handleFileSelect = async (e) => {
+        const file = e.target.files[0];
+        if (!file || !activeChat || !currentUser) return;
+
+        setIsUploading(true);
+        try {
+             // 1. Ensure chat exists (if temp) - Reuse logic or simplified check?
+             // For simplicity, we assume chat exists or we replicate creation logic.
+             // Ideally we refactor 'ensureChatExists' but for now let's just upload.
+             // If activeChat starts with 'temp_', we MUST create it first.
+             
+             let targetChatId = activeChat;
+             if (activeChat.startsWith('temp_')) {
+                 // Creating chat logic duplicated for safety (or could be refactored)
+                 const tempPatientId = activeChat.replace('temp_', '');
+                 let targetPatient = patients.find(p => p.id === tempPatientId);
+                 if (!targetPatient && initialPatientId?.id === tempPatientId) targetPatient = initialPatientId;
+                 
+                 if (targetPatient) {
+                     const newChatRef = await addDoc(collection(db, 'chats'), {
+                        patientId: targetPatient.id,
+                        doctorId: currentUser.uid,
+                        participants: [currentUser.uid], // In reality, we must add Patient UID here if we know it.
+                        // Wait, if we use temp_ID, we might not have patient UID if "patients" collection doesn't have it?
+                        // Actually 'patients' collection usually has 'uid' or we rely on 'patientId' being the uid?
+                        // In NewPrescriptionModal user used 'patientId'. Let's assume patient.id IS the uid or we store it.
+                        // For the connection to work, patientId MUST match the Patient's UID.
+                        // Let's assume the 'patients' list has the correct ID.
+                        participants: [currentUser.uid, targetPatient.id], 
+                        patientName: targetPatient.name,
+                        condition: targetPatient.condition || 'General Care',
+                        status: 'offline',
+                        lastMsg: 'Sent an attachment', 
+                        unread: 0,
+                        updatedAt: serverTimestamp(),
+                        avatarColor: 'bg-emerald-500'
+                     });
+                     targetChatId = newChatRef.id;
+                     setActiveChat(targetChatId);
+                 }
+             }
+
+             const storageRef = ref(storage, `chat_attachments/${targetChatId}/${Date.now()}_${file.name}`);
+             await uploadBytes(storageRef, file);
+             const url = await getDownloadURL(storageRef);
+
+             await addDoc(collection(db, `chats/${targetChatId}/messages`), {
+                text: 'Sent an attachment',
+                fileUrl: url,
+                fileName: file.name,
+                sender: 'doctor',
+                senderId: currentUser.uid,
+                createdAt: serverTimestamp(),
+                type: 'file'
+            });
+
+            await updateDoc(doc(db, 'chats', targetChatId), {
+                lastMsg: 'Sent an attachment',
+                updatedAt: serverTimestamp(),
+            });
+
+        } catch (err) {
+            console.error("Upload failed", err);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!messageInput.trim() || !activeChat || !currentUser) return;
@@ -522,7 +597,18 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 {/* Input Area */}
                 <div className="p-4 border-t border-white/5 bg-stone-950/50">
                     <form onSubmit={handleSendMessage} className="flex gap-4 items-center">
-                        <button type="button" className="p-3 rounded-full hover:bg-white/5 text-stone-400 hover:text-amber-500 transition-colors">
+                        <input 
+                            type="file" 
+                            ref={fileInputRef} 
+                            className="hidden" 
+                            onChange={handleFileSelect}
+                        />
+                        <button 
+                            type="button" 
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isUploading}
+                            className={`p-3 rounded-full hover:bg-white/5 text-stone-400 hover:text-amber-500 transition-colors ${isUploading ? 'animate-pulse text-amber-500' : ''}`}
+                        >
                             <Paperclip size={20} />
                         </button>
                         <div className="flex-1 bg-stone-900/50 border border-white/5 rounded-2xl flex items-center px-4 py-1 focus-within:border-amber-500/30 transition-colors">

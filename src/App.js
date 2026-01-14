@@ -15,6 +15,7 @@ import { ToastProvider } from './context/ToastContext';
 // Import all components
 import Sidebar from './components/Sidebar';
 import MedicalPortfolio from './components/MedicalPortfolio';
+import PatientChat from './components/PatientChat';
 import AuthModals from './components/AuthModals';
 import AllRecords from './components/AllRecords';
 import Appointments from './components/Appointments';
@@ -170,6 +171,7 @@ export default function App() {
             case 'Cure Tracker': return <CureTracker {...pageProps} />;
             case 'Cure Analyzer': return <CureAnalyzer {...pageProps} />;
             case 'Cure Stat': return <CureStat {...pageProps} />;
+            case 'Messages': return <PatientChat {...pageProps} />;
             case 'Cure AI': return <CureAI {...pageProps} initialContext={chatContext} />; // Pass context to Chat
             case 'Doctor Access': return <ShareProfile {...pageProps} />;
             case 'Settings': return <Settings {...pageProps} />;

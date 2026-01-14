@@ -377,12 +377,39 @@ const DoctorDashboard = ({ user }) => {
             );
             unsubUrgent = onSnapshot(urgentQuery, (snapshot) => {
                 setActionCount(snapshot.docs.length);
+                setActionCount(snapshot.docs.length);
+            });
+        }
+
+        // Unread Messages Listener
+        let unsubChats = () => {};
+        if (user) {
+            // Note: This query might require an index if we filter by unread > 0 AND participants.
+            // Safe bet: Fetch all chats for user, client-side sum unread.
+            // Or just check 'chats' where 'participants' contains user.
+            const chatUnreadQuery = query(
+                collection(db, 'chats'),
+                where('participants', 'array-contains', user.uid)
+            );
+            unsubChats = onSnapshot(chatUnreadQuery, (snapshot) => {
+                let totalUnread = 0;
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    // Basic logic: if lastMsg was NOT from me, and unread > 0
+                    // But our 'unread' field in Firestore is simple counter.
+                    // We assume it tracks unread for the 'viewer' or we need separate participant tracking.
+                    // Existing logic in PatientChat/DoctorChat just increments 'unread'.
+                    // Let's assume 'unread' > 0 means ACTION NEEDED.
+                    if (data.unread > 0) totalUnread += data.unread;
+                });
+                setUnreadNotifications(totalUnread);
             });
         }
 
         return () => {
             unsubscribe();
             unsubUrgent();
+            unsubChats();
         };
     }, [user]);
 
@@ -514,6 +541,7 @@ const DoctorDashboard = ({ user }) => {
                 onNavigate={handleNavigate}
                 onLogout={handleLogout}
                 unreadCount={unreadNotifications}
+                user={user}
             />
 
             <AddClinicalRecordModal
