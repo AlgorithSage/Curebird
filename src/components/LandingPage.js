@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeartPulse, LogIn, Dna, Pill, Stethoscope, Syringe, Activity, Globe, Shield, ShieldCheck, Zap, CheckCircle, ArrowRight, Play, Pause, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, ScanEye, Database, MessageSquare, Microscope, Crown } from 'lucide-react';
+import { HeartPulse, LogIn, Dna, Pill, Activity, Globe, ShieldCheck, Zap, ArrowRight, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, MessageSquare, Microscope, Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from './SEO';
 
@@ -28,7 +28,7 @@ const VideoBackground = ({ isMobile }) => (
 // --- Floating Icon Component ---
 const FloatingIcon = ({ icon, className, duration, delay }) => (
     <motion.div
-        className={`absolute text - amber - 400 / 15 ${className} pointer - events - none`}
+        className={`absolute text-amber-400/15 ${className} pointer-events-none`}
         initial={{ y: -15, opacity: 0 }}
         animate={{ y: 15, opacity: 1 }}
         transition={{
@@ -85,40 +85,46 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                 <motion.div
                     initial="hidden"
                     animate="visible"
-                    className="glass-card relative z-10 flex flex-col items-center px-6 py-12 sm:p-20 w-full max-w-4xl"
+                    className="glass-card relative z-10 flex flex-col items-center px-8 py-12 sm:p-16 w-full max-w-5xl gap-8 sm:gap-10"
                 >
                     {/* Logo & Title */}
-                    <motion.div custom={0} variants={textVariants} className="flex flex-col sm:flex-row items-center gap-8 mb-10">
-                        <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center shrink-0">
-                            <img src={CurebirdLogo} alt="Curebird Logo" className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" />
+                    <motion.div custom={0} variants={textVariants} className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                        <div className="relative w-40 h-40 sm:w-52 sm:h-52 flex items-center justify-center shrink-0">
+
+
+
+                            
+                            <img src={CurebirdLogo} alt="Curebird Logo" className="relative z-70 w-full h-full object-contain drop-shadow-[0_0_20px_rgba(245,158,11,0.8)]" />
                         </div>
-                        <h1 className="text-5xl sm:text-8xl font-extrabold tracking-tight text-center sm:text-left">
+                        <h1 className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tight text-center sm:text-left">
                             Cure<span className="text-amber-400">bird</span>
                         </h1>
                     </motion.div>
 
-                    <motion.h2 custom={1} variants={textVariants} className="text-xl sm:text-3xl text-slate-200 font-medium text-center">
-                        Your Personal, Intelligent Medical Portfolio
-                    </motion.h2>
+                    <div className="flex flex-col items-center gap-6 text-center max-w-3xl">
+                        <motion.h2 custom={1} variants={textVariants} className="text-2xl sm:text-4xl text-slate-100 font-semibold leading-tight">
+                            Your Personal, Intelligent Medical Portfolio
+                        </motion.h2>
 
-                    <motion.p custom={2} variants={textVariants} className="text-base sm:text-lg text-slate-400 mt-4 max-w-2xl text-center leading-relaxed">
-                        CureBird revolutionizes how you manage healthcare. Consolidate records, track appointments, and unlock
-                        <span className="text-amber-400 font-semibold"> AI-driven insights</span> for a healthier future.
-                    </motion.p>
+                        <motion.p custom={2} variants={textVariants} className="text-lg sm:text-xl text-slate-300 leading-relaxed">
+                            CureBird revolutionizes how you manage healthcare. Consolidate records, track appointments, and unlock
+                            <span className="text-amber-400 font-semibold"> AI-driven insights</span> for a healthier future.
+                        </motion.p>
+                    </div>
 
-                    <motion.div custom={3} variants={textVariants} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+                    <motion.div custom={3} variants={textVariants} className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-8 w-full">
                         <button
                             onClick={onLoginClick}
-                            className="flex items-center gap-3 bg-amber-500 text-black px-8 py-4 rounded-full shadow-xl hover:bg-amber-400 transition-all font-bold text-lg"
+                            className="w-full sm:w-auto flex items-center justify-center gap-3 bg-amber-500 text-black px-10 py-5 rounded-full shadow-2xl hover:bg-amber-400 hover:scale-105 transition-all font-bold text-xl"
                         >
-                            <LogIn size={24} />
+                            <LogIn size={26} />
                             Get Started
                         </button>
                         <button
                             onClick={onSubscribeClick}
-                            className="flex items-center gap-2 text-white border border-amber-500/50 px-8 py-4 rounded-full hover:bg-amber-500/10 transition-all font-bold text-lg backdrop-blur-sm"
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 text-white border-2 border-amber-500/30 px-10 py-5 rounded-full hover:bg-amber-500/10 hover:border-amber-500 hover:scale-105 transition-all font-bold text-xl backdrop-blur-sm"
                         >
-                            <Crown size={24} className="text-amber-500" />
+                            <Crown size={26} className="text-amber-500" />
                             View Plans
                         </button>
                     </motion.div>
