@@ -1,5 +1,5 @@
-/* Import Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 /* These are the required Tailwind directives */
 @tailwind base;
@@ -20,7 +20,7 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-smoothing: grayscale;
   overflow-x: hidden;
@@ -87,26 +87,37 @@ body {
     @apply relative rounded-[2rem] p-6 sm:p-10 transition-all duration-300 backdrop-blur-2xl;
 
     /* Transparent Body with Amber Tint */
-    background: linear-gradient(145deg, rgba(251, 191, 36, 0.1) 0%, rgba(10, 10, 10, 0.6) 100%) !important;
+    background: linear-gradient(
+      145deg,
+      rgba(251, 191, 36, 0.1) 0%,
+      rgba(10, 10, 10, 0.6) 100%
+    ) !important;
 
     /* Subtle Border */
     border: 1px solid rgba(255, 255, 255, 0.05);
 
     /* Deep Shadow */
-    box-shadow:
-      0 20px 50px -12px rgba(0, 0, 0, 0.7),
+    box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.7),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   }
 
   .glass-card-amber {
     @apply glass-card;
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(10, 10, 10, 0.7) 100%) !important;
+    background: linear-gradient(
+      135deg,
+      rgba(251, 191, 36, 0.15) 0%,
+      rgba(10, 10, 10, 0.7) 100%
+    ) !important;
     border: 1px solid rgba(251, 191, 36, 0.2);
   }
 
   .glass-card-indigo {
     @apply glass-card;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(15, 23, 42, 0.8) 100%) !important;
+    background: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.05) 0%,
+      rgba(15, 23, 42, 0.8) 100%
+    ) !important;
     border: 1px solid rgba(99, 102, 241, 0.1);
   }
 
@@ -120,21 +131,20 @@ body {
     /* Reduced specific thickness */
 
     /* The Rotating Gold Gradient - Mesh Like Blend */
-    background: conic-gradient(from var(--border-angle),
-        transparent 20%,
-        #854d0e 40%,
-        #eab308 50%,
-        #fef08a 60%,
-        #854d0e 70%,
-        transparent 80%);
+    background: conic-gradient(
+      from var(--border-angle),
+      transparent 20%,
+      #854d0e 40%,
+      #eab308 50%,
+      #fef08a 60%,
+      #854d0e 70%,
+      transparent 80%
+    );
 
     /* MASK: Cut out the center to reveal the glass card behind/inside */
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
-    mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
 
@@ -162,14 +172,17 @@ body {
     inset: 0;
     border-radius: inherit;
     padding: 2px;
-    background: conic-gradient(from var(--border-angle),
-        transparent 20%,
-        #854d0e 40%,
-        #eab308 50%,
-        #fef08a 60%,
-        #854d0e 70%,
-        transparent 80%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    background: conic-gradient(
+      from var(--border-angle),
+      transparent 20%,
+      #854d0e 40%,
+      #eab308 50%,
+      #fef08a 60%,
+      #854d0e 70%,
+      transparent 80%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -180,33 +193,39 @@ body {
   }
 
   .animated-border-rose::before {
-    background: conic-gradient(from var(--border-angle),
-        transparent 20%,
-        #9f1239 40%,
-        #f43f5e 50%,
-        #fda4af 60%,
-        #9f1239 70%,
-        transparent 80%);
+    background: conic-gradient(
+      from var(--border-angle),
+      transparent 20%,
+      #9f1239 40%,
+      #f43f5e 50%,
+      #fda4af 60%,
+      #9f1239 70%,
+      transparent 80%
+    );
   }
 
   .animated-border-emerald::before {
-    background: conic-gradient(from var(--border-angle),
-        transparent 20%,
-        #065f46 40%,
-        #10b981 50%,
-        #6ee7b7 60%,
-        #065f46 70%,
-        transparent 80%);
+    background: conic-gradient(
+      from var(--border-angle),
+      transparent 20%,
+      #065f46 40%,
+      #10b981 50%,
+      #6ee7b7 60%,
+      #065f46 70%,
+      transparent 80%
+    );
   }
 
   .animated-border-indigo::before {
-    background: conic-gradient(from var(--border-angle),
-        transparent 20%,
-        #3730a3 40%,
-        #6366f1 50%,
-        #a5b4fc 60%,
-        #3730a3 70%,
-        transparent 80%);
+    background: conic-gradient(
+      from var(--border-angle),
+      transparent 20%,
+      #3730a3 40%,
+      #6366f1 50%,
+      #a5b4fc 60%,
+      #3730a3 70%,
+      transparent 80%
+    );
   }
 
   .animated-border:hover::before {
@@ -217,9 +236,12 @@ body {
 
   .glass-card:hover {
     transform: translateY(-4px);
-    background: linear-gradient(145deg, rgba(250, 204, 21, 0.15) 0%, rgba(10, 10, 10, 0.8) 100%) !important;
-    box-shadow:
-      0 20px 50px -10px rgba(0, 0, 0, 0.9),
+    background: linear-gradient(
+      145deg,
+      rgba(250, 204, 21, 0.15) 0%,
+      rgba(10, 10, 10, 0.8) 100%
+    ) !important;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9),
       0 0 40px -10px rgba(234, 179, 8, 0.3);
     /* Softer colored glow */
   }
@@ -249,7 +271,6 @@ body {
 }
 
 @keyframes gradient-xy {
-
   0%,
   100% {
     background-position: 0% 50%;
@@ -293,7 +314,6 @@ body {
 }
 
 @keyframes pulse-slow {
-
   0%,
   100% {
     opacity: 1;
@@ -414,7 +434,6 @@ body {
 }
 
 @keyframes ember-flicker {
-
   0%,
   100% {
     opacity: 1;
