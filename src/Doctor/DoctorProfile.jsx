@@ -1,11 +1,54 @@
 import React, { useState } from 'react';
 import { User, Shield, Stethoscope, Mail, Phone, Award, ToggleLeft, ToggleRight, Copy } from 'lucide-react';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase'; // Ensure correct import path
 
 const DoctorProfile = ({ user }) => {
     const [isOnline, setIsOnline] = useState(true);
+    const [connectionCode, setConnectionCode] = useState(user.connectionCode || '');
+
+    // Lazy Generation of Connection Code
+    React.useEffect(() => {
+        if (user && !user.connectionCode && !connectionCode) {
+            const generateCode = async () => {
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; 
+                let result = 'DOC-';
+                const length = 6;
+                
+                // Ensure at least one number and one letter for "alphanumeric" feel
+                let randomPart = '';
+                while (true) {
+                    randomPart = '';
+                    let hasNum = false;
+                    let hasChar = false;
+                    for (let i = 0; i < length; i++) {
+                        const c = chars.charAt(Math.floor(Math.random() * chars.length));
+                        if (c >= '0' && c <= '9') hasNum = true;
+                        else hasChar = true;
+                        randomPart += c;
+                    }
+                    if (hasNum && hasChar) break;
+                }
+                result += randomPart;
+                
+                try {
+                    const userRef = doc(db, 'users', user.uid);
+                    await updateDoc(userRef, { connectionCode: result });
+                    setConnectionCode(result);
+                } catch (err) {
+                    console.error("Failed to generate code", err);
+                }
+            };
+            generateCode();
+        } else if (user.connectionCode) {
+            setConnectionCode(user.connectionCode);
+        }
+    }, [user]);
 
     return (
         <div className="max-w-4xl mx-auto space-y-8">
+            {/* ... keeping header ... */} 
+
 
             {/* Header / Identity - UPDATED OPACITY */}
             <div className="glass-card p-8 rounded-3xl border border-white/10 bg-slate-900/90 backdrop-blur-3xl flex flex-col md:flex-row items-center gap-8 shadow-2xl">
@@ -79,10 +122,10 @@ const DoctorProfile = ({ user }) => {
                     
                     <div className="flex items-center gap-3 w-full md:w-auto bg-black/40 p-2 pr-3 rounded-xl border border-white/5 group-hover:border-amber-500/30 transition-colors">
                         <code className="flex-1 md:flex-none text-center font-mono text-lg font-bold text-amber-400 tracking-wider px-6">
-                            {user.uid}
+                            {connectionCode || 'Generating...'}
                         </code>
                         <button 
-                            onClick={() => navigator.clipboard.writeText(user.uid)}
+                            onClick={() => navigator.clipboard.writeText(connectionCode || user.uid)}
                             className="p-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg transition-colors shadow-lg hover:shadow-amber-500/25 active:scale-95"
                             title="Copy ID"
                         >

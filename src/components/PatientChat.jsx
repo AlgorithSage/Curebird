@@ -84,14 +84,28 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
         setConnectError('');
         setIsConnecting(true);
 
-        const targetId = connectId.trim();
+        let targetId = connectId.trim();
         if (!targetId) {
             setIsConnecting(false);
             return;
         }
 
         try {
-            // A. Check Local State First (Fastest)
+            // A. Resolve Connection Code to Doctor UID (New Short Code Logic)
+            // If the ID looks like a short code (e.g. DOC-XXXX or just length < 20), try to find the user by connectionCode
+            if (targetId.length < 20 || targetId.startsWith('DOC-')) {
+                 const codeQuery = query(collection(db, 'users'), where('connectionCode', '==', targetId));
+                 const codeSnap = await getDocs(codeQuery);
+                 
+                 if (!codeSnap.empty) {
+                     targetId = codeSnap.docs[0].id; // Resolved to real UID
+                 } else {
+                     // If it looked like a short code but wasn't found, it might be an invalid code.
+                     // But we'll let it fall through to the UID check just in case.
+                 }
+            }
+
+            // B. Check Local State First (Fastest) with resolved UID
             const existingChat = chats.find(c => c.doctorId === targetId || (c.participants && c.participants.includes(targetId)));
             if (existingChat) {
                 setActiveChat(existingChat);
@@ -100,8 +114,7 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
                 return;
             }
 
-            // B. Check Firestore (Safety Net - in case local state isn't synced or edge case)
-            // querying for chats where user is participant, then filtering for target doctor
+            // C. Check Firestore (Safety Net)
             const q = query(
                 collection(db, 'chats'), 
                 where('participants', 'array-contains', user.uid)
@@ -120,7 +133,7 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
                  return;
             }
 
-            // C. Validate Doctor ID (Check if user exists and is a doctor)
+            // D. Validate Doctor ID (Check if user exists)
             let doctorName = 'Dr. Unknown';
             const doctorRef = doc(db, 'users', targetId);
             const doctorSnap = await getDoc(doctorRef);
@@ -129,12 +142,12 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
                 const docData = doctorSnap.data();
                 doctorName = `Dr. ${docData.lastName || docData.firstName || 'Curebird'}`;
             } else {
-                 // Optional: Block connection if ID is invalid? 
-                 // For now allowing it as per previous behavior, but maybe warn?
-                 // console.warn("Doctor ID might be invalid, but proceeding.");
+                 setConnectError('Doctor not found. Please check the ID or Code.');
+                 setIsConnecting(false);
+                 return;
             }
 
-            // D. Create New Chat
+            // E. Create New Chat
             const newChatRef = await addDoc(collection(db, 'chats'), {
                 patientId: user.uid,
                 patientName: user.displayName || user.firstName || 'Patient',
