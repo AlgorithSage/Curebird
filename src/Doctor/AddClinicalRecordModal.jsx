@@ -731,7 +731,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                             {/* Row 5: File Upload */}
                             <div className="space-y-3">
                                 <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Attachment (Optional)</label>
-                                <div className="relative border-2 border-dashed border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 cursor-pointer relative group">
+                                <div className="relative border-2 border-dashed border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 cursor-pointer group">
                                     <input
                                         type="file"
                                         onChange={handleFileChange}

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutDashboard, Users, Calendar, ClipboardList, FileText,
     BarChart2, Bell, Settings, Shield, HelpCircle, LogOut, X,
-    Stethoscope, ChevronDown, Siren, Copy, Check
+    Stethoscope, ChevronDown, Siren, Check
 } from 'lucide-react';
 import CurebirdLogo from '../curebird_logo.png';
 
@@ -233,28 +233,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unre
 
                         {/* Doctor ID & Footer */}
                         <div className="p-4 border-t border-amber-500/10 bg-emerald-950/10 backdrop-blur-md space-y-3">
-                            {/* ID Card */}
-                            <div className="bg-black/40 rounded-xl p-3 border border-white/5 relative group">
-                                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">My Doctor ID</p>
-                                <div className="flex items-center justify-between gap-2">
-                                    <code className="text-xs font-mono text-amber-500 truncate max-w-[160px]">
-                                        {user?.uid || 'Loading...'}
-                                    </code>
-                                    <button 
-                                        onClick={() => {
-                                            if(user?.uid) {
-                                                navigator.clipboard.writeText(user.uid);
-                                                // Optional: visual feedback handled by parent or just toggle icon locally if converted to component
-                                                // For now, simple console log or assume user knows
-                                            }
-                                        }}
-                                        className="text-slate-500 hover:text-amber-500 transition-colors"
-                                        title="Copy ID"
-                                    >
-                                        <Copy size={14} />
-                                    </button>
-                                </div>
-                            </div>
+
 
                             <button
                                 onClick={onLogout}
