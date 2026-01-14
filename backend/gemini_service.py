@@ -182,19 +182,23 @@ Remember: You are an informational assistant, not a replacement for professional
             Output Format:
             {
                 "summary": "Key clinical summary (2 sentences max)",
+                "date": "YYYY-MM-DD (Date of the report/prescription)",
+                "doctor_name": "Name of the doctor (e.g. Dr. John Doe)",
+                "hospital_name": "Name of the hospital or clinic",
+                "diseases": ["List of likely diagnoses or conditions mentioned"],
+                "medications": [
+                    {"name": "Drug Name", "dosage": "Dosage (e.g. 500mg)", "frequency": "Frequency (e.g. BD, 1-0-1)", "status": "active"}
+                ],
                 "extracted_vitals": [
                     {"label": "Parameter Name", "value": "Value Unit", "status": "normal/high/low/critical"}
                 ],
                 "key_findings": [
                     "Finding 1", "Finding 2"
                 ],
-                "medication_adjustments": [
-                    {"name": "Drug Name", "action": "Start/Stop/Continue/Adjust", "dose": "Dosage Info"}
-                ],
                 "recommendation": "Clinical recommendation or next steps"
             }
             
-            If specific data (like vitals) is missing, omit it or leave empty. 
+            If specific data is missing/illegible, use null or empty string. 
             Ensure 'status' is inferred based on standard medical ranges if not explicitly stated.
             """
             
@@ -202,6 +206,8 @@ Remember: You are an informational assistant, not a replacement for professional
             
             # Extract JSON from response
             text = response.text
+            print(f"\n--- RAW GEMINI RESPONSE ---\n{text}\n---------------------------\n") # DEBUG PRINT
+            
             # Clean up potential markdown code blocks
             if text.startswith('```json'):
                 text = text[7:]

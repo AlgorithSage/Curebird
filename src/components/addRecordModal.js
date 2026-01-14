@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { API_BASE_URL } from '../config'; // Import API wrapper
 
 // NOTE: Make sure you have initialized Firebase in your main App.js or a firebase.js config file
 // import { app } from './firebase'; // Example import
@@ -19,12 +20,80 @@ const AddRecordModal = ({ closeModal, userId }) => {
     const [file, setFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isUploading, setIsUploading] = useState(false);
+    const [isAutofilling, setIsAutofilling] = useState(false); // New AI state
     const [error, setError] = useState('');
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
             setFile(selectedFile);
+            // Trigger AI Auto-fill
+            await handleAutofill(selectedFile);
+        }
+    };
+
+    const handleAutofill = async (file) => {
+        setIsAutofilling(true);
+        const uploadData = new FormData();
+        uploadData.append('file', file);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/analyzer/process`, {
+                method: 'POST',
+                body: uploadData,
+            });
+
+            if (!response.ok) throw new Error("Analysis failed");
+            const rawData = await response.json();
+            
+            const analysis = rawData.analysis || {};
+            const summary = rawData.summary || "";
+
+            // 1. Extract Date
+            let extractedDate = analysis.date;
+            if (!extractedDate) {
+                 const dateMatch = summary.match(/\b(\d{4}-\d{2}-\d{2})\b/) || summary.match(/\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})\b/);
+                 if (dateMatch) {
+                    const dStr = dateMatch[1].replace(/\//g, '-');
+                    const dObj = new Date(dStr);
+                    if (!isNaN(dObj.getTime())) extractedDate = dObj.toISOString().split('T')[0];
+                 }
+            }
+            if (extractedDate) setDate(extractedDate);
+
+            // 2. Extract Doctor
+            let extractedDoctor = analysis.doctor_name;
+            if (!extractedDoctor) {
+                const drMatch = summary.match(/(?:Dr\.|Doctor)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/);
+                if (drMatch) extractedDoctor = "Dr. " + drMatch[1];
+            }
+            if (extractedDoctor) setDoctor(extractedDoctor);
+
+            // 3. Build Details (Summary + Meds)
+            let builtDetails = summary;
+            
+            if (analysis.medications && analysis.medications.length > 0) {
+                builtDetails += "\n\nMedications:\n" + analysis.medications.map(m => `- ${m.name} (${m.dosage || 'N/A'})`).join("\n");
+            }
+            
+            if (analysis.hospital_name) {
+                builtDetails += `\n\nFacility: ${analysis.hospital_name}`;
+            }
+
+            if (builtDetails) setDetails(builtDetails);
+            
+            // 4. Infer Type
+            if (analysis.medications?.length > 0 || summary.toLowerCase().includes('prescription')) {
+                setRecordType('Prescription');
+            } else if (summary.toLowerCase().includes('lab') || summary.toLowerCase().includes('blood')) {
+                setRecordType('Blood Test');
+            }
+
+        } catch (err) {
+            console.error("AI Auto-fill error:", err);
+            // Non-blocking error, user can type manually
+        } finally {
+            setIsAutofilling(false);
         }
     };
 
@@ -100,7 +169,10 @@ const AddRecordModal = ({ closeModal, userId }) => {
                 <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Add New Medical Record</h2>
                 <form onSubmit={handleFormSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <input type="date" value={date} onChange={e => setDate(e.target.value)} required className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <div className="relative">
+                            <input type="date" value={date} onChange={e => setDate(e.target.value)} required className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
+                             {isAutofilling && <span className="absolute right-2 top-2 text-xs text-blue-500 font-bold">AI...</span>}
+                        </div>
                         <select value={recordType} onChange={e => setRecordType(e.target.value)} className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option>Prescription</option>
                             <option>Blood Test</option>
@@ -108,25 +180,38 @@ const AddRecordModal = ({ closeModal, userId }) => {
                             <option>ECG</option>
                             <option>Other</option>
                         </select>
-                        <input type="text" placeholder="Doctor's Name" value={doctor} onChange={e => setDoctor(e.target.value)} required className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        <input type="text" placeholder="Details / Diagnosis" value={details} onChange={e => setDetails(e.target.value)} className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <div className="relative">
+                            <input type="text" placeholder="Doctor's Name" value={doctor} onChange={e => setDoctor(e.target.value)} required className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
+                        </div>
+                        <div className="relative">
+                            <input type="text" placeholder="Details / Diagnosis" value={details} onChange={e => setDetails(e.target.value)} className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
+                        </div>
                     </div>
 
                     <div className="mb-6">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="file-upload">
                             Upload Document (PDF, IMG, etc.)
                         </label>
-                        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                        <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-all ${isAutofilling ? 'border-blue-400 bg-blue-50' : 'border-gray-300'}`}>
                             <div className="space-y-1 text-center">
-                                <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                <div className="flex text-sm text-gray-600">
-                                    <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                        <span>Upload a file</span>
-                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
-                                    </label>
-                                    <p className="pl-1">or drag and drop</p>
-                                </div>
-                                {file && <p className="text-xs text-gray-500">{file.name}</p>}
+                                {isAutofilling ? (
+                                    <div className="flex flex-col items-center py-4">
+                                        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+                                        <p className="text-sm text-blue-600 font-bold animate-pulse">Analyzing Document...</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                        <div className="flex text-sm text-gray-600">
+                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                                <span>Upload a file</span>
+                                                <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
+                                            </label>
+                                            <p className="pl-1">or drag and drop</p>
+                                        </div>
+                                        {file && <p className="text-xs text-gray-500">{file.name}</p>}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -137,7 +222,7 @@ const AddRecordModal = ({ closeModal, userId }) => {
                         <button type="button" onClick={closeModal} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             Cancel
                         </button>
-                        <button type="submit" disabled={isUploading} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300 disabled:cursor-not-allowed">
+                        <button type="submit" disabled={isUploading || isAutofilling} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300 disabled:cursor-not-allowed">
                             {isUploading ? `Uploading... ${uploadProgress}%` : 'Add Record'}
                         </button>
                     </div>

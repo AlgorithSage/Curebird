@@ -87,7 +87,10 @@ export const AppointmentFormModal = ({ onClose, appointment, userId, appId, db }
 
 const AnalysisResult = ({ result, onApply }) => (
     <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-        <h3 className="text-lg font-semibold text-white mb-3">AI Analysis Results</h3>
+        <h3 className="text-lg font-semibold text-white mb-3 flex justify-between items-center">
+            <span>AI Analysis Results</span>
+        </h3>
+        
         <div className="space-y-4">
             <div>
                 <h4 className="flex items-center gap-2 text-sm font-medium text-amber-400"><Stethoscope size={16} />Detected Conditions / Diseases</h4>
@@ -101,11 +104,14 @@ const AnalysisResult = ({ result, onApply }) => (
                 <h4 className="flex items-center gap-2 text-sm font-medium text-sky-400"><Pill size={16} />Detected Medications</h4>
                 {(result?.medications || []).length > 0 ? (
                     <div className="space-y-2 mt-2">
-                        {(result?.medications || []).map((med, i) => (
-                            <p key={i} className="text-slate-300 text-sm font-mono bg-slate-700/50 p-1 rounded">
-                                &gt; {med.name} - {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage} - {med.frequency}
-                            </p>
-                        ))}
+                        {(result?.medications || []).map((med, i) => {
+                             const dosageVal = med.dosage ? (typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage) : "N/A";
+                             return (
+                                <p key={i} className="text-slate-300 text-sm font-mono bg-slate-700/50 p-1 rounded">
+                                    &gt; {med.name || "Unknown Drug"} - {dosageVal} - {med.frequency || "N/A"}
+                                </p>
+                             );
+                        })}
                         <button onClick={onApply} className="text-sm text-sky-400 hover:text-sky-300 font-semibold mt-2">Auto-fill Medications</button>
                     </div>
                 ) : <p className="text-slate-400 text-sm mt-1">No specific medications detected.</p>}
@@ -224,19 +230,64 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
             fileData.append('file', selectedFile);
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/analyze-report`, {
+                // Use the advanced VLM processor
+                const response = await fetch(`${API_BASE_URL}/api/analyzer/process`, {
                     method: 'POST',
                     body: fileData,
                 });
+                
                 if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.error || 'Server responded with an error.');
+                    throw new Error('Analysis failed. The server returned an error.');
                 }
-                const result = await response.json();
-                setAnalysisResult(result.analysis);
+                
+                const rawData = await response.json();
+                const result = rawData.analysis || {};
+                const summary = rawData.summary || "";
+
+                // Auto-fill Logic
+                const newFormData = { ...formData };
+                
+                // 1. Date
+                if (result.date) {
+                    newFormData.date = result.date;
+                } else {
+                    // Fallback date regex
+                    const dateMatch = summary.match(/\b(\d{4}-\d{2}-\d{2})\b/) || summary.match(/\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})\b/);
+                    if (dateMatch) {
+                        const dStr = dateMatch[1].replace(/\//g, '-');
+                        const dObj = new Date(dStr);
+                        if (!isNaN(dObj.getTime())) newFormData.date = dObj.toISOString().split('T')[0];
+                    }
+                }
+
+                // 2. Doctor Name
+                if (result.doctor_name) {
+                    newFormData.doctorName = result.doctor_name;
+                } else {
+                    const drMatch = summary.match(/(?:Dr\.|Doctor)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/);
+                    if (drMatch) newFormData.doctorName = "Dr. " + drMatch[1];
+                }
+
+                // 3. Hospital Name
+                if (result.hospital_name || result.clinic_name) {
+                    newFormData.hospitalName = result.hospital_name || result.clinic_name;
+                } else {
+                    const hospMatch = summary.match(/([A-Z][a-z0-9\s]+(?:Hospital|Clinic|Medical Center|Nursing Home|Labs|Diagnostics))/i);
+                    if (hospMatch) newFormData.hospitalName = hospMatch[1].trim();
+                }
+
+                setFormData(newFormData);
+
+                // 4. Medications
+                if (result.medications && result.medications.length > 0) {
+                     setMedications(result.medications);
+                }
+
+                setAnalysisResult(result);
+
             } catch (err) {
                 console.error("Analysis failed:", err);
-                setAnalysisError(err.message);
+                setAnalysisError("AI could not read the document: " + err.message);
             } finally {
                 setIsAnalyzing(false);
             }

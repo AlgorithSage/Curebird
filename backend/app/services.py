@@ -279,7 +279,20 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
                     "content": [
                         {
                             "type": "text", 
-                            "text": "Analyze this image. First, determine if it is a valid medical document (prescription, lab report, clinical notes, discharge summary) or medication packaging. If it is NOT a medical image, return strict JSON: {\"is_medical\": false}. If it IS a medical image, extract all detected medications (name, dosage, frequency) and any detected clinical conditions or diseases. CRITICALLY: Extract the 'patient_name' if visible (look for 'Name:', 'Patient:', 'Mr/Ms/Mrs'). ALSO, generate a 'digital_copy' field which contains a clean, professional Markdown representation of the ENTIRE document text as if it were typed out. IMPORTANT: Use Markdown tables for medications calling for strict formatting. Return JSON: {\"is_medical\": true, \"patient_name\": \"...\", \"medications\": [...], \"diseases\": [...], \"digital_copy\": \"...markdown string...\"}"
+                            "text": """Analyze this medical image with high precision.
+                            Extract the following data into strict JSON format:
+                            {
+                                "is_medical": true,
+                                "patient_name": "Full Name",
+                                "doctor_name": "Doctor Name (e.g. Dr. ...)",
+                                "hospital_name": "Hospital/Clinic Name",
+                                "date": "YYYY-MM-DD",
+                                "medications": [{"name": "Drug Name", "dosage": "...", "frequency": "..."}],
+                                "diseases": ["List of conditions/diagnoses"],
+                                "digital_copy": "Markdown text of document"
+                            }
+                            If it is likely NOT a medical image, set is_medical: false.
+                            If date is not found, use null."""
                         },
                         {
                             "type": "image_url",
@@ -301,12 +314,16 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
         return {
             "is_medical": structured_data.get("is_medical", True),
             "patient_name": structured_data.get("patient_name", ""),
+            "doctor_name": structured_data.get("doctor_name", ""),
+            "hospital_name": structured_data.get("hospital_name", "") or structured_data.get("clinic_name", ""),
+            "date": structured_data.get("date", ""),
             "medications": structured_data.get("medications", []),
             "diseases": structured_data.get("diseases", []) or structured_data.get("conditions", []),
             "digital_copy": structured_data.get("digital_copy", "")
         }
     except Exception as e:
         print(f"VLM ERROR (CRITICAL): {e}")
+        # Return empty dict so logs show failure but app doesn't crash
         return {"is_medical": False, "medications": [], "diseases": [], "digital_copy": ""}
 
 def verify_and_correct_medical_data(extracted_data):

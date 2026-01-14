@@ -131,202 +131,151 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
         uploadData.append('file', file);
 
         try {
-            // Use the robust analysis endpoint
-            const response = await fetch(`${API_BASE_URL}/api/analyze-report`, {
+            // SWITCHED TO VLM ENDPOINT
+            const response = await fetch(`${API_BASE_URL}/api/analyzer/process`, {
                 method: 'POST',
                 body: uploadData,
             });
 
             if (!response.ok) throw new Error("Autofill analysis failed");
             const rawData = await response.json();
-            const data = rawData.analysis || rawData; // Handle nested structure
-            const summary = rawData.summary || data.summary || "";
-            const fullText = data.digital_copy || summary; // Prefer full text for regex
-
+            
+            // VLM Response Structure:
+            // rawData.analysis = { medications: [], diseases: [], digital_copy: "..." }
+            // rawData.summary = "..."
+            
+            const analysis = rawData.analysis || {};
+            const summary = rawData.summary || "";
+            
             // --- Intelligent Mapping Logic ---
-            let newData = { ...formData, file: file }; // specific spread to keep file
+            let newData = { ...formData, file: file }; 
 
-            // 1. Diagnosis & Vitals Mapping
-            if (data.key_findings && data.key_findings.length > 0) {
-                // Enhanced Diagnosis Inference: Join top 2 findings or use as is
-                newData.diagnosis = data.key_findings.slice(0, 2).join(", ");
+            // 1. Diagnosis (from VLM diseases)
+            if (analysis.diseases && analysis.diseases.length > 0) {
+                newData.diagnosis = analysis.diseases.join(", ");
             }
 
-            // Vitals Extraction Strategy: Structured -> Text Fallback
-            const vMap = {};
-            let foundVitals = false;
-
-            // 1. Try Structured Data
-            if (data.extracted_vitals && data.extracted_vitals.length > 0) {
-                data.extracted_vitals.forEach(v => {
-                    const label = v.label.toLowerCase();
-                    if (label.includes('bp') || label.includes('blood')) vMap.bp = v.value;
-                    else if (label.includes('heart') || label.includes('pulse') || label.includes('hr')) vMap.heartRate = v.value;
-                    else if (label.includes('temp')) vMap.temperature = v.value;
-                    else if (label.includes('spo2') || label.includes('o2')) vMap.spo2 = v.value;
-                });
-                foundVitals = true;
-            }
-
-            // 2. Fallback: Scan Text (Summary/Key Findings) if structured failed or incomplete
-            if (!foundVitals || Object.keys(vMap).length < 2) {
-                const combinedText = (summary + " " + (data.key_findings || []).join(" ")).toLowerCase();
-
-                // BP Parsing
-                if (!vMap.bp) {
-                    const bpMatch = combinedText.match(/(?:bp|blood pressure|b\.p|systolic|sys)[^0-9]*(\d{2,3}[\/-]\d{2,3})/i) || combinedText.match(/(\d{2,3}[\/-]\d{2,3})\s*mmhg/i);
-                    if (bpMatch) vMap.bp = bpMatch[1].replace(/\s/g, '');
-                }
-                // HR Parsing
-                if (!vMap.heartRate) {
-                    const hrMatch = combinedText.match(/(?:hr|heart rate|pulse|rate)[^0-9]*(\d{2,3})/i) || combinedText.match(/(\d{2,3})\s*bpm/i);
-                    if (hrMatch) vMap.heartRate = hrMatch[1];
-                }
-                // Temp Parsing
-                if (!vMap.temperature) {
-                    const tempMatch = combinedText.match(/(?:temp|temperature|t)[^0-9]*(\d{2,3}(?:\.\d+)?)/i) || combinedText.match(/(\d{2,3}(?:\.\d+)?)\s*(?:°|deg)?(?:f|c)\b/i);
-                    if (tempMatch) vMap.temperature = tempMatch[1];
-                }
-                // SpO2 Parsing
-                if (!vMap.spo2) {
-                    const spo2Match = combinedText.match(/(?:spo2|o2|oxygen|sat)[^0-9]*(\d{2,3})/i) || combinedText.match(/(\d{2,3})%/);
-                    if (spo2Match) vMap.spo2 = spo2Match[1];
-                }
-            }
-
-            if (Object.keys(vMap).length > 0) {
-                newData.vitals = vMap;
-            }
-
-            // 2. Description & Summary
-            // 2. Description & Summary
-            let fullDescription = summary;
-
-            // Capture structured medications for Active Meds workspace
-            if (data.medications && Array.isArray(data.medications) && data.medications.length > 0) {
-                newData.medications = data.medications;
-
-                // Append to description if not present
-                if (!fullDescription.includes("Medications:")) {
-                    fullDescription += "\n\nMedications:\n• " + data.medications.map(m => `${m.name} ${m.dosage || ''} ${m.frequency || ''}`).join("\n• ");
-                }
-            } else if (data.medication_adjustments && data.medication_adjustments.length > 0) {
-                // FALLBACK: Map legacy adjustments to new medications structure
-                console.log("Using fallback medication adjustments");
-                newData.medications = data.medication_adjustments.map(adj => ({
-                    name: adj.name,
-                    dosage: adj.dose || adj.dosage || 'As prescribed',
-                    frequency: 'See instructions', // defaulting since adjustment might not have freq separated
+            // 2. Medications (Robust VLM extraction)
+            if (analysis.medications && Array.isArray(analysis.medications)) {
+                newData.medications = analysis.medications.map(m => ({
+                    name: m.name || m.medicine_name || m.input || 'Unknown',
+                    dosage: typeof m.dosage === 'object' ? (m.dosage.dosage || JSON.stringify(m.dosage)) : (m.dosage || 'As prescribed'),
+                    frequency: m.frequency || 'See instructions',
                     status: 'Active'
                 }));
-
-                fullDescription += "\n\nMedications:\n• " + data.medication_adjustments.map(m => `${m.name} (${m.action})`).join("\n• ");
-            }
-            if (fullDescription) newData.description = fullDescription;
-
-            // 2. Title Inference
-            if (data.title && data.title !== "Clinical Document" && data.title !== "Analyzed Report") {
-                newData.title = data.title;
-            } else if (data.fileName) {
-                // Clean up filename for a decent title
-                newData.title = data.fileName.replace(/\.[^/.]+$/, "").split('_').join(' ').split('-').join(' ');
             }
 
-            // 3. Date Extraction
-            if (data.date) {
-                newData.date = data.date;
+            // 3. Description & Summary
+            let fullDescription = summary;
+            
+            // Append formatted medications list to description for readability
+            if (newData.medications && newData.medications.length > 0) {
+                fullDescription += "\n\n**Extracted Medications:**\n" + newData.medications.map(m => `• ${m.name} - ${m.dosage} (${m.frequency})`).join("\n");
             }
 
-            // 4. Type Context Inference
-            const textContext = (data.summary + " " + (data.title || "")).toLowerCase();
-            if (textContext.includes("prescription") || textContext.includes("rx") || textContext.includes("medication")) newData.type = 'prescription';
-            else if (textContext.includes("lab") || textContext.includes("blood") || textContext.includes("panel") || textContext.includes("test")) newData.type = 'lab_report';
-            else if (textContext.includes("referral") || textContext.includes("letter")) newData.type = 'referral';
-            else if (textContext.includes("vital") || textContext.includes("measurement")) newData.type = 'vitals_log';
+            // --- NEW: Doctor & Hospital Extraction ---
+            let extractedDoctor = analysis.doctor_name;
+            let extractedHospital = analysis.hospital_name || analysis.clinic_name;
+            let extractedDate = analysis.date;
 
-            // 5. Priority Inference
-            if (textContext.includes("emergency") || textContext.includes("critical") || textContext.includes("severe") || textContext.includes("immediately")) newData.priority = 'critical';
-            else if (textContext.includes("urgent") || textContext.includes("acute") || textContext.includes("asap")) newData.priority = 'urgent';
-
-            // 6. Patient Identification (Smart Match or New)
-
-            // Strategy: 1. API Field -> 2. Key Findings Scan -> 3. Regex Extraction
-            let extractedName = data.patient_name || data.patientName;
-
-            // Deep Search: content scan
-            if (!extractedName && data.key_findings) {
-                const nameFinding = data.key_findings.find(f => /name|patient/i.test(f));
-                if (nameFinding) {
-                    // Look for "Name: John Doe" pattern
-                    const match = nameFinding.match(/(?:name|patient)\s*[:\-]?\s*([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/i);
-                    if (match) extractedName = match[1];
-                }
+            // Regex Fallbacks if API didn't return specific fields
+            if (!extractedDoctor) {
+                const drMatch = summary.match(/(?:Dr\.|Doctor)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/);
+                if (drMatch) extractedDoctor = "Dr. " + drMatch[1];
             }
 
-            if (!extractedName && fullText) {
-                // Stricter Regex: Enforce Capitalized Words (Title Case)
-                const namePatterns = [
-                    // Label based (High Confidence)
-                    /patient,?\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})(?=[,\.]|\s+is|\s+has|\s+who|\s+was)/,
-                    /name\s*:\s*([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})/,
+            if (!extractedHospital) {
+                const hospMatch = summary.match(/([A-Z][a-z0-9\s]+(?:Hospital|Clinic|Medical Center|Nursing Home|Labs|Diagnostics))/i);
+                if (hospMatch) extractedHospital = hospMatch[1].trim();
+            }
 
-                    // Honorifics (Mr. John Doe)
-                    /(?:Mr\.|Ms\.|Mrs\.|Dr\.|Master|Miss)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})/,
-
-                    // Clinical Context (John Doe presented with...)
-                    /(?:^|\.\s+)([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3})\s+(?:is\s+)?(?:a\s+)?(?:\d+\s*[-]?\s*year)?\s*(?:old)?\s*(?:male|female|man|woman|boy|girl)?\s*(?:who)?\s*(?:presented|complained|reported|visited|suffering|diagnosed)/i,
-
-                    // Age Context (John Doe, 20-year-old)
-                    /([A-Z][a-z]+(?:\s[A-Z][a-z]+){1,3}),?\s+(?:is\s+)?(?:a|an)?\s*\d+\s*-?\s*year/
-                ];
-
-                for (let pattern of namePatterns) {
-                    const match = fullDescription.match(pattern);
-                    if (match) {
-                        // Extra check: exclude common false positive words even if capitalized at start of sentence
-                        const candidate = match[1];
-                        const invalidWords = ["The", "A", "An", "This", "Patient", "With"];
-                        if (!invalidWords.includes(candidate.split(' ')[0])) {
-                            extractedName = candidate;
-                            console.log("Extracted Name via Regex:", extractedName);
-                            break;
-                        }
+            if (!extractedDate) {
+                // Try to find a date in YYYY-MM-DD or DD/MM/YYYY format
+                const dateMatch = summary.match(/\b(\d{4}-\d{2}-\d{2})\b/) || summary.match(/\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})\b/);
+                if (dateMatch) {
+                    // Normalize to YYYY-MM-DD for input[type="date"]
+                    const dStr = dateMatch[1].replace(/\//g, '-');
+                    const dObj = new Date(dStr);
+                    if (!isNaN(dObj.getTime())) {
+                        extractedDate = dObj.toISOString().split('T')[0];
                     }
                 }
+            }
+
+            // Apply Extracted Info
+            if (extractedDate) {
+                newData.date = extractedDate;
+            }
+
+            if (extractedDoctor || extractedHospital) {
+                fullDescription += "\n";
+                if (extractedDoctor) fullDescription += `\n**Prescribing Doctor:** ${extractedDoctor}`;
+                if (extractedHospital) fullDescription += `\n**Facility:** ${extractedHospital}`;
+            }
+            // ----------------------------------------
+            
+            // Append digital copy if available
+            if (analysis.digital_copy) {
+                setDigitalCopy(analysis.digital_copy); // Set for "Smart Digitization" feature
+            }
+            
+            newData.description = fullDescription;
+
+            // 4. Record Type Inference
+            const textContext = (summary + " " + (newData.diagnosis || "")).toLowerCase();
+            if (newData.medications.length > 0 || textContext.includes("prescription") || textContext.includes("rx")) {
+                newData.type = 'prescription';
+            } else if (textContext.includes("lab") || textContext.includes("test") || textContext.includes("report")) {
+                newData.type = 'lab_report';
+            }
+
+            // 5. Vitals Extraction (Regex Fallback on Summary if structured not available)
+            // Note: Current VLM endpoint might not return structured vitals yet, so we scan the summary.
+            const vMap = {};
+            const combinedText = summary.toLowerCase();
+
+            const bpMatch = combinedText.match(/(?:bp|blood pressure|b\.p)[^0-9]*(\d{2,3}[\/-]\d{2,3})/i);
+            if (bpMatch) vMap.bp = bpMatch[1];
+
+            const hrMatch = combinedText.match(/(?:hr|heart rate|pulse)[^0-9]*(\d{2,3})/i);
+            if (hrMatch) vMap.heartRate = hrMatch[1];
+            
+            const tempMatch = combinedText.match(/(?:temp|temperature)[^0-9]*(\d{2,3}(?:\.\d+)?)/i);
+            if (tempMatch) vMap.temperature = tempMatch[1];
+
+            const spo2Match = combinedText.match(/(?:spo2|o2|oxygen)[^0-9]*(\d{2,3})%/i);
+            if (spo2Match) vMap.spo2 = spo2Match[1];
+
+            if (Object.keys(vMap).length > 0) newData.vitals = vMap;
+            // If structured vitals come in future VLM update, add check here.
+
+            // 6. Patient Name (Regex Scan on Summary)
+            // VLM endpoint output includes summary which might have name.
+            let extractedName = null;
+            const nameMatch = summary.match(/(?:patient|name)[\s:-]+([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/i);
+            if (nameMatch) {
+               extractedName = nameMatch[1];
+            } else {
+               // Fallback: Look for "Mr./Mrs. X"
+               const honorificMatch = summary.match(/(?:Mr\.|Ms\.|Mrs\.)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/);
+               if (honorificMatch) extractedName = honorificMatch[1];
             }
 
             if (extractedName) {
-                // Formatting: Capitalize first letters
-                const rawName = extractedName.trim();
-                setPatientSearchQuery(rawName); // Pre-fill input with extracted name
-
-                if (patients && patients.length > 0) {
-                    const matchedPatient = patients.find(p => p.name.toLowerCase().includes(rawName.toLowerCase()));
-                    if (matchedPatient) {
-                        newData.patientId = matchedPatient.id;
-                        setPatientSearchQuery(matchedPatient.name); // Normalize to existing record name
-                    } else {
-                        newData.patientId = ''; // Reset ID to indicate new patient creation needed
-                    }
-                }
-            } else if (patients && patients.length > 0) {
-                // Fallback: Try finding name in text context if API didn't return explicit field
-                const matchedPatient = patients.find(p => textContext.includes(p.name.toLowerCase()));
-                if (matchedPatient) {
-                    newData.patientId = matchedPatient.id;
-                    setPatientSearchQuery(matchedPatient.name);
+                setPatientSearchQuery(extractedName);
+                // Try to auto-match existing patient
+                if (patients) {
+                    const match = patients.find(p => p.name.toLowerCase().includes(extractedName.toLowerCase()));
+                    if (match) newData.patientId = match.id;
                 }
             }
 
             setFormData(newData);
-
-            // Also set digital copy if available from this endpoint (it might be in a different format, but let's try)
-            // The previous endpoint returned data.analysis.digital_copy. This one returns summary etc.
-            // We can treat the summary as the digital copy for now or leave it null.
+            console.log("Auto-fill complete", newData);
 
         } catch (error) {
             console.error("Autofill error:", error);
-            // Fail silently on autofill, let user type manually
+            // Fail silently so user can manually enter
         } finally {
             setAutofilling(false);
         }
