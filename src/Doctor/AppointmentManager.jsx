@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     Calendar, Clock, User, CheckCircle, XCircle, MoreVertical,
     Video, Phone, MessageSquare, MapPin, Filter, Plus, ChevronLeft,
     ChevronRight, AlertCircle
-} from 'lucide-react';
+ } from '../components/Icons';
 import NewSlotModal from './NewSlotModal';
 
 // --- Sub-Components ---

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Calendar, Activity, AlertTriangle } from 'lucide-react';
+import {  X, Calendar, Activity, AlertTriangle  } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import { DISEASE_CONFIG, getMetricStatus } from '../../data/diseaseMetrics';
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, MapPin, ChevronDown, Activity, UserPlus, Stethoscope, AlertCircle, Info, X, Search, ArrowRight } from 'lucide-react';
+import {  Map, MapPin, ChevronDown, Activity, UserPlus, Stethoscope, AlertCircle, Info, X, Search, ArrowRight  } from './Icons';
 import { STATE_DATA } from '../data/state_disease_burden';
 
 const StateHealthProfile = () => {

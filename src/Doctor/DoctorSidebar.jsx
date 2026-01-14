@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     LayoutDashboard, Users, Calendar, ClipboardList, FileText,
     BarChart2, Bell, Settings, Shield, HelpCircle, LogOut, X,
     Stethoscope, ChevronDown, Siren, Check
-} from 'lucide-react';
+ } from '../components/Icons';
 import CurebirdLogo from '../curebird_logo.png';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expanded, onToggleExpand, badge }) => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, FileText, Activity, Pill, Stethoscope, Edit2, Unlock, Lock } from 'lucide-react';
+import {  X, Check, FileText, Activity, Pill, Stethoscope, Edit2, Unlock, Lock  } from '../../components/Icons';
 
 const InsightReviewModal = ({ isOpen, onClose, insight, onApprove, onReject }) => {
     const [editedData, setEditedData] = useState({});

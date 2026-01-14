@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle, FileText, CheckCircle, Bot, Activity } from 'lucide-react';
+import {  AlertCircle, FileText, CheckCircle, Bot, Activity  } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 
 const ActionableInsightCard = ({ disease, metrics, userId, onInsightLoaded }) => {

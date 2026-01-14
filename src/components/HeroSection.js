@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { HeartPulse, Activity, ShieldPlus, FileText, Pill, Calendar, Bot, BarChart2, CheckCircle2, Volume2, VolumeX, MessageSquare, Microscope } from 'lucide-react';
+import {  HeartPulse, Activity, ShieldPlus, FileText, Pill, Calendar, Bot, BarChart2, CheckCircle2, Volume2, VolumeX, MessageSquare, Microscope  } from './Icons';
 
 const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) => {
     const [isMobile, setIsMobile] = React.useState(false);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, RefreshCw, Check, FileText, Bot, Cpu, History, ChevronRight, CheckCircle } from 'lucide-react';
+import {  X, RefreshCw, Check, FileText, Bot, Cpu, History, ChevronRight, CheckCircle  } from '../../../components/Icons';
 
 const GenerateSummaryModal = ({ isOpen, onClose }) => {
     const [isGenerating, setIsGenerating] = useState(true);

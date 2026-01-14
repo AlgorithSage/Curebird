@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Database, AlertOctagon, FileSpreadsheet, Globe, Info } from 'lucide-react';
+import {  Database, AlertOctagon, FileSpreadsheet, Globe, Info  } from './Icons';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, PieChart, Pie } from 'recharts';
 
 // VERIFIED DATA SOURCE: Organization for Rare Diseases India (ORDI) & ICMR

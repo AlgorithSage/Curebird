@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Check, AlertCircle, Activity, Pill } from 'lucide-react';
+import {  X, Check, AlertCircle, Activity, Pill  } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 // Note: Direct firestore usage for meds until MedService is created

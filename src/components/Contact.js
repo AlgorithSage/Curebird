@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import { Mail, Send, Phone } from 'lucide-react';
+import {  Mail, Send, Phone  } from './Icons';
 import Header from './Header';
 
 const Contact = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {

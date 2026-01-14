@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Pill, Plus, Search, TrendingUp, Calendar, Clock, CheckCircle2, ChevronRight, Activity } from 'lucide-react';
+import {  X, Pill, Plus, Search, TrendingUp, Calendar, Clock, CheckCircle2, ChevronRight, Activity  } from '../../../components/Icons';
 
 const UpdateCarePlanModal = ({ isOpen, onClose }) => {
     const [searchTerm, setSearchTerm] = useState('');

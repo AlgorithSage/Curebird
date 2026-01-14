@@ -10,7 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, Stethoscope } from 'lucide-react';
+import {  X, ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, Stethoscope  } from './Icons';
 import CurebirdLogo from '../curebird_logo.png';
 
 // --- Initialize Providers ---

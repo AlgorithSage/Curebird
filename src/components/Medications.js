@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Pill, Plus, Stethoscope, Hospital } from 'lucide-react';
+import {  Pill, Plus, Stethoscope, Hospital  } from './Icons';
 
 import Header from './Header';
 import { SkeletonCard } from './SkeletonLoaders';

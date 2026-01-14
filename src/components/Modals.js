@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Copy, AlertTriangle, Trash2, UploadCloud, Pill, Stethoscope, Loader, Camera } from 'lucide-react';
+import {  X, Copy, AlertTriangle, Trash2, UploadCloud, Pill, Stethoscope, Loader, Camera  } from './Icons';
 import { jsPDF } from "jspdf";
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';

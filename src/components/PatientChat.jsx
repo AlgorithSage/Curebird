@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {  
     Send, Paperclip, MoreVertical, Search, Bot, 
     ArrowLeft, Plus, QrCode, ShieldCheck, FileText, 
     Download, CheckCircle, AlertCircle, Loader2, X 
-} from 'lucide-react';
+ } from './Icons';
 import { 
     collection, query, where, orderBy, onSnapshot, 
     addDoc, serverTimestamp, doc, updateDoc, getDocs, getDoc 

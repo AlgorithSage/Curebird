@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     Bell, CheckCircle2, AlertTriangle, FileText,
     MessageSquare, Activity,
     BrainCircuit, ArrowUpRight, Plus
-} from 'lucide-react';
+ } from '../components/Icons';
 
 const NOTIFICATION_CATEGORIES = [
     { id: 'all', label: 'All Alerts', icon: Bell },

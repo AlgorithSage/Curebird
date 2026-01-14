@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Plus, ChevronRight, CheckCircle, AlertTriangle, Trash2 } from 'lucide-react';
+import {  Activity, Plus, ChevronRight, CheckCircle, AlertTriangle, Trash2  } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import AddDiseaseModal from './AddDiseaseModal';
 

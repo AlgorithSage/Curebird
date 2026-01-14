@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users } from 'lucide-react';
+import {  Users  } from './Icons';
 import { motion } from 'framer-motion';
 
 const FamilyProfile = ({ onNavigate }) => {

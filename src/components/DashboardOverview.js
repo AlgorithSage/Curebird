@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UploadCloud, BarChart3, FileText, CheckCircle2 } from 'lucide-react';
+import {  UploadCloud, BarChart3, FileText, CheckCircle2  } from './Icons';
 
 const DashboardOverview = ({ user, onNavigateToHistory }) => {
     // Get first name safely

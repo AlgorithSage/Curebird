@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DiseaseList from './diseases/DiseaseList';
 import DiseaseDetail from './diseases/DiseaseDetail';
-import { ChevronLeft } from 'lucide-react';
+import {  ChevronLeft  } from './Icons';
 
 import Header from './Header';
 

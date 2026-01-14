@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     ArrowLeft, Activity, Calendar, FileText, Pill, Microscope,
     AlertCircle, Clock, File, Download, Search, MessageSquare, Loader, Droplets
-} from 'lucide-react';
+ } from '../components/Icons';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 

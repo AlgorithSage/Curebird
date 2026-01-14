@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {
+import { 
   UploadCloud,
   Loader,
   AlertTriangle,
@@ -17,7 +17,7 @@ import {
   ScanEye,
   BrainCircuit,
   Sparkles,
-} from "lucide-react";
+ } from './Icons';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
 import { collection, addDoc } from "firebase/firestore";

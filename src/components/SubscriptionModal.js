@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Shield, Zap, Crown } from 'lucide-react';
+import {  X, Check, Shield, Zap, Crown  } from './Icons';
 
 const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
     const [selectedTier, setSelectedTier] = useState('Premium'); // Default to Premium

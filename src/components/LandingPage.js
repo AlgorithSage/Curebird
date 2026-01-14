@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeartPulse, LogIn, Dna, Pill, Activity, Globe, ShieldCheck, Zap, ArrowRight, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, MessageSquare, Microscope, Crown } from 'lucide-react';
+import {  HeartPulse, LogIn, Dna, Pill, Activity, Globe, ShieldCheck, Zap, ArrowRight, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, MessageSquare, Microscope, Crown  } from './Icons';
 import { motion } from 'framer-motion';
 import SEO from './SEO';
 

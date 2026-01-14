@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Pill, Plus, Trash2, CheckCircle, AlertTriangle, Loader, User } from 'lucide-react';
+import {  X, Pill, Plus, Trash2, CheckCircle, AlertTriangle, Loader, User  } from '../components/Icons';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../firebase';

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     BrainCircuit, X, FileText, CheckCircle2,
     TrendingUp, Lightbulb, Download, Share2, Sparkles,
     CheckCircle, Pill, AlertCircle, Activity
-} from 'lucide-react';
+ } from '../components/Icons';
 
 const AIReportModal = ({ isOpen, onClose, report }) => {
     const [loadingStep, setLoadingStep] = useState(0);

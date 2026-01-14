@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from './Header';
 import { motion } from 'framer-motion';
-import { ShieldCheck, ScrollText, AlertTriangle } from 'lucide-react';
+import {  ShieldCheck, ScrollText, AlertTriangle  } from './Icons';
 
 const TermsOfService = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     return (

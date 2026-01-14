@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
+import {  ArrowUpRight  } from './Icons';
 
 const StatCard = ({ icon, label, value, color, change, onClick }) => (
     <motion.div

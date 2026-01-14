@@ -8,7 +8,7 @@ import {
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, ArrowLeft } from 'lucide-react';
+import {  ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, ArrowLeft  } from '../components/Icons';
 
 // Use the central Firebase exports
 import { auth, db, storage } from '../firebase';
