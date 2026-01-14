@@ -106,17 +106,17 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                         <span className="text-amber-400 font-semibold"> AI-driven insights</span> for a healthier future.
                     </motion.p>
 
-                    <motion.div custom={3} variants={textVariants}>
+                    <motion.div custom={3} variants={textVariants} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
                         <button
                             onClick={onLoginClick}
-                            className="mt-10 flex items-center gap-3 bg-amber-500 text-black px-8 py-4 rounded-full shadow-xl hover:bg-amber-400 transition-all font-bold text-lg"
+                            className="flex items-center gap-3 bg-amber-500 text-black px-8 py-4 rounded-full shadow-xl hover:bg-amber-400 transition-all font-bold text-lg"
                         >
                             <LogIn size={24} />
                             Get Started
                         </button>
                         <button
                             onClick={onSubscribeClick}
-                            className="mt-4 sm:ml-4 sm:mt-10 inline-flex items-center gap-2 text-white border border-amber-500/50 px-8 py-4 rounded-full hover:bg-amber-500/10 transition-all font-bold text-lg backdrop-blur-sm"
+                            className="flex items-center gap-2 text-white border border-amber-500/50 px-8 py-4 rounded-full hover:bg-amber-500/10 transition-all font-bold text-lg backdrop-blur-sm"
                         >
                             <Crown size={24} className="text-amber-500" />
                             View Plans

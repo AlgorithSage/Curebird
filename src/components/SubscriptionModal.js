@@ -107,7 +107,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                 {/* Scrollable Content Wrapper */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8">
                     <div className="text-center mb-8 mt-4">
-                        <h2 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 to-amber-500 mb-2 drop-shadow-md">
+                        <h2 className="font-display text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 to-amber-500 mb-2 drop-shadow-md">
                             Unlock Your Health Potential
                         </h2>
                         <p className="text-slate-300 text-sm md:text-base">

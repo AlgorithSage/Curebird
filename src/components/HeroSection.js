@@ -94,10 +94,10 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                             </motion.div>
 
                             <div className="space-y-6">
-                                <h1 className="text-7xl sm:text-8xl lg:text-[11rem] font-black tracking-tighter leading-[0.9] text-amber-400 bg-clip-text text-transparent bg-gradient-to-r from-white via-amber-200 via-yellow-300 via-amber-200 to-white animate-text-flow drop-shadow-[0_0_30px_rgba(245,158,11,0.5)] pb-2 sm:pb-4">
+                                <h1 className="font-display text-7xl sm:text-8xl lg:text-[11rem] font-black tracking-tighter leading-[0.9] text-amber-400 bg-clip-text text-transparent bg-gradient-to-r from-white via-amber-200 via-yellow-300 via-amber-200 to-white animate-text-flow drop-shadow-[0_0_30px_rgba(245,158,11,0.5)] pb-2 sm:pb-4">
                                     CureBird
                                 </h1>
-                                <h2 className="text-lg sm:text-3xl font-bold tracking-wide text-slate-200 max-w-2xl leading-relaxed">
+                                <h2 className="font-display text-lg sm:text-3xl font-bold tracking-wide text-slate-200 max-w-2xl leading-relaxed">
                                     <span className="text-amber-400 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-200">Revolutionizing</span> and <span className="text-amber-400 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-200">Digitizing</span> Healthcare with <span className="text-amber-400 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-200">Clinical Precision</span>
                                 </h2>
                             </div>
