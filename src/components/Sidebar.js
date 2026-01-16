@@ -1,44 +1,54 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {  LayoutDashboard, FileText, Calendar, Settings, Activity, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users, Pill, TrendingUp, Microscope, BarChart2, Stethoscope, Bot  } from './Icons';
 import CurebirdLogo from '../curebird_logo.png';
 
-const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) => {
+const Sidebar = ({ isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    const isActive = (path) => {
+        if (!path) return false;
+        // Exact match or sub-path logic could go here
+        return location.pathname === path;
+    };
+
 
     const menuGroups = [
         {
             title: "Overview",
             items: [
-                { name: 'Dashboard', icon: LayoutDashboard },
-                { name: 'All Records', icon: FileText },
+                { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+                { name: 'All Records', path: '/all-records', icon: FileText },
             ]
         },
         {
             title: "Health Management",
             items: [
-                { name: 'Appointments', icon: Calendar },
-                { name: 'Medications', icon: Pill },
+                { name: 'Appointments', path: '/appointments', icon: Calendar },
+                { name: 'Medications', path: '/medications', icon: Pill },
             ]
         },
         {
             title: "Core Features",
             items: [
-                { name: 'Cure Tracker', icon: TrendingUp },
-                { name: 'Cure Analyzer', icon: Microscope },
-                { name: 'Cure Stat', icon: BarChart2 },
-                { name: 'Messages', icon: MessageSquare }, // New Chat Bridge
-                { name: 'Cure AI', icon: Bot },
-                { name: 'Doctor Access', icon: Stethoscope },
+                { name: 'Cure Tracker', path: '/cure-tracker', icon: TrendingUp },
+                { name: 'Cure Analyzer', path: '/cure-analyzer', icon: Microscope },
+                { name: 'Cure Stat', path: '/cure-stat', icon: BarChart2 },
+                { name: 'Messages', path: '/messages', icon: MessageSquare }, // New Chat Bridge
+                { name: 'Cure AI', path: '/cure-ai', icon: Bot },
+                { name: 'Doctor Access', path: '/doctor-access', icon: Stethoscope },
             ]
         },
         {
             title: "Account",
             items: [
-                { name: 'Settings', icon: Settings },
-                { name: 'Family Profile', icon: Users },
-                { name: 'Subscription', icon: Crown, isAction: true }, // Special Action Item
-                { name: 'Contact', icon: Mail },
-                { name: 'Terms', icon: ScrollText },
-                { name: 'Privacy', icon: Shield },
+                { name: 'Settings', path: '/settings', icon: Settings },
+                { name: 'Family Profile', path: '/family-profile', icon: Users },
+                { name: 'Subscription', path: null, icon: Crown, isAction: true }, // Special Action Item
+                { name: 'Contact', path: '/contact', icon: Mail },
+                { name: 'Terms', path: '/terms', icon: ScrollText },
+                { name: 'Privacy', path: '/privacy', icon: Shield },
             ]
         }
     ];
@@ -96,6 +106,7 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user, onSubscribeCli
                             <ul className="space-y-1">
                                 {group.items.map((item) => {
                                     const Icon = item.icon;
+                                    const active = item.path ? isActive(item.path) : false;
                                     return (
                                         <li key={item.name}>
                                             <button
@@ -104,22 +115,22 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user, onSubscribeCli
                                                         if (item.name === 'Subscription') onSubscribeClick();
                                                         onClose();
                                                     } else {
-                                                        onNavigate(item.name);
+                                                        navigate(item.path);
                                                         onClose(); // Close sidebar on mobile after navigation
                                                     }
                                                 }}
-                                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 group ${activeView === item.name
+                                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 group ${active
                                                     ? 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 border border-amber-500/30'
                                                     : 'hover:bg-white/5 hover:translate-x-1'
                                                     }`}
                                             >
                                                 {/* Icon: Amber default -> White (Active/Hover) */}
-                                                <span className={`transition-colors duration-200 ${activeView === item.name ? 'text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]' : 'text-amber-500/80 group-hover:text-white group-hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]'}`}>
-                                                    <Icon size={20} weight={activeView === item.name ? "fill" : "duotone"} />
+                                                <span className={`transition-colors duration-200 ${active ? 'text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]' : 'text-amber-500/80 group-hover:text-white group-hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]'}`}>
+                                                    <Icon size={20} weight={active ? "fill" : "duotone"} />
                                                 </span>
                                                 
                                                 {/* Text: Slate default -> White (Active/Hover) */}
-                                                <span className={`font-bold tracking-wide text-sm transition-colors duration-200 ${activeView === item.name ? 'text-white' : 'text-slate-400 group-hover:text-amber-100'}`}>
+                                                <span className={`font-bold tracking-wide text-sm transition-colors duration-200 ${active ? 'text-white' : 'text-slate-400 group-hover:text-amber-100'}`}>
                                                     {item.name}
                                                 </span>
                                                 {item.badge && (
@@ -127,7 +138,7 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user, onSubscribeCli
                                                         {item.badge}
                                                     </span>
                                                 )}
-                                                {activeView === item.name && (
+                                                {active && (
                                                     <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500"></div>
                                                 )}
                                             </button>

@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { AnimatePresence } from 'framer-motion';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 import { auth, db, storage, googleProvider, appId } from './firebase';
 import { ToastProvider } from './context/ToastContext';
@@ -40,69 +41,78 @@ import FamilyProfile from './components/FamilyProfile';
 const formatDate = (date) => date?.toDate ? date.toDate().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ') : '');
 
+const RequireAuth = ({ user, children, redirectTo = "/" }) => {
+    if (!user) {
+        return <Navigate to={redirectTo} replace />;
+    }
+    return children;
+};
+
+const LayoutWithSidebar = ({ user, isSidebarOpen, setSidebarOpen, onSubscribeClick, children }) => {
+    return (
+        <div className="relative min-h-screen flex">
+            <Sidebar
+                // activeView is now handled internally in Sidebar or we can pass it if needed, 
+                // but better to let Sidebar use useLocation.
+                isOpen={isSidebarOpen}
+                onClose={() => setSidebarOpen(false)}
+                user={user}
+                onSubscribeClick={onSubscribeClick}
+            />
+            <main className="w-full min-h-screen transition-all duration-300">
+                {children}
+            </main>
+        </div>
+    );
+};
+
 export default function App() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [publicView, setPublicView] = useState(null); // 'terms', 'privacy', 'contact', or null
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [authError, setAuthError] = useState(null);
-    const [activeView, setActiveView] = useState('Dashboard');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [chatContext, setChatContext] = useState(null); // New state for passing context to Chat
     const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
 
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const handleAskAI = (context) => {
-        setChatContext(context);
-        setActiveView('Cure AI');
+        navigate('/cure-ai', { state: context });
     };
-
-
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const shareToken = params.get('share');
-        if (shareToken) {
-            setPublicView('doctor_view');
+        if (shareToken && location.pathname !== '/doctor-view') {
+           navigate(`/doctor-view?share=${shareToken}`);
         }
-    }, []);
+    }, [location.pathname, navigate]);
 
     useEffect(() => {
         let profileUnsubscribe = null;
 
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
-                // Set initial user with Auth data to avoid delay
-                // setUser(currentUser); // Optional: Set basic user first
-
                 try {
                     const { doc, onSnapshot } = await import('firebase/firestore');
                     const userDocRef = doc(db, 'users', currentUser.uid);
 
-                    // Listen for real-time updates to the user profile
                     profileUnsubscribe = onSnapshot(userDocRef, (docSnap) => {
                         if (docSnap.exists()) {
                             const userData = docSnap.data();
                             const fullUser = { ...currentUser, ...userData };
-                            // Important: If Auth displayName changes, it might not trigger this if only Firestore changes
-                            // But since we update both, Firestore update will trigger this.
                             setUser(fullUser);
-
 
                             if (userData.isProfileComplete === false) {
                                 setIsAuthModalOpen(true);
                             }
 
-                            // Check for New User / Subscription Prompt
-                            // If user is new (no subscriptionData) or specific flag is missing
-                            // For this mock, we'll check if 'hasSeenSubscription' is false/undefined
                             if (!userData.hasSeenSubscription) {
-                                setTimeout(() => setIsSubscriptionModalOpen(true), 1500); // Slight delay after login
-                                // In a real app, we would update this flag ONLY after they interact or close the modal
-                                // For now, we'll just open it.
+                                setTimeout(() => setIsSubscriptionModalOpen(true), 1500);
                             }
 
                         } else {
-                            // No profile yet
                             setUser(currentUser);
                             setIsAuthModalOpen(true);
                         }
@@ -122,10 +132,9 @@ export default function App() {
                 }
             }
 
-            // Artificial delay for loading screen
             setTimeout(() => {
                 setLoading(false);
-            }, 2000); // Reduced delay for snappier feel
+            }, 2000);
         });
 
         return () => {
@@ -136,57 +145,68 @@ export default function App() {
 
     const handleLogin = async (email, password) => {
         setAuthError(null);
-        try { await signInWithEmailAndPassword(auth, email, password); }
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            setIsAuthModalOpen(false);
+        }
         catch (error) { setAuthError(error.message); }
     };
     const handleSignUp = async (email, password) => {
         setAuthError(null);
-        try { await createUserWithEmailAndPassword(auth, email, password); }
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            setIsAuthModalOpen(false);
+        }
         catch (error) { setAuthError(error.message); }
     };
     const handleGoogleSignIn = async () => {
         setAuthError(null);
-        try { await signInWithPopup(auth, googleProvider); }
+        try {
+            await signInWithPopup(auth, googleProvider);
+            setIsAuthModalOpen(false);
+        }
         catch (error) { setAuthError(error.message); }
     };
     const handleLogout = () => {
         signOut(auth).catch(error => setAuthError(error.message));
-    };
-
-    const renderActiveView = () => {
-        const pageProps = {
-            user, db, storage, appId, formatDate, capitalize,
-            onLogout: handleLogout,
-            onLoginClick: () => setIsAuthModalOpen(true),
-            onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen),
-            onNavigate: setActiveView,
-            onAskAI: handleAskAI, // Pass handler to all pages
-            onSubscribeClick: () => setIsSubscriptionModalOpen(true) // Pass trigger
-        };
-
-        switch (activeView) {
-            case 'Dashboard': return <MedicalPortfolio {...pageProps} />;
-            case 'All Records': return <AllRecords {...pageProps} />;
-            case 'Appointments': return <Appointments {...pageProps} />;
-            case 'Medications': return <Medications {...pageProps} />;
-            case 'Cure Tracker': return <CureTracker {...pageProps} />;
-            case 'Cure Analyzer': return <CureAnalyzer {...pageProps} />;
-            case 'Cure Stat': return <CureStat {...pageProps} />;
-            case 'Messages': return <PatientChat {...pageProps} />;
-            case 'Cure AI': return <CureAI {...pageProps} initialContext={chatContext} />; // Pass context to Chat
-            case 'Doctor Access': return <ShareProfile {...pageProps} />;
-            case 'Settings': return <Settings {...pageProps} />;
-            case 'Contact': return <Contact {...pageProps} db={db} />;
-            case 'Terms': return <TermsOfService {...pageProps} />;
-            case 'Privacy': return <PrivacyPolicy {...pageProps} />;
-            case 'Family Profile': return <FamilyProfile {...pageProps} />;
-            default: return <MedicalPortfolio {...pageProps} />;
-        }
+        navigate('/');
     };
 
     if (loading) {
         return <LoadingScreen />;
     }
+
+    const handleNavigate = (pathOrViewName) => {
+        const routeMap = {
+            'Dashboard': '/dashboard',
+            'All Records': '/all-records',
+            'Appointments': '/appointments',
+            'Medications': '/medications',
+            'Cure Tracker': '/cure-tracker',
+            'Cure Analyzer': '/cure-analyzer',
+            'Cure Stat': '/cure-stat',
+            'Messages': '/messages',
+            'Cure AI': '/cure-ai',
+            'Doctor Access': '/doctor-access',
+            'Settings': '/settings',
+            'Family Profile': '/family-profile',
+            'Contact': '/contact',
+            'Terms': '/terms',
+            'Privacy': '/privacy'
+        };
+        const target = routeMap[pathOrViewName] || pathOrViewName;
+        navigate(target);
+    };
+
+    const pageProps = {
+        user, db, storage, appId, formatDate, capitalize,
+        onLogout: handleLogout,
+        onLoginClick: () => setIsAuthModalOpen(true),
+        onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen),
+        onNavigate: handleNavigate,
+        onAskAI: handleAskAI,
+        onSubscribeClick: () => setIsSubscriptionModalOpen(true)
+    };
 
     return (
         <ToastProvider>
@@ -194,55 +214,46 @@ export default function App() {
                 <div className="min-h-screen font-sans text-slate-200 relative isolate overflow-hidden">
                     <Background />
 
-                    {user ? (
-                        <div className="relative min-h-screen flex">
-                            <Sidebar
-                                activeView={activeView}
-                                onNavigate={setActiveView}
-                                isOpen={isSidebarOpen}
-                                onClose={() => setIsSidebarOpen(false)}
-                                user={user} // Pass updated user with profile data
+                    <Routes>
+                        <Route path="/" element={
+                            user ? <Navigate to="/dashboard" replace /> :
+                            <LandingPage
+                                onLoginClick={() => setIsAuthModalOpen(true)}
+                                onTermsClick={() => navigate('/terms')}
+                                onPrivacyClick={() => navigate('/privacy')}
+                                onContactClick={() => navigate('/contact')}
                                 onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
                             />
-                            <main className="w-full min-h-screen transition-all duration-300">
-                                {renderActiveView()}
-                            </main>
-                        </div>
-                    ) : (
-                        <>
-                            {publicView === 'terms' && <TermsOfService onBack={() => setPublicView(null)} />}
-                            {publicView === 'privacy' && <PrivacyPolicy onBack={() => setPublicView(null)} />}
-                            {publicView === 'contact' && <Contact onBack={() => setPublicView(null)} db={db} />}
-                            {publicView === 'doctor_view' && (
-                                <DoctorPublicView
-                                    db={db}
-                                    appId={appId}
-                                    shareToken={new URLSearchParams(window.location.search).get('share')}
-                                    onBack={() => {
-                                        setPublicView(null);
-                                        window.history.replaceState({}, document.title, "/");
-                                    }}
-                                />
-                            )}
+                        } />
+                        
+                        <Route path="/terms" element={<TermsOfService onBack={() => navigate(-1)} {...pageProps} />} />
+                        <Route path="/privacy" element={<PrivacyPolicy onBack={() => navigate(-1)} {...pageProps} />} />
+                        <Route path="/contact" element={<Contact onBack={() => navigate(-1)} db={db} {...pageProps} />} />
+                        <Route path="/doctor-view" element={
+                            <DoctorPublicView
+                                db={db}
+                                appId={appId}
+                                shareToken={new URLSearchParams(window.location.search).get('share')}
+                                onBack={() => navigate('/')}
+                            />
+                        } />
 
-                            {!publicView && (
-                                <LandingPage
-                                    onLoginClick={() => setIsAuthModalOpen(true)}
-                                    onTermsClick={() => setPublicView('terms')}
-                                    onPrivacyClick={() => setPublicView('privacy')}
-                                    onContactClick={() => setPublicView('contact')}
-                                    onNavigate={(view) => {
-                                        if (user) {
-                                            setActiveView(view);
-                                        } else {
-                                            setIsAuthModalOpen(true);
-                                        }
-                                    }}
-                                    onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
-                                />
-                            )}
-                        </>
-                    )}
+                        {/* Protected Routes */}
+                        <Route path="/dashboard" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><MedicalPortfolio {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/all-records" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><AllRecords {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/appointments" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><Appointments {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/medications" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><Medications {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/cure-tracker" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><CureTracker {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/cure-analyzer" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><CureAnalyzer {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/cure-stat" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><CureStat {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/messages" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><PatientChat {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/cure-ai" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><CureAI {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/doctor-access" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><ShareProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/settings" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><Settings {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        <Route path="/family-profile" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><FamilyProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                        
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
 
                     <AnimatePresence>
                         {isAuthModalOpen && (
@@ -253,7 +264,7 @@ export default function App() {
                                 storage={storage}
                                 onLogout={handleLogout}
                                 onClose={() => setIsAuthModalOpen(false)}
-                                allowClose={user ? user.isProfileComplete : true} // Only allow close if profile is complete (if user exists)
+                                allowClose={user ? user.isProfileComplete : true}
                                 onLogin={handleLogin}
                                 onSignUp={handleSignUp}
                                 onGoogleSignIn={handleGoogleSignIn}
@@ -267,7 +278,6 @@ export default function App() {
                                 onClose={() => setIsSubscriptionModalOpen(false)}
                                 onSubscribe={(tier) => {
                                     console.log("Subscribed to:", tier);
-                                    // Here we would update the user record in Firestore
                                 }}
                             />
                         )}
@@ -277,4 +287,3 @@ export default function App() {
         </ToastProvider>
     );
 }
-

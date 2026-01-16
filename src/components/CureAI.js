@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import {  Send, Bot, User, Trash2, TrendingUp, MessageSquare, Brain, ShieldCheck, Sparkles, FileText  } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import { useLocation } from 'react-router-dom';
 import Header from './Header';
 import { API_BASE_URL } from '../config';
+
+// ... (ChatMessage and TypingIndicator components remain unchanged)
 
 const ChatMessage = ({ message, isUser }) => {
     return (
@@ -61,6 +64,7 @@ const TypingIndicator = () => (
 );
 
 const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db, appId, initialContext }) => {
+    const location = useLocation();
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -87,9 +91,11 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
         // Load disease context
         fetchDiseaseContext();
 
-        if (initialContext) {
+        const contextToUse = location.state || initialContext;
+
+        if (contextToUse) {
             // Case 1: Context injected from Analyzer
-            setMedicalSummary(initialContext);
+            setMedicalSummary(contextToUse);
             setMessages([{
                 text: `**Analysis Loaded.** I have the context of your uploaded document. Ask me anything about the medicines, diagnosis, or side effects mentioned in it.`,
                 isUser: false,
@@ -105,7 +111,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
                 timestamp: new Date().toISOString()
             }]);
         }
-    }, [initialContext]);
+    }, [initialContext, location.state]);
 
     const fetchDiseaseContext = async () => {
         try {
