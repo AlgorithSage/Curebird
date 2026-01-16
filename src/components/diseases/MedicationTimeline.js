@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import React, { useState, useEffect, useCallback } from 'react';
+import { collection, query, getDocs, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import {  Pill, Trash2  } from '../Icons';
 
 const MedicationTimeline = ({ userId, db }) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchMeds = async () => {
+    const fetchMeds = useCallback(async () => {
         if (!userId) return;
         try {
             const medsRef = collection(db, 'users', userId, 'medications');
@@ -36,11 +35,11 @@ const MedicationTimeline = ({ userId, db }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [userId, db]);
 
     useEffect(() => {
         fetchMeds();
-    }, [userId, db]);
+    }, [fetchMeds]);
 
     const handleDelete = async (id) => {
         if (!userId) {

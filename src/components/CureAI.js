@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {  Send, Bot, User, Trash2, TrendingUp, MessageSquare, Brain, ShieldCheck, Sparkles, FileText  } from './Icons';
+import {  Send, Bot, User, Trash2, Brain, ShieldCheck  } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { useLocation } from 'react-router-dom';

@@ -6,7 +6,6 @@ import {
     signOut,
     signInWithPopup
 } from 'firebase/auth';
-import { doc, onSnapshot } from 'firebase/firestore';
 import { AnimatePresence } from 'framer-motion';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 

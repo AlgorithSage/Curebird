@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {  LayoutDashboard, FileText, Calendar, Settings, Activity, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users, Pill, TrendingUp, Microscope, BarChart2, Stethoscope, Bot  } from './Icons';
+import {  LayoutDashboard, FileText, Calendar, Settings, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users, Pill, TrendingUp, Microscope, BarChart2, Stethoscope, Bot  } from './Icons';
 import CurebirdLogo from '../curebird_logo.png';
 
 const Sidebar = ({ isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) => {
