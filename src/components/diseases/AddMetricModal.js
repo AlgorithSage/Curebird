@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {  X, Calendar, Activity, AlertTriangle  } from '../Icons';
+import { X, Activity, AlertTriangle } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import { DISEASE_CONFIG, getMetricStatus } from '../../data/diseaseMetrics';
 
 const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
     const config = DISEASE_CONFIG[disease.configId];
-    // If no config (custom disease), we might need a generic metric type or just "Notes"
     const availableMetrics = config ? Object.values(config.metrics) : [];
 
     const [formData, setFormData] = useState({
         type: availableMetrics.length > 0 ? availableMetrics[0].id : 'generic',
         value: '',
-        value2: '', // For BP (Diastolic) if we want to handle it together, but schema says separate. Sticking to single for now or handling compound UI.
-        // Actually, for BP it's user friendly to enter 120/80. But let's keep it simple: 1 metric = 1 entry for now, or use a compound form.
-        // Let's stick to 1 metric per entry for simplicity of graph, OR allow selecting "Blood Pressure" which adds 2 metrics.
-        // For MVP, simple dropdown.
+        value2: '',
         date: new Date().toISOString().split('T')[0],
         time: new Date().toTimeString().split(' ')[0].slice(0, 5),
         notes: ''
@@ -27,7 +23,6 @@ const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
     const handleValueChange = (val) => {
         setFormData({ ...formData, value: val });
 
-        // Immediate validation feedback
         if (config) {
             const status = getMetricStatus(disease.configId, formData.type, Number(val));
             if (status === 'critical') setWarning("This value is in the critical range!");
@@ -39,6 +34,7 @@ const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
+
         try {
             const selectedMetric = availableMetrics.find(m => m.id === formData.type);
             const timestamp = new Date(`${formData.date}T${formData.time}`);
@@ -75,23 +71,30 @@ const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
                         <h2 className="text-lg font-bold text-white">Add Log</h2>
                         <p className="text-xs text-slate-400">{disease.name}</p>
                     </div>
-                    <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={24} /></button>
+                    <button onClick={onClose} className="text-slate-400 hover:text-white">
+                        <X size={24} />
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-5 space-y-4">
-
                     {/* Metric Type */}
                     <div>
                         <label className="block text-sm font-medium text-slate-400 mb-1">Metric Type</label>
                         <select
                             value={formData.type}
-                            onChange={(e) => setFormData({ ...formData, type: e.target.value, value: '' })} // Reset value on type change
+                            onChange={(e) =>
+                                setFormData({ ...formData, type: e.target.value, value: '' })
+                            }
                             className="w-full bg-slate-800 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500"
                         >
                             {availableMetrics.map(m => (
-                                <option key={m.id} value={m.id}>{m.label} ({m.unit})</option>
+                                <option key={m.id} value={m.id}>
+                                    {m.label} ({m.unit})
+                                </option>
                             ))}
-                            {availableMetrics.length === 0 && <option value="generic">Note / Generic Value</option>}
+                            {availableMetrics.length === 0 && (
+                                <option value="generic">Note / Generic Value</option>
+                            )}
                         </select>
                     </div>
 
@@ -112,8 +115,13 @@ const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
                                 {availableMetrics.find(m => m.id === formData.type)?.unit}
                             </span>
                         </div>
+
                         {warning && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 mt-2 text-red-400 text-xs">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex items-center gap-2 mt-2 text-red-400 text-xs"
+                            >
                                 <AlertTriangle size={12} /> {warning}
                             </motion.div>
                         )}
@@ -160,7 +168,6 @@ const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
                     >
                         {isSubmitting ? <Activity className="animate-spin" /> : 'Log Entry'}
                     </button>
-
                 </form>
             </motion.div>
         </div>

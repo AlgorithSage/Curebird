@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {  X, Calendar, Activity, AlertCircle  } from '../Icons';
+import { motion } from 'framer-motion';
+import { X, Calendar, Activity } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import { DISEASE_CONFIG } from '../../data/diseaseMetrics';
 
@@ -13,6 +13,7 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
         severity: 'moderate',
         primaryDoctor: ''
     });
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const predefinedDiseases = Object.values(DISEASE_CONFIG).map(d => ({ value: d.id, label: d.label }));
@@ -21,8 +22,12 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
+
         try {
-            const diseaseName = formData.name === 'other' ? formData.customName : predefinedDiseases.find(d => d.value === formData.name)?.label;
+            const diseaseName =
+                formData.name === 'other'
+                    ? formData.customName
+                    : predefinedDiseases.find(d => d.value === formData.name)?.label;
 
             const payload = {
                 name: diseaseName,
@@ -30,7 +35,7 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
                 status: formData.status,
                 severity: formData.severity,
                 primaryDoctor: formData.primaryDoctor,
-                configId: formData.name !== 'other' ? formData.name : null // Store config ID for linking metrics later
+                configId: formData.name !== 'other' ? formData.name : null
             };
 
             await DiseaseService.addDisease(userId, payload);
@@ -38,7 +43,6 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
             onClose();
         } catch (error) {
             console.error(error);
-            // Handle error (toast?)
         } finally {
             setIsSubmitting(false);
         }
@@ -53,11 +57,12 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
             >
                 <div className="flex justify-between items-center p-6 border-b border-slate-800">
                     <h2 className="text-xl font-bold text-white">Add New Condition</h2>
-                    <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={24} /></button>
+                    <button onClick={onClose} className="text-slate-400 hover:text-white">
+                        <X size={24} />
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
-
                     {/* Disease Name Selection */}
                     <div>
                         <label className="block text-sm font-medium text-slate-400 mb-1">Condition Name</label>
@@ -154,6 +159,7 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
                         >
                             Cancel
                         </button>
+
                         <button
                             type="submit"
                             disabled={isSubmitting}
@@ -162,7 +168,6 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
                             {isSubmitting ? <Activity className="animate-spin" /> : 'Save Condition'}
                         </button>
                     </div>
-
                 </form>
             </motion.div>
         </div>
