@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  Activity, Plus, ChevronRight, CheckCircle, AlertTriangle, Trash2  } from '../Icons';
+import { Activity, Plus, ChevronRight, Trash2 } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import AddDiseaseModal from './AddDiseaseModal';
 
@@ -9,7 +9,7 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
     const [loading, setLoading] = useState(true);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-    const fetchDiseases = async () => {
+    const fetchDiseases = useCallback(async () => {
         try {
             if (userId) {
                 const data = await DiseaseService.getDiseases(userId);
@@ -20,7 +20,7 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [userId]);
 
     const handleDeleteDisease = async (e, diseaseId) => {
         e.stopPropagation(); // Prevent card click
@@ -37,7 +37,7 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
 
     useEffect(() => {
         fetchDiseases();
-    }, [userId]);
+    }, [fetchDiseases]);
 
     const getStatusColor = (status, severity) => {
         if (status === 'resolved') return 'text-green-400 bg-green-400/10 border-green-400/20';
@@ -62,12 +62,19 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
 
                     {/* Main Heading */}
                     <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
-                        Live Health <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Tracker</span>
+                        Live Health{' '}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
+                            Tracker
+                        </span>
                     </h1>
 
                     {/* Description */}
                     <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8">
-                        Your central command center for health data. <span className="text-white font-semibold">Track conditions</span>, monitor <span className="text-amber-400 font-semibold">vital trends</span>, and manage your <span className="text-emerald-400 font-semibold">daily insights</span> in one secure, real-time dashboard.
+                        Your central command center for health data.{' '}
+                        <span className="text-white font-semibold">Track conditions</span>, monitor{' '}
+                        <span className="text-amber-400 font-semibold">vital trends</span>, and manage your{' '}
+                        <span className="text-emerald-400 font-semibold">daily insights</span> in one secure, real-time
+                        dashboard.
                     </p>
 
                     {/* Action Button */}
@@ -97,10 +104,19 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
                         >
                             <div>
                                 <h3 className="text-lg font-bold text-white mb-1">{disease.name}</h3>
-                                <p className="text-xs text-slate-400 mb-3">Diagnosed: {new Date(disease.diagnosisDate).toLocaleDateString()}</p>
+                                <p className="text-xs text-slate-400 mb-3">
+                                    Diagnosed: {new Date(disease.diagnosisDate).toLocaleDateString()}
+                                </p>
 
-                                <span className={`px-2 py-1 rounded-md text-xs font-semibold border ${getStatusColor(disease.status, disease.severity)}`}>
-                                    {disease.status === 'active' ? disease.severity.toUpperCase() + ' SEVERITY' : disease.status.toUpperCase()}
+                                <span
+                                    className={`px-2 py-1 rounded-md text-xs font-semibold border ${getStatusColor(
+                                        disease.status,
+                                        disease.severity
+                                    )}`}
+                                >
+                                    {disease.status === 'active'
+                                        ? disease.severity.toUpperCase() + ' SEVERITY'
+                                        : disease.status.toUpperCase()}
                                 </span>
                             </div>
 
@@ -112,6 +128,7 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
                                 >
                                     <Trash2 size={16} />
                                 </button>
+
                                 <div className="bg-slate-800/50 p-2 rounded-full text-slate-500 group-hover:text-amber-400 group-hover:bg-amber-400/10 transition-colors">
                                     <ChevronRight size={20} />
                                 </div>
@@ -134,16 +151,14 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
                 )}
             </div>
 
-            {
-                isAddModalOpen && (
-                    <AddDiseaseModal
-                        userId={userId}
-                        onClose={() => setIsAddModalOpen(false)}
-                        onDiseaseAdded={fetchDiseases}
-                    />
-                )
-            }
-        </div >
+            {isAddModalOpen && (
+                <AddDiseaseModal
+                    userId={userId}
+                    onClose={() => setIsAddModalOpen(false)}
+                    onDiseaseAdded={fetchDiseases}
+                />
+            )}
+        </div>
     );
 };
 
