@@ -9,7 +9,7 @@ import * as PhosphorIcons from '@phosphor-icons/react';
 import * as LucideIcons from 'lucide-react';
 
 // Debug Log
-console.log("Phosphor Icons Loaded:", Object.keys(PhosphorIcons).length);
+console.log("Phosphor Icons Loaded v2:", Object.keys(PhosphorIcons).length);
 
 // --- MAPPING LAYER ---
 // We try to find the icon in Phosphor first. If not found, use Lucide.
