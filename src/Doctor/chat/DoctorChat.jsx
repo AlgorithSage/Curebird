@@ -136,21 +136,108 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         }
     }, [activeChat]);
 
-    // 4. Send Message
+    // 4. Send Message (File)
+
+
+    // --- Voice Recording Logic ---
+    const [isRecording, setIsRecording] = useState(false);
+    const mediaRecorderRef = React.useRef(null);
+    const audioChunksRef = React.useRef([]);
+
+    const toggleRecording = async () => {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    };
+
+    const startRecording = async () => {
+        if (!activeChat) {
+             alert("Please select a valid chat first.");
+             return;
+        }
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = mediaRecorder;
+            audioChunksRef.current = [];
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunksRef.current.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = async () => {
+                // Ensure we have data
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                if (audioBlob.size === 0) {
+                     console.warn("Empty audio recording discarded.");
+                     return;
+                }
+                
+                const audioFile = new File([audioBlob], `voice_note_${Date.now()}.webm`, { type: 'audio/webm' });
+                
+                setIsUploading(true);
+                try {
+                     let targetChatId = activeChat;
+                     // Handle temp chat creation if needed (Simplified: activeChat must exist for voice for now)
+                     
+                     const storageRef = ref(storage, `chat_attachments/${targetChatId}/${audioFile.name}`);
+                     await uploadBytes(storageRef, audioFile);
+                     const url = await getDownloadURL(storageRef);
+
+                     await addDoc(collection(db, `chats/${targetChatId}/messages`), {
+                        text: 'Voice Message',
+                        fileUrl: url,
+                        fileName: audioFile.name,
+                        sender: 'doctor',
+                        senderId: currentUser.uid,
+                        createdAt: serverTimestamp(),
+                        type: 'audio',
+                        duration: '0:00' 
+                    });
+
+                    await updateDoc(doc(db, 'chats', targetChatId), {
+                        lastMsg: '🎤 Voice Message',
+                        updatedAt: serverTimestamp(),
+                    });
+
+                } catch (err) {
+                    console.error("Audio upload failed", err);
+                } finally {
+                    setIsUploading(false);
+                    stream.getTracks().forEach(track => track.stop());
+                }
+            };
+
+            mediaRecorder.start();
+            setIsRecording(true);
+        } catch (err) {
+            console.error("Could not start recording", err);
+            // Handling permission error gracefully
+            alert("Microphone access denied. Please allow microphone permissions in your browser settings.");
+        }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+        }
+    };
+
     const handleFileSelect = async (e) => {
         const file = e.target.files[0];
         if (!file || !activeChat || !currentUser) return;
 
         setIsUploading(true);
         try {
-             // 1. Ensure chat exists (if temp) - Reuse logic or simplified check?
-             // For simplicity, we assume chat exists or we replicate creation logic.
-             // Ideally we refactor 'ensureChatExists' but for now let's just upload.
-             // If activeChat starts with 'temp_', we MUST create it first.
-             
              let targetChatId = activeChat;
+             // If temp, create chat logic (Duplicate of handleSendMessage logic)
              if (activeChat.startsWith('temp_')) {
-                 // Creating chat logic duplicated for safety (or could be refactored)
                  const tempPatientId = activeChat.replace('temp_', '');
                  let targetPatient = patients.find(p => p.id === tempPatientId);
                  if (!targetPatient && initialPatientId?.id === tempPatientId) targetPatient = initialPatientId;
@@ -159,12 +246,6 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                      const newChatRef = await addDoc(collection(db, 'chats'), {
                         patientId: targetPatient.id,
                         doctorId: currentUser.uid,
-                        participants: [currentUser.uid], // In reality, we must add Patient UID here if we know it.
-                        // Wait, if we use temp_ID, we might not have patient UID if "patients" collection doesn't have it?
-                        // Actually 'patients' collection usually has 'uid' or we rely on 'patientId' being the uid?
-                        // In NewPrescriptionModal user used 'patientId'. Let's assume patient.id IS the uid or we store it.
-                        // For the connection to work, patientId MUST match the Patient's UID.
-                        // Let's assume the 'patients' list has the correct ID.
                         participants: [currentUser.uid, targetPatient.id], 
                         patientName: targetPatient.name,
                         condition: targetPatient.condition || 'General Care',
@@ -581,6 +662,16 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                             )}
                                         </div>
                                     </div>
+                                ) : msg.type === 'audio' ? (
+                                    <div className="flex items-center gap-3 min-w-[200px]">
+                                         <div className={`p-2 rounded-full ${msg.sender === 'doctor' ? 'bg-black/20 text-black' : 'bg-amber-500 text-black'}`}>
+                                            <Mic size={20} />
+                                         </div>
+                                         <div className="flex-1">
+                                             <audio controls src={msg.fileUrl} className="w-full h-8 max-w-[250px]" />
+                                             <p className="text-[10px] mt-1 opacity-70">Voice Message</p>
+                                         </div>
+                                    </div>
                                 ) : (
                                     <p className={`text-sm ${msg.sender === 'doctor' ? 'font-medium' : 'font-normal'}`}>{msg.text}</p>
                                 )}
@@ -619,8 +710,14 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                 placeholder="Type a message..."
                                 className="w-full bg-transparent border-none text-white focus:ring-0 py-3 text-sm placeholder:text-stone-600"
                             />
-                            <button type="button" className="ml-2 text-stone-500 hover:text-white">
-                                <Mic size={18} />
+                            {/* Voice Recording Button */}
+                            <button 
+                                type="button" 
+                                onClick={toggleRecording}
+                                className={`ml-2 p-2 rounded-full transition-all ${isRecording ? 'text-red-500 animate-pulse bg-red-500/10 ring-2 ring-red-500/50' : 'text-stone-500 hover:text-white'}`}
+                                title={isRecording ? "Click to Stop & Send" : "Click to Record Voice Note"}
+                            >
+                                {isRecording ? <div className="w-[18px] h-[18px] bg-current rounded-sm" /> : <Mic size={18} />}
                             </button>
                         </div>
                         <button
