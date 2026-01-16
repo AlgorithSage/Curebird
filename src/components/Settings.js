@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getAuth, updateProfile, updateEmail, updatePassword, deleteUser } from 'firebase/auth';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Shield, Save, Camera, AlertTriangle, BadgeCheck, FileText, ArrowRight, Settings as SettingsIcon } from 'lucide-react';
+import {  User, Mail, Shield, Save, Camera, AlertTriangle, BadgeCheck, FileText, ArrowRight, Settings as SettingsIcon  } from './Icons';
 
 import Header from './Header';
 import { DeleteAccountModal } from './Modals';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, query } from 'firebase/firestore';
 import { AnimatePresence, motion, LayoutGroup } from 'framer-motion';
-import { FileText, Search } from 'lucide-react';
+import {  FileText, Search  } from './Icons';
 
 import Header from './Header';
 import RecordCard from './RecordCard';

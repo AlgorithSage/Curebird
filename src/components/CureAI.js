@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Trash2, TrendingUp, MessageSquare, Brain, ShieldCheck, Sparkles, FileText } from 'lucide-react';
+import {  Send, Bot, User, Trash2, TrendingUp, MessageSquare, Brain, ShieldCheck, Sparkles, FileText  } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import Header from './Header';

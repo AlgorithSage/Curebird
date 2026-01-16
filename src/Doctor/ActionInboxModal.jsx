@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ClipboardList, Bell, Zap, FileCheck, Loader2, ShieldAlert } from 'lucide-react';
+import {  X, ClipboardList, Bell, Zap, FileCheck, Loader2, ShieldAlert  } from '../components/Icons';
 
 const ActionInboxModal = ({ isOpen, onClose, onResolve }) => {
     const [activeTab, setActiveTab] = React.useState('pending');

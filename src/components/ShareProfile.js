@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Share2, Link, QrCode, Clock, Copy, Check, ShieldCheck, UserCog, Timer } from 'lucide-react';
+import {  Share2, Link, QrCode, Clock, Copy, Check, ShieldCheck, UserCog, Timer  } from './Icons';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import Header from './Header';
 

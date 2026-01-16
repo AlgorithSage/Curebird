@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { HeartPulse, Activity, ShieldPlus, FileText, Pill, Calendar, Bot, BarChart2, CheckCircle2, Volume2, VolumeX, MessageSquare, Microscope } from 'lucide-react';
+import {  HeartPulse, Activity, ShieldPlus, FileText, Pill, Calendar, Bot, BarChart2, CheckCircle2, Volume2, VolumeX, MessageSquare, Microscope  } from './Icons';
 
 const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) => {
     const [isMobile, setIsMobile] = React.useState(false);
@@ -94,10 +94,10 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                             </motion.div>
 
                             <div className="space-y-6">
-                                <h1 className="text-7xl sm:text-8xl lg:text-[11rem] font-black tracking-tighter leading-[0.9] text-amber-400 bg-clip-text text-transparent bg-gradient-to-r from-white via-amber-200 via-yellow-300 via-amber-200 to-white animate-text-flow drop-shadow-[0_0_30px_rgba(245,158,11,0.5)] pb-2 sm:pb-4">
+                                <h1 className="font-display text-7xl sm:text-8xl lg:text-[11rem] font-black tracking-tighter leading-[0.9] text-amber-400 bg-clip-text text-transparent bg-[linear-gradient(to_right,white,theme(colors.amber.200),theme(colors.yellow.300),theme(colors.amber.200),white)] animate-text-flow drop-shadow-[0_0_30px_rgba(245,158,11,0.5)] pb-2 sm:pb-4">
                                     CureBird
                                 </h1>
-                                <h2 className="text-lg sm:text-3xl font-semibold tracking-wide text-slate-200 max-w-2xl leading-relaxed">
+                                <h2 className="font-display text-lg sm:text-3xl font-bold tracking-wide text-slate-200 max-w-2xl leading-relaxed">
                                     <span className="text-amber-400 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-200">Revolutionizing</span> and <span className="text-amber-400 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-200">Digitizing</span> Healthcare with <span className="text-amber-400 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-200">Clinical Precision</span>
                                 </h2>
                             </div>
@@ -169,7 +169,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                         <div className="flex flex-col gap-1">
                                             <div className="flex items-center gap-2 text-slate-300">
                                                 <Activity size={16} className={`${healthScore.grade === 'A' ? 'text-emerald-400' : healthScore.grade === 'B' ? 'text-amber-400' : 'text-red-400'}`} />
-                                                <span className="text-sm font-semibold tracking-wide">Your Health Score</span>
+                                                <span className="text-sm font-semibold tracking-wide">CHI (Curebird Health Index)</span>
                                             </div>
 
                                             <div className="flex items-baseline gap-2 mt-2">
@@ -185,6 +185,10 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                                     : healthScore.grade === 'B'
                                                         ? "Good progress. A few improvements can get you to A."
                                                         : "Let's focus on consistency to improve your score."}
+                                            </p>
+                                            
+                                            <p className="text-[10px] text-slate-500 mt-3 leading-relaxed border-t border-white/5 pt-2 max-w-[240px]">
+                                                <span className="text-amber-500 font-bold">Tip:</span> Upload documents for all your health metrics (e.g., blood reports, disease history) to improve the accuracy of your CHI score.
                                             </p>
                                         </div>
 

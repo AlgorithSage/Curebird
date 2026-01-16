@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Microscope, CheckCircle, AlertTriangle, Loader, User, FileText, Upload, Sparkles } from 'lucide-react';
+import {  X, Microscope, CheckCircle, AlertTriangle, Loader, User, FileText, Upload, Sparkles  } from '../components/Icons';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';

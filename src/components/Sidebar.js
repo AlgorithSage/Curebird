@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, FileText, Calendar, Settings, Activity, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users } from 'lucide-react';
+import {  LayoutDashboard, FileText, Calendar, Settings, Activity, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users, Pill, TrendingUp, Microscope, BarChart2, Stethoscope, Bot  } from './Icons';
 import CurebirdLogo from '../curebird_logo.png';
 
 const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) => {
@@ -16,18 +16,18 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user, onSubscribeCli
             title: "Health Management",
             items: [
                 { name: 'Appointments', icon: Calendar },
-                { name: 'Medications', icon: Activity },
+                { name: 'Medications', icon: Pill },
             ]
         },
         {
             title: "Core Features",
             items: [
-                { name: 'Cure Tracker', icon: Activity },
-                { name: 'Cure Analyzer', icon: Activity },
-                { name: 'Cure Stat', icon: Activity },
+                { name: 'Cure Tracker', icon: TrendingUp },
+                { name: 'Cure Analyzer', icon: Microscope },
+                { name: 'Cure Stat', icon: BarChart2 },
                 { name: 'Messages', icon: MessageSquare }, // New Chat Bridge
-                { name: 'Cure AI', icon: MessageSquare },
-                { name: 'Doctor Access', icon: Activity },
+                { name: 'Cure AI', icon: Bot },
+                { name: 'Doctor Access', icon: Stethoscope },
             ]
         },
         {
@@ -109,14 +109,19 @@ const Sidebar = ({ activeView, onNavigate, isOpen, onClose, user, onSubscribeCli
                                                     }
                                                 }}
                                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 group ${activeView === item.name
-                                                    ? 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 text-amber-500 border border-amber-500/30'
-                                                    : 'text-slate-100 hover:bg-white/5 hover:text-amber-200 hover:translate-x-1'
+                                                    ? 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 border border-amber-500/30'
+                                                    : 'hover:bg-white/5 hover:translate-x-1'
                                                     }`}
                                             >
-                                                <span className={`transition-colors duration-200 ${activeView === item.name ? 'text-amber-500' : 'text-slate-400 group-hover:text-amber-500'}`}>
-                                                    <Icon size={20} />
+                                                {/* Icon: Amber default -> White (Active/Hover) */}
+                                                <span className={`transition-colors duration-200 ${activeView === item.name ? 'text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]' : 'text-amber-500/80 group-hover:text-white group-hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]'}`}>
+                                                    <Icon size={20} weight={activeView === item.name ? "fill" : "duotone"} />
                                                 </span>
-                                                <span className="font-bold tracking-wide text-sm">{item.name}</span>
+                                                
+                                                {/* Text: Slate default -> White (Active/Hover) */}
+                                                <span className={`font-bold tracking-wide text-sm transition-colors duration-200 ${activeView === item.name ? 'text-white' : 'text-slate-400 group-hover:text-amber-100'}`}>
+                                                    {item.name}
+                                                </span>
                                                 {item.badge && (
                                                     <span className="ml-2 text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">
                                                         {item.badge}

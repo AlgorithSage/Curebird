@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Plus, Activity, Calendar, TrendingUp, AlertCircle, FileText, Trash2 } from 'lucide-react';
+import {  ArrowLeft, Plus, Activity, Calendar, TrendingUp, AlertCircle, FileText, Trash2  } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import { DISEASE_CONFIG } from '../../data/diseaseMetrics';
 import AddMetricModal from './AddMetricModal';
@@ -10,7 +10,7 @@ import ActionableInsightCard from './ActionableInsightCard';
 import DoctorSummaryView from './DoctorSummaryView';
 import { getAuth } from 'firebase/auth'; // Using auth from context in MedicalPortfolio usually, but here props.
 import { getFirestore } from 'firebase/firestore'; // Ensure we have db access
-import { Printer } from 'lucide-react';
+import {  Printer  } from '../Icons';
 
 const DiseaseDetail = ({ userId, disease, onBack }) => {
     const [metrics, setMetrics] = useState([]);

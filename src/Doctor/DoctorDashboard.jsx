@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     Users, Calendar, Activity, ClipboardList, FilePlus,
     Microscope, Siren, LayoutDashboard, Search, ArrowRight,
     Stethoscope, FileText, Settings, HelpCircle
-} from 'lucide-react';
+ } from '../components/Icons';
 import { collection, query, onSnapshot, orderBy, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import Header from '../components/Header';

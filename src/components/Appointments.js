@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, MoreVertical, Edit, Trash2, Video } from 'lucide-react';
+import {  Plus, MoreVertical, Edit, Trash2, Video  } from './Icons';
 
 import Header from './Header';
 import { AppointmentFormModal, DeleteConfirmModal } from './Modals';

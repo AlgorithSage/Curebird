@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { FileText, Calendar, Activity, Pill, User, AlertTriangle } from 'lucide-react';
+import {  FileText, Calendar, Activity, Pill, User, AlertTriangle  } from '../Icons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const DoctorSummaryView = ({ user, disease, metrics, insights, medications }) => {

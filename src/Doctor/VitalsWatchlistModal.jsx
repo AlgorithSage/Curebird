@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Activity, Heart, Droplets, Thermometer } from 'lucide-react';
+import {  X, Activity, Heart, Droplets, Thermometer  } from '../components/Icons';
 
 const VitalsWatchlistModal = ({ isOpen, onClose, onAssess }) => {
     const patients = [

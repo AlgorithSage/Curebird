@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, AlertTriangle } from 'lucide-react';
+import {  ShieldCheck, AlertTriangle  } from '../Icons';
 
 const MedicalDisclaimerModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;

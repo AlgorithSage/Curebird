@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Home, Utensils, TrendingUp, Info, Pill } from 'lucide-react';
+import {  Home, Utensils, TrendingUp, Info, Pill  } from './Icons';
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, Cell, PieChart, Pie } from 'recharts';
 // VERIFIED DATA SOURCE: NFHS-5 India (National Family Health Survey 2019-21)
 // VERIFIED DATA SOURCE: NFHS-5 India (National Family Health Survey 2019-21)

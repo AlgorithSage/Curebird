@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     Wind, CloudFog, AlertTriangle, Cigarette, Info,
     Search, RefreshCw, Signal, Hourglass, FlaskConical, Skull, Activity,
     Timer, AlertOctagon, HeartPulse
-} from 'lucide-react';
+ } from './Icons';
 
 // Scientific conversion constants
 const CIGARETTE_FACTOR = 22; // ~22ug/m3 PM2.5 = 1 Cigarette

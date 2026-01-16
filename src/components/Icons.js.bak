@@ -1,0 +1,301 @@
+// --- Icon Configuration ---
+// Current Icon Pack: lucide-react
+//
+// To switch icon packs:
+// 1. Change the import source (e.g. from 'lucide-react' to '@heroicons/react')
+// 2. Update the aliases in the import block if the library uses different names.
+// 3. The 'export const' block creates the mapping between the App's internal name and the Library's name.
+
+import {
+    Activity as LucideActivity,
+    AlertCircle as LucideAlertCircle,
+    AlertOctagon as LucideAlertOctagon,
+    AlertTriangle as LucideAlertTriangle,
+    ArrowLeft as LucideArrowLeft,
+    ArrowRight as LucideArrowRight,
+    ArrowUpRight as LucideArrowUpRight,
+    Award as LucideAward,
+    BadgeCheck as LucideBadgeCheck,
+    BarChart2 as LucideBarChart2,
+    BarChart3 as LucideBarChart3,
+    Bell as LucideBell,
+    BellRing as LucideBellRing,
+    Bookmark as LucideBookmark,
+    Bot as LucideBot,
+    Brain as LucideBrain,
+    BrainCircuit as LucideBrainCircuit,
+    Briefcase as LucideBriefcase,
+    Calendar as LucideCalendar,
+    CalendarClock as LucideCalendarClock,
+    Camera as LucideCamera,
+    Check as LucideCheck,
+    CheckCircle as LucideCheckCircle,
+    CheckCircle2 as LucideCheckCircle2,
+    ChevronDown as LucideChevronDown,
+    ChevronLeft as LucideChevronLeft,
+    ChevronRight as LucideChevronRight,
+    ChevronUp as LucideChevronUp,
+    Cigarette as LucideCigarette,
+    Clipboard as LucideClipboard,
+    ClipboardCheck as LucideClipboardCheck,
+    ClipboardList as LucideClipboardList,
+    Clock as LucideClock,
+    CloudFog as LucideCloudFog,
+    Copy as LucideCopy,
+    Cpu as LucideCpu,
+    Crown as LucideCrown,
+    Database as LucideDatabase,
+    Dna as LucideDna,
+    Download as LucideDownload,
+    Droplet as LucideDroplet,
+    Droplets as LucideDroplets,
+    Edit as LucideEdit,
+    Edit2 as LucideEdit2,
+    ExternalLink as LucideExternalLink,
+    Eye as LucideEye,
+    Facebook as LucideFacebook,
+    File as LucideFile,
+    FileCheck as LucideFileCheck,
+    FilePlus as LucideFilePlus,
+    FileSpreadsheet as LucideFileSpreadsheet,
+    FileText as LucideFileText,
+    Filter as LucideFilter,
+    Flag as LucideFlag,
+    FlaskConical as LucideFlaskConical,
+    Globe as LucideGlobe,
+    Hash as LucideHash,
+    Heart as LucideHeart,
+    HeartPulse as LucideHeartPulse,
+    HelpCircle as LucideHelpCircle,
+    History as LucideHistory,
+    Home as LucideHome,
+    Hospital as LucideHospital,
+    Hourglass as LucideHourglass,
+    Info as LucideInfo,
+    Instagram as LucideInstagram,
+    Key as LucideKey,
+    Laptop as LucideLaptop,
+    Layers as LucideLayers,
+    LayoutDashboard as LucideLayoutDashboard,
+    Lightbulb as LucideLightbulb,
+    Link as LucideLink,
+    Linkedin as LucideLinkedin,
+    Loader as LucideLoader,
+    Loader2 as LucideLoader2,
+    Lock as LucideLock,
+    LogIn as LucideLogIn,
+    LogOut as LucideLogOut,
+    Mail as LucideMail,
+    Map as LucideMap,
+    MapPin as LucideMapPin,
+    Menu as LucideMenu,
+    MessageSquare as LucideMessageSquare,
+    Mic as LucideMic,
+    MicOff as LucideMicOff,
+    Microscope as LucideMicroscope,
+    Monitor as LucideMonitor,
+    MoreHorizontal as LucideMoreHorizontal,
+    MoreVertical as LucideMoreVertical,
+    Paperclip as LucidePaperclip,
+    Phone as LucidePhone,
+    PhoneIncoming as LucidePhoneIncoming,
+    PhoneOff as LucidePhoneOff,
+    Pill as LucidePill,
+    Plus as LucidePlus,
+    Printer as LucidePrinter,
+    QrCode as LucideQrCode,
+    RefreshCcw as LucideRefreshCcw,
+    RefreshCw as LucideRefreshCw,
+    Save as LucideSave,
+    ScanEye as LucideScanEye,
+    ScrollText as LucideScrollText,
+    Search as LucideSearch,
+    Send as LucideSend,
+    Server as LucideServer,
+    ServerCrash as LucideServerCrash,
+    Settings as LucideSettings,
+    Share2 as LucideShare2,
+    Shield as LucideShield,
+    ShieldAlert as LucideShieldAlert,
+    ShieldCheck as LucideShieldCheck,
+    ShieldPlus as LucideShieldPlus,
+    Signal as LucideSignal,
+    Siren as LucideSiren,
+    Skull as LucideSkull,
+    Smartphone as LucideSmartphone,
+    Sparkles as LucideSparkles,
+    Star as LucideStar,
+    Stethoscope as LucideStethoscope,
+    Thermometer as LucideThermometer,
+    Timer as LucideTimer,
+    ToggleLeft as LucideToggleLeft,
+    ToggleRight as LucideToggleRight,
+    Trash2 as LucideTrash2,
+    TrendingUp as LucideTrendingUp,
+    Twitter as LucideTwitter,
+    Unlock as LucideUnlock,
+    Upload as LucideUpload,
+    UploadCloud as LucideUploadCloud,
+    User as LucideUser,
+    UserCog as LucideUserCog,
+    UserPlus as LucideUserPlus,
+    Users as LucideUsers,
+    Utensils as LucideUtensils,
+    Video as LucideVideo,
+    VideoOff as LucideVideoOff,
+    Volume2 as LucideVolume2,
+    VolumeX as LucideVolumeX,
+    Wifi as LucideWifi,
+    Wind as LucideWind,
+    X as LucideX,
+    XCircle as LucideXCircle,
+    Youtube as LucideYoutube,
+    Zap as LucideZap
+} from 'lucide-react';
+
+// --- MAPPING LAYER ---
+// App Component Name = Library Component Name
+export const Activity = LucideActivity;
+export const AlertCircle = LucideAlertCircle;
+export const AlertOctagon = LucideAlertOctagon;
+export const AlertTriangle = LucideAlertTriangle;
+export const ArrowLeft = LucideArrowLeft;
+export const ArrowRight = LucideArrowRight;
+export const ArrowUpRight = LucideArrowUpRight;
+export const Award = LucideAward;
+export const BadgeCheck = LucideBadgeCheck;
+export const BarChart2 = LucideBarChart2;
+export const BarChart3 = LucideBarChart3;
+export const Bell = LucideBell;
+export const BellRing = LucideBellRing;
+export const Bookmark = LucideBookmark;
+export const Bot = LucideBot;
+export const Brain = LucideBrain;
+export const BrainCircuit = LucideBrainCircuit;
+export const Briefcase = LucideBriefcase;
+export const Calendar = LucideCalendar;
+export const CalendarClock = LucideCalendarClock;
+export const Camera = LucideCamera;
+export const Check = LucideCheck;
+export const CheckCircle = LucideCheckCircle;
+export const CheckCircle2 = LucideCheckCircle2;
+export const ChevronDown = LucideChevronDown;
+export const ChevronLeft = LucideChevronLeft;
+export const ChevronRight = LucideChevronRight;
+export const ChevronUp = LucideChevronUp;
+export const Cigarette = LucideCigarette;
+export const Clipboard = LucideClipboard;
+export const ClipboardCheck = LucideClipboardCheck;
+export const ClipboardList = LucideClipboardList;
+export const Clock = LucideClock;
+export const CloudFog = LucideCloudFog;
+export const Copy = LucideCopy;
+export const Cpu = LucideCpu;
+export const Crown = LucideCrown;
+export const Database = LucideDatabase;
+export const Dna = LucideDna;
+export const Download = LucideDownload;
+export const Droplet = LucideDroplet;
+export const Droplets = LucideDroplets;
+export const Edit = LucideEdit;
+export const Edit2 = LucideEdit2;
+export const ExternalLink = LucideExternalLink;
+export const Eye = LucideEye;
+export const Facebook = LucideFacebook;
+export const File = LucideFile;
+export const FileCheck = LucideFileCheck;
+export const FilePlus = LucideFilePlus;
+export const FileSpreadsheet = LucideFileSpreadsheet;
+export const FileText = LucideFileText;
+export const Filter = LucideFilter;
+export const Flag = LucideFlag;
+export const FlaskConical = LucideFlaskConical;
+export const Globe = LucideGlobe;
+export const Hash = LucideHash;
+export const Heart = LucideHeart;
+export const HeartPulse = LucideHeartPulse;
+export const HelpCircle = LucideHelpCircle;
+export const History = LucideHistory;
+export const Home = LucideHome;
+export const Hospital = LucideHospital;
+export const Hourglass = LucideHourglass;
+export const Info = LucideInfo;
+export const Instagram = LucideInstagram;
+export const Key = LucideKey;
+export const Laptop = LucideLaptop;
+export const Layers = LucideLayers;
+export const LayoutDashboard = LucideLayoutDashboard;
+export const Lightbulb = LucideLightbulb;
+export const Link = LucideLink;
+export const Linkedin = LucideLinkedin;
+export const Loader = LucideLoader;
+export const Loader2 = LucideLoader2;
+export const Lock = LucideLock;
+export const LogIn = LucideLogIn;
+export const LogOut = LucideLogOut;
+export const Mail = LucideMail;
+export const Map = LucideMap;
+export const MapPin = LucideMapPin;
+export const Menu = LucideMenu;
+export const MessageSquare = LucideMessageSquare;
+export const Mic = LucideMic;
+export const MicOff = LucideMicOff;
+export const Microscope = LucideMicroscope;
+export const Monitor = LucideMonitor;
+export const MoreHorizontal = LucideMoreHorizontal;
+export const MoreVertical = LucideMoreVertical;
+export const Paperclip = LucidePaperclip;
+export const Phone = LucidePhone;
+export const PhoneIncoming = LucidePhoneIncoming;
+export const PhoneOff = LucidePhoneOff;
+export const Pill = LucidePill;
+export const Plus = LucidePlus;
+export const Printer = LucidePrinter;
+export const QrCode = LucideQrCode;
+export const RefreshCcw = LucideRefreshCcw;
+export const RefreshCw = LucideRefreshCw;
+export const Save = LucideSave;
+export const ScanEye = LucideScanEye;
+export const ScrollText = LucideScrollText;
+export const Search = LucideSearch;
+export const Send = LucideSend;
+export const Server = LucideServer;
+export const ServerCrash = LucideServerCrash;
+export const Settings = LucideSettings;
+export const Share2 = LucideShare2;
+export const Shield = LucideShield;
+export const ShieldAlert = LucideShieldAlert;
+export const ShieldCheck = LucideShieldCheck;
+export const ShieldPlus = LucideShieldPlus;
+export const Signal = LucideSignal;
+export const Siren = LucideSiren;
+export const Skull = LucideSkull;
+export const Smartphone = LucideSmartphone;
+export const Sparkles = LucideSparkles;
+export const Star = LucideStar;
+export const Stethoscope = LucideStethoscope;
+export const Thermometer = LucideThermometer;
+export const Timer = LucideTimer;
+export const ToggleLeft = LucideToggleLeft;
+export const ToggleRight = LucideToggleRight;
+export const Trash2 = LucideTrash2;
+export const TrendingUp = LucideTrendingUp;
+export const Twitter = LucideTwitter;
+export const Unlock = LucideUnlock;
+export const Upload = LucideUpload;
+export const UploadCloud = LucideUploadCloud;
+export const User = LucideUser;
+export const UserCog = LucideUserCog;
+export const UserPlus = LucideUserPlus;
+export const Users = LucideUsers;
+export const Utensils = LucideUtensils;
+export const Video = LucideVideo;
+export const VideoOff = LucideVideoOff;
+export const Volume2 = LucideVolume2;
+export const VolumeX = LucideVolumeX;
+export const Wifi = LucideWifi;
+export const Wind = LucideWind;
+export const X = LucideX;
+export const XCircle = LucideXCircle;
+export const Youtube = LucideYoutube;
+export const Zap = LucideZap;

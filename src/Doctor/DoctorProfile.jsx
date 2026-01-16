@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Shield, Stethoscope, Mail, Phone, Award, ToggleLeft, ToggleRight, Copy } from 'lucide-react';
+import {  User, Shield, Stethoscope, Mail, Phone, Award, ToggleLeft, ToggleRight, Copy  } from '../components/Icons';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase'; // Ensure correct import path
 

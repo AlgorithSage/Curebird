@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
+import { 
     Plus, Share2, Bell, LogIn, LogOut, Settings, Menu,
     LayoutDashboard, Bot, Activity, Mail, MessageSquare,
     Users, Calendar, ClipboardList, FileText, BarChart2,
-    Shield, HelpCircle, Stethoscope, Siren
-} from 'lucide-react';
+    Shield, HelpCircle, Stethoscope, Siren, Microscope
+ } from './Icons';
 import { AnimatePresence, motion } from 'framer-motion';
 import CurebirdLogo from '../curebird_logo.png';
 
@@ -135,9 +135,9 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     // Default Navigation Items (Patient Portal Defaults)
     const defaultNavItems = [
         { name: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-        { name: 'Cure Analyzer', icon: <Bot size={20} /> },
-        { name: 'Cure Stat', icon: <Activity size={20} /> },
-        { name: 'Cure AI', icon: <MessageSquare size={20} /> },
+        { name: 'Cure Analyzer', icon: <Microscope size={20} /> },
+        { name: 'Cure Stat', icon: <BarChart2 size={20} /> },
+        { name: 'Cure AI', icon: <Bot size={20} /> },
         { name: 'Settings', icon: <Settings size={20} /> },
         { name: 'Contact', icon: <Mail size={20} /> }
     ];

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Clock, Check, Calendar, Plus } from 'lucide-react';
+import {  X, Clock, Check, Calendar, Plus  } from '../components/Icons';
 
 const NewSlotModal = ({ isOpen, onClose, onConfirm }) => {
     // State for time inputs

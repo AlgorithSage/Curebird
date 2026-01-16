@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Clock, Calendar, CheckCircle2, FlaskConical, Bell, CalendarClock, ChevronRight } from 'lucide-react';
+import {  X, Clock, Calendar, CheckCircle2, FlaskConical, Bell, CalendarClock, ChevronRight  } from '../../../components/Icons';
 
 const ConsultationStatusModal = ({ isOpen, onClose }) => {
     const [status, setStatus] = useState('active');

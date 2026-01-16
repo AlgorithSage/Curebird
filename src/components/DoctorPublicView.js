@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, collection, query, orderBy, limit, getDocs } from 'firebase/firestore'; // Removed where import as it is unused
-import { Activity, FileText, Calendar, User, ShieldCheck, AlertTriangle, Loader, Lock } from 'lucide-react';
+import {  Activity, FileText, Calendar, User, ShieldCheck, AlertTriangle, Loader, Lock  } from './Icons';
 import CurebirdLogo from '../curebird_logo.png';
 
 const DoctorPublicView = ({ db, appId, shareToken, onBack }) => {

@@ -6,6 +6,7 @@
     "@craco/craco": "^7.1.0",
     "@emailjs/browser": "^4.4.1",
     "@lottiefiles/dotlottie-react": "^0.17.12",
+    "@phosphor-icons/react": "^2.1.10",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",

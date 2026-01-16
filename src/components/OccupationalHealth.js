@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, Activity, Shield, Stethoscope, Pill, Search, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import {  Briefcase, Activity, Shield, Stethoscope, Pill, Search, AlertTriangle, CheckCircle2  } from './Icons';
 
 // --- DATA: EXTENSIVE PROFESSION LIST (100+) ---
 // Mapped to specific risk categories to ensure scalability while maintaining accuracy.

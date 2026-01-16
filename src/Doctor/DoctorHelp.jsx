@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import {
+import { 
     Search, HelpCircle, FileText, Phone, MessageSquare,
     ChevronDown, ChevronUp, ExternalLink, Lock, Users, User, ArrowRight, BarChart2
-} from 'lucide-react';
+ } from '../components/Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FEATURES = [

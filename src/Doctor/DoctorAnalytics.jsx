@@ -4,10 +4,10 @@ import {
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
     AreaChart, Area, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
-import {
+import { 
     TrendingUp, Users, Activity, AlertTriangle, Calendar,
     BrainCircuit, Clock, Stethoscope, FileText, Trash2
-} from 'lucide-react';
+ } from '../components/Icons';
 import AIReportModal from './AIReportModal';
 import AnalyzeDataModal from './AnalyzeDataModal';
 import { collection, query, where, onSnapshot, orderBy, doc, deleteDoc } from 'firebase/firestore';

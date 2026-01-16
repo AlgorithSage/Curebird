@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, AlertTriangle, ArrowRight, Phone, Bell, ShieldAlert, Lock, Siren, ChevronRight } from 'lucide-react';
+import {  X, AlertTriangle, ArrowRight, Phone, Bell, ShieldAlert, Lock, Siren, ChevronRight  } from '../../../components/Icons';
 
 const EscalateRiskModal = ({ isOpen, onClose }) => {
     const [sliderValue, setSliderValue] = useState(0);

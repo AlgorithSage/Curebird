@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     UploadCloud, FileText, X, CheckCircle2,
     Loader2, Search, AlertCircle, ArrowRight
-} from 'lucide-react';
+ } from '../components/Icons';
 
 import { auth, db } from '../firebase';
 import { addDoc, collection } from 'firebase/firestore';

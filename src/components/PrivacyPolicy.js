@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from './Header';
 import { motion } from 'framer-motion';
-import { Lock, Database, Eye, Server } from 'lucide-react';
+import {  Lock, Database, Eye, Server  } from './Icons';
 
 const PrivacyPolicy = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     return (

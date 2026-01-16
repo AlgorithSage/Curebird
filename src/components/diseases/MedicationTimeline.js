@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from 'firebase/firestore';
-import { Pill, Trash2 } from 'lucide-react';
+import {  Pill, Trash2  } from '../Icons';
 
 const MedicationTimeline = ({ userId, db }) => {
     const [data, setData] = useState([]);

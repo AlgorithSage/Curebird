@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Clock, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import {  X, Calendar, Clock, ArrowRight, CheckCircle2, AlertCircle  } from '../components/Icons';
 
 const ScheduleQueueModal = ({ isOpen, onClose, onStartConsultation, onReschedule }) => {
     const appointments = [

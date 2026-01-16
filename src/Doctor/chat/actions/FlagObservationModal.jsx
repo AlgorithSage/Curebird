@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Flag, AlertCircle, Bookmark, BellRing, ChevronRight } from 'lucide-react';
+import {  X, Flag, AlertCircle, Bookmark, BellRing, ChevronRight  } from '../../../components/Icons';
 
 const FlagObservationModal = ({ isOpen, onClose }) => {
     const [selectedCategory, setSelectedCategory] = useState('');

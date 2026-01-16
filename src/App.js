@@ -11,6 +11,7 @@ import { AnimatePresence } from 'framer-motion';
 
 import { auth, db, storage, googleProvider, appId } from './firebase';
 import { ToastProvider } from './context/ToastContext';
+import { IconContext } from '@phosphor-icons/react';
 
 // Import all components
 import Sidebar from './components/Sidebar';
@@ -189,88 +190,90 @@ export default function App() {
 
     return (
         <ToastProvider>
-            <div className="min-h-screen font-sans text-slate-200 relative isolate overflow-hidden">
-                <Background />
+            <IconContext.Provider value={{ weight: "duotone", color: "currentColor", size: "1em" }}>
+                <div className="min-h-screen font-sans text-slate-200 relative isolate overflow-hidden">
+                    <Background />
 
-                {user ? (
-                    <div className="relative min-h-screen flex">
-                        <Sidebar
-                            activeView={activeView}
-                            onNavigate={setActiveView}
-                            isOpen={isSidebarOpen}
-                            onClose={() => setIsSidebarOpen(false)}
-                            user={user} // Pass updated user with profile data
-                            onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
-                        />
-                        <main className="w-full min-h-screen transition-all duration-300">
-                            {renderActiveView()}
-                        </main>
-                    </div>
-                ) : (
-                    <>
-                        {publicView === 'terms' && <TermsOfService onBack={() => setPublicView(null)} />}
-                        {publicView === 'privacy' && <PrivacyPolicy onBack={() => setPublicView(null)} />}
-                        {publicView === 'contact' && <Contact onBack={() => setPublicView(null)} db={db} />}
-                        {publicView === 'doctor_view' && (
-                            <DoctorPublicView
-                                db={db}
-                                appId={appId}
-                                shareToken={new URLSearchParams(window.location.search).get('share')}
-                                onBack={() => {
-                                    setPublicView(null);
-                                    window.history.replaceState({}, document.title, "/");
-                                }}
-                            />
-                        )}
-
-                        {!publicView && (
-                            <LandingPage
-                                onLoginClick={() => setIsAuthModalOpen(true)}
-                                onTermsClick={() => setPublicView('terms')}
-                                onPrivacyClick={() => setPublicView('privacy')}
-                                onContactClick={() => setPublicView('contact')}
-                                onNavigate={(view) => {
-                                    if (user) {
-                                        setActiveView(view);
-                                    } else {
-                                        setIsAuthModalOpen(true);
-                                    }
-                                }}
+                    {user ? (
+                        <div className="relative min-h-screen flex">
+                            <Sidebar
+                                activeView={activeView}
+                                onNavigate={setActiveView}
+                                isOpen={isSidebarOpen}
+                                onClose={() => setIsSidebarOpen(false)}
+                                user={user} // Pass updated user with profile data
                                 onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
                             />
-                        )}
-                    </>
-                )}
+                            <main className="w-full min-h-screen transition-all duration-300">
+                                {renderActiveView()}
+                            </main>
+                        </div>
+                    ) : (
+                        <>
+                            {publicView === 'terms' && <TermsOfService onBack={() => setPublicView(null)} />}
+                            {publicView === 'privacy' && <PrivacyPolicy onBack={() => setPublicView(null)} />}
+                            {publicView === 'contact' && <Contact onBack={() => setPublicView(null)} db={db} />}
+                            {publicView === 'doctor_view' && (
+                                <DoctorPublicView
+                                    db={db}
+                                    appId={appId}
+                                    shareToken={new URLSearchParams(window.location.search).get('share')}
+                                    onBack={() => {
+                                        setPublicView(null);
+                                        window.history.replaceState({}, document.title, "/");
+                                    }}
+                                />
+                            )}
 
-                <AnimatePresence>
-                    {isAuthModalOpen && (
-                        <AuthModals
-                            user={user}
-                            auth={auth}
-                            db={db}
-                            storage={storage}
-                            onLogout={handleLogout}
-                            onClose={() => setIsAuthModalOpen(false)}
-                            allowClose={user ? user.isProfileComplete : true} // Only allow close if profile is complete (if user exists)
-                            onLogin={handleLogin}
-                            onSignUp={handleSignUp}
-                            onGoogleSignIn={handleGoogleSignIn}
-                            capitalize={capitalize}
-                            error={authError}
-                        />
+                            {!publicView && (
+                                <LandingPage
+                                    onLoginClick={() => setIsAuthModalOpen(true)}
+                                    onTermsClick={() => setPublicView('terms')}
+                                    onPrivacyClick={() => setPublicView('privacy')}
+                                    onContactClick={() => setPublicView('contact')}
+                                    onNavigate={(view) => {
+                                        if (user) {
+                                            setActiveView(view);
+                                        } else {
+                                            setIsAuthModalOpen(true);
+                                        }
+                                    }}
+                                    onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
+                                />
+                            )}
+                        </>
                     )}
-                    {isSubscriptionModalOpen && (
-                        <SubscriptionModal
-                            isOpen={isSubscriptionModalOpen}
-                            onClose={() => setIsSubscriptionModalOpen(false)}
-                            onSubscribe={(tier) => {
-                                console.log("Subscribed to:", tier);
-                                // Here we would update the user record in Firestore
-                            }}
-                        />
-                    )}
-                </AnimatePresence>
-            </div>
+
+                    <AnimatePresence>
+                        {isAuthModalOpen && (
+                            <AuthModals
+                                user={user}
+                                auth={auth}
+                                db={db}
+                                storage={storage}
+                                onLogout={handleLogout}
+                                onClose={() => setIsAuthModalOpen(false)}
+                                allowClose={user ? user.isProfileComplete : true} // Only allow close if profile is complete (if user exists)
+                                onLogin={handleLogin}
+                                onSignUp={handleSignUp}
+                                onGoogleSignIn={handleGoogleSignIn}
+                                capitalize={capitalize}
+                                error={authError}
+                            />
+                        )}
+                        {isSubscriptionModalOpen && (
+                            <SubscriptionModal
+                                isOpen={isSubscriptionModalOpen}
+                                onClose={() => setIsSubscriptionModalOpen(false)}
+                                onSubscribe={(tier) => {
+                                    console.log("Subscribed to:", tier);
+                                    // Here we would update the user record in Firestore
+                                }}
+                            />
+                        )}
+                    </AnimatePresence>
+                </div>
+            </IconContext.Provider>
         </ToastProvider>
     );
 }

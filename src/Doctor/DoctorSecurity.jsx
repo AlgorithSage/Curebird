@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import {
+import { 
     Shield, Lock, Smartphone, Key, History, AlertTriangle,
     CheckCircle2, LogOut, Laptop, Globe, MapPin, ChevronRight
-} from 'lucide-react';
+ } from '../components/Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SecurityTab = ({ active, label, icon: Icon, onClick }) => (

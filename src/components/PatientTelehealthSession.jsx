@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     Mic, MicOff, Video, VideoOff, PhoneOff, MessageSquare,
     Settings, Shield, Wifi, Clock, Activity, FileText, User
-} from 'lucide-react';
+ } from './Icons';
 import { doc, onSnapshot, updateDoc, addDoc, collection, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 

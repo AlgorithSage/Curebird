@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Users, Search, Filter, ShieldAlert, ArrowRight, Star } from 'lucide-react';
+import {  X, Users, Search, Filter, ShieldAlert, ArrowRight, Star  } from '../components/Icons';
 
 const PatientRosterModal = ({ isOpen, onClose, patients = [], onViewPatient, onAddPatient }) => {
     const [searchTerm, setSearchTerm] = React.useState('');
