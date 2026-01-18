@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { 
+import {
   UploadCloud,
   Loader,
   AlertTriangle,
@@ -17,7 +17,8 @@ import {
   ScanEye,
   BrainCircuit,
   Sparkles,
- } from './Icons';
+  Activity,
+} from './Icons';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
 import { collection, addDoc } from "firebase/firestore";
@@ -190,7 +191,7 @@ const CureAnalyzer = ({
 
     const analysis = analysisResult.analysis;
     const medList = analysis.medications?.map(m =>
-      `- ${m.name || m.medicine_name || m.input || 'Unknown Medicine'} (Dosage: ${typeof m.dosage === 'object' ? (m.dosage.dosage || JSON.stringify(m.dosage)) : (m.dosage || 'N/A')}, Freq: ${m.frequency || 'N/A'}) ${m.is_corrected ? '[Verified]' : ''}`
+      `- ${m.name || m.medicine_name || m.input || 'Unknown Medicine'} (Dosage: ${m.dosage && typeof m.dosage === 'object' ? (m.dosage.dosage || JSON.stringify(m.dosage)) : (m.dosage || 'N/A')}, Freq: ${m.frequency || 'N/A'}) ${m.is_corrected ? '[Verified]' : ''}`
     ).join('\n') || 'None';
 
     const diseaseList = analysis.diseases?.join(', ') || 'None';
@@ -609,28 +610,99 @@ const CureAnalyzer = ({
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
                   {/* Comprehensive Summary Section */}
                   {analysisResult.summary && (
-                    <div className="bg-slate-800/50 border border-sky-500/30 p-6 rounded-2xl relative overflow-hidden group/summary">
-                      <div className="absolute top-0 right-0 p-4 opacity-5">
-                        <Bot size={80} />
-                      </div>
-                      <div className="absolute inset-0 bg-sky-500/5 group-hover/summary:bg-sky-500/10 transition-all"></div>
+                    <div className="relative overflow-hidden rounded-2xl p-6 group/summary transition-all duration-500 bg-gradient-to-br from-[#eab308] via-[#f59e0b] to-[#d97706]">
 
-                      <div className="flex items-center justify-between mb-4 relative z-10">
-                        <h4 className="flex items-center gap-2 text-xs font-black text-sky-400 uppercase tracking-[0.2em]">
-                          <Bot size={16} /> Cure Executive Summary
+                      {/* Decorative Elements - Subtle Pattern */}
+                      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+                      <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/20 blur-[50px] rounded-full mix-blend-overlay"></div>
+
+                      <div className="absolute bottom-0 right-0 p-4 opacity-10 blur-[0.5px]">
+                        <Bot size={100} className="text-black" />
+                      </div>
+
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-6 relative z-10 border-b border-black/10 pb-4">
+                        <h4 className="flex items-center gap-3 text-sm font-black text-black uppercase tracking-[0.2em] drop-shadow-sm">
+                          <div className="p-1.5 bg-black/10 border border-black/5 rounded-lg shadow-inner">
+                            <Sparkles size={16} className="text-black" />
+                          </div>
+                          Cure Executive Summary
                         </h4>
                         {analysisResult.analysis?.digital_copy && (
                           <button
                             onClick={() => setShowDigitalCopy(true)}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-sky-500/30 hover:bg-sky-500/20 hover:border-sky-500/50 transition-all text-[10px] font-bold text-sky-300 uppercase tracking-wider"
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black/80 hover:bg-black text-amber-300 border border-black/10 transition-all text-[10px] font-bold uppercase tracking-wider shadow-lg hover:scale-105 active:scale-95"
                           >
-                            <FileText size={12} /> View Digital Copy
+                            <FileText size={14} weight="bold" /> View Digital Copy
                           </button>
                         )}
                       </div>
 
-                      <div className="text-slate-200 text-base leading-relaxed whitespace-pre-wrap font-medium relative z-10">
-                        {analysisResult.summary}
+                      {/* Content with Smart Highlighting */}
+                      <div className="text-slate-900 text-[15px] leading-relaxed relative z-10 font-medium">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            // Custom Text Processor for Highlighting
+                            p: ({ children }) => {
+                              const processText = (text) => {
+                                if (typeof text !== 'string') return text;
+                                // Split by Keywords AND Numerical Values
+                                const parts = text.split(/(\b(?:high|low|critical|abnormal|elevated)\b|\b\d+(?:\.\d+)?(?:\s?(?:mg\/dL|g\/dL|u\/L|%|cm|kg|lbs|mm\/Hg))?\b)/gi);
+                                return parts.map((part, i) => {
+                                  const lower = part.toLowerCase();
+
+                                  // High/Critical -> Solid Rose Badge (No Border)
+                                  if (['high', 'elevated', 'critical', 'abnormal'].includes(lower)) {
+                                    return <span key={i} className="inline-block bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded text-xs uppercase tracking-wide mx-0.5 transform -translate-y-px">{part}</span>;
+                                  }
+                                  // Low -> Solid Blue Badge (No Border)
+                                  if (lower === 'low') {
+                                    return <span key={i} className="inline-block bg-blue-600 text-white font-bold px-1.5 py-0.5 rounded text-xs uppercase tracking-wide mx-0.5 transform -translate-y-px">{part}</span>;
+                                  }
+                                  // Numbers/Values -> White Highlight (No Border)
+                                  if (/^\d/.test(part)) {
+                                    return <span key={i} className="bg-white/60 text-black font-black px-1 rounded mx-0.5">{part}</span>;
+                                  }
+                                  return part;
+                                });
+                              };
+
+                              return (
+                                <div className="mb-3 last:mb-0">
+                                  {React.Children.map(children, child => {
+                                    if (typeof child === 'string') return processText(child);
+                                    // Handle nested strong/em tags
+                                    if (child?.props?.children && typeof child.props.children === 'string') {
+                                      return React.cloneElement(child, { children: processText(child.props.children) });
+                                    }
+                                    return child;
+                                  })}
+                                </div>
+                              );
+                            },
+
+                            // Medical Terms (Bold) -> Extra Bold Black
+                            strong: ({ node, ...props }) => (
+                              <span className="font-black text-slate-900" {...props} />
+                            ),
+
+                            ul: ({ node, ...props }) => <ul className="space-y-3 my-4" {...props} />,
+
+                            li: ({ children }) => (
+                              <li className="flex gap-3 text-slate-900 bg-black/5 p-2 rounded-lg transition-colors">
+                                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-black shrink-0"></span>
+                                <span className="font-medium flex-1">{children}</span>
+                              </li>
+                            ),
+
+                            h1: ({ node, ...props }) => <h3 className="text-lg font-black text-black mt-4 mb-2 uppercase tracking-wide border-l-4 border-black pl-3" {...props} />,
+                            h2: ({ node, ...props }) => <h4 className="text-base font-bold text-black mt-3 mb-2 uppercase tracking-wide" {...props} />,
+                            h3: ({ node, ...props }) => <h5 className="text-sm font-bold text-black mt-2 mb-1 uppercase" {...props} />,
+                          }}
+                        >
+                          {analysisResult.summary}
+                        </ReactMarkdown>
                       </div>
                     </div>
                   )}
@@ -658,67 +730,111 @@ const CureAnalyzer = ({
                       )}
                     </div>
 
-                    <div className="relative">
-                      <h4 className="flex items-center gap-2 text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-4 opacity-70">
-                        <Pill size={12} /> Pharmacy Data extract
+                  </div>
+
+                  {/* Lab Results Section */}
+                  {(analysisResult.analysis?.test_results || []).length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="flex items-center gap-2 text-[10px] font-black text-sky-500 uppercase tracking-[0.2em] mb-4 opacity-70">
+                        <Activity size={12} /> Lab Findings
                       </h4>
-                      {(analysisResult.analysis?.medications || []).length >
-                        0 ? (
-                        <div className="space-y-3">
-                          {analysisResult.analysis.medications.map((med, i) => (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {analysisResult.analysis.test_results.map((test, i) => {
+                          const isAbnormal = test.status?.toLowerCase().includes('high') || test.status?.toLowerCase().includes('low') || test.status?.toLowerCase().includes('critical');
+                          return (
                             <div
                               key={i}
-                              className="flex flex-col text-slate-300 text-sm bg-slate-900 border border-slate-700 p-4 rounded-xl hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)] transition-all group/med"
+                              className={`flex flex-col p-4 rounded-xl border transition-all ${isAbnormal ? 'bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40' : 'bg-slate-900 border-slate-700 hover:border-sky-500/40'}`}
                             >
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="font-bold text-emerald-400 group-hover/med:text-emerald-300 flex items-center gap-2">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                                  {med.name || med.medicine_name || med.input || "Unknown Medicine"}
-                                  {med.is_corrected && (
-                                    <span className="flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                                      <Check size={10} /> Verified
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="flex gap-4 text-slate-500 font-mono text-xs">
-                                  <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
-                                    DSG: {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
+                              <div className="flex justify-between items-start mb-2">
+                                <span className={`font-bold text-sm ${isAbnormal ? 'text-rose-400' : 'text-slate-200'}`}>
+                                  {test.test_name}
+                                </span>
+                                {test.status && (
+                                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${isAbnormal ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
+                                    {test.status}
                                   </span>
-                                  <span className="w-px h-full bg-slate-800"></span>
-                                  <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
-                                    FRQ: {med.frequency}
-                                  </span>
-                                </div>
+                                )}
                               </div>
-
-                              {/* Alternative Medications Section */}
-                              {med.alternatives && med.alternatives.length > 0 && (
-                                <div className="mt-2 pl-4 border-l-2 border-slate-800">
-                                  <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">
-                                    Approved Alternatives:
-                                  </p>
-                                  <div className="flex flex-wrap gap-2">
-                                    {med.alternatives.map((alt, idx) => (
-                                      <span
-                                        key={idx}
-                                        className="text-xs bg-slate-800/50 text-slate-400 px-2 py-1 rounded hover:bg-slate-800 hover:text-sky-400 transition-colors cursor-help"
-                                        title="Generic/Alternative Option"
-                                      >
-                                        {alt}
-                                      </span>
-                                    ))}
-                                  </div>
+                              <div className="flex items-baseline gap-2">
+                                <span className="text-xl font-black text-white">{test.result_value}</span>
+                                <span className="text-xs text-slate-500 font-mono">{test.unit}</span>
+                              </div>
+                              {test.reference_range && (
+                                <div className="mt-2 text-[10px] text-slate-500 flex items-center gap-1">
+                                  <span>Ref:</span>
+                                  <span className="font-mono bg-slate-800 px-1.5 py-0.5 rounded text-slate-400">
+                                    {test.reference_range}
+                                  </span>
                                 </div>
                               )}
                             </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-slate-600 text-xs italic font-mono pl-2">
-                          -- No medications detected --
-                        </p>
-                      )}
+                          );
+                        })}
+                      </div>
                     </div>
+                  )}
+
+                  <div className="relative">
+                    <h4 className="flex items-center gap-2 text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-4 opacity-70">
+                      <Pill size={12} /> Pharmacy Data extract
+                    </h4>
+                    {(analysisResult.analysis?.medications || []).length >
+                      0 ? (
+                      <div className="space-y-3">
+                        {analysisResult.analysis.medications.map((med, i) => (
+                          <div
+                            key={i}
+                            className="flex flex-col text-slate-300 text-sm bg-slate-900 border border-slate-700 p-4 rounded-xl hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)] transition-all group/med"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="font-bold text-emerald-400 group-hover/med:text-emerald-300 flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                                {med.name || med.medicine_name || med.input || "Unknown Medicine"}
+                                {med.is_corrected && (
+                                  <span className="flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                                    <Check size={10} /> Verified
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex gap-4 text-slate-500 font-mono text-xs">
+                                <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
+                                  DSG: {med.dosage && typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage || 'N/A'}
+                                </span>
+                                <span className="w-px h-full bg-slate-800"></span>
+                                <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
+                                  FRQ: {med.frequency}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Alternative Medications Section */}
+                            {med.alternatives && med.alternatives.length > 0 && (
+                              <div className="mt-2 pl-4 border-l-2 border-slate-800">
+                                <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">
+                                  Approved Alternatives:
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {med.alternatives.map((alt, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="text-xs bg-slate-800/50 text-slate-400 px-2 py-1 rounded hover:bg-slate-800 hover:text-sky-400 transition-colors cursor-help"
+                                      title="Generic/Alternative Option"
+                                    >
+                                      {alt}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-slate-600 text-xs italic font-mono pl-2">
+                        -- No medications detected --
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
@@ -996,7 +1112,7 @@ const CureAnalyzer = ({
         )
       }
 
-    </div>
+    </div >
   );
 };
 

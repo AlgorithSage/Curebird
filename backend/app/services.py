@@ -280,15 +280,21 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
                         {
                             "type": "text", 
                             "text": """Analyze this medical image with high precision.
+                            Determine if it is a "prescription" or a "lab_report".
+                            
                             Extract the following data into strict JSON format:
                             {
                                 "is_medical": true,
+                                "document_type": "prescription | lab_report",
                                 "patient_name": "Full Name",
                                 "doctor_name": "Doctor Name (e.g. Dr. ...)",
                                 "hospital_name": "Hospital/Clinic Name",
                                 "date": "YYYY-MM-DD",
                                 "medications": [{"name": "Drug Name", "dosage": "...", "frequency": "..."}],
                                 "diseases": ["List of conditions/diagnoses"],
+                                "test_results": [
+                                    {"test_name": "Name (e.g. HbA1c)", "result_value": "Value", "unit": "Unit", "reference_range": "Range", "status": "Normal/High/Low"}
+                                ],
                                 "digital_copy": "Markdown text of document"
                             }
                             If it is likely NOT a medical image, set is_medical: false.
@@ -319,12 +325,14 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
             "date": structured_data.get("date", ""),
             "medications": structured_data.get("medications", []),
             "diseases": structured_data.get("diseases", []) or structured_data.get("conditions", []),
-            "digital_copy": structured_data.get("digital_copy", "")
+            "digital_copy": structured_data.get("digital_copy", ""),
+            "document_type": structured_data.get("document_type", "prescription"),
+            "test_results": structured_data.get("test_results", [])
         }
     except Exception as e:
         print(f"VLM ERROR (CRITICAL): {e}")
         # Return empty dict so logs show failure but app doesn't crash
-        return {"is_medical": False, "medications": [], "diseases": [], "digital_copy": ""}
+        return {"is_medical": False, "medications": [], "diseases": [], "digital_copy": "", "test_results": []}
 
 def verify_and_correct_medical_data(extracted_data):
     """
@@ -521,7 +529,7 @@ def analyze_comprehensive(file_stream):
         # Guardrail: Check if it's medical
         if not extracted_data.get('is_medical', True):
              return {
-                "analysis": {"medications": [], "diseases": []},
+                "analysis": {"medications": [], "diseases": [], "test_results": []},
                 "summary": "Please upload a valid medical document (e.g., prescription, lab report, or doctor's notes). I am programmed to only analyze medical records and cannot process non-medical images."
             }
             
@@ -531,24 +539,54 @@ def analyze_comprehensive(file_stream):
         verified_data = verify_and_correct_medical_data(extracted_data)
         
         # Phase 3: User-friendly Summary (Core 3)
+        # Phase 3: User-friendly Summary (Core 3)
+        if not verified_data['diseases'] and not verified_data['medications'] and not extracted_data.get('test_results'):
+            return {
+                "analysis": verified_data,
+                "summary": "We analyzed your document but couldn't detect any specific medical conditions, medications, or lab results. It appears to be a medical document, but the details might be unclear. Please try uploading a clearer image."
+            }
+
         client = Groq(api_key=analyzer_key)
         
-        summary_prompt = f"""
-        You are a friendly medical interpreter for a patient.
-        Given the following medically verified data, provide a very crisp, short, and empathetic summary.
-        
-        Validated Data:
-        Diseases/Conditions: {', '.join(verified_data['diseases'])}
-        Medications: {json.dumps(verified_data['medications'])}
-        
-        Instructions:
-        - Explain clinical terms (e.g., 'CAD' becomes 'heart artery blockage').
-        - If corrections were made by the system (e.g. spelling fixed), mention that the AI verified the prescription.
-        - Be encouraging but professional.
-        - Maximum 3-4 bullet points.
-        - End with a small disclaimer.
-        - Reference the 'Alternatives' if available, saying 'Generic alternatives have been identified'.
-        """
+        # Branching Logic based on Document Type
+        doc_type = extracted_data.get('document_type', 'prescription')
+
+        if doc_type == 'lab_report':
+            summary_prompt = f"""
+            You are a smart Medical Lab Assistant.
+            Analyze these Lab Results and explain them to the patient in simple terms.
+
+            Patient Data:
+            Test Results: {json.dumps(extracted_data.get('test_results', []))}
+            Inferred Conditions: {', '.join(verified_data['diseases'])}
+
+            Instructions:
+            - **Identify the abnormal results** (High/Low) and explain what they mean (e.g. "Your Cholesterol is high, which means...").
+            - **Decode Jargon**: Explain terms like 'HbA1c', 'TSH', 'Lipid Profile', 'CBC' in one sentence each.
+            - **Be Reassuring**: If values are normal, say "Everything looks good."
+            - **Format**:
+              * **Key Findings**: [Bullet points of abnormal values]
+              * **Understanding Your Report**: [Brief explanation of the test types]
+            - Keep it short (max 150 words).
+            """
+        else:
+            # Default Prescription Mode
+            summary_prompt = f"""
+            You are a friendly medical interpreter for a patient.
+            Given the following medically verified data, provide a very crisp, short, and empathetic summary.
+            
+            Validated Data:
+            Diseases/Conditions: {', '.join(verified_data['diseases'])}
+            Medications: {json.dumps(verified_data['medications'])}
+            
+            Instructions:
+            - Explain clinical terms in simple language (e.g., 'Hypertension' -> 'High Blood Pressure').
+            - If corrections were made by the system (e.g. spelling fixed), mention that the AI verified the prescription.
+            - Be encouraging but professional.
+            - Maximum 3-4 bullet points.
+            - End with a small disclaimer.
+            - Reference the 'Alternatives' if available, saying 'Generic alternatives have been identified'.
+            """
         
         summary_completion = client.chat.completions.create(
             model="llama-3.1-8b-instant",

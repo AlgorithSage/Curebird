@@ -10,10 +10,19 @@ import {
     orderBy,
     limit,
     serverTimestamp,
-    deleteDoc
+    deleteDoc,
+    setDoc
 } from 'firebase/firestore';
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL,
+    listAll,
+    deleteObject,
+    getMetadata
+} from 'firebase/storage';
 import { API_BASE_URL } from '../config';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 
 /**
  * Service to handle Disease-Centric Data interactions.
@@ -226,6 +235,77 @@ export const DiseaseService = {
             }
         } catch (error) {
             console.error("Error linking record:", error);
+            throw error;
+        }
+    },
+
+    /**
+     * Upload a document for a specific disease condition.
+     * @param {string} userId
+     * @param {string} diseaseId
+     * @param {File} file
+     * @returns {Promise<object>} Metadata of uploaded file
+     */
+    async uploadDocument(userId, diseaseId, file) {
+        try {
+            // 1. Upload to Storage
+            const storagePath = `users/${userId}/diseases/${diseaseId}/${Date.now()}_${file.name}`;
+            const storageRef = ref(storage, storagePath);
+            await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(storageRef);
+
+            // 2. Save Metadata to Firestore
+            // We store metadata in a subcollection so we can query/sort/filter easily
+            const docRef = await addDoc(collection(db, 'users', userId, 'diseases', diseaseId, 'documents'), {
+                name: file.name,
+                url: downloadURL,
+                storagePath: storagePath,
+                type: file.type,
+                size: file.size,
+                uploadedAt: serverTimestamp()
+            });
+
+            return { id: docRef.id, name: file.name, url: downloadURL };
+        } catch (error) {
+            console.error("Error uploading document:", error);
+            throw error;
+        }
+    },
+
+    /**
+     * Get list of documents for a disease.
+     * @param {string} userId 
+     * @param {string} diseaseId 
+     */
+    async getDocuments(userId, diseaseId) {
+        try {
+            const docsRef = collection(db, 'users', userId, 'diseases', diseaseId, 'documents');
+            const q = query(docsRef, orderBy('uploadedAt', 'desc'));
+            const snapshot = await getDocs(q);
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        } catch (error) {
+            console.error("Error fetching documents:", error);
+            throw error;
+        }
+    },
+
+    /**
+     * Delete a document.
+     * @param {string} userId 
+     * @param {string} diseaseId 
+     * @param {string} docId 
+     * @param {string} storagePath 
+     */
+    async deleteDocument(userId, diseaseId, docId, storagePath) {
+        try {
+            // 1. Delete from Storage
+            const storageRef = ref(storage, storagePath);
+            await deleteObject(storageRef);
+
+            // 2. Delete from Firestore
+            await deleteDoc(doc(db, 'users', userId, 'diseases', diseaseId, 'documents', docId));
+        } catch (error) {
+            console.error("Error deleting document:", error);
             throw error;
         }
     }
