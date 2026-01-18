@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Mic, MicOff, Video, VideoOff, PhoneOff, Monitor,
     MoreVertical, FileText, Pill, Activity, ChevronRight,
-    Wifi, Users, Clock, Shield, Zap, AlertCircle, PhoneIncoming, Check, X, Save, Loader
+    Wifi, Users, Clock, Shield, Zap, AlertCircle, PhoneIncoming, Check, X, Save, Loader, Copy
  } from '../components/Icons';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -13,6 +13,8 @@ const TelehealthSession = ({ user, patients = [] }) => {
     const [isVideoOff, setIsVideoOff] = useState(false);
     const [activeSideTab, setActiveSideTab] = useState('notes');
     const [duration, setDuration] = useState(0);
+    const [meetLink, setMeetLink] = useState(null);
+    const [isCreatingMeet, setIsCreatingMeet] = useState(false);
 
     // Note State
     const [noteContent, setNoteContent] = useState('');
@@ -47,51 +49,16 @@ const TelehealthSession = ({ user, patients = [] }) => {
         };
     }, []);
 
-    // Initialize WebRTC Call (Create Offer)
+    // Initialize Google Meet (Mock)
     const createCall = async () => {
-        if (!stream) {
-            console.error("Local stream not ready yet.");
-            alert("Please allow camera access and wait for the video feed to appear.");
-            return;
-        }
-
-        const servers = {
-            iceServers: [
-                {
-                    urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
-                },
-            ],
-            iceCandidatePoolSize: 10,
-        };
-        const newPc = new RTCPeerConnection(servers);
-        setPc(newPc);
-
-        // Push tracks from local stream to peer connection
-        stream.getTracks().forEach((track) => {
-            newPc.addTrack(track, stream);
-        });
-
-        // Create the call document in Firestore
-        const callDoc = collection(db, 'calls');
-        const callRef = await addDoc(callDoc, {
-            date: serverTimestamp(),
-            doctorId: user?.uid || 'unknown',
-        });
-        const callId = callRef.id;
-        setCallId(callId);
-
-        // Create Offer
-        const offerDescription = await newPc.createOffer();
-        await newPc.setLocalDescription(offerDescription);
-
-        const offer = {
-            sdp: offerDescription.sdp,
-            type: offerDescription.type,
-        };
-
-        await addDoc(collection(db, `calls/${callId}/offer`), { offer });
-
-        console.log("Call Created with ID:", callId);
+        setIsCreatingMeet(true);
+        // Simulate API delay
+        setTimeout(() => {
+            const mockMeetId = "abc-defg-hij";
+            setCallId(mockMeetId);
+            setMeetLink(`meet.google.com/${mockMeetId}`);
+            setIsCreatingMeet(false);
+        }, 1500);
     };
 
     // Toggle Handlers
@@ -239,24 +206,34 @@ const TelehealthSession = ({ user, patients = [] }) => {
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col">
                             <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
-                                {callId ? "Waiting for Patient..." : "Start Telehealth Session"}
-                                {callId && <span className="px-2 py-0.5 rounded text-[10px] bg-red-500 text-white font-black uppercase tracking-widest animate-pulse">LIVE SIGNAL</span>}
+                                {meetLink ? "Google Meet Session Active" : "Start Google Meet"}
+                                {meetLink && <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500 text-black font-black uppercase tracking-widest animate-pulse">SECURED</span>}
                             </h2>
-                            <p className="text-xs text-amber-500/70 font-bold uppercase tracking-widest mt-1 flex items-center gap-2">
-                                <Wifi size={12} /> {callId ? `Session ID: ${callId}` : (stream ? "Secure HD Connection Ready" : "Initializing Camera...")}
-                            </p>
-                            {!callId && (
-                                <button
-                                    onClick={createCall}
-                                    disabled={!stream}
-                                    className={`mt-2 text-xs px-3 py-1 font-bold rounded transition-all ${
-                                        stream
-                                        ? 'bg-amber-500 text-black hover:bg-amber-400'
-                                        : 'bg-stone-800 text-stone-500 cursor-not-allowed'
-                                    }`}
-                                >
-                                    {stream ? "Initiate Connection" : "Waiting for Media..."}
-                                </button>
+                            
+                            {meetLink ? (
+                                <div className="mt-2 flex items-center gap-3 p-2 rounded-lg bg-stone-800/80 border border-white/10 backdrop-blur-md">
+                                    <div className="flex items-center gap-2 px-2">
+                                        <Video size={14} className="text-emerald-400" weight="fill" />
+                                        <span className="text-xs font-mono text-emerald-100 tracking-wide">{meetLink}</span>
+                                    </div>
+                                    <button className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-stone-400 hover:text-white">
+                                        <Copy size={14} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col gap-1 mt-1">
+                                    <p className="text-xs text-stone-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                                        <Shield size={12} className="text-amber-500" /> End-to-End Encrypted
+                                    </p>
+                                    <button 
+                                        onClick={createCall}
+                                        disabled={isCreatingMeet}
+                                        className="mt-3 flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-5 py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/10 disabled:opacity-50 disabled:cursor-wait"
+                                    >
+                                        <Video size={16} weight="fill" />
+                                        {isCreatingMeet ? "Creating Room..." : "Create Google Meet Room"}
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </div>
