@@ -48,22 +48,29 @@ const Background = () => {
         <div className="absolute bottom-0 h-1/3 w-full bg-gradient-to-t from-slate-900/20 to-transparent" />
       </div>
 
-      {/* Animated Orbs */}
-      <div className="absolute inset-0">
-        {visibleOrbs.map((orb, i) => (
-          <div
-            key={i}
-            className={`absolute rounded-full blur-2xl ${orb.color} ${isMobile ? 'opacity-40' : ''}`}
-            style={{
-              width: isMobile ? orb.size / 1.5 : orb.size,
-              height: isMobile ? orb.size / 1.5 : orb.size,
-              animation: `${orb.anim} ${isMobile ? '40s' : '20s'} ease-in-out infinite`,
-              willChange: i < 3 ? "transform" : "auto", // Only hint top 3 for mobile
-              ...orb
-            }}
-          />
-        ))}
-      </div>
+      {/* Animated Orbs - Desktop Only for Performance */}
+      {!isMobile && (
+        <div className="absolute inset-0">
+          {visibleOrbs.map((orb, i) => (
+            <div
+              key={i}
+              className={`absolute rounded-full blur-2xl ${orb.color}`}
+              style={{
+                width: orb.size,
+                height: orb.size,
+                animation: `${orb.anim} 20s ease-in-out infinite`,
+                willChange: "transform",
+                ...orb
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Mobile Optimized Static Accent */}
+      {isMobile && (
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-amber-500/5 to-slate-900/20" />
+      )}
 
       {/* Glass overlay */}
       <div className="absolute inset-0 backdrop-blur-[2px] bg-white/[0.02]" />
