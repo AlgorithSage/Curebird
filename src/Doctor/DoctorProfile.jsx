@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  User, Shield, Stethoscope, Mail, Phone, Award, ToggleLeft, ToggleRight, Copy  } from '../components/Icons';
+import {  User, Shield, Stethoscope, Mail, Phone, Award, ToggleLeft, ToggleRight, Copy, Video, CheckCircle  } from '../components/Icons';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase'; // Ensure correct import path
 
@@ -44,6 +44,18 @@ const DoctorProfile = ({ user }) => {
             setConnectionCode(user.connectionCode);
         }
     }, [user]);
+
+    const linkGoogle = async () => {
+        try {
+            const res = await fetch('http://localhost:5001/auth/google');
+            const data = await res.json();
+            if (data.url) window.location.href = data.url;
+            else alert("Backend not configured properly. See console.");
+        } catch (e) {
+            console.error(e);
+            alert("Failed to connect to backend (Port 5001).");
+        }
+    };
 
     return (
         <div className="max-w-4xl mx-auto space-y-8">
@@ -103,6 +115,15 @@ const DoctorProfile = ({ user }) => {
                             </div>
                         )}
                     </button>
+                </div>
+
+                {/* Google Consulation Link */}
+                <div className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-black/40 border border-white/5 ml-4 group/gmeet relative overflow-hidden cursor-pointer" onClick={linkGoogle}>
+                     <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover/gmeet:opacity-100 transition-opacity"/>
+                     <span className="text-xs font-bold text-slate-400 uppercase tracking-wider group-hover/gmeet:text-blue-400 transition-colors">G-Meet</span>
+                     <div className="p-2 rounded-xl bg-white/5 group-hover/gmeet:bg-blue-500 group-hover/gmeet:text-white transition-all text-slate-400">
+                        <Video size={20} weight="fill" />
+                     </div>
                 </div>
             </div>
 

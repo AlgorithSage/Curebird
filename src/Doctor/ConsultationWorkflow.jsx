@@ -49,16 +49,35 @@ const TelehealthSession = ({ user, patients = [] }) => {
         };
     }, []);
 
-    // Initialize Google Meet (Mock)
+    // Initialize Google Meet (REAL BACKEND)
     const createCall = async () => {
         setIsCreatingMeet(true);
-        // Simulate API delay
-        setTimeout(() => {
-            const mockMeetId = "abc-defg-hij";
-            setCallId(mockMeetId);
-            setMeetLink(`meet.google.com/${mockMeetId}`);
+        try {
+            // Using Port 5001 (Backend)
+            const res = await fetch('http://localhost:5001/create-meet', { method: 'POST' });
+            const data = await res.json();
+
+            if (data.meetLink) {
+                setMeetLink(data.meetLink);
+                setCallId("gmeet-active"); // Placeholder ID
+            } else {
+                console.error("Backend Error:", data);
+                // Fallback to Mock if backend fails (Graceful degradation for demo)
+                const mockMeetId = "demo-mode-" + Date.now().toString().slice(-4);
+                setCallId(mockMeetId);
+                setMeetLink(`meet.google.com/${mockMeetId}`);
+                alert("Backend Connection Failed. Switched to Demo Mode.\n(Check console for details)");
+            }
+        } catch (err) {
+            console.error("Network Error:", err);
+            // Fallback
+             const mockMeetId = "offline-demo-" + Date.now().toString().slice(-4);
+             setCallId(mockMeetId);
+             setMeetLink(`meet.google.com/${mockMeetId}`);
+             alert("Backend Unreachable. Switched to Demo Mode.");
+        } finally {
             setIsCreatingMeet(false);
-        }, 1500);
+        }
     };
 
     // Toggle Handlers
