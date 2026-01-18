@@ -27,50 +27,68 @@ const ORBS = [
 const Background = () => {
   const [isMobile, setIsMobile] = React.useState(false);
 
+  // ✅ Mobile optimisation logic (debounced resize + fewer/lighter orbs)
   React.useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+
+    let timeoutId;
+    const onResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(checkMobile, 200);
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
-  // Only show 6 orbs on mobile instead of 20
-  const visibleOrbs = isMobile ? ORBS.slice(0, 6) : ORBS;
+  // ✅ Mobile optimization: ORBS disabled entirely
+  const visibleOrbs = isMobile ? [] : ORBS;
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden">
       {/* Base gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-slate-950 to-blue-950" />
+      <div
+        className={`absolute inset-0 ${isMobile
+            ? "bg-slate-950" // Static bluish-black for mobile
+            : "bg-gradient-to-br from-neutral-950 via-black to-slate-950"
+          }`}
+      />
 
-      {/* Accent lighting */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 h-1/3 w-full bg-gradient-to-b from-blue-900/20 to-transparent" />
-        <div className="absolute bottom-0 h-1/3 w-full bg-gradient-to-t from-slate-900/20 to-transparent" />
-      </div>
-
-      {/* Animated Orbs - Desktop Only for Performance */}
+      {/* Accent lighting - Desktop Only */}
       {!isMobile && (
-        <div className="absolute inset-0">
-          {visibleOrbs.map((orb, i) => (
-            <div
-              key={i}
-              className={`absolute rounded-full blur-2xl ${orb.color}`}
-              style={{
-                width: orb.size,
-                height: orb.size,
-                animation: `${orb.anim} 20s ease-in-out infinite`,
-                willChange: "transform",
-                ...orb
-              }}
-            />
-          ))}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 h-1/3 w-full bg-gradient-to-b from-white/5 to-transparent" />
+          <div className="absolute bottom-0 h-1/3 w-full bg-gradient-to-t from-black/60 to-transparent" />
         </div>
       )}
 
-      {/* Mobile Optimized Static Accent */}
-      {isMobile && (
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-amber-500/5 to-slate-900/20" />
-      )}
+      {/* Animated Orbs */}
+      <div className="absolute inset-0">
+        {visibleOrbs.map((orb, i) => (
+          <div
+            key={i}
+            className={`absolute rounded-full blur-2xl ${orb.color} ${isMobile ? "opacity-40" : ""}`}
+            style={{
+              width: isMobile ? orb.size / 1.5 : orb.size,
+              height: isMobile ? orb.size / 1.5 : orb.size,
+
+              top: orb.top,
+              left: orb.left,
+              right: orb.right,
+              bottom: orb.bottom,
+
+              animation: `${orb.anim} ${isMobile ? "40s" : "20s"} ease-in-out infinite`,
+
+              // ✅ lighter GPU hinting on mobile
+              willChange: isMobile ? (i < 2 ? "transform" : "auto") : "transform",
+            }}
+          />
+        ))}
+      </div>
 
       {/* Glass overlay */}
       <div className="absolute inset-0 backdrop-blur-[2px] bg-white/[0.02]" />
@@ -78,7 +96,7 @@ const Background = () => {
       {/* Vignette */}
       <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/25" />
 
-      <style>{`
+      <style jsx>{`
         @media (prefers-reduced-motion: reduce) {
           div[style*="animation"] {
             animation: none !important;
@@ -86,84 +104,184 @@ const Background = () => {
         }
 
         @keyframes float1 {
-          0%,100% { transform: translate3d(0,0,0) scale(1); }
-          50% { transform: translate3d(300px,-200px,0) scale(1.1); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0) scale(1);
+          }
+          50% {
+            transform: translate3d(300px, -200px, 0) scale(1.1);
+          }
         }
         @keyframes float2 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(-250px,200px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(-250px, 200px, 0);
+          }
         }
         @keyframes float3 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(-100px,-300px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(-100px, -300px, 0);
+          }
         }
         @keyframes float4 {
-          0%,100% { transform: translate3d(0,0,0) scale(1); }
-          50% { transform: translate3d(200px,-150px,0) scale(0.9); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0) scale(1);
+          }
+          50% {
+            transform: translate3d(200px, -150px, 0) scale(0.9);
+          }
         }
         @keyframes float5 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(180px,-260px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(180px, -260px, 0);
+          }
         }
         @keyframes float6 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(280px,240px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(280px, 240px, 0);
+          }
         }
         @keyframes float7 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(-200px,-150px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(-200px, -150px, 0);
+          }
         }
         @keyframes float8 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(-250px,-180px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(-250px, -180px, 0);
+          }
         }
         @keyframes float9 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(-300px,200px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(-300px, 200px, 0);
+          }
         }
         @keyframes float10 {
-          0%,100% { transform: translate3d(0,0,0) scale(1); }
-          50% { transform: translate3d(200px,200px,0) scale(0.85); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0) scale(1);
+          }
+          50% {
+            transform: translate3d(200px, 200px, 0) scale(0.85);
+          }
         }
         @keyframes float11 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(-220px,180px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(-220px, 180px, 0);
+          }
         }
         @keyframes float12 {
-          0%,100% { transform: translate3d(0,0,0) scale(1); }
-          50% { transform: translate3d(160px,-140px,0) scale(1.15); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0) scale(1);
+          }
+          50% {
+            transform: translate3d(160px, -140px, 0) scale(1.15);
+          }
         }
         @keyframes float13 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(180px,-220px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(180px, -220px, 0);
+          }
         }
         @keyframes float14 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(140px,180px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(140px, 180px, 0);
+          }
         }
         @keyframes float15 {
-          0%,100% { transform: translate3d(0,0,0) scale(1); }
-          50% { transform: translate3d(-200px,-160px,0) scale(1.1); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0) scale(1);
+          }
+          50% {
+            transform: translate3d(-200px, -160px, 0) scale(1.1);
+          }
         }
         @keyframes float16 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(-180px,220px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(-180px, 220px, 0);
+          }
         }
         @keyframes float17 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(240px,-180px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(240px, -180px, 0);
+          }
         }
         @keyframes float18 {
-          0%,100% { transform: translate3d(0,0,0) scale(1); }
-          50% { transform: translate3d(-160px,-200px,0) scale(0.9); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0) scale(1);
+          }
+          50% {
+            transform: translate3d(-160px, -200px, 0) scale(0.9);
+          }
         }
         @keyframes float19 {
-          0%,100% { transform: translate3d(0,0,0); }
-          50% { transform: translate3d(200px,160px,0); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(200px, 160px, 0);
+          }
         }
         @keyframes float20 {
-          0%,100% { transform: translate3d(0,0,0) scale(1); }
-          50% { transform: translate3d(-240px,-140px,0) scale(1.2); }
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0) scale(1);
+          }
+          50% {
+            transform: translate3d(-240px, -140px, 0) scale(1.2);
+          }
         }
       `}</style>
     </div>

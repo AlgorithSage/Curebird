@@ -46,6 +46,25 @@ body {
   background-color: #334155;
 }
 
+/* --- MOBILE OPTIMIZATIONS --- */
+@media (max-width: 768px) {
+  /* Disable heavy border animations on mobile */
+  .glass-card::before,
+  .animated-border::before,
+  .glass-card:hover::before,
+  .rotating-amber-border {
+    animation: none !important;
+    opacity: 0.3 !important; /* Static, subtle border instead */
+    transition: none !important;
+  }
+  
+  /* Ensure smooth scrolling is enforced */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* Add this to the bottom of src/index.css */
 @layer utilities {
   .animate-gradient-xy {

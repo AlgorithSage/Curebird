@@ -56,7 +56,7 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
 
                 <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
                     {/* Pill Label */}
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-bold mb-6 animate-pulse">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-bold mb-6 md:animate-pulse">
                         <Activity size={16} /> LIVE TRACKER
                     </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { AnimatePresence, motion } from 'framer-motion';
-import {  Pill, Plus, Stethoscope, Hospital  } from './Icons';
+import { Pill, Plus, Stethoscope, Hospital } from './Icons';
 
 import Header from './Header';
 import { SkeletonCard } from './SkeletonLoaders';
@@ -20,7 +20,7 @@ const MedicationCard = ({ med, records }) => (
                 <p className="text-sm font-medium text-slate-300">{med.frequency}</p>
             </div>
             <div className="text-xs font-bold text-black bg-yellow-400 px-3 py-1 rounded-full shadow-lg shadow-yellow-400/20">
-                {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
+                {med.dosage && typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : (med.dosage || 'N/A')}
             </div>
         </div>
 
