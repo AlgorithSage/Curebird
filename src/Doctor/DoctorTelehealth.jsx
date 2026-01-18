@@ -232,61 +232,88 @@ const DoctorTelehealth = ({ onNavigate, patients = [] }) => {
                             initial={{ opacity: 0, y: 5 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -5 }}
-                            className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+                            className="space-y-12 pb-8"
                         >
-                            {/* Same Overview Layout as before */}
-                             <div className="lg:col-span-2 space-y-8">
-                                <div className="glass-card p-8 rounded-[2rem] bg-[#080705] border border-white/5 relative overflow-hidden h-full">
-                                    <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                                    <h3 className="text-white font-bold mb-6 flex items-center gap-3 text-lg">
-                                        <Clock size={20} className="text-amber-400" /> Today's Video Queue
-                                    </h3>
-                                    <div className="space-y-4 relative z-10">
-                                        <AnimatePresence>
-                                            {upcomingAppts.map(appt => (
-                                                <AppointmentCard key={appt.id} appt={appt} type="upcoming" onAction={handleAction} />
-                                            ))}
-                                        </AnimatePresence>
-                                        {upcomingAppts.length === 0 && <p className="text-stone-600 text-sm font-medium italic">No video sessions scheduled for today.</p>}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                {/* Left: Today's Agenda */}
+                                <div className="lg:col-span-2 h-full">
+                                    <div className="glass-card p-8 rounded-[2rem] bg-[#080705] border border-white/5 relative overflow-hidden h-full min-h-[400px]">
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                                        <h3 className="text-white font-bold mb-6 flex items-center gap-3 text-lg">
+                                            <Clock size={20} className="text-amber-400" /> Today's Video Queue
+                                        </h3>
+                                        <div className="space-y-4 relative z-10">
+                                            <AnimatePresence>
+                                                {upcomingAppts.map(appt => (
+                                                    <AppointmentCard key={appt.id} appt={appt} type="upcoming" onAction={handleAction} />
+                                                ))}
+                                            </AnimatePresence>
+                                            {upcomingAppts.length === 0 && <p className="text-stone-600 text-sm font-medium italic">No video sessions scheduled for today.</p>}
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Stats */}
-                                <div className="grid grid-cols-3 gap-6">
-                                    <div className="p-6 rounded-[2rem] bg-stone-900/40 border border-white/5 text-center group hover:bg-stone-900/60 transition-colors">
-                                        <h4 className="text-3xl font-black text-white group-hover:text-amber-500 transition-colors">8</h4>
-                                        <p className="text-[10px] text-stone-500 uppercase font-black tracking-[0.2em] mt-2">Completed</p>
-                                    </div>
-                                    <div className="p-6 rounded-[2rem] bg-stone-900/40 border border-white/5 text-center group hover:bg-stone-900/60 transition-colors">
-                                        <h4 className="text-3xl font-black text-amber-400">{requests.length}</h4>
-                                        <p className="text-[10px] text-stone-500 uppercase font-black tracking-[0.2em] mt-2">Pending</p>
-                                    </div>
-                                    <div className="p-6 rounded-[2rem] bg-stone-900/40 border border-white/5 text-center group hover:bg-stone-900/60 transition-colors">
-                                        <h4 className="text-3xl font-black text-rose-500">1</h4>
-                                        <p className="text-[10px] text-stone-500 uppercase font-black tracking-[0.2em] mt-2">Missed</p>
+                                {/* Right: Quick Requests Preview */}
+                                <div className="h-full">
+                                    <div className="glass-card p-8 rounded-[2rem] bg-[#0c0a05] border border-white/5 h-full relative flex flex-col">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <h3 className="text-white font-bold flex items-center gap-2">
+                                                <AlertCircle size={20} className="text-amber-500" /> New Requests
+                                            </h3>
+                                            <button
+                                                onClick={() => setActiveTab('requests')}
+                                                className="text-[10px] text-amber-500 hover:text-amber-300 font-black uppercase tracking-widest"
+                                            >
+                                                View All
+                                            </button>
+                                        </div>
+                                        <div className="space-y-4 flex-1">
+                                            <AnimatePresence>
+                                                {requests.slice(0, 2).map(req => (
+                                                    <AppointmentCard key={req.id} appt={req} type="request" onAction={handleAction} />
+                                                ))}
+                                            </AnimatePresence>
+                                            {requests.length === 0 && (
+                                                <div className="h-full flex flex-col items-center justify-center text-stone-600 space-y-2 opacity-50">
+                                                    <div className="p-3 bg-white/5 rounded-full">
+                                                        <CheckCircle size={24} />
+                                                    </div>
+                                                    <p className="text-xs font-bold uppercase tracking-widest">All Caught Up</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                             {/* Quick Widget */}
-                             <div className="glass-card p-8 rounded-[2rem] bg-[#0c0a05] border border-white/5 h-fit relative">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-white font-bold flex items-center gap-2">
-                                        <AlertCircle size={20} className="text-amber-500" /> New Requests
-                                    </h3>
-                                    <button
-                                        onClick={() => setActiveTab('requests')}
-                                        className="text-[10px] text-amber-500 hover:text-amber-300 font-black uppercase tracking-widest"
-                                    >
-                                        View All
-                                    </button>
+                            {/* Stats Mockup - Shifted to Bottom */}
+                            {/* Stats Mockup - Amber Theme */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {/* Completed - Emerald Green Glass */}
+                                <div className="p-10 rounded-[2.5rem] bg-[#051a05] border border-emerald-500/20 text-center group hover:border-emerald-500/50 hover:bg-[#0a2a0a] transition-all relative overflow-hidden shadow-2xl">
+                                    <h4 className="text-6xl font-black text-emerald-400 group-hover:text-emerald-300 transition-colors relative z-10">8</h4>
+                                    <p className="text-xs text-emerald-500/50 uppercase font-black tracking-[0.3em] mt-2 relative z-10">Completed</p>
+                                    <div className="absolute -bottom-6 -right-6 text-emerald-500/5 rotate-12">
+                                        <CheckCircle size={100} weight="fill" />
+                                    </div>
                                 </div>
-                                <div className="space-y-4">
-                                    <AnimatePresence>
-                                        {requests.slice(0, 2).map(req => (
-                                            <AppointmentCard key={req.id} appt={req} type="request" onAction={handleAction} />
-                                        ))}
-                                    </AnimatePresence>
+
+                                {/* Pending - Amber Glass */}
+                                <div className="p-10 rounded-[2.5rem] bg-[#1a1405] border border-amber-500/20 text-center group hover:border-amber-500/50 hover:bg-[#2a2008] transition-all relative overflow-hidden shadow-2xl">
+                                    <h4 className="text-6xl font-black text-amber-400 group-hover:text-amber-300 transition-colors relative z-10">{requests.length}</h4>
+                                    <p className="text-xs text-amber-500/50 uppercase font-black tracking-[0.3em] mt-2 relative z-10">Pending</p>
+                                    <div className="absolute -bottom-6 -right-6 text-amber-500/5 rotate-12">
+                                        <Clock size={100} weight="fill" />
+                                    </div>
+                                </div>
+
+                                {/* Missed - Rose Glass (Consistent Style) */}
+                                <div className="p-10 rounded-[2.5rem] bg-[#1a0505] border border-rose-500/20 text-center group hover:border-rose-500/50 hover:bg-[#2a0808] transition-all relative overflow-hidden shadow-2xl">
+                                    <h4 className="text-6xl font-black text-rose-500 group-hover:text-rose-400 transition-colors relative z-10">1</h4>
+                                    <p className="text-xs text-rose-500/50 uppercase font-black tracking-[0.3em] mt-2 relative z-10">Missed</p>
+                                    <div className="absolute -bottom-6 -right-6 text-rose-500/5 rotate-12">
+                                        <AlertCircle size={100} weight="fill" />
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
