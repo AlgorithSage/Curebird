@@ -49,6 +49,12 @@ const TelehealthSession = ({ user, patients = [] }) => {
 
     // Initialize WebRTC Call (Create Offer)
     const createCall = async () => {
+        if (!stream) {
+            console.error("Local stream not ready yet.");
+            alert("Please allow camera access and wait for the video feed to appear.");
+            return;
+        }
+
         const servers = {
             iceServers: [
                 {
@@ -237,11 +243,19 @@ const TelehealthSession = ({ user, patients = [] }) => {
                                 {callId && <span className="px-2 py-0.5 rounded text-[10px] bg-red-500 text-white font-black uppercase tracking-widest animate-pulse">LIVE SIGNAL</span>}
                             </h2>
                             <p className="text-xs text-amber-500/70 font-bold uppercase tracking-widest mt-1 flex items-center gap-2">
-                                <Wifi size={12} /> {callId ? `Session ID: ${callId}` : "Secure HD Connection Ready"}
+                                <Wifi size={12} /> {callId ? `Session ID: ${callId}` : (stream ? "Secure HD Connection Ready" : "Initializing Camera...")}
                             </p>
                             {!callId && (
-                                <button onClick={createCall} className="mt-2 text-xs bg-amber-500 text-black px-3 py-1 font-bold rounded hover:bg-amber-400">
-                                    Initiate Connection
+                                <button
+                                    onClick={createCall}
+                                    disabled={!stream}
+                                    className={`mt-2 text-xs px-3 py-1 font-bold rounded transition-all ${
+                                        stream
+                                        ? 'bg-amber-500 text-black hover:bg-amber-400'
+                                        : 'bg-stone-800 text-stone-500 cursor-not-allowed'
+                                    }`}
+                                >
+                                    {stream ? "Initiate Connection" : "Waiting for Media..."}
                                 </button>
                             )}
                         </div>

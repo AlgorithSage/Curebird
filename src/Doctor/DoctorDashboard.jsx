@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Users, Calendar, Activity, ClipboardList, FilePlus,
     Microscope, Siren, LayoutDashboard, Search, ArrowRight,
-    Stethoscope, FileText, Settings, HelpCircle
+    Stethoscope, FileText, Settings, HelpCircle, Video
  } from '../components/Icons';
 import { collection, query, onSnapshot, orderBy, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -16,7 +16,8 @@ import PatientManagement from './PatientManagement';
 import ConsultationWorkflow from './ConsultationWorkflow';
 import DoctorProfile from './DoctorProfile';
 import PatientWorkspace from './PatientWorkspace';
-import AppointmentManager from './AppointmentManager';
+import DoctorTelehealth from './DoctorTelehealth';
+
 import MedicalRecordManager from './MedicalRecordManager';
 import DoctorAnalytics from './DoctorAnalytics';
 import DoctorChat from './chat/DoctorChat';
@@ -465,10 +466,11 @@ const DoctorDashboard = ({ user }) => {
         }
 
         // 2. Appointment Manager (Sub-views)
-        if (activeView.startsWith('appointments_') && activeView !== 'appointments_group') {
-            const subView = activeView.split('_')[1]; // overview, requests, schedule
-            return <AppointmentManager view={subView} patients={patients} onNavigate={handleNavigate} />;
-        }
+        // 2. Appointment Manager (Sub-views) - DEPRECATED / REMOVED
+        // if (activeView.startsWith('appointments_') && activeView !== 'appointments_group') {
+        //     const subView = activeView.split('_')[1]; // overview, requests, schedule
+        //     return <AppointmentManager view={subView} patients={patients} onNavigate={handleNavigate} />;
+        // }
 
         // 3. Fallback/Direct views
         switch (activeView) {
@@ -493,7 +495,7 @@ const DoctorDashboard = ({ user }) => {
                 setWorkspacePatient(p);
                 setActiveView('patient_workspace');
             }} />;
-            case 'appointments_group': return <AppointmentManager view="overview" patients={patients} onNavigate={handleNavigate} />;
+            case 'telehealth': return <DoctorTelehealth onNavigate={handleNavigate} patients={patients} />;
             case 'consultations': return <ConsultationWorkflow user={user} patients={patients} />;
             case 'medical_records': return <MedicalRecordManager user={user} onAddAction={(type) => {
                 if (type === 'prescription') setIsPrescriptionModalOpen(true);
@@ -654,7 +656,7 @@ const DoctorDashboard = ({ user }) => {
                     navItems={[
                         { name: 'Dashboard', id: 'dashboard', icon: <LayoutDashboard size={20} /> },
                         { name: 'My Patients', id: 'patients', icon: <Users size={20} /> },
-                        { name: 'Appointments', id: 'appointments_group', icon: <Calendar size={20} /> },
+                        { name: 'Telehealth', id: 'telehealth', icon: <Video size={20} /> },
                         { name: 'Consultations', id: 'consultations', icon: <Stethoscope size={20} /> },
                         { name: 'Medical Records', id: 'medical_records', icon: <FileText size={20} /> },
                         { name: 'Messages', id: 'messages', icon: <Siren size={20} /> },

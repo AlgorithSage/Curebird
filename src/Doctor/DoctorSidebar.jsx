@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
     LayoutDashboard, Users, Calendar, ClipboardList, FileText,
     BarChart2, Bell, Settings, Shield, HelpCircle, LogOut, X,
-    Stethoscope, ChevronDown, Siren, Check
+    Stethoscope, ChevronDown, Siren, Check, Video
  } from '../components/Icons';
 import CureBirdLogo from '../curebird_logo.png';
 
@@ -115,18 +115,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unre
                 { id: 'patient_workspace', label: 'Patient Workspace', icon: ClipboardList },
                 { id: 'messages', label: 'Messages', icon: Siren },
                 { id: 'patients', label: 'My Patients', icon: Users },
-                // Appointments Group
-                {
-                    id: 'appointments_group',
-                    label: 'Appointments',
-                    icon: Calendar,
-                    isGroup: true,
-                    subItems: [
-                        { id: 'appointments_overview', label: 'Overview' },
-                        { id: 'appointments_requests', label: 'Requests' },
-                        { id: 'appointments_schedule', label: 'Schedule' },
-                    ]
-                },
+                { id: 'telehealth', label: 'Telehealth', icon: Video },
                 { id: 'consultations', label: 'Consultations', icon: Stethoscope },
                 { id: 'medical_records', label: 'Medical Records', icon: FileText },
             ]
