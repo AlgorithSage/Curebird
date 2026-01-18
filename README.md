@@ -1,66 +1,127 @@
-# Curebird - Intelligent Doctor Portal
+# Curebird 🏥🐦
 
-A next-generation healthcare platform featuring a comprehensive Doctor Portal with real-time clinical workflows, AI-powered automation, and telehealth capabilities.
+**Curebird** is an advanced digital health platform designed to bridge the gap between patients and healthcare providers. It leverages cutting-edge **Generative AI** and **Real-time Data Visualization** to provide actionable health insights, digitize medical records, and monitor epidemiological trends across India.
 
-## 🛠️ Technology Stack
+---
 
-### Frontend (Client-Side)
+## 🏗️ Project Architecture & Organization
 
-Building a premium, responsive, and animated user interface.
+### 1. CureStat 📊
+**Purpose**: A comprehensive public health dashboard that visualizes epidemiological data to help users stay informed about disease outbreaks and environmental risks.
 
-- **Core**: `React` (v19)
-- **Routing**: `react-router-dom`
-- **Styling**: `Tailwind CSS`, `postcss`, `autoprefixer`
-- **Animations**: `framer-motion`, `lottie-react`, `@lottiefiles/dotlottie-react`
-- **Icons**: `lucide-react`
-- **Charts & Visualization**: `recharts`
-- **Backend Integration**: `firebase` (Auth, Firestore, Storage)
-- **Utilities**: `react-markdown`, `remark-gfm` (Markdown Rendering), `jspdf` (PDF Generation), `react-helmet-async` (SEO/Meta)
+*   **National Health Indices**: Displays critical health metrics (Diabetes, Cardiac, Respiratory, Renal, Mental) derived from national surveys (ICMR, IDSP), giving a quick snapshot of the country's health burden.
+*   **Regional Impact (Bar Chart)**: Visualizes the top affected states for current outbreaks, allowing users to identify high-risk zones.
+*   **Disease Distribution (Pie Chart)**: Break down of reported cases by disease type, helping to identify dominant health threats.
+*   **Live Heatmap**: An interactive Google Maps layer showing the density of disease clusters across the Indian subcontinent.
+*   **Environmental Health**: Tracks Air Quality Index (AQI) and other environmental factors that directly correlate with respiratory and cardiovascular health.
+*   **Resource Disparity**: Analyzes the gap between urban and rural healthcare infrastructure (bed density, doctor availability).
 
-### Backend (Server-Side)
+### 2. Cure Analyzer 🔬
+**Purpose**: A tool to digitize and interpret complex medical documents (prescriptions, lab reports).
 
-Powering AI analysis and data processing services.
+**The Two-Step AI Process**:
+1.  **Step 1: Visual Language Model (VLM) Extraction**
+    *   The uploaded image is processed by **Groq's Vision Model** (Model: `meta-llama/llama-4-scout-17b-16e-instruct`).
+    *   It performs OCR (Optical Character Recognition) and Structure Extraction simultaneously to identify medications, dosages, and clinical conditions in strict JSON format.
+2.  **Step 2: Intelligent Summarization**
+    *   The raw JSON data is fed into a **Llama 3.1 8B** model via Groq.
+    *   A specialized System Prompt acts as a "Medical Interpreter," translating technical jargon into a customized, empathetic summary for the patient (e.g., explaining that "Hypertension" means "High Blood Pressure").
 
-- **Framework**: `Flask`, `flask-cors`
-- **AI & LLM Integration**:
-  - `google-generativeai` (Gemini)
-  - `groq` (Llama/Groq Models)
-  - `cerebras_cloud_sdk` (Inference)
-- **Data Processing**: `pandas`
-- **Image & OCR**: `Pillow`, `pytesseract`
-- **Document Handling**: `pymupdf` (PDF Parsing)
-- **Utilities**: `python-dotenv`, `requests`, `gunicorn`
+### 3. Cure AI 🤖
+**Purpose**: An intelligent, context-aware health assistant.
 
-## 🚀 All-In-One Healthcare Platform
+*   **Context Injection**: The AI is fed real-time disease trend data (cached from CureStat) via a System Prompt. This allows it to give advice relevant to current outbreaks (e.g., advising on Dengue prevention during monsoon season if cases are high).
+*   **Hybrid Model Routing**:
+    *   **Llama 3.1 8B**: Handles casual greetings and simple interactions for low latency.
+    *   **Llama 3.3 70B**: Handles complex clinical queries to ensure high accuracy and reasoning capabilities.
 
-The project uses a **Unified Tech Stack** (React + Firebase + Flask) to power both the Doctor and Patient experiences.
+---
 
-### 🏥 Doctor Portal
+## 🚀 Key Features
 
-- **Secure Authentication**: Isolated Doctor Login/Signup.
-- **Clinical Workspace**: Real-time patient roster, vital monitoring, and collaborative care.
-- **Smart Clinical AI**:
-  - **Autofill**: Extracts data from Lab Reports & Vitals.
-  - **Intelligence**: Summarizes clinical notes and flags risks.
-- **Telehealth**: Integrated video consultations.
-- **Messaging**: Secure doctor-patient chat.
+### 🧑‍⚕️ For Patients (Active Module)
+*   **Medical Portfolio**: A central hub for health stats (BP, BMI, Heart Rate), upcoming appointments, and active prescriptions.
+*   **Digital Health Locker**: Securely upload, store, and categorize medical records (Lab Reports, Prescriptions, Imaging).
+*   **Cure Analyzer**: Instantly convert physical reports into digital, understandable summaries using the dual-core AI pipeline.
+*   **Cure AI Chatbot**: 24/7 access to a health assistant that knows the current disease landscape of India.
+*   **Medication Tracker**: Visual tracking of active medicines with dosage and frequency details extracted from your records.
+*   **Doctor Discovery**: Browse specialist profiles and book appointments.
 
-### 👤 Patient Portal
+### 👨‍⚕️ For Doctors (Active Module - Beta)
+*   **Premium Clinical Workspace**: A sophisticated, glassmorphic dashboard designed for high-performance clinical workflows.
+*   **Secure Authentication**: Role-based access via Email/Google Sign-In with strict Firestore security rules.
+*   **Patient Management**: 
+    *   **Live Roster**: Real-time view of assigned patients with status indicators.
+    *   **Digital Workspace**: Unified view for vitals monitoring, medical history, and clinical notes.
+*   **Telehealth Suite**:
+    *   **Smart Scheduler**: "Time Command" modal for rapid availability management.
+    *   **Live Consultation**: Integrated video room entry and queue management.
+    *   **Chat System**: Secure, real-time messaging with patients.
+*   **Clinical Tools**:
+    *   **Quick Actions**: Rapidly issue Prescriptions, Lab Requests, and Emergency Alerts.
+    *   **Vitals Monitoring**: Track patient health trends with interactive charts.
+*   **Dual Access Navigation**: Seamlessly switch between tools via the Sidebar or the Quick Access Header.
 
-- **Personal Health Dashboard**: Overview of vitals, upcoming appointments, and daily wellness.
-- **Medical Portfolio**:
-  - **Smart Records**: Store Lab results, prescriptions, and reports.
-  - **Actionable Insights**: Buttons to **View Digital Copy** (OCR text), **View Summary** (AI simplified), and download PDFs.
-  - **Vitals History**: Interactive charts for BP, Heart Rate, and Weight trends.
-- **Cure AI Assistant**:
-  - **Context-Aware Chat**: "Ask Cure AI" specific questions based on your uploaded documents.
-  - **Medical Context**: Automatically generates and maintains a summary of your recent medical history to provide accurate AI responses.
-- **Connectivity & Sharing**:
-  - **1-Hour Access Link**: Generate a secure, temporary link for doctors to view your portfolio during emergencies.
-  - **Doctor Messaging**: Integrated secure chat for direct follow-ups with your assigned physician.
-- **Self-Scanning Tools**:
-  - **CureAnalyzer**: Upload reports for instant AI explanation & **Auto-Digitization**.
-  - **CureStat**: Track environmental and occupational health risks.
-- **Telehealth**: Join video sessions directly from the portal.
-- **Enhanced Navigation**: Full browser history support (Back/Forward) and Deep Linking for all major views.
-- **Emergency**: Quick access to emergency contacts and alerts.
+---
+
+## �️ Backend Technologies
+
+The backend is built as a modular Flask application optimized for AI inference and data processing.
+
+*   **Framework**: **Flask** (Python) - Lightweight and flexible for microservices.
+*   **AI Inference Engine**: **Groq API**
+    *   Delivers ultra-low latency inference for Llama 3 models.
+    *   Used for both VLM (Vision) and Text generation.
+*   **Optical Character Recognition (OCR)**:
+    *   **Groq VLM**: Primary tool for structure extraction.
+    *   **Tesseract OCR** (`pytesseract`): Fallback engine for raw text extraction.
+*   **Data Processing**:
+    *   **Pandas**: For manipulating epidemiological datasets.
+    *   **NumPy**: For statistical analysis of health trends.
+*   **Server**: **Gunicorn** - Production-grade WSGI server for handling concurrent requests.
+
+---
+
+## 💾 Storage & Database (Firebase)
+
+The project relies on a serverless **Firebase** architecture for security and scalability.
+
+### 1. Authentication (`Firebase Auth`)
+*   Handles user sign-up/login via Email/Password and Google OAuth.
+*   Manages Identity Tokens for securing API requests.
+
+### 2. Database (`Cloud Firestore`)
+*   **Structure**: NoSQL Document-based.
+*   **Collections**:
+    *   `users/{uid}`: Stores user profile, roles, and health stats.
+    *   `users/{uid}/medical_records`: Stores metadata of uploaded files (file URL, doctor name, date).
+    *   `users/{uid}/appointments`: Tracks booking history.
+
+### 3. File Storage (`Cloud Storage`)
+*   Secure bucket for storing actual medical document files (Images/PDFs).
+*   Files are organized by User ID to enforce privacy and access control.
+
+---
+
+## 📡 API Setup & Endpoints
+
+The Flask backend exposes RESTful endpoints for the frontend React application.
+
+### AI Endpoints
+*   `POST /api/health-assistant/chat`:
+    *   Accepts a message history.
+    *   Routes to **Groq Llama 3** (8B or 70B) based on complexity.
+    *   Returns a context-aware medical response.
+*   `POST /api/analyzer/process`:
+    *   Accepts a file upload (`FormData`).
+    *   Triggers the **Two-Step AI Pipeline** (VLM -> Summary).
+    *   Returns structured JSON (medications, diseases) and a plain-text summary.
+
+### Data Endpoints
+*   `GET /api/disease-trends`:
+    *   Returns the top 10 outbreak trends from the local cache (`disease_data_cache.json`).
+*   `GET /api/resource-distribution`:
+    *   Returns comparative health infrastructure data (Urban vs Rural beds) for visualizations.
+
+### Context Management
+*   `POST /api/health-assistant/clear`: Resets the conversation context for the AI.
