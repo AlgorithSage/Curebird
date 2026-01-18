@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Plus, Activity, TrendingUp, FileText, Trash2, Printer, UploadCloud, Eye, Download, File } from '../Icons';
+import { ArrowLeft, Plus, Activity, TrendingUp, FileText, Trash2, Printer, UploadCloud, Eye, Download, File, X } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 
 import { DISEASE_CONFIG, calculateCHI } from '../../data/diseaseMetrics';
@@ -588,48 +588,127 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
             {/* Document Preview Modal */}
             <AnimatePresence>
                 {previewDoc && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setPreviewDoc(null)}>
-                        <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
-                            <div className="flex items-center justify-between p-4 border-b border-white/10">
-                                <h3 className="text-white font-bold truncate max-w-md">{previewDoc.name}</h3>
-                                <div className="flex items-center gap-2">
-                                    <a
-                                        href={previewDoc.url}
-                                        download={previewDoc.name}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                                        title="Open Original"
-                                    >
-                                        <Download size={20} />
-                                    </a>
-                                    <button
-                                        onClick={() => setPreviewDoc(null)}
-                                        className="p-2 text-slate-400 hover:text-white hover:bg-red-500/20 rounded-lg transition-colors"
-                                    >
-                                        <ArrowLeft size={20} className="rotate-180" /> {/* Using arrow as close or X */}
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="flex-1 overflow-auto bg-slate-950/50 p-4 flex items-center justify-center">
-                                {previewDoc.type?.startsWith('image/') ? (
-                                    <img src={previewDoc.url} alt="Preview" className="max-w-full max-h-full object-contain rounded-lg" />
-                                ) : previewDoc.type === 'application/pdf' ? (
-                                    <iframe src={previewDoc.url} title="Preview" className="w-full h-full min-h-[500px] rounded-lg border-0" />
-                                ) : (
-                                    <div className="text-center text-slate-400 py-12">
-                                        <FileText size={48} className="mx-auto mb-4 opacity-50" />
-                                        <p>Preview not available for this file type.</p>
-                                        <a href={previewDoc.url} target="_blank" rel="noreferrer" className="text-amber-500 hover:underline mt-2 inline-block">Download to view</a>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setPreviewDoc(null)}>
+                        <ImagePreviewModal doc={previewDoc} onClose={() => setPreviewDoc(null)} />
                     </div>
                 )}
             </AnimatePresence>
-
         </div >
+    );
+};
+
+// Sub-component to handle image dimension calculation logic
+const ImagePreviewModal = ({ doc, onClose }) => {
+    const [dimensions, setDimensions] = React.useState({ width: 'auto', height: '80vh' }); // Default fallback
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        const calculateSize = () => {
+            const isImage = doc.type?.startsWith('image/') || doc.name?.match(/\.(jpg|jpeg|png|webp|gif|bmp)$/i);
+
+            if (isImage) {
+                setLoading(true);
+                const img = new Image();
+                img.src = doc.url;
+                img.onload = () => {
+                    const padding = 64; // Extra padding as requested
+                    const maxWidth = window.innerWidth * 0.9;
+                    const maxHeight = window.innerHeight * 0.9;
+
+                    let { naturalWidth: width, naturalHeight: height } = img;
+                    const aspectRatio = width / height;
+
+                    // Scale down if too wide
+                    if (width > maxWidth) {
+                        width = maxWidth;
+                        height = width / aspectRatio;
+                    }
+
+                    // Scale down if too tall
+                    if (height > maxHeight) {
+                        height = maxHeight;
+                        width = height * aspectRatio;
+                    }
+
+                    setDimensions({
+                        width: Math.min(width + padding, maxWidth),
+                        height: Math.min(height + padding, maxHeight)
+                    });
+                    setLoading(false);
+                };
+                img.onerror = () => setLoading(false);
+            } else {
+                // PDF or other types use standard large size
+                setDimensions({ width: window.innerWidth * 0.8, height: window.innerHeight * 0.9 });
+                setLoading(false);
+            }
+        };
+
+        calculateSize();
+        window.addEventListener('resize', calculateSize);
+        return () => window.removeEventListener('resize', calculateSize);
+    }, [doc]);
+
+    return (
+        <div
+            className="bg-slate-900 border border-white/10 rounded-2xl flex flex-col overflow-hidden shadow-2xl transition-all duration-300"
+            style={{ width: dimensions.width, height: dimensions.height }}
+            onClick={e => e.stopPropagation()}
+        >
+            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-slate-800/50 shrink-0">
+                <h3 className="text-white font-bold truncate max-w-md flex items-center gap-2">
+                    <FileText size={18} className="text-amber-500" />
+                    {doc.name}
+                </h3>
+                <div className="flex items-center gap-2">
+                    <a
+                        href={doc.url}
+                        download={doc.name}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
+                        title="Download Original"
+                    >
+                        <Download size={18} /> <span className="hidden sm:inline">Download</span>
+                    </a>
+                    <button
+                        onClick={onClose}
+                        className="p-2 text-slate-400 hover:text-white hover:bg-red-500/20 rounded-lg transition-colors"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
+            </div>
+
+            <div className="flex-1 overflow-hidden bg-black/50 flex items-center justify-center relative p-4">
+                {loading ? (
+                    <div className="animate-spin text-amber-500"><Activity size={40} /></div>
+                ) : (
+                    (doc.type?.startsWith('image/') || doc.name?.match(/\.(jpg|jpeg|png|webp|gif|bmp)$/i)) ? (
+                        <img
+                            src={doc.url}
+                            alt="Preview"
+                            className="max-w-full max-h-full object-contain rounded shadow-lg"
+                        />
+                    ) : doc.type === 'application/pdf' || doc.name?.toLowerCase().endsWith('.pdf') ? (
+                        <iframe src={doc.url} title="Preview" className="w-full h-full rounded-lg border-0 bg-white" />
+                    ) : (
+                        <div className="text-center text-slate-400 py-12">
+                            <FileText size={64} className="mx-auto mb-6 opacity-30" />
+                            <p className="text-lg mb-4">Preview not available for this file type.</p>
+                            <a
+                                href={doc.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-xl font-bold transition-colors inline-block"
+                            >
+                                Download to View
+                            </a>
+                        </div>
+                    )
+                )}
+            </div>
+        </div>
     );
 };
 
