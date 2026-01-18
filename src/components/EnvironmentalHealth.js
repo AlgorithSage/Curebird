@@ -60,8 +60,14 @@ const EnvironmentalHealth = () => {
     const [activeView, setActiveView] = useState('smoker');
 
     useEffect(() => {
+        console.log("Debug - Environment Variables Check:");
+        console.log("WAQI Token Present:", !!process.env.REACT_APP_WAQI_API_TOKEN);
+        console.log("Maps Key Present:", !!process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
+        console.log("Current Origin:", window.location.origin);
+        
         if (!process.env.REACT_APP_WAQI_API_TOKEN) {
-            console.log("WAQI API Key missing. Please check .env.local");
+            console.error("WAQI API Key is missing from process.env");
+            console.log("Please ensure REACT_APP_WAQI_API_TOKEN is set in your .env file and you have restarted the development server.");
         }
     }, []);
 
