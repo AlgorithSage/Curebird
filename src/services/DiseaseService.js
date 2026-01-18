@@ -11,7 +11,8 @@ import {
     limit,
     serverTimestamp,
     deleteDoc,
-    setDoc
+    setDoc,
+    writeBatch
 } from 'firebase/firestore';
 import {
     ref,
@@ -146,6 +147,48 @@ export const DiseaseService = {
     async addMetric(userId, diseaseId, metricData) {
         try {
             const metricsRef = collection(db, 'users', userId, 'diseases', diseaseId, 'metrics');
+
+            // Robust Deduplication: Client-side check on recent entries.
+            // We fetch the last 10 metrics of this type to see if this value/date was already logged.
+            // This avoids complex Firestore queries that might require indexes.
+            if (metricData.timestamp) {
+                const checkDate = new Date(metricData.timestamp);
+                const startOfDay = new Date(checkDate); startOfDay.setHours(0, 0, 0, 0);
+                const endOfDay = new Date(checkDate); endOfDay.setHours(23, 59, 59, 999);
+
+                // Simple query: Get recent metrics of this type
+                const q = query(
+                    metricsRef,
+                    where('type', '==', metricData.type),
+                    orderBy('timestamp', 'desc'),
+                    limit(10)
+                );
+
+                // Note: If this query fails due to index (Type + Timestamp sort), 
+                // we can just fall back to no-sort, or just simple fetch. 
+                // But usually type+timestamp index is standard or auto-created for simple fields.
+                // Safest fall back: just query by type and filter in JS.
+                const safeQ = query(metricsRef, where('type', '==', metricData.type), limit(20));
+
+                const recentSnapshot = await getDocs(safeQ);
+
+                const isDuplicate = recentSnapshot.docs.some(doc => {
+                    const data = doc.data();
+                    if (!data.timestamp) return false;
+
+                    const dDate = new Date(data.timestamp.seconds * 1000);
+                    const isSameDay = dDate >= startOfDay && dDate <= endOfDay;
+                    const isSameValue = String(data.value) === String(metricData.value);
+
+                    return isSameDay && isSameValue;
+                });
+
+                if (isDuplicate) {
+                    console.log(`Duplicate metric skipped: ${metricData.type}`);
+                    return; // Skip adding
+                }
+            }
+
             await addDoc(metricsRef, {
                 ...metricData,
                 timestamp: metricData.timestamp || serverTimestamp()
@@ -215,6 +258,42 @@ export const DiseaseService = {
     },
 
     /**
+     * Delete ALL metrics for a disease (RESET).
+     * @param {string} userId
+     * @param {string} diseaseId
+     */
+    async deleteAllMetrics(userId, diseaseId) {
+        try {
+            const metricsRef = collection(db, 'users', userId, 'diseases', diseaseId, 'metrics');
+            const snapshot = await getDocs(metricsRef);
+
+            if (snapshot.empty) return;
+
+            // Firestore Batch Limit is 500
+            const batch = writeBatch(db);
+            let count = 0;
+
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+                count++;
+            });
+
+            await batch.commit();
+            console.log(`Deleted ${count} metrics.`);
+
+            // Reset disease updated timestamp
+            const diseaseRef = doc(db, 'users', userId, 'diseases', diseaseId);
+            await updateDoc(diseaseRef, {
+                updatedAt: serverTimestamp()
+            });
+
+        } catch (error) {
+            console.error("Error deleting all metrics:", error);
+            throw error;
+        }
+    },
+
+    /**
      * Link an existing medical record to a disease.
      * @param {string} userId 
      * @param {string} recordId 
@@ -268,6 +347,29 @@ export const DiseaseService = {
             return { id: docRef.id, name: file.name, url: downloadURL };
         } catch (error) {
             console.error("Error uploading document:", error);
+            throw error;
+        }
+    },
+
+    /**
+     * Analyze a document to extract clinical metrics.
+     * @param {File} file 
+     * @returns {Promise<object>} Extracted data
+     */
+    async analyzeDocument(file) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch(`${API_BASE_URL}/api/analyze-report`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error("Analysis failed");
+            return await response.json();
+        } catch (error) {
+            console.error("Error analyzing document:", error);
             throw error;
         }
     },

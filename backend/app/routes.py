@@ -41,6 +41,10 @@ def get_disease_trends():
         traceback.print_exc()
         return jsonify({"error": f"An error occurred: {e}"}), 500
 
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": f"An error occurred during analysis: {e}"}), 500
+
 @app.route('/api/analyze-report', methods=['POST'])
 def analyze_report():
     try:
@@ -53,14 +57,9 @@ def analyze_report():
             return jsonify({"error": "No file selected for uploading"}), 400
 
         if file:
-            # Clinical Analysis using Groq Llama 3.2 (Fallback for Gemini)
-            # assistant = get_gemini_assistant()
-            # analysis_results = assistant.analyze_clinical_document(file.stream)
-            
-            analysis_results = services.analyze_clinical_groq(file.stream)
-            
-            # Add status field for frontend compatibility
-            analysis_results['status'] = 'Complete'
+            # Clinical Analysis using Groq VLM via GroqHealthAssistant
+            assistant = get_health_assistant()
+            analysis_results = assistant.analyze_clinical_document(file.stream)
             
             return jsonify(analysis_results)
             
