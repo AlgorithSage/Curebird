@@ -68,7 +68,7 @@ export default function DoctorLogin({ onSwitchToSignup }) {
                     createdAt: serverTimestamp(),
                     authProvider: 'google'
                 });
-                showToast("Account created! Welcome to Curebird Doctor Portal.", "success");
+                showToast("Account created! Welcome to CureBird Doctor Portal.", "success");
             }
 
         } catch (err) {

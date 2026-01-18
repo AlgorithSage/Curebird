@@ -103,7 +103,7 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                 },
                 date: new Date().toISOString().split('T')[0],
                 doctorId: user?.uid || auth.currentUser?.uid,
-                doctorName: user?.name || user?.displayName || auth.currentUser?.displayName || 'Dr. Curebird',
+                doctorName: user?.name || user?.displayName || auth.currentUser?.displayName || 'Dr. CureBird',
                 patientId,
                 patientName,
                 priority: 'routine',

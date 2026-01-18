@@ -1,6 +1,6 @@
 # Email Service Architecture
 
-Curebird uses **EmailJS** to handle transactional emails and contact form submissions directly from the client side, removing the need for a dedicated SMTP backend server.
+CureBird uses **EmailJS** to handle transactional emails and contact form submissions directly from the client side, removing the need for a dedicated SMTP backend server.
 
 ## 1. Overview
 

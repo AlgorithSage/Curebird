@@ -43,7 +43,7 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
             const fetchedChats = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),
-                doctorName: doc.data().doctorName || 'Dr. Curebird', // Fallback
+                doctorName: doc.data().doctorName || 'Dr. CureBird', // Fallback
                 time: doc.data().updatedAt?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }));
             
@@ -148,7 +148,7 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
 
             if (doctorSnap.exists()) {
                 const docData = doctorSnap.data();
-                doctorName = `Dr. ${docData.lastName || docData.firstName || 'Curebird'}`;
+                doctorName = `Dr. ${docData.lastName || docData.firstName || 'CureBird'}`;
             } else {
                  setConnectError('Doctor not found. Please check the ID or Code.');
                  setIsConnecting(false);

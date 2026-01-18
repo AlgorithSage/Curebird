@@ -5,7 +5,7 @@ import {
     BarChart2, Bell, Settings, Shield, HelpCircle, LogOut, X,
     Stethoscope, ChevronDown, Siren, Check
  } from '../components/Icons';
-import CurebirdLogo from '../curebird_logo.png';
+import CureBirdLogo from '../curebird_logo.png';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expanded, onToggleExpand, badge }) => {
 
@@ -183,12 +183,12 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unre
                                     {/* Logo */}
                                     <div className="w-10 h-10 flex items-center justify-center relative">
                                         <div className="absolute inset-0 bg-amber-400 blur-md rounded-full opacity-25"></div>
-                                        <img src={CurebirdLogo} alt="Logo" className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" />
+                                        <img src={CureBirdLogo} alt="Logo" className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" />
                                     </div>
 
                                     {/* Text Identity */}
                                     <div className="flex flex-col justify-center">
-                                        <h2 className="text-xl font-black text-white tracking-tight leading-none drop-shadow-md">Curebird</h2>
+                                        <h2 className="text-xl font-black text-white tracking-tight leading-none drop-shadow-md">CureBird</h2>
                                         <p className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] leading-none mt-1.5 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">Doctor Portal</p>
                                     </div>
                                 </div>

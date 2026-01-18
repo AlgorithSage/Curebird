@@ -87,7 +87,7 @@ const NewPrescriptionModal = ({ isOpen, onClose, patients = [], user }) => {
                 medicines: medications,
                 date: new Date().toISOString().split('T')[0],
                 doctorId: user?.uid || auth.currentUser?.uid,
-                doctorName: user?.name || user?.displayName || auth.currentUser?.displayName || 'Dr. Curebird',
+                doctorName: user?.name || user?.displayName || auth.currentUser?.displayName || 'Dr. CureBird',
                 patientId,
                 patientName,
                 priority: 'routine',

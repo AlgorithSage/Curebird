@@ -66,7 +66,7 @@ export default function DoctorSignup({ onSwitchToLogin }) {
                     createdAt: serverTimestamp(),
                     joinedVia: 'google'
                 });
-                showToast("Account created! Welcome to Curebird Doctor Portal.", "success");
+                showToast("Account created! Welcome to CureBird Doctor Portal.", "success");
             } else {
                 // EXISTING USER: Check if they are actually a doctor
                 if (docSnap.data().role !== 'doctor') {

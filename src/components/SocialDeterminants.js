@@ -152,7 +152,7 @@ const SocialDeterminants = () => {
                                                 <span className="text-emerald-400 font-bold">Bottom-Right (Safe):</span> High clean fuel access drastically reduces illness (e.g., Punjab, Kerala).
                                             </p>
                                             <div className="bg-blue-500/10 p-3 rounded-lg border border-blue-500/20">
-                                                <span className="text-xs text-blue-300 font-bold uppercase tracking-wider">Curebird Insight</span>
+                                                <span className="text-xs text-blue-300 font-bold uppercase tracking-wider">CureBird Insight</span>
                                                 <p className="text-white text-sm mt-1">Switching to LPG reduces indoor pollution by 90%, preventing Asthma & COPD.</p>
                                             </div>
                                         </div>

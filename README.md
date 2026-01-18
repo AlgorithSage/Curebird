@@ -1,4 +1,4 @@
-# Curebird - Intelligent Doctor Portal
+# CureBird - Intelligent Doctor Portal
 
 A next-generation healthcare platform featuring a comprehensive Doctor Portal with real-time clinical workflows, AI-powered automation, and telehealth capabilities.
 

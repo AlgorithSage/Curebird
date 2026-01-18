@@ -1,6 +1,6 @@
 # Frontend Architecture
 
-The Curebird frontend is a Single Page Application (SPA) built with **React 19**, designed for modularity, visual richness, and responsiveness.
+The CureBird frontend is a Single Page Application (SPA) built with **React 19**, designed for modularity, visual richness, and responsiveness.
 
 ## 1. Directory Structure (`src/`)
 

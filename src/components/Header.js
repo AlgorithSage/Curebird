@@ -6,7 +6,7 @@ import {
     Shield, HelpCircle, Stethoscope, Siren, Microscope
  } from './Icons';
 import { AnimatePresence, motion } from 'framer-motion';
-import CurebirdLogo from '../curebird_logo.png';
+import CureBirdLogo from '../curebird_logo.png';
 
 const UserProfile = ({ user, onLogout, onNavigate }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -150,7 +150,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
             <h1 className="text-xl sm:text-2xl xl:text-3xl font-extrabold tracking-tight leading-tight mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
                 <span className="inline">
                     <span className="text-white">Welcome {user?.firstName || 'User'} | </span>
-                    <span className="text-white">Cure</span><span className="text-amber-200">bird</span>
+                    <span className="text-white">Cure</span><span className="text-amber-200">Bird</span>
                     <span className="text-white"> is at your service!</span>
                 </span>
             </h1>
@@ -183,7 +183,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
 
                     <div className="relative w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-black/40 p-1.5 flex items-center justify-center transition-transform duration-500 hover:scale-105 shrink-0">
                         <img
-                            src={CurebirdLogo}
+                            src={CureBirdLogo}
                             alt="Logo"
                             className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-[pulse_3s_ease-in-out_infinite] hover:drop-shadow-[0_0_20px_rgba(245,158,11,1)] transition-all duration-300"
                         />

@@ -39,7 +39,7 @@ const PrivacyPolicy = ({ user, onLogout, onLoginClick, onToggleSidebar, onNaviga
                             1. Information We Collect
                         </h3>
                         <p className="leading-relaxed mb-4">
-                            When you use Curebird, we may collect:
+                            When you use CureBird, we may collect:
                         </p>
                         <ul className="list-disc pl-5 space-y-2 marker:text-sky-500">
                             <li><strong>Personal Identity Information:</strong> Name, email address, date of birth.</li>

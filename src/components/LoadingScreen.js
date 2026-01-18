@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import GoldenBird from "../curebird_loading_logo.png";
 
 const loadingMessages = [
-    "Connecting to Curebird AI...",
+    "Connecting to CureBird AI...",
     "Analyzing Health Patterns...",
     "Securing Patient Data...",
     "Calibrating Medical AI...",
@@ -104,7 +104,7 @@ const LoadingScreen = () => {
                     {/* LOGO */}
                     <motion.img
                         src={GoldenBird}
-                        alt="Curebird"
+                        alt="CureBird"
                         className="w-50 h-50 object-contain"
                         animate={{
                             scale: breathIndex === 0 ? 1.08 : 0.96,
@@ -120,7 +120,7 @@ const LoadingScreen = () => {
                 <AnimatePresence mode="wait">
                     <motion.h2
                         key={breathIndex}
-                        className="mt-5 text-2xl tracking-widest font-bold text-amber-200 font-['Inter']"
+                        className="mt-5 text-2xl tracking-widest font-bold text-amber-200 font-sans"
                         initial={{ opacity: 0, scale: 0.96 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.04 }}
@@ -135,7 +135,7 @@ const LoadingScreen = () => {
                 <AnimatePresence mode="wait">
                     <motion.p
                         key={messageIndex}
-                        className="mt-4 text-sm text-slate-300 font-['Inter']"
+                        className="mt-4 text-sm text-slate-300 font-sans"
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -6 }}

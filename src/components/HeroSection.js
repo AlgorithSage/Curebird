@@ -169,7 +169,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                         <div className="flex flex-col gap-1">
                                             <div className="flex items-center gap-2 text-slate-300">
                                                 <Activity size={16} className={`${healthScore.grade === 'A' ? 'text-emerald-400' : healthScore.grade === 'B' ? 'text-amber-400' : 'text-red-400'}`} />
-                                                <span className="text-sm font-semibold tracking-wide">CHI (Curebird Health Index)</span>
+                                                <span className="text-sm font-semibold tracking-wide">CHI (CureBird Health Index)</span>
                                             </div>
 
                                             <div className="flex items-baseline gap-2 mt-2">

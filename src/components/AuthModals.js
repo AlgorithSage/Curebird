@@ -11,7 +11,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {  X, ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, Stethoscope  } from './Icons';
-import CurebirdLogo from '../curebird_logo.png';
+import CureBirdLogo from '../curebird_logo.png';
 
 // --- Initialize Providers ---
 const googleProvider = new GoogleAuthProvider();
@@ -315,8 +315,8 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
                     <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-slate-900 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-4 p-3 relative group">
                         <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
                         <img
-                            src={CurebirdLogo}
-                            alt="Curebird Logo"
+                            src={CureBirdLogo}
+                            alt="CureBird Logo"
                             className="w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]"
                         />
                     </div>
@@ -324,7 +324,7 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
                         {authStep === 'selection' ? (
                             <>Are you a <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Patient</span> or <span className="text-slate-200">Doctor</span>?</>
                         ) : authStep === 'login' ? (
-                            <>Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Curebird</span></>
+                            <>Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">CureBird</span></>
                         ) : 'Complete Profile'}
                     </h1>
                     <p className="text-slate-400 text-sm font-medium">

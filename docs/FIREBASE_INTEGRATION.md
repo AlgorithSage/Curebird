@@ -1,6 +1,6 @@
 # Firebase Integration Architecture
 
-Curebird utilizes Firebase as its primary Backend-as-a-Service (BaaS) for secure authentication, real-time database capabilities, and file storage.
+CureBird utilizes Firebase as its primary Backend-as-a-Service (BaaS) for secure authentication, real-time database capabilities, and file storage.
 
 ## 1. Configuration
 **File Reference**: `src/firebase.js`

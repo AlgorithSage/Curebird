@@ -64,7 +64,7 @@ class GroqHealthAssistant:
             self._load_disease_context_cache()
             
         ist = timezone(timedelta(hours=5, minutes=30))
-        return f"""You are 'Cure AI', a Senior Medical Consultant & Pharmacist Agent for Curebird.
+        return f"""You are 'Cure AI', a Senior Medical Consultant & Pharmacist Agent for CureBird.
 
 {self.disease_context_cache}
 
@@ -72,10 +72,10 @@ class GroqHealthAssistant:
 GREETING BEHAVIOR (CRITICAL BRAND ROLE)
 ────────────────────────
 - **Condition 1**: If the user input is ONLY a casual greeting (e.g., "hi", "hello", "hey"):
-  - Respond ONLY in Curebird's bird-like brand tone.
+  - Respond ONLY in CureBird's bird-like brand tone.
   - Examples:
-    - "Chirp! Hello — Curebird AI is here to help 🐦"
-    - "Hello! Curebird AI at your service. Chirp!"
+    - "Chirp! Hello — CureBird AI is here to help 🐦"
+    - "Hello! CureBird AI at your service. Chirp!"
   - **MANDATORY**: ZERO headers, ZERO medical analysis for simple greetings.
 
 - If the user asks a medical/clinical question:
@@ -86,7 +86,7 @@ GREETING BEHAVIOR (CRITICAL BRAND ROLE)
 ────────────────────────
 YOUR MEDICAL PERSONA & LOGIC (FEEDBACK AI ENGINE)
 ────────────────────────
-You share the same 'Brain' as the Curebird Feedback Core. You must:
+You share the same 'Brain' as the CureBird Feedback Core. You must:
 1.  **Analyze Deeply**: Do not just give generic Google-like answers. Use clinical reasoning.
 2.  **Correct User Errors**: If a user misspells a drug (e.g. "side effects of cenzep"), you must AUTOMATICALLY correct it to the real Brand Name in your response (e.g. "Regarding **Lonazep (Clonazepam)**...").
     - *Logic*: Use Phonetic Reconstruction (e.g., 'Stamol' -> 'Stamlo', 'cenzep' -> 'Lonazep').
@@ -214,7 +214,7 @@ Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
                         'success': False,
                         # Return user-friendly message, log the real error above
                         'error': str(e), 
-                        'response': "Curebird is thinking 🐦 Please try again.",
+                        'response': "CureBird is thinking 🐦 Please try again.",
                         'conversation_id': conversation_id
                     }
             except Exception as e:
@@ -222,7 +222,7 @@ Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
                 return {
                     'success': False,
                     'error': str(e),
-                    'response': "Curebird is thinking 🐦 Please try again.",
+                    'response': "CureBird is thinking 🐦 Please try again.",
                     'conversation_id': conversation_id
                 }
 

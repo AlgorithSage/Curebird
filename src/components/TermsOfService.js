@@ -26,7 +26,7 @@ const TermsOfService = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavig
                             1. Acceptance of Terms
                         </h3>
                         <p className="leading-relaxed">
-                            By accessing and using Curebird ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use our services.
+                            By accessing and using CureBird ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use our services.
                         </p>
                     </section>
 
@@ -35,7 +35,7 @@ const TermsOfService = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavig
                             <AlertTriangle size={20} /> 2. Medical Disclaimer
                         </h3>
                         <p className="leading-relaxed text-amber-100/80">
-                            Curebird uses artificial intelligence to analyze medical data. <strong className="text-amber-400">The Platform is NOT a substitute for professional medical advice, diagnosis, or treatment.</strong> Never disregard professional medical advice or delay in seeking it because of something you have read or analyzed on this Platform. In case of a medical emergency, call your local emergency services immediately.
+                            CureBird uses artificial intelligence to analyze medical data. <strong className="text-amber-400">The Platform is NOT a substitute for professional medical advice, diagnosis, or treatment.</strong> Never disregard professional medical advice or delay in seeking it because of something you have read or analyzed on this Platform. In case of a medical emergency, call your local emergency services immediately.
                         </p>
                     </section>
 
@@ -51,14 +51,14 @@ const TermsOfService = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavig
                     <section>
                         <h3 className="text-xl font-semibold text-white mb-3">4. Data Privacy & Security</h3>
                         <p className="leading-relaxed">
-                            We implement industry-standard security measures to protect your personal health information. However, no method of transmission over the Internet is 100% secure. By using Curebird, you acknowledge that you understand and accept the inherent risks of data transmission.
+                            We implement industry-standard security measures to protect your personal health information. However, no method of transmission over the Internet is 100% secure. By using CureBird, you acknowledge that you understand and accept the inherent risks of data transmission.
                         </p>
                     </section>
 
                     <section>
                         <h3 className="text-xl font-semibold text-white mb-3">5. Intellectual Property</h3>
                         <p className="leading-relaxed">
-                            The Curebird platform, including its AI algorithms, interface design, and branding, is the exclusive property of Curebird Inc. and is protected by copyright and intellectual property laws.
+                            The CureBird platform, including its AI algorithms, interface design, and branding, is the exclusive property of CureBird Inc. and is protected by copyright and intellectual property laws.
                         </p>
                     </section>
 

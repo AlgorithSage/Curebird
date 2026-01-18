@@ -91,7 +91,7 @@ const Contact = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate
                         </div>
 
                         <div className="mt-12">
-                            <p className="text-xs text-amber-200/60">© 2025 Curebird Inc.</p>
+                            <p className="text-xs text-amber-200/60">© 2025 CureBird Inc.</p>
                         </div>
                     </div>
                 </div>

@@ -166,7 +166,7 @@ const DoctorProfile = ({ user }) => {
                     <div className="space-y-0.5 bg-[#0c0a09] rounded-xl border border-stone-800/50 p-1">
                         <div className="flex justify-between items-center text-sm p-3 rounded-lg hover:bg-white/5 transition-colors">
                             <span className="text-stone-500 font-medium">Clinic Name</span>
-                            <span className="text-amber-500 font-bold tracking-wide">Curebird Central</span>
+                            <span className="text-amber-500 font-bold tracking-wide">CureBird Central</span>
                         </div>
                         <div className="w-full h-px bg-stone-800/50" />
                         <div className="flex justify-between items-center text-sm p-3 rounded-lg hover:bg-white/5 transition-colors">

@@ -128,7 +128,7 @@ def get_trends_data():
                 'avg_recovery': disease.get('recovery_metrics', {}).get('avg_time', '7 days'),
                 'age_groups': [{'name': k, 'value': v} for k, v in age_data.items()],
                 'gender_split': [{'name': 'Male', 'value': 52}, {'name': 'Female', 'value': 48}],
-                'source': 'Public Health Intelligence (Curebird Store)',
+                'source': 'Public Health Intelligence (CureBird Store)',
                 'source_label': 'IDSP + MoHFW Surveillance Metrics',
                 'sources': disease.get('sources', []),
                 'top_medicines': meds,
@@ -348,7 +348,7 @@ def verify_and_correct_medical_data(extracted_data):
         medications_json = json.dumps(extracted_data.get('medications', []))
         
         system_prompt = """
-        You are Curebird’s Clinical Feedback & Validation AI.
+        You are CureBird’s Clinical Feedback & Validation AI.
 
         Your job is to receive OCR-extracted medical text from prescriptions and convert it into a medically correct, verified, and structured form.
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {  LayoutDashboard, FileText, Calendar, Settings, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users, Pill, TrendingUp, Microscope, BarChart2, Stethoscope, Bot  } from './Icons';
-import CurebirdLogo from '../curebird_logo.png';
+import CureBirdLogo from '../curebird_logo.png';
 
 const Sidebar = ({ isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) => {
     const navigate = useNavigate();
@@ -76,15 +76,15 @@ const Sidebar = ({ isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) 
                             <div className="relative w-12 h-12 rounded-full bg-black/40 p-2 flex items-center justify-center transition-transform duration-500 group-hover/card:scale-110">
                                 {/* The Logo Itself */}
                                 <img
-                                    src={CurebirdLogo}
-                                    alt="Curebird Logo"
+                                    src={CureBirdLogo}
+                                    alt="CureBird Logo"
                                     className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-[pulse_3s_ease-in-out_infinite] hover:drop-shadow-[0_0_20px_rgba(245,158,11,1)] transition-all duration-300"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-200">Curebird</h1>
+                            <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-200">CureBird</h1>
                             <p className="text-[10px] text-amber-500/80 font-bold uppercase tracking-wider">Patient Portal</p>
                         </div>
                     </div>

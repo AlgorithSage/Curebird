@@ -1,6 +1,6 @@
 # Technology Stack
 
-This document outlines the core technologies, frameworks, and libraries used in the Curebird project.
+This document outlines the core technologies, frameworks, and libraries used in the CureBird project.
 
 ## 1. Frontend (Client-Side)
 

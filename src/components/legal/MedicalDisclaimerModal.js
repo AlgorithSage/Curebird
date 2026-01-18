@@ -25,11 +25,11 @@ const MedicalDisclaimerModal = ({ isOpen, onClose }) => {
                     </div>
 
                     <div className="p-6 space-y-4 text-slate-300 text-sm leading-relaxed h-[300px] overflow-y-auto">
-                        <p><strong>1. No Medical Advice:</strong> Curebird is a health management tool designed to help you organize and track your medical information. It does <span className="text-red-400 font-bold">NOT</span> provide medical advice, diagnosis, or treatment.</p>
+                        <p><strong>1. No Medical Advice:</strong> CureBird is a health management tool designed to help you organize and track your medical information. It does <span className="text-red-400 font-bold">NOT</span> provide medical advice, diagnosis, or treatment.</p>
 
                         <p><strong>2. AI Limitations:</strong> The "Cure Insight" and "Cure AI" features use artificial intelligence to analyze data. These insights are automated observations and may contain errors. They should never replace professional medical judgment.</p>
 
-                        <p><strong>3. Emergency Use:</strong> Do not rely on Curebird for immediate life-saving assistance during critical emergencies. Always call your local emergency services (e.g., 911, 112) first.</p>
+                        <p><strong>3. Emergency Use:</strong> Do not rely on CureBird for immediate life-saving assistance during critical emergencies. Always call your local emergency services (e.g., 911, 112) first.</p>
 
                         <p><strong>4. Data Privacy:</strong> Your data is stored securely. However, you are responsible for the security of your account credentials and any data you choose to share via the "Doctor Mode" or "Print" features.</p>
                     </div>

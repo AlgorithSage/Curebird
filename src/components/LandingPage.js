@@ -3,7 +3,7 @@ import {  HeartPulse, LogIn, Dna, Pill, Activity, Globe, ShieldCheck, Zap, Arrow
 import { motion } from 'framer-motion';
 import SEO from './SEO';
 
-import CurebirdLogo from '../curebird_logo.png';
+import CureBirdLogo from '../curebird_logo.png';
 
 // --- Video Background Component (Mobile Optimized) ---
 const VideoBackground = ({ isMobile }) => (
@@ -94,10 +94,10 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
 
 
                             
-                            <img src={CurebirdLogo} alt="Curebird Logo" className="relative z-70 w-full h-full object-contain drop-shadow-[0_0_20px_rgba(245,158,11,0.8)]" />
+                            <img src={CureBirdLogo} alt="CureBird Logo" className="relative z-70 w-full h-full object-contain drop-shadow-[0_0_20px_rgba(245,158,11,0.8)]" />
                         </div>
                         <h1 className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tight text-center sm:text-left">
-                            Cure<span className="text-amber-400">bird</span>
+                            Cure<span className="text-amber-400">Bird</span>
                         </h1>
                     </motion.div>
 

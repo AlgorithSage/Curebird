@@ -74,7 +74,7 @@ class GeminiHealthAssistant:
         """Create system prompt with disease context."""
         disease_context = self.load_disease_context()
         
-        return f"""You are a Health Assistant AI for Curebird, India's premier medical intelligence platform.
+        return f"""You are a Health Assistant AI for CureBird, India's premier medical intelligence platform.
 
 {disease_context}
 

@@ -64,7 +64,7 @@ const GenerateSummaryModal = ({ isOpen, onClose }) => {
                                 </h2>
                                 <p className="text-stone-500 text-xs font-bold uppercase tracking-[0.2em] mt-1.5 flex items-center gap-2">
                                     <Bot size={12} className="text-amber-500 animate-pulse" />
-                                    Powered by Curebird Clinical Engine
+                                    Powered by CureBird Clinical Engine
                                 </p>
                             </div>
                         </div>
