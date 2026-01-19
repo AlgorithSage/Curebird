@@ -32,3 +32,4 @@ Include/
 
 __pycache__/
 *.pyc
+client_secret.json

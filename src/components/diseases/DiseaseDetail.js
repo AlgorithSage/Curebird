@@ -499,15 +499,15 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                             // Document Tab Content
                             <div className="grid grid-cols-1 gap-6">
                                 {/* Upload Area */}
-                                <div className="bg-slate-800/30 border-2 border-dashed border-slate-700 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:bg-slate-800/50 transition-colors">
-                                    <div className="p-4 bg-slate-800 rounded-full mb-4">
+                                <div className="bg-slate-800/30 border-2 border-dashed border-sky-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:bg-sky-500/5 transition-colors group">
+                                    <div className="p-4 bg-slate-800/80 rounded-full mb-4 group-hover:bg-sky-500/20 transition-colors">
                                         <UploadCloud size={32} className="text-amber-500" />
                                     </div>
                                     <h3 className="text-lg font-bold text-white mb-2">Upload Lab Reports</h3>
                                     <p className="text-slate-400 text-sm mb-6 max-w-sm">
                                         Store your prescriptions, test results, and imaging reports here securely.
                                     </p>
-                                    <label className="cursor-pointer px-6 py-3 bg-white text-slate-900 font-bold rounded-xl hover:bg-amber-50 hover:text-amber-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <label className="cursor-pointer px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold rounded-xl shadow-lg shadow-amber-500/20 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
                                         {isUploading ? 'Uploading...' : 'Select File'}
                                         <input
                                             type="file"
@@ -521,10 +521,10 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                                 {/* Document List */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {documents.map(doc => (
-                                        <div key={doc.id} className="bg-slate-800/50 border border-white/5 p-4 rounded-xl hover:border-amber-500/30 transition-colors flex flex-col justify-between">
+                                        <div key={doc.id} className="glass-card-amber animated-border flex flex-col justify-between group">
                                             <div className="flex items-start gap-3 mb-4">
-                                                <div className="p-2 bg-slate-900/50 rounded-lg">
-                                                    <FileText size={24} className="text-blue-400" />
+                                                <div className="p-2 bg-sky-900/30 rounded-lg border border-sky-500/20">
+                                                    <FileText size={24} className="text-sky-400" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <h4 className="text-white font-medium truncate">{doc.name}</h4>
@@ -534,16 +534,16 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-2 pt-3 border-t border-white/5">
+                                            <div className="flex items-center gap-2 pt-3 border-t border-sky-500/10">
                                                 <button
                                                     onClick={() => handleViewDocument(doc)}
-                                                    className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold text-slate-300 bg-slate-700/50 rounded-lg hover:bg-slate-700 hover:text-white transition-colors"
+                                                    className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold text-sky-300 bg-sky-500/10 rounded-lg hover:bg-sky-500/20 transition-colors"
                                                 >
                                                     <Eye size={14} /> Preview
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteDocument(doc.id, doc.storagePath)}
-                                                    className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                    className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
