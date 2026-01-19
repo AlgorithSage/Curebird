@@ -134,7 +134,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
     return (
         <>
             <motion.div layout initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
-                className="glass-card p-5 rounded-2xl group border-l-4 border-l-transparent hover:border-l-amber-500">
+                className="glass-card-amber p-6 rounded-2xl group border border-amber-500/10 hover:border-amber-500/30 shadow-lg hover:shadow-amber-500/20 transition-all duration-300">
                 <div className="flex justify-between items-start">
                     <div className="flex items-center space-x-4">
                         <div className="bg-white/5 p-3 rounded-xl shadow-inner group-hover:scale-110 transition-transform duration-300">{ICONS[record.type] || ICONS.default}</div>
@@ -143,19 +143,18 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                                 <h3 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{capitalize(record.type)}</h3>
                                 {record.fileUrl && (
                                     <button
-                                        onClick={handleViewFile}
                                         disabled={isLoadingFile}
-                                        className="flex items-center gap-1 px-2 py-0.5 bg-sky-500/10 text-sky-400 rounded-md border border-sky-500/20 hover:bg-sky-500/20 transition-all text-[10px] uppercase font-black disabled:opacity-50"
+                                        className="flex items-center gap-1.5 px-3 py-1 bg-sky-500/10 text-sky-300 rounded-lg border border-sky-500/20 hover:bg-sky-500/20 transition-all text-[11px] font-bold uppercase tracking-wider disabled:opacity-50 shadow-sm"
                                     >
-                                        {isLoadingFile ? <span className="animate-spin">⌛</span> : <ExternalLink size={10} />} View
+                                        {isLoadingFile ? <span className="animate-spin">⌛</span> : <ExternalLink size={12} />} View
                                     </button>
                                 )}
                                 {record.digital_copy && (
                                     <button
                                         onClick={() => setShowDigitalModal(true)}
-                                        className="flex items-center gap-1 px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-md border border-emerald-500/20 hover:bg-emerald-500/20 transition-all text-[10px] uppercase font-black"
+                                        className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-300 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/20 transition-all text-[11px] font-bold uppercase tracking-wider shadow-sm"
                                     >
-                                        <Eye size={10} /> Digital Copy
+                                        <Eye size={12} /> Digital Copy
                                     </button>
                                 )}
                             </div>
@@ -189,17 +188,17 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-white border border-amber-500/20 w-full max-w-4xl h-[85vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden"
+                            className="bg-slate-900/95 backdrop-blur-xl border border-white/10 w-full max-w-4xl h-[85vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden ring-1 ring-white/5"
                         >
                             {/* Header */}
-                            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                            <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-slate-900/50">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
-                                        <FileText size={20} />
+                                    <div className="p-2.5 bg-amber-500/20 text-amber-500 rounded-xl border border-amber-500/20">
+                                        <FileText size={20} weight="duotone" />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold text-slate-900">Digital Transcript</h3>
-                                        <p className="text-[10px] text-amber-600 uppercase tracking-widest font-black">AI-Generated Digitization</p>
+                                        <h3 className="text-lg font-bold text-white">Digital Transcript</h3>
+                                        <p className="text-[10px] text-amber-500 uppercase tracking-widest font-black">AI-Generated Digitization</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -207,7 +206,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                                         <>
                                             <button
                                                 onClick={startEditing}
-                                                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs uppercase tracking-wider hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                                                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 text-slate-400 font-bold text-xs uppercase tracking-wider hover:bg-slate-700 hover:text-white transition-colors border border-white/5"
                                             >
                                                 <Edit size={16} /> Edit
                                             </button>
@@ -244,39 +243,39 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                             </div>
 
                             {/* Content */}
-                            <div className="flex-1 overflow-y-auto p-8 bg-white font-sans" style={{ color: 'black' }}>
-                                <div className="max-w-3xl mx-auto">
+                            <div className="flex-1 overflow-y-auto p-8 bg-slate-900/50 font-sans custom-scrollbar">
+                                <div className="max-w-3xl mx-auto bg-slate-800/20 p-8 rounded-2xl border border-white/5">
                                     {/* Letterhead */}
-                                    <div className="border-b-2 border-amber-500 pb-6 mb-8 flex justify-between items-end">
+                                    <div className="border-b-2 border-amber-500/50 pb-6 mb-8 flex justify-between items-end">
                                         <div>
-                                            <h1 className="text-2xl font-black text-slate-900 m-0 leading-none">DIGITAL TRANSCRIPT</h1>
-                                            <p className="text-amber-600 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
+                                            <h1 className="text-2xl font-black text-white m-0 leading-none tracking-tight">DIGITAL TRANSCRIPT</h1>
+                                            <p className="text-amber-500 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
                                         </div>
                                         <div className="text-right opacity-100">
-                                            <div className="flex items-center justify-end gap-2 text-slate-900 font-bold">
-                                                <img src="/favicon.ico" alt="CureBird Logo" className="h-10 w-auto" />
-                                                <span className="text-xl">CureBird</span>
+                                            <div className="flex items-center justify-end gap-2 text-white font-bold">
+                                                <img src="/favicon.ico" alt="CureBird Logo" className="h-10 w-auto brightness-110 drop-shadow-lg" />
+                                                <span className="text-xl tracking-tight">CureBird</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Actual Markdown Content - Forcing Colors with Inline Styles */}
-                                    <div className="markdown-content text-left" style={{ textAlign: 'left', color: '#000000' }}>
+                                    {/* Actual Markdown Content - Dark Mode Styles */}
+                                    <div className="markdown-content text-left">
                                         <style>{`
                                             .markdown-content * {
-                                                color: #000000 !important;
+                                                color: #e2e8f0 !important;
                                                 opacity: 1 !important;
                                                 text-align: left !important;
                                             }
                                             .markdown-content strong {
                                                 font-weight: 800 !important;
-                                                color: #000000 !important;
+                                                color: #fff !important;
                                             }
                                             .markdown-content li {
-                                                color: #000000 !important;
+                                                color: #cbd5e1 !important;
                                             }
                                             .markdown-content h1, .markdown-content h2, .markdown-content h3 {
-                                                color: #000000 !important;
+                                                color: #f59e0b !important;
                                                 font-weight: 800 !important;
                                             }
                                             .markdown-content table {
@@ -285,23 +284,23 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                                                 margin: 1em 0;
                                             }
                                             .markdown-content th, .markdown-content td {
-                                                border: 1px solid #cbd5e1;
+                                                border: 1px solid #334155;
                                                 padding: 8px;
-                                                color: #000 !important;
+                                                color: #e2e8f0 !important;
                                             }
                                             .markdown-content th {
-                                                background-color: #f1f5f9;
+                                                background-color: #1e293b;
                                                 font-weight: bold;
+                                                color: #fbbf24 !important;
                                             }
                                         `}</style>
-                                        <div className="prose prose-sm max-w-none text-black">
+                                        <div className="prose prose-sm prose-invert max-w-none text-slate-200">
                                             {isEditing ? (
                                                 <textarea
                                                     value={tempContent}
                                                     onChange={(e) => setTempContent(e.target.value)}
-                                                    className="w-full h-[60vh] p-4 rounded-xl border border-slate-300 bg-slate-50 font-mono text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none shadow-inner"
+                                                    className="w-full h-[60vh] p-4 rounded-xl border border-white/10 bg-slate-950/50 font-mono text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none shadow-inner"
                                                     placeholder="Edit markdown content..."
-                                                    style={{ color: '#000000' }}
                                                 />
                                             ) : (
                                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -312,7 +311,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                                     </div>
 
                                     {/* Footer */}
-                                    <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono uppercase tracking-widest">
+                                    <div className="mt-12 pt-6 border-t border-white/10 flex justify-between items-center text-[10px] text-slate-500 font-mono uppercase tracking-widest">
                                         <span>Generated by CureBird AI</span>
                                         <span>ID: {record.id}</span>
                                     </div>
