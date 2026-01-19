@@ -8,12 +8,14 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) => {
+    // Step 5: Unified Iconography
+    // Standardized all to use FileText (Document Icon) but kept color differentiation
     const ICONS = {
-        prescription: <Pill className="text-rose-400" />,
+        prescription: <FileText className="text-rose-400" />,
         test_report: <FileText className="text-fuchsia-400" />,
-        diagnosis: <Stethoscope className="text-emerald-400" />,
-        admission: <Hospital className="text-red-400" />,
-        ecg: <HeartPulse className="text-pink-400" />,
+        diagnosis: <FileText className="text-emerald-400" />,
+        admission: <FileText className="text-red-400" />,
+        ecg: <FileText className="text-pink-400" />,
         default: <FileText className="text-slate-400" />,
     };
 
@@ -29,8 +31,6 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
             return 'Invalid Date';
         }
     };
-
-
 
     const [isLoadingFile, setIsLoadingFile] = useState(false);
     const [showDigitalModal, setShowDigitalModal] = useState(false);
@@ -67,6 +67,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
         if (!printContent) return;
 
         const printWindow = window.open('', '_blank');
+        // ... (Print Logic unchanged)
         printWindow.document.write(`
             <html>
                 <head>
@@ -110,7 +111,6 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
     };
 
     const handleViewFile = async () => {
-        // Option 1: Try secure Fetch via Storage SDK
         if (record.storagePath && storage) {
             setIsLoadingFile(true);
             try {
@@ -119,13 +119,11 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                 window.open(url, '_blank');
             } catch (error) {
                 console.error("Secure fetch failed, falling back to public URL", error);
-                // Fallback to stored URL if SDK fails
                 if (record.fileUrl) window.open(record.fileUrl, '_blank');
             } finally {
                 setIsLoadingFile(false);
             }
         }
-        // Option 2: Fallback to tokenized URL
         else if (record.fileUrl) {
             window.open(record.fileUrl, '_blank');
         }
@@ -134,45 +132,117 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
     return (
         <>
             <motion.div layout initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
-                className="glass-card-amber p-6 rounded-2xl group border border-amber-500/10 hover:border-amber-500/30 shadow-lg hover:shadow-amber-500/20 transition-all duration-300">
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center space-x-4">
-                        <div className="bg-white/5 p-3 rounded-xl shadow-inner group-hover:scale-110 transition-transform duration-300">{ICONS[record.type] || ICONS.default}</div>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <h3 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{capitalize(record.type)}</h3>
-                                {record.fileUrl && (
-                                    <button
-                                        disabled={isLoadingFile}
-                                        className="flex items-center gap-1.5 px-3 py-1 bg-sky-500/10 text-sky-300 rounded-lg border border-sky-500/20 hover:bg-sky-500/20 transition-all text-[11px] font-bold uppercase tracking-wider disabled:opacity-50 shadow-sm"
-                                    >
-                                        {isLoadingFile ? <span className="animate-spin">⌛</span> : <ExternalLink size={12} />} View
-                                    </button>
-                                )}
-                                {record.digital_copy && (
-                                    <button
-                                        onClick={() => setShowDigitalModal(true)}
-                                        className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-300 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/20 transition-all text-[11px] font-bold uppercase tracking-wider shadow-sm"
-                                    >
-                                        <Eye size={12} /> Digital Copy
-                                    </button>
-                                )}
-                            </div>
-                            <p className="text-sm text-slate-400 font-medium">On {formatDate(record.date)}</p>
+                // Step 1: Global Theme Integration
+                // Used globally declared .glass-card-amber class
+                className="glass-card-amber p-0 group flex flex-col overflow-hidden isolate relative">
+
+                {/* Main Content Area */}
+                <div className="p-5 flex gap-5 items-center relative z-10">
+                    {/* Icon Container */}
+                    <div className="relative group/icon">
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl blur-none" />
+                        <div className="bg-slate-950/50 p-4 h-fit rounded-2xl shadow-inner ring-1 ring-white/10 relative z-10 group-hover:scale-105 transition-all duration-300">
+                            {/* Step 5: Unified Icons rendered here */}
+                            {React.cloneElement(ICONS[record.type] || ICONS.default, { size: 32 })}
                         </div>
                     </div>
-                    <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <button onClick={onEdit} className="p-2 text-slate-400 hover:text-amber-400 hover:bg-white/10 rounded-lg transition"><Edit size={16} /></button>
-                        <button onClick={onDelete} className="p-2 text-slate-400 hover:text-rose-400 hover:bg-white/10 rounded-lg transition"><Trash2 size={16} /></button>
+
+                    {/* Content Column */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <h3 className="font-bold text-xl text-white group-hover:text-amber-400 transition-colors leading-tight truncate pr-4" title={record.docName || record.fileName}>
+                            {record.docName || record.fileName || capitalize(record.type)}
+                        </h3>
+
+                        {/* Step 3: Professional Metadata Badges */}
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            {/* Date Badge */}
+                            <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] text-slate-400 font-bold uppercase tracking-wider backdrop-blur-sm shadow-sm">
+                                {formatDate(record.date)}
+                            </span>
+                            {/* Type Badge - Color Coded Pills */}
+                            <span className={`px-2.5 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm shadow-sm ${record.type === 'prescription' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' :
+                                    record.type === 'test_report' ? 'bg-fuchsia-500/10 border-fuchsia-500/20 text-fuchsia-400' :
+                                        record.type === 'diagnosis' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
+                                            record.type === 'admission' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
+                                                record.type === 'ecg' ? 'bg-pink-500/10 border-pink-500/20 text-pink-400' :
+                                                    'bg-amber-500/10 border-amber-500/20 text-amber-500'
+                                }`}>
+                                {capitalize(record.type)}
+                            </span>
+                        </div>
+
+                        {/* Step 4: Smart Field Display */}
+                        <div className="flex flex-wrap gap-x-6 gap-y-1 mt-2 text-xs text-slate-300">
+                            {/* Only show Doctor if valid */}
+                            {record.doctorName && !["N/A", "Imported Doc"].includes(record.doctorName) && (
+                                <div className="flex items-center gap-2 truncate">
+                                    <span className="w-1.5 rounded-full h-1.5 bg-amber-500"></span>
+                                    <span className="text-slate-500 text-[10px] uppercase font-bold">Dr:</span>
+                                    {record.doctorName}
+                                </div>
+                            )}
+                            {/* Only show Facility if valid */}
+                            {record.hospitalName && !["N/A", "Unknown Facility"].includes(record.hospitalName) && (
+                                <div className="flex items-center gap-2 truncate">
+                                    <span className="w-1.5 rounded-full h-1.5 bg-emerald-500"></span>
+                                    <span className="text-slate-500 text-[10px] uppercase font-bold">Facility:</span>
+                                    {record.hospitalName}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Right Side Actions */}
+                    <div className="flex flex-col items-end gap-2 shrink-0 h-full justify-center my-auto">
+                        {/* Step 2: "Big Square" Action Buttons */}
+                        <div className="flex items-center gap-3 h-full">
+                            {record.fileUrl && (
+                                <button
+                                    onClick={handleViewFile}
+                                    disabled={isLoadingFile}
+                                    className="flex flex-col items-center justify-center w-20 h-20 bg-gradient-to-br from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white rounded-xl shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 transition-all disabled:opacity-50 transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden"
+                                >
+                                    {/* Shine effect */}
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+
+                                    {isLoadingFile ? <span className="animate-spin text-lg">⌛</span> : <ExternalLink size={24} />}
+                                    <span className="text-[10px] font-bold uppercase tracking-wider relative z-10">View</span>
+                                </button>
+                            )}
+                            {record.digital_copy && (
+                                <button
+                                    onClick={() => setShowDigitalModal(true)}
+                                    className="flex flex-col items-center justify-center w-20 h-20 bg-gradient-to-br from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transition-all transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+                                    <Eye size={24} />
+                                    <span className="text-[10px] font-bold uppercase tracking-wider relative z-10">Digital</span>
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Step 6: Prominent Secondary Actions */}
+                        {/* Always visible, no hover-to-reveal */}
+                        <div className="flex gap-2 justify-end w-full mt-1">
+                            <button
+                                onClick={onEdit}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-white/5 hover:bg-amber-500/10 hover:border-amber-500/30 text-slate-400 hover:text-amber-400 transition-all text-[10px] font-bold uppercase tracking-wider backdrop-blur-md"
+                            >
+                                <Edit size={14} /> Edit
+                            </button>
+                            <button
+                                onClick={onDelete}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-white/5 hover:bg-rose-500/10 hover:border-rose-500/30 text-slate-400 hover:text-rose-400 transition-all text-[10px] font-bold uppercase tracking-wider backdrop-blur-md"
+                            >
+                                <Trash2 size={14} /> Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div className="mt-4 pl-16 border-t border-white/5 pt-4 text-sm grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span><strong className="font-medium text-slate-300">Doctor:</strong> <span className="text-slate-200">{record.doctorName}</span></p>
-                    <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><strong className="font-medium text-slate-300">Facility:</strong> <span className="text-slate-200">{record.hospitalName}</span></p>
-                </div>
+
             </motion.div>
 
-            {/* Helper div for printing - Force light mode text for the print content source */}
+            {/* Print Helper */}
             <div id={`markdown-content-${record.id}`} style={{ display: 'none' }}>
                 {record.digital_copy && (
                     <div className="prose max-w-none text-black [&_*]:text-black">
@@ -182,6 +252,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
             </div>
 
             <AnimatePresence>
+                {/* ... (Modal code kept unchanged as it was already correct) */}
                 {showDigitalModal && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
                         <motion.div
@@ -270,6 +341,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                                             .markdown-content strong {
                                                 font-weight: 800 !important;
                                                 color: #fff !important;
+                                                text-align: left !important;
                                             }
                                             .markdown-content li {
                                                 color: #cbd5e1 !important;
