@@ -116,7 +116,6 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unre
                 { id: 'messages', label: 'Messages', icon: Siren },
                 { id: 'patients', label: 'My Patients', icon: Users },
                 { id: 'telehealth', label: 'Telehealth', icon: Video },
-                { id: 'consultations', label: 'Consultations', icon: Stethoscope },
                 { id: 'medical_records', label: 'Medical Records', icon: FileText },
             ]
         },
