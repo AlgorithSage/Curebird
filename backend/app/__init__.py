@@ -4,7 +4,7 @@ from flask_cors import CORS
 def create_app():
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     with app.app_context():
         # Import parts of our application
