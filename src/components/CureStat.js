@@ -282,7 +282,7 @@ const DiseaseCard = ({ disease, onClick, getRiskLevel }) => {
     );
 };
 
-const HealthIndexCard = ({ title, value, status, trend, icon: Icon, color, source, description, utility }) => (
+const HealthIndexCard = ({ title, value, status, trend, icon: Icon, color, source, description, utility, isMobile }) => (
     <div className="glass-card p-4 sm:p-5 relative group hover:-translate-y-1 transition-all duration-300 hover:z-[45]">
         <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity`}>
             <Icon size={isMobile ? 48 : 64} className={color} />
@@ -658,6 +658,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         {/* 1. Diabetes Health Index */}
                         <HealthIndexCard
+                            isMobile={isMobile}
                             title="Diabetes Index"
                             value="11.4%"
                             status="Critical"
@@ -670,6 +671,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                         />
                         {/* 2. Cardiac Health Index */}
                         <HealthIndexCard
+                            isMobile={isMobile}
                             title="Cardiac Index"
                             value="15.2%"
                             status="Critical"
@@ -682,6 +684,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                         />
                         {/* 3. Respiratory Health Index */}
                         <HealthIndexCard
+                            isMobile={isMobile}
                             title="Respiratory Index"
                             value="High"
                             status="Severe"
@@ -694,6 +697,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                         />
                         {/* 4. Renal Health Index */}
                         <HealthIndexCard
+                            isMobile={isMobile}
                             title="Renal Index"
                             value="13.0%"
                             status="High"
@@ -706,6 +710,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                         />
                         {/* 5. Mental Health Index */}
                         <HealthIndexCard
+                            isMobile={isMobile}
                             title="Mental Health"
                             value="10.6%"
                             status="Moderate"
