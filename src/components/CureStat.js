@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import {  Activity, Loader, ServerCrash, Info, Pill, TrendingUp, X, Download, Users, Brain, Search, MapPin, AlertTriangle, Map, Calendar, ShieldCheck, Clock, Layers, HeartPulse, Wind, Droplets, Database, ArrowLeft  } from './Icons';
+import { Activity, Loader, ServerCrash, Info, Pill, TrendingUp, X, Download, Users, Brain, Search, MapPin, AlertTriangle, Map, Calendar, ShieldCheck, Clock, Layers, HeartPulse, Wind, Droplets, Database, ArrowLeft } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import Header from './Header';
@@ -283,18 +283,19 @@ const DiseaseCard = ({ disease, onClick, getRiskLevel }) => {
 };
 
 const HealthIndexCard = ({ title, value, status, trend, icon: Icon, color, source, description, utility }) => (
-    <div className="glass-card p-5 relative group hover:-translate-y-1 transition-all duration-300 hover:z-[45]">
+    <div className="glass-card p-4 sm:p-5 relative group hover:-translate-y-1 transition-all duration-300 hover:z-[45]">
         <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity`}>
-            <Icon size={64} className={color} />
+            <Icon size={isMobile ? 48 : 64} className={color} />
         </div>
         <div className="relative z-10">
             <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg bg-white/5 border border-white/5 ${color}`}>
-                        <Icon size={20} />
+                <div className="flex items-center gap-2 sm:gap-3">
+                    <div className={`p-1.5 sm:p-2 rounded-lg bg-white/5 border border-white/5 ${color}`}>
+                        <Icon size={isMobile ? 16 : 20} />
                     </div>
-                    <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wide">{title}</h3>
+                    <h3 className="text-[10px] sm:text-sm font-bold text-slate-300 uppercase tracking-wide">{title}</h3>
                 </div>
+                ...
 
                 {/* Info Icon with Tooltip */}
                 <div className="relative group/info">
@@ -613,35 +614,35 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
             <div className="relative z-10">
 
                 {/* Premium Hero Section */}
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-8 text-center mt-6">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-6 sm:p-8 mb-8 text-center mt-6">
                     <div className="absolute top-0 left-0 -translate-x-1/4 w-96 h-96 bg-amber-500/20 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
 
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-bold mb-6 animate-pulse">
-                        <Activity size={16} /> REAL-TIME MONITOR
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] sm:text-sm font-bold mb-4 sm:mb-6 animate-pulse">
+                        <Activity size={14} className="sm:w-4 sm:h-4" /> REAL-TIME MONITOR
                     </div>
 
-                    <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-3 sm:mb-4 tracking-tight drop-shadow-lg">
                         Medical Intelligence <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Hub</span>
                     </h1>
 
-                    <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                        Track disease outbreaks, analyze national health trends, and access real-time predictive analytics to stay ahead of public health challenges.
+                    <p className="text-sm sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed px-2 sm:px-0">
+                        Track disease outbreaks, analyze national health trends, and access real-time predictive analytics to stay ahead of challenges.
                     </p>
 
-                    <div className="flex justify-center gap-8 mt-8 opacity-70">
+                    <div className="flex justify-center gap-4 sm:gap-8 mt-6 sm:mt-8 opacity-70 scale-75 sm:scale-100">
                         <div className="flex flex-col items-center gap-2">
-                            <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><Activity /></div>
-                            <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Monitor</span>
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><Activity size={18} /></div>
+                            <span className="text-[10px] uppercase tracking-widest font-bold text-slate-500">Monitor</span>
                         </div>
-                        <div className="w-16 h-px bg-slate-700 self-center"></div>
+                        <div className="w-8 sm:w-16 h-px bg-slate-700 self-center"></div>
                         <div className="flex flex-col items-center gap-2">
-                            <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-orange-400"><Map /></div>
-                            <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Track</span>
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 flex items-center justify-center text-orange-400"><Map size={18} /></div>
+                            <span className="text-[10px] uppercase tracking-widest font-bold text-slate-500">Track</span>
                         </div>
-                        <div className="w-16 h-px bg-slate-700 self-center"></div>
+                        <div className="w-8 sm:w-16 h-px bg-slate-700 self-center"></div>
                         <div className="flex flex-col items-center gap-2">
-                            <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><TrendingUp /></div>
-                            <span className="text-xs uppercase tracking-widest font-bold text-slate-500">Predict</span>
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 flex items-center justify-center text-amber-400"><TrendingUp size={18} /></div>
+                            <span className="text-[10px] uppercase tracking-widest font-bold text-slate-500">Predict</span>
                         </div>
                     </div>
                 </div>
@@ -718,7 +719,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                     </div>
                 </motion.div>
 
-                <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between glass-card p-4 relative z-40">
+                <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between glass-card p-4 sm:p-5 relative z-40 mx-2 sm:mx-0">
                     <div className="relative w-full md:w-96 group" ref={searchWrapperRef}>
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-400 transition-colors" size={20} />
                         <input
@@ -727,47 +728,25 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                             value={searchTerm}
                             onChange={handleSearchChange}
                             onFocus={() => { if (searchTerm) setShowSuggestions(true); }}
-                            className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white font-bold placeholder:text-white font-bold focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner"
+                            className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-3 sm:py-2.5 pl-10 pr-4 text-white font-bold placeholder:text-slate-500 focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner text-sm"
                         />
-
-                        {/* Auto-complete Dropdown */}
-                        <AnimatePresence>
-                            {showSuggestions && suggestions.length > 0 && (
-                                <motion.ul
-                                    initial={{ opacity: 0, y: 5 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 5 }}
-                                    className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 border border-white/10 rounded-xl shadow-2xl backdrop-blur-md z-[100] overflow-hidden"
-                                >
-                                    {suggestions.map((disease, idx) => (
-                                        <li
-                                            key={idx}
-                                            onClick={() => handleSuggestionClick(disease)}
-                                            className="px-4 py-3 text-sm text-slate-300 hover:bg-sky-500/10 hover:text-sky-400 cursor-pointer border-b border-white/5 last:border-0 flex items-center gap-2 transition-colors font-medium"
-                                        >
-                                            <Search size={14} className="opacity-50" />
-                                            {disease}
-                                        </li>
-                                    ))}
-                                </motion.ul>
-                            )}
-                        </AnimatePresence>
+                        ...
                     </div>
-                    <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
+                    <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 sm:pb-0 custom-scrollbar">
                         {['all', 'high', 'medium', 'low'].map((level) => (
-                            <button key={level} onClick={() => setRiskFilter(level)} className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all whitespace-nowrap border ${riskFilter === level ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25 border-sky-400' : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white'}`}>
+                            <button key={level} onClick={() => setRiskFilter(level)} className={`px-4 py-2.5 sm:py-2 rounded-xl text-[10px] sm:text-sm font-bold capitalize transition-all whitespace-nowrap border ${riskFilter === level ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25 border-sky-400' : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white'}`}>
                                 {level === 'all' ? 'All Risks' : `${level} Risk`}
                             </button>
                         ))}
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                    <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card p-6 relative hover:z-[45] transition-all duration-200">
-                        <div className="flex items-center justify-between mb-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 px-2 sm:px-0">
+                    <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card p-5 sm:p-6 relative hover:z-[45] transition-all duration-200">
+                        <div className="flex items-center justify-between mb-4 sm:mb-2">
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <h2 className="text-xl font-bold text-white">Regional Impact</h2>
+                                    <h2 className="text-lg sm:text-xl font-bold text-white">Regional Impact</h2>
                                     <div className="group relative">
                                         <Info size={16} className="text-slate-500 hover:text-sky-400 cursor-help transition-colors" />
                                         <div className="absolute left-0 bottom-full mb-2 w-96 p-4 bg-slate-900/95 border border-slate-700/80 rounded-xl shadow-2xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[100]">
@@ -818,12 +797,12 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                         </div>
                         <div className="h-[250px] sm:h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart layout="vertical" data={getRegionalData(trends[0] || { disease: 'Default' })} margin={{ top: 10, right: 30, left: 40, bottom: 0 }}>
+                                <BarChart layout="vertical" data={getRegionalData(trends[0] || { disease: 'Default' })} margin={{ top: 10, right: 30, left: 0, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" horizontal={false} opacity={0.3} />
-                                    <XAxis type="number" stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} fontWeight="bold" />
-                                    <YAxis dataKey="name" type="category" stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} width={80} fontWeight="bold" />
+                                    <XAxis type="number" stroke="#ffffff" fontSize={10} tickLine={false} axisLine={false} fontWeight="bold" />
+                                    <YAxis dataKey="name" type="category" stroke="#ffffff" fontSize={10} tickLine={false} axisLine={false} width={isMobile ? 60 : 80} fontWeight="bold" />
                                     <Tooltip content={<CustomTooltip />} cursor={{ fill: '#ffffff', opacity: 0.05 }} />
-                                    <Bar dataKey="value" fill="#38bdf8" radius={[0, 4, 4, 0]} barSize={20}>
+                                    <Bar dataKey="value" fill="#38bdf8" radius={[0, 4, 4, 0]} barSize={isMobile ? 12 : 20}>
                                         {getRegionalData(trends[0] || { disease: 'Default' }).map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
@@ -869,10 +848,10 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                 <p className="text-xs text-slate-400 font-medium mt-1">Proportion of top reported illnesses</p>
                             </div>
                         </div>
-                        <div className="h-[250px] sm:h-[350px]">
+                        <div className="h-[300px] sm:h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
-                                    <Pie data={filteredTrends.slice(0, 5)} cx="50%" cy="50%" innerRadius={isMobile ? 40 : 60} outerRadius={isMobile ? 60 : 80} paddingAngle={4} dataKey="outbreaks" nameKey="disease" stroke="none">
+                                    <Pie data={filteredTrends.slice(0, 5)} cx="50%" cy="45%" innerRadius={isMobile ? 40 : 60} outerRadius={isMobile ? 60 : 80} paddingAngle={4} dataKey="outbreaks" nameKey="disease" stroke="none">
                                         {filteredTrends.slice(0, 5).map((entry, index) => (<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />))}
                                     </Pie>
                                     <Tooltip content={<CustomTooltip />} />
@@ -880,10 +859,10 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                         verticalAlign="bottom"
                                         height={undefined}
                                         iconType="circle"
-                                        layout="vertical"
+                                        layout={isMobile ? "horizontal" : "vertical"}
                                         align="center"
-                                        wrapperStyle={{ paddingTop: '20px' }}
-                                        formatter={(value) => <span className="text-white text-sm ml-2 font-bold">{value}</span>}
+                                        wrapperStyle={{ paddingTop: isMobile ? '10px' : '20px' }}
+                                        formatter={(value) => <span className="text-white text-[10px] sm:text-sm ml-2 font-bold">{value}</span>}
                                     />
                                 </PieChart>
                             </ResponsiveContainer>
@@ -947,18 +926,16 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                         </div>
                                         <span className="text-xs font-normal text-slate-500 ml-auto bg-slate-800 px-2 py-1 rounded">Beds per 1000 Population</span>
                                     </h3>
-                                    <div className="h-[300px]">
+                                    <div className="h-[250px] sm:h-[300px]">
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart data={resourceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                            <BarChart data={resourceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.3} />
-                                                <XAxis dataKey="state" stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} interval={0} angle={-25} textAnchor="end" height={60} fontWeight="bold" />
-                                                <YAxis stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} fontWeight="bold" />
-                                                <YAxis stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} fontWeight="bold" />
+                                                <XAxis dataKey="state" stroke="#ffffff" fontSize={9} tickLine={false} axisLine={false} interval={isMobile ? 1 : 0} angle={-25} textAnchor="end" height={60} fontWeight="bold" />
+                                                <YAxis stroke="#ffffff" fontSize={9} tickLine={false} axisLine={false} fontWeight="bold" />
                                                 <Tooltip content={<ResourceTooltip />} cursor={{ fill: 'transparent' }} />
-                                                <Legend wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
-                                                <Legend wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
-                                                <Bar name="Urban Density" dataKey="urban_beds_per_1000" fill="#38bdf8" radius={[4, 4, 0, 0]} barSize={12} />
-                                                <Bar name="Rural Density" dataKey="rural_beds_per_1000" fill="#10b981" radius={[4, 4, 0, 0]} barSize={12} />
+                                                <Legend iconSize={10} wrapperStyle={{ paddingTop: '10px', fontSize: '10px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
+                                                <Bar name="Urban Density" dataKey="urban_beds_per_1000" fill="#38bdf8" radius={[4, 4, 0, 0]} barSize={isMobile ? 8 : 12} />
+                                                <Bar name="Rural Density" dataKey="rural_beds_per_1000" fill="#10b981" radius={[4, 4, 0, 0]} barSize={isMobile ? 8 : 12} />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     </div>
@@ -988,9 +965,9 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                         </div>
                                         <span className="text-xs font-normal text-slate-500 ml-auto bg-slate-800 px-2 py-1 rounded">% Share of Healthcare</span>
                                     </h3>
-                                    <div className="h-[300px]">
+                                    <div className="h-[250px] sm:h-[300px]">
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart data={resourceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                            <AreaChart data={resourceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                                 <defs>
                                                     <linearGradient id="colorPrivate" x1="0" y1="0" x2="0" y2="1">
                                                         <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
@@ -1002,12 +979,10 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                                     </linearGradient>
                                                 </defs>
                                                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.3} />
-                                                <XAxis dataKey="state" stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} interval={0} angle={-25} textAnchor="end" height={60} fontWeight="bold" />
-                                                <YAxis stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} fontWeight="bold" />
-                                                <YAxis stroke="#ffffff" fontSize={11} tickLine={false} axisLine={false} fontWeight="bold" />
+                                                <XAxis dataKey="state" stroke="#ffffff" fontSize={9} tickLine={false} axisLine={false} interval={isMobile ? 1 : 0} angle={-25} textAnchor="end" height={60} fontWeight="bold" />
+                                                <YAxis stroke="#ffffff" fontSize={9} tickLine={false} axisLine={false} fontWeight="bold" />
                                                 <Tooltip content={<ResourceTooltip />} />
-                                                <Legend wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
-                                                <Legend wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
+                                                <Legend iconSize={10} wrapperStyle={{ paddingTop: '10px', fontSize: '10px' }} formatter={(value) => <span className="text-white font-bold">{value}</span>} />
                                                 <Area type="monotone" name="Private Sector" dataKey="private_sector_share" stroke="#8b5cf6" fillOpacity={1} fill="url(#colorPrivate)" />
                                                 <Area type="monotone" name="Public Sector" dataKey="public_sector_share" stroke="#06b6d4" fillOpacity={1} fill="url(#colorPublic)" />
                                             </AreaChart>

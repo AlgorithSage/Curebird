@@ -50,18 +50,18 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
 
     return (
         <div className="mb-8">
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-8 text-center mt-6">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-6 sm:p-8 mb-8 text-center mt-6">
                 {/* Background Glow */}
                 <div className="absolute top-0 left-0 -translate-x-1/4 w-96 h-96 bg-amber-500/20 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
 
                 <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
                     {/* Pill Label */}
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-bold mb-6 md:animate-pulse">
-                        <Activity size={16} /> LIVE TRACKER
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] sm:text-sm font-bold mb-4 sm:mb-6 md:animate-pulse">
+                        <Activity size={14} className="sm:w-4 sm:h-4" /> LIVE TRACKER
                     </div>
 
                     {/* Main Heading */}
-                    <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-3 sm:mb-4 tracking-tight drop-shadow-lg">
                         Live Health{' '}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
                             Tracker
@@ -69,18 +69,17 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
                     </h1>
 
                     {/* Description */}
-                    <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8">
+                    <p className="text-sm sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 px-2 sm:px-0">
                         Your central command center for health data.{' '}
                         <span className="text-white font-semibold">Track conditions</span>, monitor{' '}
                         <span className="text-amber-400 font-semibold">vital trends</span>, and manage your{' '}
-                        <span className="text-emerald-400 font-semibold">daily insights</span> in one secure, real-time
-                        dashboard.
+                        <span className="text-emerald-400 font-semibold">daily insights</span> in one dashboard.
                     </p>
 
                     {/* Action Button */}
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold rounded-2xl shadow-xl hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 border border-white/20"
+                        className="group relative inline-flex items-center gap-3 px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm sm:text-base font-bold rounded-2xl shadow-xl hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 border border-white/20"
                     >
                         <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                         <span className="p-1.5 bg-white/20 text-white rounded-lg group-hover:bg-white group-hover:text-amber-600 transition-colors duration-300">

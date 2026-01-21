@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { collection, query, getDocs, orderBy, deleteDoc, doc } from 'firebase/firestore';
-import {  Pill, Trash2  } from '../Icons';
+import { Pill, Trash2 } from '../Icons';
 
 const MedicationTimeline = ({ userId, db }) => {
     const [data, setData] = useState([]);
@@ -69,9 +69,9 @@ const MedicationTimeline = ({ userId, db }) => {
                 <div className="absolute left-32 top-0 bottom-0 w-px bg-slate-700/50 hidden sm:block"></div>
 
                 {data.map((med, idx) => (
-                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-4 group">
+                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 group bg-white/5 sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-white/5 sm:border-none">
                         {/* Left Info */}
-                        <div className="w-32 min-w-[128px] text-right">
+                        <div className="w-full sm:w-32 sm:min-w-[128px] sm:text-right">
                             <p className="font-bold text-white text-sm truncate">{med.name}</p>
                             <p className="text-emerald-500 text-xs">
                                 {typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage}
@@ -81,18 +81,17 @@ const MedicationTimeline = ({ userId, db }) => {
                         {/* Bar */}
                         <div className="flex-grow bg-slate-900/50 h-10 rounded-lg relative overflow-hidden border border-slate-700/50 flex items-center pr-2">
                             <div
-                                className={`absolute top-0 bottom-0 left-0 rounded-md flex items-center px-3 text-xs font-bold text-white/90 shadow-lg ${med.isActive ? 'bg-emerald-600' : 'bg-slate-600 opacity-60'}`}
+                                className={`absolute top-0 bottom-0 left-0 rounded-md flex items-center px-3 text-[10px] sm:text-xs font-bold text-white/90 shadow-lg ${med.isActive ? 'bg-emerald-600' : 'bg-slate-600 opacity-60'}`}
                                 style={{ width: med.isActive ? '100%' : '80%' /* simplified visual for demo */ }}
                             >
-                                {med.start.toLocaleDateString()} — {med.isActive ? 'Present' : med.end.toLocaleDateString()}
+                                <span className="truncate">
+                                    {med.start.toLocaleDateString()} — {med.isActive ? 'Present' : med.end.toLocaleDateString()}
+                                </span>
                             </div>
 
-                            {/* Delete Button - Absolute Right on top of the bar or flexed if possible. 
-                                Since bar is absolute, let's put delete button outside or ensure z-index.
-                            */}
                             <button
                                 onClick={() => handleDelete(med.id)}
-                                className="ml-auto z-10 p-1.5 bg-slate-800/80 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                className="ml-auto z-10 p-1.5 bg-slate-800/80 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-lg transition-colors sm:opacity-0 group-hover:opacity-100"
                                 title="Delete Medication"
                             >
                                 <Trash2 size={14} />

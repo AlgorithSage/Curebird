@@ -132,18 +132,37 @@ const LoadingScreen = () => {
                 </AnimatePresence>
 
                 {/* SYSTEM STATUS */}
-                <AnimatePresence mode="wait">
-                    <motion.p
-                        key={messageIndex}
-                        className="mt-4 text-sm text-slate-300 font-sans"
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
-                        transition={{ duration: 0.4 }}
-                    >
-                        {loadingMessages[messageIndex]}
-                    </motion.p>
-                </AnimatePresence>
+                <div className="flex flex-col items-center">
+                    <AnimatePresence mode="wait">
+                        <motion.p
+                            key={messageIndex}
+                            className="mt-4 text-sm text-slate-300 font-sans"
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -6 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            {loadingMessages[messageIndex]}
+                        </motion.p>
+                    </AnimatePresence>
+
+                    {/* SLOW NETWORK INDICATOR */}
+                    {(() => {
+                        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                        if (conn && ['slow-2g', '2g', '3g'].includes(conn.effectiveType)) {
+                            return (
+                                <motion.p
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="mt-2 text-[10px] uppercase tracking-tighter text-amber-500/60 font-medium"
+                                >
+                                    Optimizing for slow connection...
+                                </motion.p>
+                            );
+                        }
+                        return null;
+                    })()}
+                </div>
 
                 {/* LOADING BAR */}
                 <div className="mt-5 w-72 h-6 overflow-hidden rounded-full bg-white/10">

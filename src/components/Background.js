@@ -26,8 +26,9 @@ const ORBS = [
 
 const Background = () => {
   const [isMobile, setIsMobile] = React.useState(false);
+  const [isScrolling, setIsScrolling] = React.useState(false);
 
-  // ✅ Mobile optimisation logic (debounced resize + fewer/lighter orbs)
+  // ✅ Mobile detection (Isolate mobile from desktop logic)
   React.useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -45,20 +46,35 @@ const Background = () => {
     };
   }, []);
 
-  // ✅ Mobile optimization: ORBS disabled entirely
-  const visibleOrbs = isMobile ? [] : ORBS;
+  // ✅ Performance: Pause animations during scroll on mobile to avoid jank
+  React.useEffect(() => {
+    if (!isMobile) return;
+
+    let scrollTimeout;
+    const handleScroll = () => {
+      setIsScrolling(true);
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => setIsScrolling(false), 150);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
+
+  // ✅ Mobile logic selects only 2 orbs and uses a simplified style
+  const visibleOrbs = isMobile ? ORBS.slice(0, 2) : ORBS;
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden">
       {/* Base gradient */}
       <div
         className={`absolute inset-0 ${isMobile
-            ? "bg-slate-950" // Static bluish-black for mobile
-            : "bg-gradient-to-br from-neutral-950 via-black to-slate-950"
+          ? "bg-slate-950" // Static bluish-black for mobile
+          : "bg-gradient-to-br from-neutral-950 via-black to-slate-950"
           }`}
       />
 
-      {/* Accent lighting - Desktop Only */}
+      {/* Accent lighting - Desktop Only (Avoids extra layers on mobile) */}
       {!isMobile && (
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 h-1/3 w-full bg-gradient-to-b from-white/5 to-transparent" />
@@ -66,35 +82,50 @@ const Background = () => {
         </div>
       )}
 
-      {/* Animated Orbs */}
+      {/* Animated Elements */}
       <div className="absolute inset-0">
         {visibleOrbs.map((orb, i) => (
           <div
             key={i}
-            className={`absolute rounded-full blur-2xl ${orb.color} ${isMobile ? "opacity-40" : ""}`}
+            className={`absolute rounded-full ${isMobile ? "" : "blur-2xl"} ${orb.color}`}
             style={{
-              width: isMobile ? orb.size / 1.5 : orb.size,
-              height: isMobile ? orb.size / 1.5 : orb.size,
-
+              width: isMobile ? orb.size * 1.5 : orb.size,
+              height: isMobile ? orb.size * 1.5 : orb.size,
               top: orb.top,
               left: orb.left,
               right: orb.right,
               bottom: orb.bottom,
 
+              // ✅ Mobile Optimization: Use CSS gradients for "light" blur instead of expensive filters
+              // ✅ Mobile Optimization: Use CSS gradients for "light" blur instead of expensive filters
+              background: isMobile
+                ? `radial-gradient(circle, ${i === 0 ? 'rgba(245, 158, 11, 0.35)' : 'rgba(251, 191, 36, 0.3)'} 0%, transparent 70%)`
+                : undefined,
+
               animation: `${orb.anim} ${isMobile ? "40s" : "20s"} ease-in-out infinite`,
 
-              // ✅ lighter GPU hinting on mobile
-              willChange: isMobile ? (i < 2 ? "transform" : "auto") : "transform",
+              // ✅ Feature: Pause animations while scrolling on mobile
+              animationPlayState: (isMobile && isScrolling) ? 'paused' : 'running',
+
+              // ✅ Performance: Forced GPU acceleration
+              willChange: "transform",
+              transform: "translate3d(0,0,0)"
             }}
           />
         ))}
       </div>
 
-      {/* Glass overlay */}
-      <div className="absolute inset-0 backdrop-blur-[2px] bg-white/[0.02]" />
+      {/* Glass/Noise Overlay - Simplified for Mobile */}
+      <div
+        className={`absolute inset-0 pointer-events-none ${isMobile ? "opacity-[0.15]" : "backdrop-blur-[2px] bg-white/[0.02]"}`}
+        style={isMobile ? {
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          mixBlendMode: 'overlay'
+        } : {}}
+      />
 
       {/* Vignette */}
-      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/25" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.4)_100%)]" />
 
       <style jsx>{`
         @media (prefers-reduced-motion: reduce) {

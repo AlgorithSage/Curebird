@@ -137,9 +137,9 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                 className="glass-card-amber p-0 group flex flex-col overflow-hidden isolate relative">
 
                 {/* Main Content Area */}
-                <div className="p-5 flex gap-5 items-center relative z-10">
+                <div className="p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5 items-center sm:items-center relative z-10">
                     {/* Icon Container */}
-                    <div className="relative group/icon">
+                    <div className="relative group/icon hidden sm:block">
                         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl blur-none" />
                         <div className="bg-slate-950/50 p-4 h-fit rounded-2xl shadow-inner ring-1 ring-white/10 relative z-10 group-hover:scale-105 transition-all duration-300">
                             {/* Step 5: Unified Icons rendered here */}
@@ -147,9 +147,19 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                         </div>
                     </div>
 
+                    {/* Mobile Header (Icon + Title) */}
+                    <div className="flex sm:hidden items-center gap-3 w-full border-b border-white/5 pb-3">
+                        <div className="bg-slate-950/50 p-2 rounded-lg ring-1 ring-white/10">
+                            {React.cloneElement(ICONS[record.type] || ICONS.default, { size: 20 })}
+                        </div>
+                        <h3 className="font-bold text-lg text-white truncate flex-1">
+                            {record.docName || record.fileName || capitalize(record.type)}
+                        </h3>
+                    </div>
+
                     {/* Content Column */}
-                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <h3 className="font-bold text-xl text-white group-hover:text-amber-400 transition-colors leading-tight truncate pr-4" title={record.docName || record.fileName}>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center w-full">
+                        <h3 className="hidden sm:block font-bold text-xl text-white group-hover:text-amber-400 transition-colors leading-tight truncate pr-4" title={record.docName || record.fileName}>
                             {record.docName || record.fileName || capitalize(record.type)}
                         </h3>
 
@@ -161,11 +171,11 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                             </span>
                             {/* Type Badge - Color Coded Pills */}
                             <span className={`px-2.5 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm shadow-sm ${record.type === 'prescription' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' :
-                                    record.type === 'test_report' ? 'bg-fuchsia-500/10 border-fuchsia-500/20 text-fuchsia-400' :
-                                        record.type === 'diagnosis' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
-                                            record.type === 'admission' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
-                                                record.type === 'ecg' ? 'bg-pink-500/10 border-pink-500/20 text-pink-400' :
-                                                    'bg-amber-500/10 border-amber-500/20 text-amber-500'
+                                record.type === 'test_report' ? 'bg-fuchsia-500/10 border-fuchsia-500/20 text-fuchsia-400' :
+                                    record.type === 'diagnosis' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
+                                        record.type === 'admission' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
+                                            record.type === 'ecg' ? 'bg-pink-500/10 border-pink-500/20 text-pink-400' :
+                                                'bg-amber-500/10 border-amber-500/20 text-amber-500'
                                 }`}>
                                 {capitalize(record.type)}
                             </span>
@@ -193,29 +203,29 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                     </div>
 
                     {/* Right Side Actions */}
-                    <div className="flex flex-col items-end gap-2 shrink-0 h-full justify-center my-auto">
-                        {/* Step 2: "Big Square" Action Buttons */}
-                        <div className="flex items-center gap-3 h-full">
+                    <div className="flex flex-col items-center sm:items-end gap-3 shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
+                        {/* Step 2: "Big Square" Action Buttons - Responsive resizing */}
+                        <div className="flex items-center gap-3 w-full justify-center sm:justify-end">
                             {record.fileUrl && (
                                 <button
                                     onClick={handleViewFile}
                                     disabled={isLoadingFile}
-                                    className="flex flex-col items-center justify-center w-20 h-20 bg-gradient-to-br from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white rounded-xl shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 transition-all disabled:opacity-50 transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden"
+                                    className="flex flex-col items-center justify-center w-full sm:w-20 h-14 sm:h-20 bg-gradient-to-br from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white rounded-xl shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 transition-all disabled:opacity-50 transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden"
                                 >
                                     {/* Shine effect */}
                                     <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity" />
 
-                                    {isLoadingFile ? <span className="animate-spin text-lg">⌛</span> : <ExternalLink size={24} />}
-                                    <span className="text-[10px] font-bold uppercase tracking-wider relative z-10">View</span>
+                                    {isLoadingFile ? <span className="animate-spin text-lg">⌛</span> : <ExternalLink className="w-5 h-5 sm:w-6 sm:h-6" />}
+                                    <span className="text-[10px] font-bold uppercase tracking-wider relative z-10">View Receipt</span>
                                 </button>
                             )}
                             {record.digital_copy && (
                                 <button
                                     onClick={() => setShowDigitalModal(true)}
-                                    className="flex flex-col items-center justify-center w-20 h-20 bg-gradient-to-br from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transition-all transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden"
+                                    className="flex flex-col items-center justify-center w-full sm:w-20 h-14 sm:h-20 bg-gradient-to-br from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transition-all transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity" />
-                                    <Eye size={24} />
+                                    <Eye className="w-5 h-5 sm:w-6 sm:h-6" />
                                     <span className="text-[10px] font-bold uppercase tracking-wider relative z-10">Digital</span>
                                 </button>
                             )}

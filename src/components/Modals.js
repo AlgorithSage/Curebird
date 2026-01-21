@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  X, Copy, AlertTriangle, Trash2, UploadCloud, Pill, Stethoscope, Loader, Camera  } from './Icons';
+import { X, Copy, AlertTriangle, Trash2, UploadCloud, Pill, Stethoscope, Loader, Camera } from './Icons';
 import { jsPDF } from "jspdf";
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -9,9 +9,9 @@ import { API_BASE_URL } from '../config';
 
 const ModalWrapper = ({ onClose, children }) => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/70 backdrop-blur-md flex justify-center items-center z-50 p-4" onClick={onClose}>
-        <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-            className="glass-card w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden !p-0" onClick={(e) => e.stopPropagation()}>
+        className="fixed inset-0 bg-black/70 backdrop-blur-md flex justify-center items-end sm:items-center z-50 p-0 sm:p-4" onClick={onClose}>
+        <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
+            className="glass-card w-full max-w-lg max-h-[92vh] sm:max-h-[90vh] flex flex-col overflow-hidden !p-0 rounded-t-2xl sm:rounded-2xl shadow-2xl" onClick={(e) => e.stopPropagation()}>
             {children}
         </motion.div>
     </motion.div>
@@ -90,7 +90,7 @@ const AnalysisResult = ({ result, onApply }) => (
         <h3 className="text-lg font-semibold text-white mb-3 flex justify-between items-center">
             <span>AI Analysis Results</span>
         </h3>
-        
+
         <div className="space-y-4">
             <div>
                 <h4 className="flex items-center gap-2 text-sm font-medium text-amber-400"><Stethoscope size={16} />Detected Conditions / Diseases</h4>
@@ -105,12 +105,12 @@ const AnalysisResult = ({ result, onApply }) => (
                 {(result?.medications || []).length > 0 ? (
                     <div className="space-y-2 mt-2">
                         {(result?.medications || []).map((med, i) => {
-                             const dosageVal = med.dosage ? (typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage) : "N/A";
-                             return (
+                            const dosageVal = med.dosage ? (typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage) : "N/A";
+                            return (
                                 <p key={i} className="text-slate-300 text-sm font-mono bg-slate-700/50 p-1 rounded">
                                     &gt; {med.name || "Unknown Drug"} - {dosageVal} - {med.frequency || "N/A"}
                                 </p>
-                             );
+                            );
                         })}
                         <button onClick={onApply} className="text-sm text-sky-400 hover:text-sky-300 font-semibold mt-2">Auto-fill Medications</button>
                     </div>
@@ -235,18 +235,18 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
                     method: 'POST',
                     body: fileData,
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Analysis failed. The server returned an error.');
                 }
-                
+
                 const rawData = await response.json();
                 const result = rawData.analysis || {};
                 const summary = rawData.summary || "";
 
                 // Auto-fill Logic
                 const newFormData = { ...formData };
-                
+
                 // 1. Date
                 if (result.date) {
                     newFormData.date = result.date;
@@ -280,7 +280,7 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
 
                 // 4. Medications
                 if (result.medications && result.medications.length > 0) {
-                     setMedications(result.medications);
+                    setMedications(result.medications);
                 }
 
                 setAnalysisResult(result);
@@ -374,92 +374,107 @@ export const RecordFormModal = ({ onClose, record, userId, appId, db, storage })
                 <h2 className="text-xl font-semibold text-white">{record ? 'Edit' : 'Add'} Medical Record</h2>
                 <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={24} /></button>
             </div>
-            <form onSubmit={handleSave} className="p-6 space-y-4 overflow-y-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all" required />
-                    <select name="type" value={type} onChange={(e) => setType(e.target.value)} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all appearance-none cursor-pointer">
-                        <option value="prescription" className="bg-slate-900">Prescription</option><option value="test_report" className="bg-slate-900">Test Report</option><option value="diagnosis" className="bg-slate-900">Diagnosis</option>
-                        <option value="admission" className="bg-slate-900">Hospital Admission</option><option value="ecg" className="bg-slate-900">ECG</option>
-                    </select>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" name="doctorName" placeholder="Doctor's Name" value={formData.doctorName || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-500" required />
-                    <input type="text" name="hospitalName" placeholder="Hospital/Clinic Name" value={formData.hospitalName || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-500" required />
-                </div>
-
-                <div className="pt-4 border-t border-amber-500/10 space-y-4">
-                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-amber-500/20 border-dashed rounded-2xl bg-black/20 hover:bg-black/30 transition-colors group">
-                        <div className="space-y-1 text-center">
-                            <UploadCloud className="mx-auto h-12 w-12 text-amber-500/60 group-hover:text-amber-400 transition-colors mb-2 drop-shadow-lg" />
-                            <div className="flex text-sm text-slate-400 justify-center">
-                                <label htmlFor="file-upload" className="relative cursor-pointer bg-amber-500/5 px-4 py-2 rounded-xl font-bold text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 transition-all shadow-lg">
-                                    <span>{file ? 'Change File' : 'Upload PDF or Image'}</span>
-                                    <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="application/pdf,image/*" />
-                                </label>
-                            </div>
-                            <p className="text-xs text-slate-500 pt-2">{file ? file.name : (record?.fileUrl ? 'Existing document attached' : 'No file selected')}</p>
+            <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-hidden">
+                <div className="p-4 sm:p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Date</label>
+                            <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all" required />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Record Type</label>
+                            <select name="type" value={type} onChange={(e) => setType(e.target.value)} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all appearance-none cursor-pointer">
+                                <option value="prescription" className="bg-slate-900">Prescription</option><option value="test_report" className="bg-slate-900">Test Report</option><option value="diagnosis" className="bg-slate-900">Diagnosis</option>
+                                <option value="admission" className="bg-slate-900">Hospital Admission</option><option value="ecg" className="bg-slate-900">ECG</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Doctor Name</label>
+                            <input type="text" name="doctorName" placeholder="Dr. Smith" value={formData.doctorName || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-500" required />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Facility</label>
+                            <input type="text" name="hospitalName" placeholder="City General" value={formData.hospitalName || ''} onChange={handleInputChange} className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-500" required />
                         </div>
                     </div>
 
-                    {/* Camera Button */}
-                    {!showCamera && (
-                        <div className="flex justify-center">
-                            <button type="button" onClick={startCamera} className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg transition-colors border border-slate-600">
-                                <Camera size={20} />
-                                <span>Capture from Camera</span>
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Camera View */}
-                    {showCamera && (
-                        <div className="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-600">
-                            <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
-                            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
-                                <button type="button" onClick={stopCamera} className="bg-red-500/80 hover:bg-red-600 text-white px-4 py-2 rounded-full font-semibold backdrop-blur-sm transition-colors">
-                                    Cancel
-                                </button>
-                                <button type="button" onClick={captureImage} className="bg-emerald-500/80 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-semibold backdrop-blur-sm transition-colors flex items-center gap-2">
-                                    <Camera size={18} /> Capture
-                                </button>
+                    <div className="pt-4 border-t border-amber-500/10 space-y-4">
+                        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-amber-500/20 border-dashed rounded-2xl bg-black/20 hover:bg-black/30 transition-colors group">
+                            <div className="space-y-1 text-center">
+                                <UploadCloud className="mx-auto h-12 w-12 text-amber-500/60 group-hover:text-amber-400 transition-colors mb-2 drop-shadow-lg" />
+                                <div className="flex text-sm text-slate-400 justify-center">
+                                    <label htmlFor="file-upload" className="relative cursor-pointer bg-amber-500/5 px-4 py-2 rounded-xl font-bold text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 transition-all shadow-lg">
+                                        <span>{file ? 'Change File' : 'Upload PDF or Image'}</span>
+                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="application/pdf,image/*" />
+                                    </label>
+                                </div>
+                                <p className="text-xs text-slate-500 pt-2">{file ? file.name : (record?.fileUrl ? 'Existing document attached' : 'No file selected')}</p>
                             </div>
                         </div>
-                    )}
 
-                    {uploadProgress > 0 && (
-                        <div className="w-full bg-slate-800 rounded-full h-2.5 mt-2 overflow-hidden border border-white/5">
-                            <motion.div initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} className="bg-gradient-to-r from-sky-500 to-amber-500 h-full rounded-full transition-all duration-300" />
-                            <p className="text-[10px] text-slate-400 mt-1 text-center font-bold uppercase tracking-widest">{Math.round(uploadProgress)}% Uploaded</p>
-                        </div>
-                    )}
+                        {/* Camera Button */}
+                        {!showCamera && (
+                            <div className="flex justify-center">
+                                <button type="button" onClick={startCamera} className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg transition-colors border border-slate-600">
+                                    <Camera size={20} />
+                                    <span>Capture from Camera</span>
+                                </button>
+                            </div>
+                        )}
 
-                    {isAnalyzing && <div className="flex items-center justify-center gap-2 text-slate-300 py-4 bg-white/5 rounded-xl"><Loader className="animate-spin text-sky-400" size={20} /> <p className="text-sm font-medium">AI is analyzing medical data...</p></div>}
-                    {analysisError && <div className="text-red-400 text-center text-sm p-3 bg-red-900/20 border border-red-900/50 rounded-xl">{analysisError}</div>}
-                    {analysisResult && <AnalysisResult result={analysisResult} onApply={() => setMedications(analysisResult.medications)} />}
+                        {/* Camera View */}
+                        {showCamera && (
+                            <div className="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-600">
+                                <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
+                                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
+                                    <button type="button" onClick={stopCamera} className="bg-red-500/80 hover:bg-red-600 text-white px-4 py-2 rounded-full font-semibold backdrop-blur-sm transition-colors">
+                                        Cancel
+                                    </button>
+                                    <button type="button" onClick={captureImage} className="bg-emerald-500/80 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-semibold backdrop-blur-sm transition-colors flex items-center gap-2">
+                                        <Camera size={18} /> Capture
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {uploadProgress > 0 && (
+                            <div className="w-full bg-slate-800 rounded-full h-2.5 mt-2 overflow-hidden border border-white/5">
+                                <motion.div initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} className="bg-gradient-to-r from-sky-500 to-amber-500 h-full rounded-full transition-all duration-300" />
+                                <p className="text-[10px] text-slate-400 mt-1 text-center font-bold uppercase tracking-widest">{Math.round(uploadProgress)}% Uploaded</p>
+                            </div>
+                        )}
+
+                        {isAnalyzing && <div className="flex items-center justify-center gap-2 text-slate-300 py-4 bg-white/5 rounded-xl"><Loader className="animate-spin text-sky-400" size={20} /> <p className="text-sm font-medium">AI is analyzing medical data...</p></div>}
+                        {analysisError && <div className="text-red-400 text-center text-sm p-3 bg-red-900/20 border border-red-900/50 rounded-xl">{analysisError}</div>}
+                        {analysisResult && <AnalysisResult result={analysisResult} onApply={() => setMedications(analysisResult.medications)} />}
+                    </div>
+
+                    <AnimatePresence>
+                        {type === 'prescription' && (
+                            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                                <div className="space-y-3 pt-4 border-t border-slate-700">
+                                    <h4 className="font-bold text-white flex items-center gap-2"><Pill size={18} className="text-rose-400" />Medications</h4>
+                                    {medications.map((med, index) => (
+                                        <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2 items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                                            <input type="text" name="name" placeholder="Medication Name" value={med.name} onChange={e => handleMedicationChange(index, e)} className="p-2 bg-slate-800 border border-slate-700 rounded-lg md:col-span-2 text-white text-sm focus:border-sky-500 outline-none transition-colors" required />
+                                            <input type="text" name="dosage" placeholder="Dosage" value={med.dosage} onChange={e => handleMedicationChange(index, e)} className="p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:border-sky-500 outline-none transition-colors" />
+                                            <div className="flex items-center">
+                                                <input type="text" name="frequency" placeholder="Frequency" value={med.frequency} onChange={e => handleMedicationChange(index, e)} className="p-2 bg-slate-800 border border-slate-700 rounded-lg w-full text-white text-sm focus:border-sky-500 outline-none transition-colors" />
+                                                <button type="button" onClick={() => removeMedication(index)} className="ml-2 text-rose-500 hover:text-rose-700 p-2 hover:bg-rose-500/10 rounded-lg transition-colors"><Trash2 size={16} /></button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button type="button" onClick={addMedication} className="text-sm text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1 transition-colors">+ Add Medication</button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
                 </div>
 
-                <AnimatePresence>
-                    {type === 'prescription' && (
-                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                            <div className="space-y-3 pt-4 border-t border-slate-700">
-                                <h4 className="font-bold text-white flex items-center gap-2"><Pill size={18} className="text-rose-400" />Medications</h4>
-                                {medications.map((med, index) => (
-                                    <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2 items-center bg-white/5 p-3 rounded-xl border border-white/5">
-                                        <input type="text" name="name" placeholder="Medication Name" value={med.name} onChange={e => handleMedicationChange(index, e)} className="p-2 bg-slate-800 border border-slate-700 rounded-lg md:col-span-2 text-white text-sm focus:border-sky-500 outline-none transition-colors" required />
-                                        <input type="text" name="dosage" placeholder="Dosage" value={med.dosage} onChange={e => handleMedicationChange(index, e)} className="p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:border-sky-500 outline-none transition-colors" />
-                                        <div className="flex items-center">
-                                            <input type="text" name="frequency" placeholder="Frequency" value={med.frequency} onChange={e => handleMedicationChange(index, e)} className="p-2 bg-slate-800 border border-slate-700 rounded-lg w-full text-white text-sm focus:border-sky-500 outline-none transition-colors" />
-                                            <button type="button" onClick={() => removeMedication(index)} className="ml-2 text-rose-500 hover:text-rose-700 p-2 hover:bg-rose-500/10 rounded-lg transition-colors"><Trash2 size={16} /></button>
-                                        </div>
-                                    </div>
-                                ))}
-                                <button type="button" onClick={addMedication} className="text-sm text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1 transition-colors">+ Add Medication</button>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                <div className="flex justify-end pt-6 border-t border-amber-500/10 gap-3">
+                <div className="flex justify-end p-5 border-t border-amber-500/10 gap-3 bg-black/20 flex-shrink-0">
                     <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-xl border border-amber-500/10 text-slate-300 hover:bg-amber-500/5 transition-colors font-bold">Cancel</button>
                     <button type="submit" className="px-8 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:hover:shadow-none" disabled={isSaving || isAnalyzing}>
                         {isSaving ? 'Cloud Syncing...' : 'Save Record'}
