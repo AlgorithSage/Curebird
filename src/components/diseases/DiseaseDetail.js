@@ -262,18 +262,18 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
             </div>
 
             {/* Health Index Display */}
-            <div className="flex items-center gap-4 px-6 py-3 bg-slate-800/40 rounded-xl border border-white/5 mx-4 md:mx-0">
-                <div>
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 px-4 sm:px-6 py-4 bg-slate-800/40 rounded-xl border border-white/5 mx-4 md:mx-0">
+                <div className="text-center sm:text-left">
                     <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Curebird Health Index</div>
-                    <div className="flex items-baseline gap-1">
+                    <div className="flex items-baseline justify-center sm:justify-start gap-1">
                         <span className="text-2xl font-bold text-white">
                             {metrics.length > 0 ? calculateCHI(metrics, disease.configId) : '--'}
                         </span>
                         <span className="text-xs text-slate-400">/ 100</span>
                     </div>
                 </div>
-                <div className="h-8 w-[1px] bg-white/10"></div>
-                <div className="text-xs text-slate-400 max-w-[150px] leading-tight">
+                <div className="hidden sm:block h-8 w-[1px] bg-white/10"></div>
+                <div className="text-[11px] sm:text-xs text-slate-400 max-w-full sm:max-w-[150px] leading-tight text-center sm:text-left">
                     Based on your {config?.metrics[activeMetricType]?.label || 'current'} trends.
                 </div>
             </div>
@@ -300,7 +300,7 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                 )}
 
                 {!isDoctorMode && (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 w-full sm:w-auto mt-4 sm:mt-0">
                         <button
                             onClick={handleDeleteAllMetrics}
                             className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
@@ -310,7 +310,7 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                         </button>
                         <button
                             onClick={() => setIsAddMetricOpen(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-xl font-bold transition-colors shadow-lg shadow-amber-500/20"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-xl font-bold transition-colors shadow-lg shadow-amber-500/20"
                         >
                             <Plus size={18} /> Add Log
                         </button>
@@ -380,8 +380,8 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                                     )}
 
                                     {/* Chart Container */}
-                                    <div className="bg-slate-800/50 rounded-2xl p-6 border border-white/5 h-[350px] flex flex-col">
-                                        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                    <div className="bg-slate-800/50 rounded-2xl p-4 sm:p-6 border border-white/5 h-[300px] sm:h-[350px] flex flex-col">
+                                        <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
                                             <TrendingUp size={18} className="text-blue-400" />
                                             {availableMetrics.find(m => m.id === activeMetricType)?.label || 'Trends'}
                                         </h3>
@@ -391,17 +391,24 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                                                 Loading data...
                                             </div>
                                         ) : chartData.length > 0 ? (
-                                            <div className="h-[280px] w-full">
+                                            <div className="flex-1 w-full min-h-0">
                                                 <ResponsiveContainer width="100%" height="100%">
-                                                    <LineChart data={chartData}>
-                                                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                                                        <XAxis dataKey="date" stroke="#94a3b8" tick={{ fontSize: 12 }} />
-                                                        <YAxis stroke="#94a3b8" tick={{ fontSize: 12 }} domain={['auto', 'auto']} />
+                                                    <LineChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+                                                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                                                        <XAxis
+                                                            dataKey="date"
+                                                            stroke="#94a3b8"
+                                                            tick={{ fontSize: 10 }}
+                                                            interval="preserveStartEnd"
+                                                            minTickGap={30}
+                                                        />
+                                                        <YAxis hide={window.innerWidth < 640} stroke="#94a3b8" tick={{ fontSize: 10 }} domain={['auto', 'auto']} />
                                                         <Tooltip
                                                             contentStyle={{
                                                                 backgroundColor: '#1e293b',
                                                                 borderColor: '#334155',
-                                                                color: '#fff'
+                                                                color: '#fff',
+                                                                fontSize: '12px'
                                                             }}
                                                             itemStyle={{ color: '#fff' }}
                                                         />
@@ -419,8 +426,8 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                                                             dataKey="val"
                                                             stroke="#f59e0b"
                                                             strokeWidth={3}
-                                                            dot={{ r: 4, fill: '#f59e0b' }}
-                                                            activeDot={{ r: 6 }}
+                                                            dot={{ r: 3, fill: '#f59e0b' }}
+                                                            activeDot={{ r: 5 }}
                                                         />
                                                     </LineChart>
                                                 </ResponsiveContainer>

@@ -84,7 +84,7 @@ export default function App() {
         const params = new URLSearchParams(window.location.search);
         const shareToken = params.get('share');
         if (shareToken && location.pathname !== '/doctor-view') {
-           navigate(`/doctor-view?share=${shareToken}`);
+            navigate(`/doctor-view?share=${shareToken}`);
         }
     }, [location.pathname, navigate]);
 
@@ -131,9 +131,13 @@ export default function App() {
                 }
             }
 
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            const isSlow = connection && (['slow-2g', '2g', '3g'].includes(connection.effectiveType));
+            const finalDelay = isSlow ? 3500 : 1000;
+
             setTimeout(() => {
                 setLoading(false);
-            }, 2000);
+            }, finalDelay);
         });
 
         return () => {
@@ -216,15 +220,15 @@ export default function App() {
                     <Routes>
                         <Route path="/" element={
                             user ? <Navigate to="/dashboard" replace /> :
-                            <LandingPage
-                                onLoginClick={() => setIsAuthModalOpen(true)}
-                                onTermsClick={() => navigate('/terms')}
-                                onPrivacyClick={() => navigate('/privacy')}
-                                onContactClick={() => navigate('/contact')}
-                                onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
-                            />
+                                <LandingPage
+                                    onLoginClick={() => setIsAuthModalOpen(true)}
+                                    onTermsClick={() => navigate('/terms')}
+                                    onPrivacyClick={() => navigate('/privacy')}
+                                    onContactClick={() => navigate('/contact')}
+                                    onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
+                                />
                         } />
-                        
+
                         <Route path="/terms" element={<TermsOfService onBack={() => navigate(-1)} {...pageProps} />} />
                         <Route path="/privacy" element={<PrivacyPolicy onBack={() => navigate(-1)} {...pageProps} />} />
                         <Route path="/contact" element={<Contact onBack={() => navigate(-1)} db={db} {...pageProps} />} />
@@ -250,7 +254,7 @@ export default function App() {
                         <Route path="/doctor-access" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><ShareProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
                         <Route path="/settings" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><Settings {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
                         <Route path="/family-profile" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><FamilyProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                        
+
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
 

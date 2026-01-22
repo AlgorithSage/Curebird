@@ -10,7 +10,7 @@ import { API_BASE_URL } from '../config'; // Import API wrapper
 
 const AddRecordModal = ({ closeModal, userId }) => {
     // Dummy Firebase instances for demonstration. Replace with your actual initialized instances.
-    const storage = getStorage(); 
+    const storage = getStorage();
     const db = getFirestore();
 
     const [recordType, setRecordType] = useState('Prescription');
@@ -45,19 +45,19 @@ const AddRecordModal = ({ closeModal, userId }) => {
 
             if (!response.ok) throw new Error("Analysis failed");
             const rawData = await response.json();
-            
+
             const analysis = rawData.analysis || {};
             const summary = rawData.summary || "";
 
             // 1. Extract Date
             let extractedDate = analysis.date;
             if (!extractedDate) {
-                 const dateMatch = summary.match(/\b(\d{4}-\d{2}-\d{2})\b/) || summary.match(/\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})\b/);
-                 if (dateMatch) {
+                const dateMatch = summary.match(/\b(\d{4}-\d{2}-\d{2})\b/) || summary.match(/\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})\b/);
+                if (dateMatch) {
                     const dStr = dateMatch[1].replace(/\//g, '-');
                     const dObj = new Date(dStr);
                     if (!isNaN(dObj.getTime())) extractedDate = dObj.toISOString().split('T')[0];
-                 }
+                }
             }
             if (extractedDate) setDate(extractedDate);
 
@@ -71,17 +71,17 @@ const AddRecordModal = ({ closeModal, userId }) => {
 
             // 3. Build Details (Summary + Meds)
             let builtDetails = summary;
-            
+
             if (analysis.medications && analysis.medications.length > 0) {
                 builtDetails += "\n\nMedications:\n" + analysis.medications.map(m => `- ${m.name} (${m.dosage || 'N/A'})`).join("\n");
             }
-            
+
             if (analysis.hospital_name) {
                 builtDetails += `\n\nFacility: ${analysis.hospital_name}`;
             }
 
             if (builtDetails) setDetails(builtDetails);
-            
+
             // 4. Infer Type
             if (analysis.medications?.length > 0 || summary.toLowerCase().includes('prescription')) {
                 setRecordType('Prescription');
@@ -114,23 +114,23 @@ const AddRecordModal = ({ closeModal, userId }) => {
         // 1. Create a storage reference
         // Unique path for each user and file: `records/{userId}/{timestamp}-{fileName}`
         const storageRef = ref(storage, `records/${userId}/${Date.now()}-${file.name}`);
-        
+
         // 2. Start the upload task
         const uploadTask = uploadBytesResumable(storageRef, file);
 
         // 3. Listen for state changes, errors, and completion of the upload.
-        uploadTask.on('state_changed', 
+        uploadTask.on('state_changed',
             (snapshot) => {
                 // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 setUploadProgress(Math.round(progress));
-            }, 
+            },
             (error) => {
                 // Handle unsuccessful uploads
                 console.error("Upload failed:", error);
                 setError('File upload failed. Please try again.');
                 setIsUploading(false);
-            }, 
+            },
             () => {
                 // 4. Handle successful uploads on complete
                 getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
@@ -147,7 +147,7 @@ const AddRecordModal = ({ closeModal, userId }) => {
                             fileName: file.name,
                             createdAt: serverTimestamp()
                         });
-                        
+
                         // Reset state and close modal
                         setIsUploading(false);
                         closeModal();
@@ -164,14 +164,14 @@ const AddRecordModal = ({ closeModal, userId }) => {
 
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-2xl m-4 transform transition-all">
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Add New Medical Record</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+            <div className="bg-white rounded-t-2xl sm:rounded-lg shadow-2xl p-6 sm:p-8 w-full max-w-2xl transform transition-all max-h-[92vh] overflow-y-auto">
+                <h2 className="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">Add New Medical Record</h2>
                 <form onSubmit={handleFormSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div className="relative">
                             <input type="date" value={date} onChange={e => setDate(e.target.value)} required className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
-                             {isAutofilling && <span className="absolute right-2 top-2 text-xs text-blue-500 font-bold">AI...</span>}
+                            {isAutofilling && <span className="absolute right-2 top-2 text-xs text-blue-500 font-bold">AI...</span>}
                         </div>
                         <select value={recordType} onChange={e => setRecordType(e.target.value)} className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option>Prescription</option>
@@ -217,12 +217,12 @@ const AddRecordModal = ({ closeModal, userId }) => {
                     </div>
 
                     {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
-                    
-                    <div className="flex items-center justify-end space-x-4">
-                        <button type="button" onClick={closeModal} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+
+                    <div className="flex flex-col sm:flex-row items-center justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+                        <button type="button" onClick={closeModal} className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition-colors text-sm uppercase tracking-wide">
                             Cancel
                         </button>
-                        <button type="submit" disabled={isUploading || isAutofilling} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300 disabled:cursor-not-allowed">
+                        <button type="submit" disabled={isUploading || isAutofilling} className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] text-sm uppercase tracking-wide shadow-lg shadow-blue-500/20">
                             {isUploading ? `Uploading... ${uploadProgress}%` : 'Add Record'}
                         </button>
                     </div>
