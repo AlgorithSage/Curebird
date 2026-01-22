@@ -520,3 +520,22 @@ body {
     transform: scale(0.95);
   }
 }
+
+.glass-card-rose {
+    @apply glass-card;
+    background: linear-gradient(
+      135deg,
+      rgba(225, 29, 72, 0.15) 0%,
+      rgba(10, 10, 10, 0.7) 100%
+    ) !important;
+    border: 1px solid rgba(225, 29, 72, 0.2);
+}
+
+.glass-card-rose:hover {
+    background: linear-gradient(
+      145deg,
+      rgba(225, 29, 72, 0.15) 0%,
+      rgba(10, 10, 10, 0.8) 100%
+    ) !important;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9), 0 0 40px -10px rgba(225, 29, 72, 0.3);
+}
