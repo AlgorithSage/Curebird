@@ -155,7 +155,7 @@ const ECGLine = () => (
 // --- Helper Components (Top Level) ---
 const ViewHeader = ({ icon: Icon, title, description }) => (
     <div className="mb-6 flex items-center gap-4 animate-in slide-in-from-left duration-500">
-        <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/50 text-yellow-400 shadow-lg">
+        <div className="p-3 rounded-2xl bg-slate-800/80 border border-amber-400/30 text-yellow-400 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
             <Icon size={24} />
         </div>
         <div>
@@ -188,7 +188,7 @@ const DashboardOverview = ({ onAddRecord, onViewOversight, patientCount, actionC
                         <motion.div
                             animate={{ rotate: 360 }}
                             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                            className="absolute -inset-[150%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(251,191,36,0.4)_270deg,#fbbf24_360deg)] opacity-40 group-hover:opacity-100 transition-opacity duration-500"
+                            className="absolute -inset-[150%] bg-[conic-gradient(from_0deg,transparent_20%,#059669_40%,#10b981_45%,#fbbf24_50%,#f59e0b_55%,#059669_70%,transparent_80%)] opacity-60 group-hover:opacity-100 transition-opacity duration-500"
                         />
                     </div>
 
@@ -236,7 +236,7 @@ const DashboardOverview = ({ onAddRecord, onViewOversight, patientCount, actionC
                 icon={<Calendar size={28} />}
                 label="Today's Schedule"
                 value="8"
-                color="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                color="bg-slate-900/50 text-yellow-400 border border-amber-400/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
                 change="On Track"
                 className="!h-full"
                 onClick={() => onViewOversight('schedule')}
@@ -283,7 +283,7 @@ const PatientSearchLanding = ({ onSelectPatient, patients = [], onAddPatientClic
                 className="w-full space-y-8"
             >
                 <div className="text-center space-y-2">
-                    <div className="inline-block p-4 rounded-full bg-yellow-500/10 border border-yellow-500/20 mb-4 shadow-[0_0_30px_rgba(250,204,21,0.2)]">
+                    <div className="inline-block p-4 rounded-full bg-slate-900/50 border border-amber-400/30 mb-4 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
                         <Users size={32} className="text-yellow-400" />
                     </div>
                     <h2 className="text-3xl font-bold text-white tracking-tight">Patient Workspace Access</h2>
@@ -292,7 +292,7 @@ const PatientSearchLanding = ({ onSelectPatient, patients = [], onAddPatientClic
 
                 <div className="relative w-full group">
                     <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="relative bg-slate-900/90 border border-yellow-500/30 rounded-2xl shadow-2xl flex items-center p-2 backdrop-blur-xl">
+                    <div className="relative bg-slate-900/90 border border-amber-400/30 rounded-2xl shadow-[0_0_25px_rgba(16,185,129,0.15)] flex items-center p-2 backdrop-blur-xl">
                         <Search className="ml-4 text-slate-500" size={24} />
                         <input
                             type="text"

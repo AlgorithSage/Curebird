@@ -26,8 +26,8 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
                 transition={{ delay }}
                 onClick={handleMainClick}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${active
-                    ? 'bg-gradient-to-r from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/30 text-yellow-100 shadow-[0_4px_30px_rgba(250,204,21,0.1)] backdrop-blur-md animated-border'
-                    : (subItems && expanded ? 'bg-amber-500/5 text-amber-100 border border-transparent' : 'text-slate-400 hover:bg-yellow-500/5 hover:text-yellow-200 hover:border-yellow-500/20 hover:backdrop-blur-sm border border-transparent')
+                    ? 'bg-gradient-to-r from-amber-500/10 via-emerald-500/5 to-transparent border border-amber-400/30 text-yellow-100 shadow-[0_4px_20px_rgba(16,185,129,0.15)] backdrop-blur-md animated-border'
+                    : (subItems && expanded ? 'bg-emerald-500/5 text-amber-100 border border-transparent' : 'text-slate-400 hover:bg-emerald-500/5 hover:text-yellow-200 hover:border-amber-400/20 hover:backdrop-blur-sm border border-transparent')
                     }`}
             >
                 {/* Active Gloss (Top Highlight - Warm Amber/Green) */}
@@ -156,8 +156,8 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unre
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                         // EMERALD GLASS WITH AMBER BORDERS
                         // Reverted to the 30% opacity Green glass
-                        // HYBRID THEME: Amber borders, Emerald depth
-                        className="fixed top-0 left-0 bottom-0 w-72 bg-gradient-to-b from-slate-950/40 via-slate-950/40 to-emerald-950/30 backdrop-blur-3xl border-r border-yellow-500/20 z-50 shadow-[20px_0_60px_rgba(250,204,21,0.05)] flex flex-col"
+                        // HYBRID THEME: Gold Borders, Deep Emerald Shadow/Depth
+                        className="fixed top-0 left-0 bottom-0 w-72 bg-gradient-to-b from-slate-950/40 via-slate-950/40 to-emerald-950/30 backdrop-blur-3xl border-r border-amber-400/30 z-50 shadow-[20px_0_60px_rgba(16,185,129,0.1)] flex flex-col"
                     >
                         {/* Header with Warm Amber Hue */}
                         {/* Header: Tab-Style UX */}
