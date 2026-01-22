@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
-
+import { Analytics } from '@vercel/analytics/react';
 
 import Main from './Main';
 import reportWebVitals from './reportWebVitals';
@@ -14,6 +14,7 @@ root.render(
   <HelmetProvider>
     <BrowserRouter>
       <Main />
+      <Analytics />
     </BrowserRouter>
   </HelmetProvider>
 );

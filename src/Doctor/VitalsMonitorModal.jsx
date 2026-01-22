@@ -130,18 +130,18 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
     if (!isOpen) return null;
 
     const VitalInput = ({ icon: Icon, label, value, onChange, placeholder, unit }) => (
-        <div className="space-y-3">
-            <label className="text-[12px] font-black text-amber-500/70 uppercase tracking-widest ml-1">{label}</label>
-            <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all">
-                <Icon className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
+        <div className="space-y-1">
+            <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">{label}</label>
+            <div className="relative">
+                <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600" size={16} />
                 <input
                     type="text"
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={placeholder}
-                    className="w-full bg-transparent border-none outline-none pl-12 pr-14 text-base text-white placeholder-stone-700 font-medium"
+                    className="w-full p-2.5 pl-10 pr-10 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-600 sm:text-sm"
                 />
-                <span className="absolute right-4 text-[11px] font-black text-stone-600 uppercase">{unit}</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-stone-600 uppercase">{unit}</span>
             </div>
         </div>
     );
@@ -161,26 +161,8 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                     initial={{ scale: 0.95, opacity: 0, y: 30 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.95, opacity: 0, y: 30 }}
-                    className="relative w-full max-w-4xl p-[3px] rounded-[2.1rem] overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+                    className="glass-card w-full max-w-4xl !p-0 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh]"
                 >
-                    {/* Rotating Rim (Border) */}
-                    <div className="absolute inset-0 z-0 bg-[#1c1605]">
-                        <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                            className="absolute -inset-[150%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(251,191,36,0.5)_270deg,#fbbf24_360deg)] opacity-70"
-                        />
-                    </div>
-
-                    <div className="relative z-10 w-full h-full bg-[#1c1605] rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] shadow-[inset_0_0_120px_rgba(245,158,11,0.08)]">
-                        {/* Premium Vibrant Amber Backdrop */}
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,_rgba(251,191,36,0.12),_transparent_60%),_radial-gradient(circle_at_75%_75%,_rgba(217,119,6,0.08),_transparent_60%)] pointer-events-none" />
-
-                        {/* Soft Warm Diffusion Layer */}
-                        <div className="absolute inset-0 bg-amber-950/20 backdrop-blur-3xl pointer-events-none" />
-
-                        {/* Global Grain/Noise Texture */}
-                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
 
                         {/* Header */}
                         <div className="px-8 py-6 border-b-2 border-amber-500/20 flex items-center justify-between bg-gradient-to-r from-amber-500/[0.07] via-transparent to-transparent relative z-10">
@@ -189,8 +171,8 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                                     <Activity size={22} />
                                 </div>
                                 <div>
-                                    <h2 className="text-3xl font-bold text-white tracking-tight">Vitals Monitor</h2>
-                                    <p className="text-[11px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-1">Physiological Entry</p>
+                                    <h2 className="text-xl font-semibold text-white">Vitals Monitor</h2>
+                                    <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider font-medium">Physiological Entry</p>
                                 </div>
                             </div>
                             <button onClick={onClose} className="p-2.5 text-stone-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-full transition-all duration-300">
@@ -202,14 +184,14 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar relative z-10">
                             <form id="vitals-form" onSubmit={handleSubmit} className="space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-3">
-                                        <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-widest ml-1">Select Patient</label>
-                                        <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all font-sans">
-                                            <User className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Select Patient</label>
+                                        <div className="relative">
+                                            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600" size={16} />
                                             <select
                                                 value={patientId}
                                                 onChange={(e) => setPatientId(e.target.value)}
-                                                className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-base text-white appearance-none cursor-pointer"
+                                                className="w-full p-2.5 pl-10 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all appearance-none cursor-pointer sm:text-sm"
                                                 required
                                             >
                                                 <option value="" disabled className="bg-stone-900">Choose Patient...</option>
@@ -282,22 +264,22 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                             )}
                             {!error && !success && <div></div>}
 
-                            <div className="flex items-center gap-6">
-                                <button onClick={onClose} className="text-stone-500 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors">Cancel</button>
+                            <div className="flex items-center gap-3">
+                                <button onClick={onClose} className="px-6 py-2.5 rounded-xl border border-amber-500/10 text-slate-300 hover:bg-amber-500/5 transition-colors font-bold text-sm">Cancel</button>
                                 <motion.button
                                     form="vitals-form"
                                     type="submit"
                                     disabled={loading || success}
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="px-10 py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-black text-sm font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 flex items-center gap-2 disabled:opacity-50"
+                                    className="px-8 py-2.5 bg-gradient-to-r from-amber-400 to-amber-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transition-all disabled:opacity-50 flex items-center gap-2"
                                 >
                                     {loading ? <Loader size={16} className="animate-spin" /> : <CheckCircle size={16} />}
                                     {loading ? 'Logging...' : 'Secure Vitals Log'}
                                 </motion.button>
                             </div>
                         </div>
-                    </div>
+
                 </motion.div>
             </div>
         </AnimatePresence>

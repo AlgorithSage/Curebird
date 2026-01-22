@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
+import {
     Plus, Share2, Bell, LogIn, LogOut, Settings, Menu,
     LayoutDashboard, Bot, Activity, Mail, MessageSquare,
     Users, Calendar, ClipboardList, FileText, BarChart2,
     Shield, HelpCircle, Stethoscope, Siren, Microscope
- } from './Icons';
+} from './Icons';
 import { AnimatePresence, motion } from 'framer-motion';
 import CureBirdLogo from '../curebird_logo.png';
 
@@ -146,12 +146,13 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
 
 
     const HeaderText = () => (
-        <div className="text-center xl:text-left">
-            <h1 className="text-xl sm:text-2xl xl:text-3xl font-extrabold tracking-tight leading-tight mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
+        <div className="text-center xl:text-left px-4">
+            <h1 className="text-lg sm:text-2xl xl:text-3xl font-extrabold tracking-tight leading-tight mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
                 <span className="inline">
-                    <span className="text-white">Welcome {user?.firstName || 'User'} | </span>
-                    <span className="text-white">Cure</span><span className="text-amber-200">Bird</span>
-                    <span className="text-white"> is at your service!</span>
+                    <span className="text-white">Welcome {user?.firstName || 'User'}</span>
+                    <span className="hidden sm:inline text-white opacity-40 mx-2">|</span>
+                    <span className="ml-1 sm:ml-0 text-white">Cure</span><span className="text-amber-200">Bird</span>
+                    <span className="hidden md:inline text-white"> is at your service!</span>
                 </span>
             </h1>
             <div className="flex items-center justify-center xl:justify-start gap-2 text-slate-400 text-xs sm:text-sm font-medium">

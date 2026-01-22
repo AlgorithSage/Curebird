@@ -1,0 +1,52 @@
+# Docker build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+test_*.py
+check_*.py
+debug_*.py
+*_test.py
+
+# Local environment files
+.env
+.env.local
+
+# Documentation and notes
+*.txt
+!requirements.txt
+*.md
+README*
+
+# Data files (if large)
+*.csv
+*.json
+!resource_distribution.json
+!india_epidemiology_data.json
+
+# Logs
+*.log

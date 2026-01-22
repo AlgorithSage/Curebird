@@ -1,69 +1,27 @@
-# Telehealth Feature Implementation - File Changelog
+# Telehealth & Google Meet Integration - Changed Files
 
-Here is the list of all files modified or created to implement the unified Telehealth Dashboard and Google Meet integration.
+This document lists the files modified or created today to implement the Google Meet Telehealth features.
 
-## Front-End (React)
+## Backend (Python/Flask)
 
-### 1. `src/Doctor/DoctorTelehealth.jsx` (NEW)
+- **`backend/app/gmeet.py`**: [NEW] Contains the core logic for Google OAuth flow, token persistence, and the Google Meet API interaction (`create_meeting`).
+- **`backend/app/__init__.py`**: [MODIFIED] Enabled global CORS (`/*`) to allow the frontend to communicate with the backend seamlessly.
+- **`backend/.env`**: [NEW] Added for storing `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REDIRECT_URI` securely.
+- **`backend/token.json`**: [NEW] Automatically generated file to persist user authentication tokens across server restarts.
 
-- **Purpose**: The main container for the new Telehealth experience.
-- **Key Features**:
-  - Consolidated "Overview", "Requests", and "Schedule" into a single tabbed view.
-  - Implemented the Amber/Black aesthetic.
-  - Added the "Stats" dashboard (Completed/Pending/Missed).
+## Frontend (React)
 
-### 2. `src/Doctor/ConsultationWorkflow.jsx` (MODIFIED)
-
-- **Purpose**: The active video call room.
-- **Changes**:
-  - Restored the Google Meet UI.
-  - Added `createCall` logic to fetch real meeting links from the backend.
-  - Added "Secured" and "End-to-End Encrypted" visual indicators.
-  - Added Mock fallbacks if the backend is unreachable.
-
-### 3. `src/Doctor/DoctorProfile.jsx` (MODIFIED)
-
-- **Purpose**: Doctor's settings and profile page.
-- **Changes**:
-  - Added the "Link Google Account" button (Video Icon) next to the "Availability" toggle.
-  - Added `linkGoogle` function to initiate OAuth flow.
-
-### 4. `src/Doctor/DoctorSidebar.jsx` (MODIFIED)
-
-- **Purpose**: Main side navigation.
-- **Changes**:
-  - Removed nested "Appointments" sub-menu.
-  - Added a single direct link to "Telehealth".
-
-### 5. `src/Doctor/DoctorDashboard.jsx` (MODIFIED)
-
-- **Purpose**: Main routing and layout controller.
-- **Changes**:
-  - Updated the render logic to display `DoctorTelehealth` when the 'telehealth' view is active.
-  - Removed references to the old `AppointmentManager`.
-
----
-
-## Back-End (Python/FastAPI)
-
-### 6. `backend/app/gmeet.py` (NEW)
-
-- **Purpose**: Handles Google API interactions.
-- **Key Functions**:
-  - `/auth/google`: Generates OAuth login URL.
-  - `/auth/callback`: Handles the token exchange after login.
-  - `/create-meet`: Creates a proper Google Calendar event with a Meet link.
-
-### 7. `backend/app/__init__.py` (MODIFIED)
-
-- **Purpose**: Backend application entry point.
-- **Changes**:
-  - Registered the new `gmeet_bp` blueprint so the API endpoints are active.
-
----
+- **`src/Doctor/DoctorTelehealth.jsx`**: [NEW/CONSOLIDATED] The main container for the Telehealth workflow, consolidating previous incomplete views.
+- **`src/Doctor/ConsultationWorkflow.jsx`**: [MODIFIED] Added the "Create Google Meet" logic, error handling for unlinked accounts, and the "Link Google Account" prompt.
+- **`src/Doctor/DoctorProfile.jsx`**: [MODIFIED] Added the "Connect Google Account" button to allow doctors to authorize the app from their profile.
 
 ## Documentation
 
-### 8. `README_GMEET_INTEGRATION.md` (NEW)
+- **`README_GMEET_INTEGRATION.md`**: [NEW] Comprehensive guide on setting up the Google Cloud Project, enabling APIs, and configuring credentials.
+- **`README_TELEHEALTH_CONSOLIDATION.md`**: [NEW] Explains the UX changes and the consolidation of the consultation sidebar items.
+- **`ACTION_REQUIRED_FROM_USER.md`**: [NEW] Checklist for the user to set up their environment variables.
+- **`README_GMEET_CREDENTIALS.md`**: [UPDATED] Updated to reflect the switch from `client_secret.json` to `.env`.
 
-- **Purpose**: Step-by-step guide for setting up Google Cloud credentials and testing the integration.
+## Dependency / Config
+
+- **`backend/requirements.txt`**: Added `google-auth`, `google-auth-oauthlib`, `google-auth-httplib2`, `google-api-python-client`.

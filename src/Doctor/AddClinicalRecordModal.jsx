@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  X, Upload, FileText, User, Calendar, AlertTriangle, CheckCircle, Loader, Bot, Sparkles, Printer, Eye, RefreshCcw, UserPlus  } from '../components/Icons';
+import {  X, Upload, FileText, User, Calendar, AlertTriangle, CheckCircle, Loader, Bot, Sparkles, Printer, Eye, RefreshCcw, UserPlus, Camera, Trash2, Pill  } from '../components/Icons';
 import ReactMarkdown from 'react-markdown';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -50,6 +50,58 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
     const [uploadProgress, setUploadProgress] = useState(0);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
+
+    // Camera states
+    const [showCamera, setShowCamera] = useState(false);
+    const videoRef = React.useRef(null);
+    const [stream, setStream] = useState(null);
+
+    React.useEffect(() => {
+        return () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, [stream]);
+
+    const startCamera = async () => {
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            setStream(mediaStream);
+            setShowCamera(true);
+        } catch (err) {
+            console.error("Error accessing camera:", err);
+            alert("Could not access camera. Please check permissions.");
+        }
+    };
+
+    const stopCamera = () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
+        }
+        setShowCamera(false);
+    };
+
+    const captureImage = () => {
+        if (!videoRef.current) return;
+
+        const video = videoRef.current;
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob((blob) => {
+             const file = new File([blob], `captured_record_${Date.now()}.jpg`, { type: "image/jpeg" });
+             // Use existing handler
+             const event = { target: { files: [file] } };
+             handleFileChange(event);
+             stopCamera();
+        }, 'image/jpeg', 0.95);
+    };
 
     // Digitization State
     const [digitizing, setDigitizing] = useState(false);
@@ -491,30 +543,13 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                     initial={{ scale: 0.95, opacity: 0, y: 30 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.95, opacity: 0, y: 30 }}
-                    className="relative w-full max-w-4xl bg-[#1c1605] rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] shadow-[0_0_50px_rgba(0,0,0,0.5),inset_0_0_120px_rgba(245,158,11,0.08)] border border-amber-500/20"
+                    className="glass-card w-full max-w-4xl !p-0 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh]"
                 >
-                    {/* Premium Vibrant Amber Backdrop */}
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,_rgba(251,191,36,0.12),_transparent_60%),_radial-gradient(circle_at_75%_75%,_rgba(217,119,6,0.08),_transparent_60%)] pointer-events-none" />
 
-                    {/* Soft Warm Diffusion Layer */}
-                    <div className="absolute inset-0 bg-amber-950/20 backdrop-blur-3xl pointer-events-none" />
-                    {/* Global Grain/Noise Texture */}
-                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
-
-                    {/* Header */}
-                    <div className="px-8 py-6 border-b-2 border-amber-500/20 flex items-center justify-between relative bg-gradient-to-r from-amber-500/[0.07] via-transparent to-transparent">
-                        <div className="flex items-center gap-4">
-                            <div className="p-2.5 bg-amber-500/20 rounded-xl text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                                <FileText size={22} />
-                            </div>
-                            <div>
-                                <h2 className="text-3xl font-bold text-white tracking-tight">Add Clinical Record</h2>
-                                <p className="text-[11px] text-amber-500/60 uppercase tracking-[0.3em] font-black mt-1">Medical Documentation</p>
-                            </div>
-                        </div>
-                        <button onClick={onClose} className="p-2.5 text-stone-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-full transition-all duration-300">
-                            <X size={20} />
-                        </button>
+                    {/* Header - Reference Quality Match */}
+                    <div className="flex justify-between items-center p-5 border-b border-amber-500/10 bg-black/20 flex-shrink-0">
+                        <h2 className="text-xl font-semibold text-white">Add Clinical Record</h2>
+                        <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={24} /></button>
                     </div>
 
                     {/* Scrollable Form */}
@@ -523,10 +558,11 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
 
                             {/* Row 1: Patient & Date */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-3">
-                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Patient Name</label>
+
+                                <div className="space-y-1">
+                                    <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Patient Name</label>
                                     <div className="relative">
-                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-600 z-10" size={20} />
+                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600 z-10" size={16} />
                                         <input
                                             type="text"
                                             placeholder="Search or Enter New Patient..."
@@ -538,7 +574,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                                             }}
                                             onFocus={() => setShowPatientSuggestions(true)}
                                             onBlur={() => setTimeout(() => setShowPatientSuggestions(false), 200)}
-                                            className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] pl-12 pr-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
+                                            className="w-full p-2.5 pl-10 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-600 sm:text-sm"
                                             required
                                         />
 
@@ -571,15 +607,15 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                                     </div>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Record Date</label>
-                                    <div className="relative flex items-center bg-[#141211] border border-white/[0.05] focus-within:border-amber-500/30 rounded-xl h-[3.8rem] transition-all font-sans">
-                                        <Calendar className="absolute left-4 text-stone-600 focus-within:text-amber-500" size={20} />
+                                <div className="space-y-1">
+                                    <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Record Date</label>
+                                    <div className="relative">
+                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600" size={16} />
                                         <input
                                             type="date"
                                             value={formData.date}
                                             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                            className="w-full bg-transparent border-none outline-none pl-12 pr-4 text-base text-white [color-scheme:dark] transition-all font-medium"
+                                            className="w-full p-2.5 pl-10 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all [color-scheme:dark] sm:text-sm"
                                             required
                                         />
                                     </div>
@@ -589,7 +625,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                             {/* Row 2: Type & Priority */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
-                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Record Type</label>
+                                    <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Record Type</label>
                                     <div className="grid grid-cols-2 gap-2 relative">
                                         {recordTypes.slice(0, 2).map(type => (
                                             <TabButton
@@ -604,14 +640,14 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                                     <select
                                         value={formData.type}
                                         onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                        className="w-full bg-[#141211] border border-white/5 rounded-xl py-3 px-4 text-xs text-stone-400 focus:outline-none focus:border-amber-500/30 appearance-none cursor-pointer"
+                                        className="w-full p-2.5 bg-black/30 border border-amber-500/10 rounded-xl text-xs text-slate-400 focus:outline-none focus:border-amber-500/30 appearance-none cursor-pointer"
                                     >
                                         {recordTypes.map(t => <option key={t.id} value={t.id} className="bg-stone-900">{t.label}</option>)}
                                     </select>
                                 </div>
 
-                                <div className="space-y-4">
-                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Priority</label>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Priority</label>
                                     <div className="flex gap-2 relative">
                                         {priorities.map(p => (
                                             <TabButton
@@ -627,95 +663,112 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                                 </div>
                             </div>
 
-                            {/* Row 3: Title & Diagnosis */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Clinical Title</label>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Clinical Title</label>
                                     <input
                                         type="text"
                                         placeholder="e.g. Annual Cardiovascular Assessment"
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                        className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] px-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
+                                        className="w-full p-2.5 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-600 sm:text-sm"
                                         required
                                     />
                                 </div>
-                                <div className="space-y-4">
-                                    <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Primary Diagnosis</label>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Primary Diagnosis</label>
                                     <input
                                         type="text"
                                         placeholder="e.g. Hypertension, Type 2 Diabetes"
                                         value={formData.diagnosis || ''}
                                         onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })}
-                                        className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] px-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
+                                        className="w-full p-2.5 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-600 sm:text-sm"
                                     />
                                 </div>
                             </div>
 
                             {/* Row 4: Medical Parameters (Vitals) */}
-                            <div className="space-y-4">
-                                <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Medical Parameters (Vitals)</label>
+                            <div className="space-y-1">
+                                <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Medical Parameters (Vitals)</label>
                                 <input
                                     type="text"
                                     placeholder="e.g. BP: 120/80, HR: 72 bpm, SpO2: 98%"
                                     value={formData.vitals || ''}
                                     onChange={(e) => setFormData({ ...formData, vitals: e.target.value })}
-                                    className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-xl h-[3.8rem] px-6 text-base text-white outline-none transition-all placeholder-stone-700 font-medium"
+                                    className="w-full p-2.5 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-600 sm:text-sm"
                                 />
                             </div>
 
                             {/* Row 5: Detailed Observations */}
-                            <div className="space-y-4">
-                                <label className="text-[13px] font-black text-amber-500/70 uppercase tracking-[0.2em] ml-1">Clinical Details & Observations</label>
+                            <div className="space-y-1">
+                                <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Clinical Details & Observations</label>
                                 <textarea
                                     rows={5}
                                     placeholder="Enter full clinical observations, symptoms, and assessments..."
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full bg-[#141211] border border-white/[0.05] focus:border-amber-500/30 rounded-2xl py-5 px-6 text-base text-white placeholder-stone-800 outline-none transition-all custom-scrollbar resize-none leading-relaxed font-medium"
+                                    className="w-full p-3 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all placeholder:text-slate-600 custom-scrollbar resize-none leading-relaxed sm:text-sm"
                                     required
                                 />
                             </div>
 
-                            {/* Row 5: File Upload */}
-                            <div className="space-y-3">
-                                <label className="text-[11px] font-black text-amber-500/50 uppercase tracking-[0.2em] ml-1">Attachment (Optional)</label>
-                                <div className="relative border-2 border-dashed border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 cursor-pointer group">
-                                    <input
-                                        type="file"
-                                        onChange={handleFileChange}
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-                                    />
-
-                                    {/* Shimmer Effect */}
-                                    <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(245,158,11,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-shimmer opacity-0 group-hover:opacity-100 pointer-events-none rounded-2xl" />
-
-                                    <div className="w-10 h-10 flex items-center justify-center bg-amber-500/10 text-amber-500 rounded-full transition-all duration-500 mb-3 group-hover:bg-amber-500/20 group-hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] relative z-10">
-                                        <Upload size={18} />
+                            {/* Row 5: Reference Quality Upload Section */}
+                            <div className="pt-4 border-t border-amber-500/10 space-y-4">
+                                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-amber-500/20 border-dashed rounded-2xl bg-black/20 hover:bg-black/30 transition-colors group">
+                                    <div className="space-y-1 text-center">
+                                        <div className="mx-auto h-12 w-12 text-amber-500/60 group-hover:text-amber-400 transition-colors mb-2 drop-shadow-lg flex items-center justify-center">
+                                            <Upload size={32} />
+                                        </div>
+                                        <div className="flex text-sm text-slate-400 justify-center">
+                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-amber-500/5 px-4 py-2 rounded-xl font-bold text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 transition-all shadow-lg">
+                                                <span>{formData.file ? 'Change File' : 'Upload PDF or Image'}</span>
+                                                <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="application/pdf,image/*" />
+                                            </label>
+                                        </div>
+                                        <p className="text-xs text-slate-500 pt-2">{formData.file ? formData.file.name : 'No file selected'}</p>
                                     </div>
-                                    <p className="text-sm font-bold text-amber-500/90 group-hover:text-amber-500 transition-colors tracking-wide leading-none relative z-10">
-                                        {formData.file ? formData.file.name : 'Click to Upload or Drag & Drop'}
-                                    </p>
-                                    <p className="text-[11px] text-amber-500/50 group-hover:text-amber-500/70 transition-colors mt-1 font-medium relative z-10">PDF, JPG, PNG up to 10MB</p>
-
-                                    {/* Autofill Overlay */}
+                                    
+                                     {/* Autofill Overlay */}
                                     {autofilling && (
                                         <div className="absolute inset-0 bg-stone-900/90 rounded-2xl flex flex-col items-center justify-center z-30 transition-all backdrop-blur-sm border border-amber-500/20">
                                             <div className="relative">
                                                 <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
                                                 <Sparkles size={20} className="text-amber-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                                             </div>
-                                            <p className="text-amber-500 font-bold text-xs uppercase tracking-widest mt-3 animate-pulse">AI Autofilling Details...</p>
+                                            <p className="text-amber-500 font-bold text-xs uppercase tracking-widest mt-3 animate-pulse">AI Autofilling...</p>
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Camera Button */}
+                                {!showCamera && (
+                                    <div className="flex justify-center">
+                                        <button type="button" onClick={startCamera} className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg transition-colors border border-slate-600">
+                                            <Camera size={20} />
+                                            <span>Capture from Camera</span>
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Camera View */}
+                                {showCamera && (
+                                    <div className="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-600">
+                                        <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
+                                        <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
+                                            <button type="button" onClick={stopCamera} className="bg-red-500/80 hover:bg-red-600 text-white px-4 py-2 rounded-full font-semibold backdrop-blur-sm transition-colors">
+                                                Cancel
+                                            </button>
+                                            <button type="button" onClick={captureImage} className="bg-emerald-500/80 hover:bg-emerald-600 text-white px-6 py-2 rounded-full font-semibold backdrop-blur-sm transition-colors flex items-center gap-2">
+                                                <Camera size={18} /> Capture
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {loading && uploadProgress > 0 && (
-                                    <div className="w-full h-1 bg-stone-950/50 rounded-full overflow-hidden mt-2">
-                                        <motion.div
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${uploadProgress}%` }}
-                                            className="h-full bg-amber-500"
-                                        />
+                                    <div className="w-full bg-slate-800 rounded-full h-2.5 mt-2 overflow-hidden border border-white/5">
+                                        <motion.div initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} className="bg-gradient-to-r from-sky-500 to-amber-500 h-full rounded-full transition-all duration-300" />
+                                        <p className="text-[10px] text-slate-400 mt-1 text-center font-bold uppercase tracking-widest">{Math.round(uploadProgress)}% Uploaded</p>
                                     </div>
                                 )}
                             </div>
@@ -818,37 +871,23 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                         </form>
                     </div>
 
-                    {/* Footer Actions */}
-                    <div className="p-8 border-t-2 border-amber-500/20 bg-[#1c1605] flex items-center justify-between font-sans shrink-0 z-50 shadow-[0_-20px_40px_rgba(0,0,0,0.5)]">
+                    {/* Footer - Reference Quality Match */}
+                    <div className="flex justify-end p-5 border-t border-amber-500/10 gap-3 bg-black/20 flex-shrink-0">
                         {error && (
-                            <div className="flex items-center gap-2 text-rose-400 text-xs font-black uppercase tracking-widest">
-                                <AlertTriangle size={14} />
-                                <span>{error}</span>
+                            <div className="flex items-center gap-2 text-rose-400 text-[10px] font-bold uppercase tracking-widest mr-auto">
+                                <AlertTriangle size={14} /> {error}
                             </div>
                         )}
-                        {!error && !success && <div></div>}
-
-                        {success && (
-                            <div className="flex items-center gap-2 text-emerald-400 text-xs font-black uppercase tracking-widest">
-                                <CheckCircle size={14} />
-                                <span>Entry Secured</span>
-                            </div>
-                        )}
-
-                        <div className="flex items-center gap-6">
-                            <button onClick={onClose} className="text-stone-500 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors">Cancel</button>
-                            <motion.button
-                                form="add-record-form"
-                                type="submit"
-                                disabled={loading || success}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="px-10 py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-black text-sm font-black uppercase tracking-widest shadow-xl shadow-amber-900/20 flex items-center gap-2 disabled:opacity-50"
-                            >
-                                {loading ? <Loader size={18} className="animate-spin" /> : <CheckCircle size={18} />}
-                                {loading ? 'Saving...' : 'Save Record'}
-                            </motion.button>
-                        </div>
+                        <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-xl border border-amber-500/10 text-slate-300 hover:bg-amber-500/5 transition-colors font-bold">Cancel</button>
+                        <button 
+                            form="add-record-form"
+                            type="submit" 
+                            disabled={loading || success}
+                            className="px-8 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:hover:shadow-none flex items-center gap-2"
+                        >
+                            {loading ? <Loader size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+                            {loading ? 'Saving...' : 'Save Record'}
+                        </button>
                     </div>
                 </motion.div>
             </div>
