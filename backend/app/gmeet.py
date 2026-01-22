@@ -1,5 +1,11 @@
 from flask import Blueprint, jsonify, request, redirect
-from google.apps import meet_v2
+try:
+    from google.apps import meet_v2
+    HAS_GMEET_APPS = True
+except ImportError:
+    meet_v2 = None
+    HAS_GMEET_APPS = False
+    print("WARNING: google-apps-meet not found. Google Meet creation will fail.")
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build

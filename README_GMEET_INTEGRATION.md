@@ -20,6 +20,7 @@ This guide details how to enable the **Real Google Meet** integration.
 2.  **Enable API**:
     - Navigate to **APIs & Services > Library**.
     - Search for **Google Calendar API** and click **Enable**.
+    - **CRITICAL**: Search for **Google Meet API** and click **Enable** (Required for V2).
 3.  **Configure OAuth Consent Screen**:
     - Go to **APIs & Services > OAuth consent screen**.
     - Select **External** (for testing) or **Internal** (if Google Workspace organization).

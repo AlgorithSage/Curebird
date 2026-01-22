@@ -61,20 +61,16 @@ const TelehealthSession = ({ user, patients = [] }) => {
                 setMeetLink(data.meetLink);
                 setCallId("gmeet-active"); // Placeholder ID
             } else {
+                // Show explicit error
                 console.error("Backend Error:", data);
-                // Fallback to Mock if backend fails (Graceful degradation for demo)
-                const mockMeetId = "demo-mode-" + Date.now().toString().slice(-4);
-                setCallId(mockMeetId);
-                setMeetLink(`meet.google.com/${mockMeetId}`);
-                alert("Backend Connection Failed. Switched to Demo Mode.\n(Check console for details)");
+                alert("Error creating meeting: " + (data.error || "Unknown error"));
+                // Do NOT set mock link
             }
         } catch (err) {
             console.error("Network Error:", err);
             // Fallback
-             const mockMeetId = "offline-demo-" + Date.now().toString().slice(-4);
-             setCallId(mockMeetId);
-             setMeetLink(`meet.google.com/${mockMeetId}`);
-             alert("Backend Unreachable. Switched to Demo Mode.");
+             alert("Backend Unreachable. Please check if python run.py is running.");
+             // Do NOT set mock link
         } finally {
             setIsCreatingMeet(false);
         }

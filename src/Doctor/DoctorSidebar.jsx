@@ -26,8 +26,8 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
                 transition={{ delay }}
                 onClick={handleMainClick}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${active
-                    ? 'bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-transparent border border-amber-500/30 text-emerald-100 shadow-[0_4px_30px_rgba(16,185,129,0.1)] backdrop-blur-md animated-border'
-                    : (subItems && expanded ? 'bg-emerald-500/5 text-emerald-100 border border-transparent' : 'text-slate-400 hover:bg-emerald-500/5 hover:text-emerald-200 hover:border-amber-500/20 hover:backdrop-blur-sm border border-transparent')
+                    ? 'bg-gradient-to-r from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/30 text-yellow-100 shadow-[0_4px_30px_rgba(250,204,21,0.1)] backdrop-blur-md animated-border'
+                    : (subItems && expanded ? 'bg-amber-500/5 text-amber-100 border border-transparent' : 'text-slate-400 hover:bg-yellow-500/5 hover:text-yellow-200 hover:border-yellow-500/20 hover:backdrop-blur-sm border border-transparent')
                     }`}
             >
                 {/* Active Gloss (Top Highlight - Warm Amber/Green) */}
@@ -41,7 +41,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
                 )}
 
                 <div className="flex items-center gap-4">
-                    <Icon size={20} className={`relative z-10 transition-transform duration-300 group-hover:scale-110 ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-slate-500 group-hover:text-amber-400'}`} />
+                    <Icon size={20} className={`relative z-10 transition-transform duration-300 group-hover:scale-110 ${active ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]' : 'text-slate-500 group-hover:text-yellow-400'}`} />
                     <span className="relative z-10 font-medium tracking-wide text-sm">{label}</span>
                 </div>
 
@@ -69,8 +69,8 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, delay, subItems, expa
                                 key={sub.id}
                                 onClick={() => onClick(sub.id)}
                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border ${active === sub.id // Check if sub-item ID matches active view (need to pass full ID logic)
-                                    ? 'text-emerald-300 bg-emerald-500/10 backdrop-blur-sm border-amber-500/20'
-                                    : 'text-slate-500 hover:text-emerald-200 hover:bg-emerald-500/5 border-transparent'
+                                    ? 'text-yellow-300 bg-yellow-500/10 backdrop-blur-sm border-yellow-500/20'
+                                    : 'text-slate-500 hover:text-yellow-200 hover:bg-yellow-500/5 border-transparent'
                                     }`}
                             >
                                 <div className={`w-1.5 h-1.5 rounded-full ${active === sub.id ? 'bg-amber-500 shadow-[0_0_8px_#f59e0b]' : 'bg-slate-700 group-hover:bg-amber-500/50'}`} />
@@ -156,8 +156,8 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unre
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                         // EMERALD GLASS WITH AMBER BORDERS
                         // Reverted to the 30% opacity Green glass
-                        // Added Amber border
-                        className="fixed top-0 left-0 bottom-0 w-72 bg-gradient-to-b from-slate-950/40 via-slate-950/40 to-emerald-950/30 backdrop-blur-3xl border-r border-amber-500/20 z-50 shadow-[20px_0_60px_rgba(16,185,129,0.05)] flex flex-col"
+                        // HYBRID THEME: Amber borders, Emerald depth
+                        className="fixed top-0 left-0 bottom-0 w-72 bg-gradient-to-b from-slate-950/40 via-slate-950/40 to-emerald-950/30 backdrop-blur-3xl border-r border-yellow-500/20 z-50 shadow-[20px_0_60px_rgba(250,204,21,0.05)] flex flex-col"
                     >
                         {/* Header with Warm Amber Hue */}
                         {/* Header: Tab-Style UX */}
@@ -220,7 +220,7 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unre
                         </div>
 
                         {/* Doctor ID & Footer */}
-                        <div className="p-4 border-t border-amber-500/10 bg-emerald-950/10 backdrop-blur-md space-y-3">
+                        <div className="p-4 border-t border-yellow-500/10 bg-amber-950/10 backdrop-blur-md space-y-3">
 
 
                             <button

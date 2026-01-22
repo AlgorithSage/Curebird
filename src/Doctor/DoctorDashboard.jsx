@@ -68,7 +68,7 @@ const InteractiveHexGrid = () => {
                 const xOffset = (r % 2 === 0) ? 0 : hexWidth / 2;
                 const x = (c * hexWidth + xOffset) - offsetX;
                 const y = (r * (hexHeight * 0.75)) - offsetY;
-                grid.push({ x, y, intensity: 0, baseOpacity: 0.05 });
+                grid.push({ x, y, intensity: 0, baseOpacity: 0.05, c });
             }
         }
         const wavePath = new Path2D("M-18 0 L-10 0 L-7 -4 L-4 0 L-2 14 L2 -16 L6 4 L9 0 L18 0");
@@ -108,9 +108,28 @@ const InteractiveHexGrid = () => {
                 ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(cell.intensity * 0.3 + 0.05, 0.3)})`; ctx.lineWidth = 1; ctx.stroke();
                 let strokeColor = `rgba(255, 255, 255, ${totalAlpha})`; let lineWidth = 1.5;
                 if (cell.intensity > 0.05) {
-                    strokeColor = `rgba(16, 185, 129, ${cell.intensity + 0.2})`;
-                    lineWidth = 1.5 + (cell.intensity * 1.5);
-                    ctx.shadowColor = '#10b981'; ctx.shadowBlur = cell.intensity * 15;
+                    // "Golden Dominance" Logic: 
+                    // Bias the gradient so Gold appears sooner and richer.
+                    // Start Color (Left): Warm Emerald (Green mixed with Gold) -> R:50, G:185, B:50
+                    // End Color (Right): Rich Gold -> R:255, G:190, B:0
+                    
+                    // Bias ratio: curve it so Gold takes over 70% of the screen
+                    const rawRatio = Math.min(Math.max((cell.c / cols), 0), 1);
+                    const ratio = Math.pow(rawRatio, 0.8); // Curve to bring Gold in earlier
+                    
+                    const r = 50 + (255 - 50) * ratio;
+                    const g = 185 + (190 - 185) * ratio;
+                    const b = 50 + (0 - 50) * ratio;
+
+                    // High Opacity for "Striking" Brightness
+                    strokeColor = `rgba(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)}, ${cell.intensity * 0.8 + 0.2})`;
+                    
+                    // Elegant but Visible Line Weight
+                    lineWidth = 1.5 + (cell.intensity * 1.5); 
+                    
+                    // Intense, Vibrant Glow
+                    ctx.shadowColor = `rgba(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)}, 1)`; // Full alpha shadow
+                    ctx.shadowBlur = cell.intensity * 25; // Strong glow
                 }
                 ctx.strokeStyle = strokeColor; ctx.lineWidth = lineWidth; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(wavePath);
                 ctx.restore();
@@ -136,7 +155,7 @@ const ECGLine = () => (
 // --- Helper Components (Top Level) ---
 const ViewHeader = ({ icon: Icon, title, description }) => (
     <div className="mb-6 flex items-center gap-4 animate-in slide-in-from-left duration-500">
-        <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/50 text-emerald-400 shadow-lg">
+        <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/50 text-yellow-400 shadow-lg">
             <Icon size={24} />
         </div>
         <div>
@@ -217,7 +236,7 @@ const DashboardOverview = ({ onAddRecord, onViewOversight, patientCount, actionC
                 icon={<Calendar size={28} />}
                 label="Today's Schedule"
                 value="8"
-                color="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                color="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
                 change="On Track"
                 className="!h-full"
                 onClick={() => onViewOversight('schedule')}
@@ -264,16 +283,16 @@ const PatientSearchLanding = ({ onSelectPatient, patients = [], onAddPatientClic
                 className="w-full space-y-8"
             >
                 <div className="text-center space-y-2">
-                    <div className="inline-block p-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-4 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-                        <Users size={32} className="text-emerald-400" />
+                    <div className="inline-block p-4 rounded-full bg-yellow-500/10 border border-yellow-500/20 mb-4 shadow-[0_0_30px_rgba(250,204,21,0.2)]">
+                        <Users size={32} className="text-yellow-400" />
                     </div>
                     <h2 className="text-3xl font-bold text-white tracking-tight">Patient Workspace Access</h2>
                     <p className="text-slate-400">Search for a patient to open their comprehensive medical file.</p>
                 </div>
 
                 <div className="relative w-full group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="relative bg-slate-900/90 border border-emerald-500/30 rounded-2xl shadow-2xl flex items-center p-2 backdrop-blur-xl">
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="relative bg-slate-900/90 border border-yellow-500/30 rounded-2xl shadow-2xl flex items-center p-2 backdrop-blur-xl">
                         <Search className="ml-4 text-slate-500" size={24} />
                         <input
                             type="text"
@@ -301,7 +320,7 @@ const PatientSearchLanding = ({ onSelectPatient, patients = [], onAddPatientClic
                                             className="w-full flex items-center justify-between p-4 hover:bg-emerald-500/10 transition-colors group text-left"
                                         >
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 font-bold group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
+                                                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 font-bold group-hover:bg-yellow-500/20 group-hover:text-yellow-400 transition-colors">
                                                     {patient.name?.charAt(0)}
                                                 </div>
                                                 <div>
@@ -309,7 +328,7 @@ const PatientSearchLanding = ({ onSelectPatient, patients = [], onAddPatientClic
                                                     <p className="text-xs text-slate-500">{patient.id} • {patient.condition || 'General'}</p>
                                                 </div>
                                             </div>
-                                            <ArrowRight size={18} className="text-slate-600 group-hover:text-emerald-400 -translate-x-2 group-hover:translate-x-0 transition-all opacity-0 group-hover:opacity-100" />
+                                            <ArrowRight size={18} className="text-slate-600 group-hover:text-yellow-400 -translate-x-2 group-hover:translate-x-0 transition-all opacity-0 group-hover:opacity-100" />
                                         </button>
                                     ))
                                 ) : (
@@ -526,11 +545,15 @@ const DoctorDashboard = ({ user }) => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-900 relative text-slate-100 font-sans selection:bg-emerald-500/30 selection:text-emerald-200 overflow-x-hidden">
-            {/* Background Layers */}
+        <div className="min-h-screen bg-slate-900 relative text-slate-100 font-sans selection:bg-amber-500/30 selection:text-amber-200 overflow-x-hidden">
+            {/* Background Layers - GOLDEN ENHANCED */}
             <div className="fixed inset-0 bg-slate-950 pointer-events-none z-[-2]" />
-            <div className="fixed top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-amber-500/10 blur-[120px] pointer-events-none z-[-1] mix-blend-screen" />
-            <div className="fixed bottom-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-emerald-600/10 blur-[120px] pointer-events-none z-[-1] mix-blend-screen" />
+            {/* Lively Golden Pulse in Top Right */}
+            <div className="fixed top-[-30%] right-[-10%] w-[80%] h-[80%] rounded-full bg-amber-500/15 blur-[100px] pointer-events-none z-[-1] mix-blend-screen animate-pulse-slow" />
+            {/* Subtle Deep Emerald Anchor in Bottom Left */}
+            <div className="fixed bottom-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-emerald-900/20 blur-[120px] pointer-events-none z-[-1] mix-blend-screen" />
+            {/* Central Warmth */}
+            <div className="fixed inset-0 bg-gradient-to-tr from-transparent via-amber-900/5 to-amber-500/5 pointer-events-none z-[-1]" />
             <InteractiveHexGrid />
             {/* NEW: Global Glass Sheet Overlay */}
             <div className="fixed inset-0 backdrop-blur-[2px] bg-slate-900/10 pointer-events-none z-[0]" />
