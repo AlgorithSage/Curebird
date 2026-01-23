@@ -108,6 +108,31 @@ const AddRecordModal = ({ closeModal, userId }) => {
             return;
         }
 
+        // FREE TIER LIMIT: Check Record Count
+        try {
+            const { getCountFromServer, query: qQuery, collection: qCollection } = await import('firebase/firestore');
+            // We need to fetch the user profile to check tier
+            const { doc: qDoc, getDoc: qGetDoc } = await import('firebase/firestore');
+            const userRef = qDoc(db, 'users', userId);
+            const userSnap = await qGetDoc(userRef);
+            const userData = userSnap.data();
+            const subscriptionTier = userData?.subscriptionTier || 'Free';
+
+            if (subscriptionTier === 'Free') {
+                const coll = qCollection(db, `users/${userId}/records`);
+                const snapshot = await getCountFromServer(coll);
+                const count = snapshot.data().count;
+
+                if (count >= 10) {
+                    setError('Free Tier Limit Reached (10 Docs). Upgrade to Premium to upload more.');
+                    return;
+                }
+            }
+        } catch (err) {
+            console.error("Error checking limits:", err);
+            // Verify defensively if check fails? For now, allow or just log.
+        }
+
         setIsUploading(true);
         setError('');
 

@@ -11,3 +11,4 @@ gunicorn
 pymupdf
 cerebras_cloud_sdk
 google-auth-oauthlib
+razorpay

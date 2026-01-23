@@ -16,4 +16,7 @@ def create_app():
         from . import gmeet
         app.register_blueprint(gmeet.gmeet_bp)
 
+        from . import payment_routes
+        app.register_blueprint(payment_routes.payment_bp)
+
         return app

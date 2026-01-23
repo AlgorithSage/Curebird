@@ -7,7 +7,7 @@ import { FileText, Stethoscope, Hospital, Pill, HeartPulse, Trash2, Edit, Extern
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) => {
+const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, userTier }) => {
     // Step 5: Unified Iconography
     // Standardized all to use FileText (Document Icon) but kept color differentiation
     const ICONS = {
@@ -221,9 +221,25 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                             )}
                             {record.digital_copy && (
                                 <button
-                                    onClick={() => setShowDigitalModal(true)}
-                                    className="flex flex-col items-center justify-center w-full sm:w-20 h-14 sm:h-20 bg-gradient-to-br from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transition-all transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden"
+                                    onClick={() => {
+                                        if (userTier === 'Free') {
+                                            alert("View Digital Copy is a Premium Feature. Please upgrade.");
+                                            return;
+                                        }
+                                        setShowDigitalModal(true);
+                                    }}
+                                    className={`flex flex-col items-center justify-center w-full sm:w-20 h-14 sm:h-20 rounded-xl shadow-lg transition-all transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden ${userTier === 'Free'
+                                        ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-70'
+                                        : 'bg-gradient-to-br from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black shadow-amber-500/20 hover:shadow-amber-500/40'
+                                        }`}
                                 >
+                                    {/* Lock Overlay for Free Tier */}
+                                    {userTier === 'Free' && (
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
+                                            <span className="text-xs">🔒</span>
+                                        </div>
+                                    )}
+
                                     <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                                     <Eye className="w-5 h-5 sm:w-6 sm:h-6" />
                                     <span className="text-[10px] font-bold uppercase tracking-wider relative z-10">Digital</span>
@@ -325,39 +341,38 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
 
                             {/* Content */}
                             <div className="flex-1 overflow-y-auto p-8 bg-slate-900/50 font-sans custom-scrollbar">
-                                <div className="max-w-3xl mx-auto bg-slate-800/20 p-8 rounded-2xl border border-white/5">
+                                <div className="max-w-3xl mx-auto bg-white p-12 rounded-lg border border-slate-200 shadow-xl">
                                     {/* Letterhead */}
-                                    <div className="border-b-2 border-amber-500/50 pb-6 mb-8 flex justify-between items-end">
+                                    <div className="border-b-2 border-amber-500 pb-6 mb-8 flex justify-between items-end">
                                         <div>
-                                            <h1 className="text-2xl font-black text-white m-0 leading-none tracking-tight">DIGITAL TRANSCRIPT</h1>
-                                            <p className="text-amber-500 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
+                                            <h1 className="text-3xl font-black text-slate-900 m-0 leading-none tracking-tight">DIGITAL TRANSCRIPT</h1>
+                                            <p className="text-amber-600 font-bold text-xs tracking-[0.2em] mt-2 uppercase">Official Medical Record Copy</p>
                                         </div>
                                         <div className="text-right opacity-100">
-                                            <div className="flex items-center justify-end gap-2 text-white font-bold">
-                                                <img src="/favicon.ico" alt="CureBird Logo" className="h-10 w-auto brightness-110 drop-shadow-lg" />
+                                            <div className="flex items-center justify-end gap-2 text-slate-800 font-bold">
+                                                <img src="/favicon.ico" alt="CureBird Logo" className="h-10 w-auto drop-shadow-sm" />
                                                 <span className="text-xl tracking-tight">CureBird</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Actual Markdown Content - Dark Mode Styles */}
+                                    {/* Actual Markdown Content - Light/Paper Styles */}
                                     <div className="markdown-content text-left">
                                         <style>{`
                                             .markdown-content * {
-                                                color: #e2e8f0 !important;
+                                                color: #1e293b !important;
                                                 opacity: 1 !important;
                                                 text-align: left !important;
                                             }
                                             .markdown-content strong {
                                                 font-weight: 800 !important;
-                                                color: #fff !important;
-                                                text-align: left !important;
+                                                color: #000 !important;
                                             }
                                             .markdown-content li {
-                                                color: #cbd5e1 !important;
+                                                color: #334155 !important;
                                             }
                                             .markdown-content h1, .markdown-content h2, .markdown-content h3 {
-                                                color: #f59e0b !important;
+                                                color: #d97706 !important;
                                                 font-weight: 800 !important;
                                             }
                                             .markdown-content table {
@@ -366,22 +381,22 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete }) =>
                                                 margin: 1em 0;
                                             }
                                             .markdown-content th, .markdown-content td {
-                                                border: 1px solid #334155;
+                                                border: 1px solid #cbd5e1;
                                                 padding: 8px;
-                                                color: #e2e8f0 !important;
+                                                color: #334155 !important;
                                             }
                                             .markdown-content th {
-                                                background-color: #1e293b;
+                                                background-color: #f1f5f9;
                                                 font-weight: bold;
-                                                color: #fbbf24 !important;
+                                                color: #475569 !important;
                                             }
                                         `}</style>
-                                        <div className="prose prose-sm prose-invert max-w-none text-slate-200">
+                                        <div className="prose prose-sm max-w-none text-slate-800">
                                             {isEditing ? (
                                                 <textarea
                                                     value={tempContent}
                                                     onChange={(e) => setTempContent(e.target.value)}
-                                                    className="w-full h-[60vh] p-4 rounded-xl border border-white/10 bg-slate-950/50 font-mono text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none shadow-inner"
+                                                    className="w-full h-[60vh] p-4 rounded-xl border border-slate-300 bg-white font-mono text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none shadow-inner"
                                                     placeholder="Edit markdown content..."
                                                 />
                                             ) : (

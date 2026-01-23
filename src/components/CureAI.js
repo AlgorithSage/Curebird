@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {  Send, Bot, User, Trash2, Brain, ShieldCheck  } from './Icons';
+import { Send, Bot, User, Trash2, Brain, ShieldCheck } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { useLocation } from 'react-router-dom';
@@ -172,6 +172,47 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
 
     const sendMessage = async () => {
         if (!inputMessage.trim() || isLoading) return;
+
+        // FREE TIER LIMIT CHECK (50 messages/day)
+        try {
+            // We need to check daily count from Firestore
+            const { doc, getDoc, updateDoc, setDoc, increment } = await import('firebase/firestore');
+            const userRef = doc(db, 'users', user.uid);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+            const subscriptionTier = userData?.subscriptionTier || 'Free';
+
+            if (subscriptionTier === 'Free') {
+                const today = new Date().toISOString().split('T')[0];
+                const usageRef = doc(db, `users/${user.uid}/usage`, `ai_${today}`);
+                const usageSnap = await getDoc(usageRef);
+
+                let currentCount = 0;
+                if (usageSnap.exists()) {
+                    currentCount = usageSnap.data().count || 0;
+                }
+
+                if (currentCount >= 50) {
+                    const limitMessage = {
+                        text: "**Daily Limit Reached.**\n\nYou have used your 50 free messages for today. Upgrade to **Premium** for unlimited AI health guidance.",
+                        isUser: false,
+                        timestamp: new Date().toISOString()
+                    };
+                    setMessages(prev => [...prev, limitMessage]);
+                    return;
+                }
+
+                // Increment Usage (Optimistic or after success? Let's do optimistic for speed/UX)
+                if (usageSnap.exists()) {
+                    await updateDoc(usageRef, { count: increment(1) });
+                } else {
+                    await setDoc(usageRef, { count: 1 });
+                }
+            }
+        } catch (err) {
+            console.error("AI Limit Check Failed:", err);
+            // Non-blocking but good to log
+        }
 
         const userMessage = {
             text: inputMessage,

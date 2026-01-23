@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DiseaseList from './diseases/DiseaseList';
 import DiseaseDetail from './diseases/DiseaseDetail';
-import {  ChevronLeft  } from './Icons';
+import { ChevronLeft } from './Icons';
 
 import Header from './Header';
 
@@ -43,7 +43,7 @@ const CureTracker = ({ user, userId, onNavigate, onLogout, onLoginClick, onToggl
                     </div>
                 ) : (
                     <div className="animate-in fade-in zoom-in-95 duration-500 pb-20">
-                        <DiseaseList userId={activeUserId} onSelectDisease={setSelectedDisease} />
+                        <DiseaseList userId={activeUserId} user={user} onSelectDisease={setSelectedDisease} />
                     </div>
                 )}
             </main>

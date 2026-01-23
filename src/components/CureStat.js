@@ -611,7 +611,28 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
             <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
                 <Header title="Cure Stat" description="Real-time disease intelligence, medication insights, and predictive analytics for a healthier India." user={user} onLogout={onLogout} onLoginClick={onLoginClick} onToggleSidebar={onToggleSidebar} onNavigate={onNavigate} />
             </div>
-            <div className="relative z-10">
+
+            {/* FREE TIER LOCK OVERLAY */}
+            {(user?.subscriptionTier !== 'Premium' && user?.subscriptionTier !== 'Basic') && (
+                <div className="absolute inset-0 z-40 bg-slate-900/90 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8">
+                    <div className="bg-gradient-to-b from-slate-800 to-slate-900 p-8 rounded-3xl border border-amber-500/30 max-w-lg shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500"></div>
+                        <Activity size={64} className="text-amber-500 mx-auto mb-6" />
+                        <h2 className="text-3xl font-bold text-white mb-4">Premium Health Intelligence</h2>
+                        <p className="text-slate-400 mb-8 leading-relaxed">
+                            Upgrade to <span className="text-amber-400 font-bold">Premium</span> to access real-time disease tracking, predictive analytics, and national health indices.
+                        </p>
+                        <button
+                            onClick={() => onNavigate('/dashboard')}
+                            className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg shadow-amber-500/20"
+                        >
+                            Explore Premium Plans
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            <div className={`relative z-10 ${(user?.subscriptionTier !== 'Premium' && user?.subscriptionTier !== 'Basic') ? 'blur-sm pointer-events-none' : ''}`}>
 
                 {/* Premium Hero Section */}
                 <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-6 sm:p-8 mb-8 text-center mt-6">

@@ -284,8 +284,20 @@ export default function App() {
                             <SubscriptionModal
                                 isOpen={isSubscriptionModalOpen}
                                 onClose={() => setIsSubscriptionModalOpen(false)}
-                                onSubscribe={(tier) => {
-                                    console.log("Subscribed to:", tier);
+                                onSubscribe={async (tier) => {
+                                    if (user) {
+                                        try {
+                                            const { doc, updateDoc } = await import('firebase/firestore');
+                                            await updateDoc(doc(db, 'users', user.uid), {
+                                                subscriptionStatus: 'active',
+                                                subscriptionTier: tier,
+                                                subscriptionUpdatedAt: new Date()
+                                            });
+                                            // Refresh user context implicitly via onSnapshot
+                                        } catch (e) {
+                                            console.error("Error updating subscription:", e);
+                                        }
+                                    }
                                 }}
                             />
                         )}

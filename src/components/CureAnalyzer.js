@@ -253,6 +253,30 @@ const CureAnalyzer = ({
     setIsSaved(false);
     setShowSavePrompt(false);
 
+    // FREE TIER LIMIT CHECK
+    try {
+      const { getCountFromServer, query, collection, getDoc, doc } = await import('firebase/firestore');
+      // Check Tier
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      const userData = userSnap.data();
+      const subscriptionTier = userData?.subscriptionTier || 'Free';
+
+      if (subscriptionTier === 'Free') {
+        const coll = collection(db, `artifacts/${appId}/users/${user.uid}/medical_records`);
+        const snapshot = await getCountFromServer(coll);
+        const count = snapshot.data().count;
+
+        if (count >= 10) {
+          setIsLoading(false);
+          setError('Free Tier Limit Reached (10 Docs). Upgrade to Premium to analyze more documents.');
+          return;
+        }
+      }
+    } catch (err) {
+      console.error("Limit check failed", err);
+    }
+
     const formData = new FormData();
     formData.append("file", selectedFile);
 

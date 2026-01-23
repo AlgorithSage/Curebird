@@ -4,7 +4,7 @@ import { Activity, Plus, ChevronRight, Trash2 } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import AddDiseaseModal from './AddDiseaseModal';
 
-const DiseaseList = ({ userId, onSelectDisease }) => {
+const DiseaseList = ({ userId, user, onSelectDisease }) => {
     const [diseases, setDiseases] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -73,12 +73,19 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
 
                     {/* Action Button */}
                     <button
-                        onClick={() => setIsAddModalOpen(true)}
-                        className="group relative inline-flex items-center gap-3 px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm sm:text-base font-bold rounded-2xl shadow-xl hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 border border-white/20"
+                        onClick={() => {
+                            const tier = user?.subscriptionTier || 'Free';
+                            if (tier === 'Free' && diseases.length >= 2) {
+                                alert("Free Tier Limit Reached (2 Diseases). Upgrade to Premium to track more conditions.");
+                                return;
+                            }
+                            setIsAddModalOpen(true);
+                        }}
+                        className={`group relative inline-flex items-center gap-3 px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm sm:text-base font-bold rounded-2xl shadow-xl hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 border border-white/20 ${user?.subscriptionTier === 'Free' && diseases.length >= 2 ? 'opacity-80 grayscale' : ''}`}
                     >
                         <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                         <span className="p-1.5 bg-white/20 text-white rounded-lg group-hover:bg-white group-hover:text-amber-600 transition-colors duration-300">
-                            <Plus size={18} strokeWidth={3} />
+                            {(user?.subscriptionTier === 'Free' && diseases.length >= 2) ? <span className="text-xs">🔒</span> : <Plus size={18} strokeWidth={3} />}
                         </span>
                         <span>Add New Condition</span>
                     </button>
