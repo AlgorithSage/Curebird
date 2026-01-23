@@ -14,6 +14,7 @@ root.render(
   <HelmetProvider>
     <BrowserRouter>
       <Main />
+
     </BrowserRouter>
   </HelmetProvider>
 );

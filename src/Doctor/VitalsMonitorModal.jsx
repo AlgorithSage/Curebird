@@ -165,6 +165,7 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                 >
 
                         {/* Header */}
+                        {/* Header */}
                         <div className="flex justify-between items-center p-5 border-b border-amber-500/10 bg-black/20 flex-shrink-0">
                             <h2 className="text-xl font-semibold text-white">Vitals Monitor</h2>
                             <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={24} /></button>
