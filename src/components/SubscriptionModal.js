@@ -5,6 +5,68 @@ import { X, Check, Shield, Zap, Crown } from './Icons';
 const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
     const [selectedTier, setSelectedTier] = useState('Premium'); // Default to Premium
     const [isProcessing, setIsProcessing] = useState(false);
+    const [showPromo, setShowPromo] = useState(false);
+    const [promoCode, setPromoCode] = useState('');
+    const [promoError, setPromoError] = useState('');
+
+    const handlePromoSubmit = async (e) => {
+        e.preventDefault();
+        if (!promoCode.trim()) return;
+
+        setIsProcessing(true);
+        setPromoError('');
+
+        try {
+            // Need user uid to verify/apply
+            // But this component might not have user prop explicitly passed in typical usage?
+            // Actually it likely does or we need to getting it from context/localstore if not passed.
+            // Looking at usage in App.js: <SubscriptionModal ... /> ... wait, App.js uses user state.
+            // But we don't have user prop here.
+            // However, the backend verify_promo needs uid.
+            // Let's assume we can get it from auth or passing it down.
+            // Checking App.js again... <SubscriptionModal isOpen={isSubscriptionModalOpen} onClose={() => setIsSubscriptionModalOpen(false)} onSubscribe={handleSubscribe} />
+            // It doesn't pass User! 
+            // I should upgrade App.js to pass user, OR since I can't easily change App.js without another read, 
+            // I can rely on the fact that `onAuthChanged` sets `user` in App.js. 
+            // Wait, I can use `auth.currentUser.uid` directly from firebase/auth here if I import it.
+            // Or better, let's update App.js to pass user to SubscriptionModal.
+            // actually, simpler: use imports here.
+
+            const { getAuth } = await import('firebase/auth');
+            const auth = getAuth();
+            const currentUser = auth.currentUser;
+
+            if (!currentUser) {
+                setPromoError("You must be logged in.");
+                setIsProcessing(false);
+                return;
+            }
+
+            const response = await fetch('http://localhost:5001/api/pay/verify-promo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: promoCode,
+                    uid: currentUser.uid
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert("Promo Applied! You now have Premium Access.");
+                onSubscribe('Premium');
+                onClose();
+            } else {
+                setPromoError(data.error || "Invalid Code");
+            }
+        } catch (err) {
+            console.error(err);
+            setPromoError("Validation Failed");
+        } finally {
+            setIsProcessing(false);
+        }
+    };
 
     // Load Razorpay Script
     React.useEffect(() => {
@@ -278,6 +340,38 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                             You won't be charged today. Auto-renewal starts after 14 days.
                         </p>
                     )}
+
+                    {/* Promo Code Code Section */}
+                    <div className="text-center pb-8">
+                        {!showPromo ? (
+                            <button
+                                onClick={() => setShowPromo(true)}
+                                className="text-[10px] uppercase tracking-widest text-slate-600 hover:text-amber-500 transition-colors font-bold"
+                            >
+                                Have a Promo Code?
+                            </button>
+                        ) : (
+                            <form onSubmit={handlePromoSubmit} className="flex flex-col items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={promoCode}
+                                        onChange={(e) => setPromoCode(e.target.value)}
+                                        placeholder="Enter Code"
+                                        className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-slate-600 focus:border-amber-500 outline-none uppercase tracking-wider"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={isProcessing}
+                                        className="bg-slate-800 text-amber-500 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-700 transition"
+                                    >
+                                        Apply
+                                    </button>
+                                </div>
+                                {promoError && <p className="text-red-400 text-[10px] font-bold">{promoError}</p>}
+                            </form>
+                        )}
+                    </div>
                 </div>
             </motion.div>
         </div>

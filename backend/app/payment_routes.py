@@ -75,6 +75,16 @@ def create_subscription():
             
             subscription_options["start_at"] = start_at_timestamp
             subscription_options["notes"]["trial_period"] = "14_days"
+            # Set explicit small verification charge (2 INR) to replace default 5 INR auth
+            subscription_options["addons"] = [
+                {
+                    "item": {
+                        "name": "Verification Charge",
+                        "amount": 200, # 200 paise = 2 INR
+                        "currency": "INR"
+                    }
+                }
+            ]
 
         subscription = client.subscription.create(subscription_options)
 
@@ -120,3 +130,47 @@ def verify_subscription():
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+
+@payment_bp.route('/api/pay/verify-promo', methods=['POST'])
+def verify_promo():
+    try:
+        data = request.json
+        promo_code = data.get('code')
+        user_uid = data.get('uid')
+
+        if not promo_code or not user_uid:
+            return jsonify({'success': False, 'error': 'Missing code or uid'}), 400
+
+        # Hardcoded Developer Secret
+        DEV_CODE = "CUREBIRD_DEV_2025"
+
+        if promo_code.strip() == DEV_CODE:
+            # Grant Premium Access
+            try:
+                from firebase_admin import firestore
+                from . import db # Assuming db is available from app context or import
+            except ImportError:
+                 # Fallback if imports are tricky in this file structure
+                 from .routes import db
+                 from firebase_admin import firestore
+            
+            user_ref = db.collection('users').document(user_uid)
+            user_ref.update({
+                'subscriptionTier': 'Premium',
+                'subscriptionStatus': 'active',
+                'planId': 'developer_promo_lifetime',
+                'subscriptionDate': firestore.SERVER_TIMESTAMP,
+                'paymentMethod': 'PROMO_CODE'
+            })
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Developer Access Granted',
+                'tier': 'Premium'
+            }), 200
+        else:
+            return jsonify({'success': False, 'error': 'Invalid Promo Code'}), 400
+
+    except Exception as e:
+        print(f"Promo Error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
