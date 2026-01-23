@@ -1,84 +1,171 @@
 import React from 'react';
 import Header from './Header';
 import { motion } from 'framer-motion';
-import {  ShieldCheck, ScrollText, AlertTriangle  } from './Icons';
+import { ShieldCheck, ScrollText, AlertTriangle } from './Icons';
 
 const TermsOfService = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     return (
-        <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
-                <Header
-                    title="Terms of Service"
-                    description="Read our terms and conditions."
-                    user={user}
-                    onLogout={onLogout}
-                    onLoginClick={onLoginClick}
-                    onToggleSidebar={onToggleSidebar}
-                    onNavigate={onNavigate}
-                />
-            </div>
+        <div className="min-h-screen font-sans selection:bg-amber-500/30 overflow-x-hidden">
+            {/* Navigation Bar */}
+            <nav className="sticky top-0 z-50 w-full bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-20">
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => onNavigate('Dashboard')} className="flex items-center gap-2 group">
+                                <div className="relative w-10 h-10 flex items-center justify-center">
+                                    <img src="/favicon.ico" alt="CureBird Logo" className="w-full h-full object-contain" />
+                                </div>
+                                <span className="font-display font-extrabold text-2xl tracking-tight text-white group-hover:opacity-90 transition-opacity">
+                                    Cure<span className="text-amber-400">Bird</span><span className="text-green-500">.</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => onNavigate(-1)}
+                                className="text-slate-400 hover:text-white transition-colors font-medium border border-white/10 hover:border-amber-500/50 hover:bg-amber-500/10 px-4 py-2 rounded-lg"
+                            >
+                                Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
 
-            <div className="relative w-full max-w-4xl mx-auto bg-slate-900/90 border border-white/10 rounded-3xl shadow-2xl text-slate-300 p-8 sm:p-12">
+            <main className="max-w-6xl mx-auto px-4 py-16 sm:px-6 lg:px-8 relative z-10">
+                {/* Background Glow */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[100px] -z-10" />
 
-                <div className="space-y-8">
+                <div className="text-center mb-16">
+                    <h1 className="text-4xl md:text-5xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-500 to-amber-700 mb-6 drop-shadow-sm text-glow">
+                        Terms of Service
+                    </h1>
+                    <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+                        Please read these terms carefully before using the Curebird platform.
+                    </p>
+                </div>
+
+                <div className="glass-card-amber space-y-20 relative overflow-hidden p-10 md:p-20">
+                    {/* Decorative Top Line */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-50" />
+
+                    {/* 1. Acceptance */}
                     <section>
-                        <h3 className="text-xl font-semibold text-white mb-3 flex items-center gap-2">
-                            1. Acceptance of Terms
-                        </h3>
-                        <p className="leading-relaxed">
-                            By accessing and using CureBird ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use our services.
+                        <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                            <span className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center text-sm">01</span>
+                            Acceptance of Terms
+                        </h2>
+                        <p className="text-slate-300 leading-relaxed">
+                            By accessing or using <strong>Curebird</strong> ("the Platform"), a digital health platform providing AI-driven health insights, medical record digitization, and epidemiological tracking, you agree to be legally bound by these Terms of Service.
                         </p>
                     </section>
 
-                    <section className="bg-amber-500/5 p-6 rounded-2xl border border-amber-500/10">
-                        <h3 className="text-xl font-semibold text-amber-400 mb-3 flex items-center gap-2">
-                            <AlertTriangle size={20} /> 2. Medical Disclaimer
-                        </h3>
-                        <p className="leading-relaxed text-amber-100/80">
-                            CureBird uses artificial intelligence to analyze medical data. <strong className="text-amber-400">The Platform is NOT a substitute for professional medical advice, diagnosis, or treatment.</strong> Never disregard professional medical advice or delay in seeking it because of something you have read or analyzed on this Platform. In case of a medical emergency, call your local emergency services immediately.
-                        </p>
+                    {/* 2. Medical Disclaimer - CRITICAL */}
+                    <section className="bg-amber-500/5 -mx-4 md:-mx-8 p-6 md:p-8 rounded-2xl border border-amber-500/10">
+                        <h2 className="text-2xl font-bold text-amber-400 mb-4 flex items-center gap-3">
+                            <AlertTriangle className="text-amber-500" size={28} />
+                            Critical Medical Disclaimer
+                        </h2>
+                        <div className="space-y-4 text-amber-100/90 leading-relaxed">
+                            <p>
+                                <strong>Curebird is NOT a medical device and does NOT provide medical advice, diagnosis, or treatment.</strong>
+                            </p>
+                            <p>
+                                The Platform utilizes artificial intelligence (including Large Language Models via Groq API) to analyze data. AI outputs (from CureAI, Cure Analyzer) may contain errors, hallucinations, or inaccuracies.
+                            </p>
+                            <p>
+                                <strong className="text-amber-400">ALWAYS</strong> consult a qualified healthcare professional for any medical concerns. Never disregard professional medical advice based on information from this Platform. In emergencies, contact emergency services immediately.
+                            </p>
+                        </div>
                     </section>
 
+                    {/* 3. Description of Services via Docs */}
                     <section>
-                        <h3 className="text-xl font-semibold text-white mb-3">3. User Responsibilities</h3>
-                        <ul className="list-disc pl-5 space-y-2 marker:text-amber-500">
-                            <li>You are responsible for maintaining the confidentiality of your account credentials.</li>
-                            <li>You agree to provide accurate and up-to-date medical information.</li>
-                            <li>You represent that you have the legal right to upload and analyze any medical records submitted to the Platform.</li>
+                        <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                            <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-sm">03</span>
+                            Description of Services
+                        </h2>
+                        <p className="text-slate-300 leading-relaxed mb-4">
+                            Curebird provides the following features, subject to change:
+                        </p>
+                        <ul className="grid gap-4 md:grid-cols-2">
+                            <li className="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <strong className="block text-white mb-1">Cure Analyzer</strong>
+                                <span className="text-sm text-slate-400">Digitization and summarization of medical reports using AI vision models.</span>
+                            </li>
+                            <li className="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <strong className="block text-white mb-1">CureAI Assistant</strong>
+                                <span className="text-sm text-slate-400">Context-aware conversational health assistance powered by LLMs.</span>
+                            </li>
+                            <li className="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <strong className="block text-white mb-1">Medical Portfolio</strong>
+                                <span className="text-sm text-slate-400">Secure storage and organization of personal health records and vitals.</span>
+                            </li>
+                            <li className="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <strong className="block text-white mb-1">CureStat</strong>
+                                <span className="text-sm text-slate-400">Public dashboard visualizing epidemiological trends and air quality data.</span>
+                            </li>
                         </ul>
                     </section>
 
+                    {/* 4. AI & Third Party Services */}
                     <section>
-                        <h3 className="text-xl font-semibold text-white mb-3">4. Data Privacy & Security</h3>
-                        <p className="leading-relaxed">
-                            We implement industry-standard security measures to protect your personal health information. However, no method of transmission over the Internet is 100% secure. By using CureBird, you acknowledge that you understand and accept the inherent risks of data transmission.
+                        <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                            <span className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-500 flex items-center justify-center text-sm">04</span>
+                            AI & Third-Party Services
+                        </h2>
+                        <p className="text-slate-300 leading-relaxed mb-4">
+                            Our services rely on third-party integrations to function:
+                        </p>
+                        <ul className="list-disc pl-5 space-y-2 text-slate-300 marker:text-purple-500">
+                            <li><strong>Groq API:</strong> Used for high-speed AI inference (Llama models) for text generation and vision analysis.</li>
+                            <li><strong>Google & Firebase:</strong> Used for secure authentication, database services, and cloud storage.</li>
+                            <li><strong>WAQI:</strong> Used for real-time air quality data.</li>
+                        </ul>
+                        <p className="text-slate-400 text-sm mt-4">
+                            By using Curebird, you acknowledge that data may be processed by these third-party providers in accordance with our Privacy Policy.
                         </p>
                     </section>
 
+                    {/* 5. User Responsibilities */}
                     <section>
-                        <h3 className="text-xl font-semibold text-white mb-3">5. Intellectual Property</h3>
-                        <p className="leading-relaxed">
-                            The CureBird platform, including its AI algorithms, interface design, and branding, is the exclusive property of CureBird Inc. and is protected by copyright and intellectual property laws.
+                        <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                            <span className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center text-sm">05</span>
+                            User Responsibilities
+                        </h2>
+                        <ul className="list-disc pl-5 space-y-2 text-slate-300 marker:text-sky-500">
+                            <li>You must be at least 18 years old or use the platform with parental consent.</li>
+                            <li>You agree to provide accurate medical information.</li>
+                            <li>You retain ownership of your data but grant Curebird a license to store and process it for the purpose of providing services.</li>
+                        </ul>
+                    </section>
+
+                    {/* 6. Limitation of Liability */}
+                    <section>
+                        <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                            <span className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center text-sm">06</span>
+                            Limitation of Liability
+                        </h2>
+                        <p className="text-slate-300 leading-relaxed">
+                            To the fullest extent permitted by law, Curebird and its developers shall not be liable for any direct, indirect, incidental, or consequential damages arising from the use or inability to use the Platform, or from reliance on any AI-generated content.
                         </p>
                     </section>
 
-                    <section>
-                        <h3 className="text-xl font-semibold text-white mb-3">6. Termination</h3>
-                        <p className="leading-relaxed">
-                            We reserve the right to suspend or terminate your access to the Platform immediately, without prior notice, if you breach these Terms of Service.
-                        </p>
-                    </section>
+                    {/* Footer Action */}
+                    <div className="pt-8 border-t border-white/10 flex justify-center">
+                        <button
+                            onClick={() => onNavigate(-1)}
+                            className="bg-white text-slate-900 hover:bg-slate-200 px-8 py-3 rounded-full font-bold transition-all shadow-lg shadow-white/10"
+                        >
+                            I Accept & Continue
+                        </button>
+                    </div>
                 </div>
+            </main>
 
-                <div className="mt-10 pt-8 border-t border-white/10 text-center">
-                    <button
-                        onClick={() => onNavigate('Dashboard')}
-                        className="bg-white/5 hover:bg-white/10 text-white px-8 py-3 rounded-full font-medium transition-all"
-                    >
-                        I Understand
-                    </button>
-                </div>
-            </div>
+            <footer className="py-12 text-center text-slate-500 text-sm">
+                <p>&copy; {new Date().getFullYear()} Curebird. All rights reserved.</p>
+            </footer>
         </div>
     );
 };
