@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Shield, Zap, Crown } from './Icons';
+import { API_BASE_URL } from '../config';
 
 const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
     const [selectedTier, setSelectedTier] = useState('Premium'); // Default to Premium
@@ -42,7 +42,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                 return;
             }
 
-            const response = await fetch('http://localhost:5001/api/pay/verify-promo', {
+            const response = await fetch(`${API_BASE_URL}/api/pay/verify-promo`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -151,7 +151,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
         setIsProcessing(true);
         try {
             // 1. Create Subscription on Backend
-            const response = await fetch('http://localhost:5001/api/pay/create-subscription', {
+            const response = await fetch(`${API_BASE_URL}/api/pay/create-subscription`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ plan: selectedTier })
@@ -172,7 +172,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                 handler: async function (response) {
                     // 3. Verify Payment on Backend
                     try {
-                        const verifyRes = await fetch('http://localhost:5001/api/pay/verify-subscription', {
+                        const verifyRes = await fetch(`${API_BASE_URL}/api/pay/verify-subscription`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
