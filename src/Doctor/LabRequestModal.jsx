@@ -236,7 +236,6 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
                                                 {urgencyLevels.map(u => <option key={u.id} value={u.id} className="bg-stone-900">{u.label}</option>)}
                                             </select>
                                         </div>
-                                        </div>
                                     </div>
                                 </div>
 
@@ -253,7 +252,6 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
                                             >
                                                 {categories.map(c => <option key={c} value={c} className="bg-stone-900">{c}</option>)}
                                             </select>
-                                        </div>
                                         </div>
                                     </div>
                                     <div className="space-y-1">
