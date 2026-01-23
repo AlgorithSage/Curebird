@@ -165,19 +165,9 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                 >
 
                         {/* Header */}
-                        <div className="px-8 py-6 border-b-2 border-amber-500/20 flex items-center justify-between bg-gradient-to-r from-amber-500/[0.07] via-transparent to-transparent relative z-10">
-                            <div className="flex items-center gap-4">
-                                <div className="p-2.5 bg-amber-500/20 rounded-xl text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                                    <Activity size={22} />
-                                </div>
-                                <div>
-                                    <h2 className="text-xl font-semibold text-white">Vitals Monitor</h2>
-                                    <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider font-medium">Physiological Entry</p>
-                                </div>
-                            </div>
-                            <button onClick={onClose} className="p-2.5 text-stone-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-full transition-all duration-300">
-                                <X size={20} />
-                            </button>
+                        <div className="flex justify-between items-center p-5 border-b border-amber-500/10 bg-black/20 flex-shrink-0">
+                            <h2 className="text-xl font-semibold text-white">Vitals Monitor</h2>
+                            <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={24} /></button>
                         </div>
 
                         {/* Content */}
@@ -251,33 +241,22 @@ const VitalsMonitorModal = ({ isOpen, onClose, patients = [], user }) => {
                         </div>
 
                         {/* Footer */}
-                        <div className="p-8 border-t-2 border-amber-500/20 bg-black/40 flex items-center justify-between relative z-10">
+                        <div className="flex justify-end p-5 border-t border-amber-500/10 gap-3 bg-black/20 flex-shrink-0">
                             {error && (
-                                <div className="flex items-center gap-2 text-rose-400 text-[10px] font-black uppercase tracking-widest">
+                                <div className="flex items-center gap-2 text-rose-400 text-[10px] font-bold uppercase tracking-widest mr-auto">
                                     <AlertTriangle size={14} /> {error}
                                 </div>
                             )}
-                            {success && (
-                                <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-widest">
-                                    <CheckCircle size={14} /> Vitals Recorded
-                                </div>
-                            )}
-                            {!error && !success && <div></div>}
-
-                            <div className="flex items-center gap-3">
-                                <button onClick={onClose} className="px-6 py-2.5 rounded-xl border border-amber-500/10 text-slate-300 hover:bg-amber-500/5 transition-colors font-bold text-sm">Cancel</button>
-                                <motion.button
-                                    form="vitals-form"
-                                    type="submit"
-                                    disabled={loading || success}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="px-8 py-2.5 bg-gradient-to-r from-amber-400 to-amber-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transition-all disabled:opacity-50 flex items-center gap-2"
-                                >
-                                    {loading ? <Loader size={16} className="animate-spin" /> : <CheckCircle size={16} />}
-                                    {loading ? 'Logging...' : 'Secure Vitals Log'}
-                                </motion.button>
-                            </div>
+                            <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-xl border border-amber-500/10 text-slate-300 hover:bg-amber-500/5 transition-colors font-bold">Cancel</button>
+                            <button 
+                                form="vitals-form"
+                                type="submit" 
+                                disabled={loading || success}
+                                className="px-8 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:hover:shadow-none flex items-center gap-2"
+                            >
+                                {loading ? <Loader size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+                                {loading ? 'Logging...' : 'Secure Vitals Log'}
+                            </button>
                         </div>
 
                 </motion.div>

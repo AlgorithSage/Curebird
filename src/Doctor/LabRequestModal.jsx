@@ -200,19 +200,9 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
                 >
 
                         {/* Header */}
-                        <div className="px-8 py-6 border-b-2 border-amber-500/20 flex items-center justify-between bg-gradient-to-r from-amber-500/[0.07] via-transparent to-transparent relative z-10">
-                            <div className="flex items-center gap-4">
-                                <div className="p-2.5 bg-amber-500/20 rounded-xl text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                                    <Microscope size={22} />
-                                </div>
-                                <div>
-                                    <h2 className="text-xl font-semibold text-white">Lab Request</h2>
-                                    <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider font-medium">Diagnostic Investigation</p>
-                                </div>
-                            </div>
-                            <button onClick={onClose} className="p-2.5 text-stone-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-full transition-all duration-300">
-                                <X size={20} />
-                            </button>
+                        <div className="flex justify-between items-center p-5 border-b border-amber-500/10 bg-black/20 flex-shrink-0">
+                            <h2 className="text-xl font-semibold text-white">Lab Request</h2>
+                            <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={24} /></button>
                         </div>
 
                         {/* Content */}
@@ -236,17 +226,15 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
                                     </div>
                                     <div className="space-y-1">
                                         <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Urgency Level</label>
-                                        <div className="flex gap-2">
-                                            {urgencyLevels.map(u => (
-                                                <ModalTabButton
-                                                    key={u.id}
-                                                    active={urgency === u.id}
-                                                    onClick={() => setUrgency(u.id)}
-                                                    colorClass={u.color}
-                                                >
-                                                    {u.label}
-                                                </ModalTabButton>
-                                            ))}
+                                        <div className="relative">
+                                            <AlertTriangle className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600" size={16} />
+                                            <select
+                                                value={urgency}
+                                                onChange={(e) => setUrgency(e.target.value)}
+                                                className="w-full p-3 pl-10 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all appearance-none cursor-pointer"
+                                            >
+                                                {urgencyLevels.map(u => <option key={u.id} value={u.id} className="bg-stone-900">{u.label}</option>)}
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -255,16 +243,15 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-1">
                                         <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Test Category</label>
-                                        <div className="flex gap-1">
-                                            {categories.map(c => (
-                                                <ModalTabButton
-                                                    key={c}
-                                                    active={testCategory === c}
-                                                    onClick={() => setTestCategory(c)}
-                                                >
-                                                    {c.split(' ')[0]}
-                                                </ModalTabButton>
-                                            ))}
+                                        <div className="relative">
+                                            <FileText className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600" size={16} />
+                                            <select
+                                                value={testCategory}
+                                                onChange={(e) => setTestCategory(e.target.value)}
+                                                className="w-full p-3 pl-10 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all appearance-none cursor-pointer"
+                                            >
+                                                {categories.map(c => <option key={c} value={c} className="bg-stone-900">{c}</option>)}
+                                            </select>
                                         </div>
                                     </div>
                                     <div className="space-y-1">
@@ -329,33 +316,22 @@ const LabRequestModal = ({ isOpen, onClose, patients = [], user }) => {
                         </div>
 
                         {/* Footer */}
-                        <div className="p-8 border-t-2 border-amber-500/20 bg-black/40 flex items-center justify-between relative z-10">
+                        <div className="flex justify-end p-5 border-t border-amber-500/10 gap-3 bg-black/20 flex-shrink-0">
                             {error && (
-                                <div className="flex items-center gap-2 text-rose-400 text-[10px] font-black uppercase tracking-widest">
+                                <div className="flex items-center gap-2 text-rose-400 text-[10px] font-bold uppercase tracking-widest mr-auto">
                                     <AlertTriangle size={14} /> {error}
                                 </div>
                             )}
-                            {success && (
-                                <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-widest">
-                                    <CheckCircle size={14} /> Request Logged
-                                </div>
-                            )}
-                            {!error && !success && <div></div>}
-
-                            <div className="flex items-center gap-3">
-                                <button onClick={onClose} className="px-6 py-2.5 rounded-xl border border-amber-500/10 text-slate-300 hover:bg-amber-500/5 transition-colors font-bold text-sm">Cancel</button>
-                                <motion.button
-                                    form="lab-request-form"
-                                    type="submit"
-                                    disabled={loading || success}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="px-8 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transition-all disabled:opacity-50 flex items-center gap-2"
-                                >
-                                    {loading ? <Loader size={16} className="animate-spin" /> : <Microscope size={16} />}
-                                    {loading ? 'Transmitting...' : 'Issue Lab Request'}
-                                </motion.button>
-                            </div>
+                            <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-xl border border-amber-500/10 text-slate-300 hover:bg-amber-500/5 transition-colors font-bold">Cancel</button>
+                            <button 
+                                form="lab-request-form"
+                                type="submit" 
+                                disabled={loading || success}
+                                className="px-8 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 disabled:hover:shadow-none flex items-center gap-2"
+                            >
+                                {loading ? <Loader size={16} className="animate-spin" /> : <Microscope size={16} />}
+                                {loading ? 'Transmitting...' : 'Issue Lab Request'}
+                            </button>
                         </div>
 
                 </motion.div>

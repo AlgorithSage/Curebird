@@ -548,7 +548,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
 
                     {/* Header - Reference Quality Match */}
                     <div className="flex justify-between items-center p-5 border-b border-amber-500/10 bg-black/20 flex-shrink-0">
-                        <h2 className="text-xl font-semibold text-white">Add Clinical Record</h2>
+                        <h2 className="text-xl font-semibold text-white">Add Medical Record</h2>
                         <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={24} /></button>
                     </div>
 
@@ -623,42 +623,32 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                             </div>
 
                             {/* Row 2: Type & Priority */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-1">
                                     <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Record Type</label>
-                                    <div className="grid grid-cols-2 gap-2 relative">
-                                        {recordTypes.slice(0, 2).map(type => (
-                                            <TabButton
-                                                key={type.id}
-                                                active={formData.type === type.id}
-                                                onClick={() => setFormData({ ...formData, type: type.id })}
-                                            >
-                                                {type.label}
-                                            </TabButton>
-                                        ))}
+                                    <div className="relative">
+                                        <FileText className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600" size={16} />
+                                        <select
+                                            value={formData.type}
+                                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                            className="w-full p-2.5 pl-10 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all appearance-none cursor-pointer sm:text-sm"
+                                        >
+                                            {recordTypes.map(t => <option key={t.id} value={t.id} className="bg-stone-900">{t.label}</option>)}
+                                        </select>
                                     </div>
-                                    <select
-                                        value={formData.type}
-                                        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                        className="w-full p-2.5 bg-black/30 border border-amber-500/10 rounded-xl text-xs text-slate-400 focus:outline-none focus:border-amber-500/30 appearance-none cursor-pointer"
-                                    >
-                                        {recordTypes.map(t => <option key={t.id} value={t.id} className="bg-stone-900">{t.label}</option>)}
-                                    </select>
                                 </div>
 
                                 <div className="space-y-1">
                                     <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Priority</label>
-                                    <div className="flex gap-2 relative">
-                                        {priorities.map(p => (
-                                            <TabButton
-                                                key={p.id}
-                                                active={formData.priority === p.id}
-                                                onClick={() => setFormData({ ...formData, priority: p.id })}
-                                                colorClass={p.color}
-                                            >
-                                                {p.label}
-                                            </TabButton>
-                                        ))}
+                                    <div className="relative">
+                                        <AlertTriangle className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600" size={16} />
+                                        <select
+                                            value={formData.priority}
+                                            onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                                            className="w-full p-2.5 pl-10 border bg-black/30 border-amber-500/10 rounded-xl text-slate-200 focus:border-amber-500/50 focus:bg-black/50 outline-none transition-all appearance-none cursor-pointer sm:text-sm"
+                                        >
+                                            {priorities.map(p => <option key={p.id} value={p.id} className="bg-stone-900">{p.label}</option>)}
+                                        </select>
                                     </div>
                                 </div>
                             </div>
