@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  X, Check, Shield, Zap, Crown  } from './Icons';
+import { X, Check, Shield, Zap, Crown } from './Icons';
 
 const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
     const [selectedTier, setSelectedTier] = useState('Premium'); // Default to Premium
@@ -106,17 +106,17 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
 
                 {/* Scrollable Content Wrapper */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8">
-                    <div className="text-center mb-8 mt-4">
-                        <h2 className="font-display text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 to-amber-500 mb-2 drop-shadow-md">
+                    <div className="text-center mb-4 md:mb-8 mt-10 md:mt-4">
+                        <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 to-amber-500 mb-1 md:mb-2 drop-shadow-md">
                             Unlock Your Health Potential
                         </h2>
-                        <p className="text-slate-300 text-sm md:text-base">
+                        <p className="text-slate-300 text-xs md:text-base">
                             Choose the plan that fits your journey to better health.
                         </p>
                     </div>
 
-                    {/* Tiers Grid */}
-                    <div className="grid md:grid-cols-3 gap-6 mb-8">
+                    {/* Tiers Grid - Mobile Scroll / Desktop Grid */}
+                    <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-6 mb-8 overflow-x-auto snap-x snap-mandatory pb-4 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0">
                         {tiers.map((tier) => {
                             const Icon = tier.icon;
                             const isSelected = selectedTier === tier.name;
@@ -125,37 +125,37 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                                 <div
                                     key={tier.name}
                                     onClick={() => setSelectedTier(tier.name)}
-                                    className={`relative p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col items-center text-center group ${isSelected
-                                        ? `bg-gradient-to-br from-slate-900 to-black border-amber-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] transform scale-[1.02] z-10`
+                                    className={`relative p-3 md:p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col items-center text-center group min-w-[70vw] md:min-w-0 snap-center ${isSelected
+                                        ? `bg-gradient-to-br from-slate-900 to-black border-amber-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] md:transform md:scale-[1.02] z-10`
                                         : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
                                         }`}
                                 >
                                     {isSelected && (
-                                        <div className="absolute -top-4 bg-amber-500 text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg shadow-amber-500/50">
+                                        <div className="hidden md:block absolute -top-4 bg-amber-500 text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg shadow-amber-500/50">
                                             Selected
                                         </div>
                                     )}
 
-                                    <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${tier.color} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                                        <Icon size={24} className="text-white" />
+                                    <div className={`w-8 h-8 md:w-12 md:h-12 rounded-full bg-gradient-to-br ${tier.color} flex items-center justify-center mb-2 md:mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
+                                        <Icon size={16} className="text-white md:w-6 md:h-6" />
                                     </div>
 
-                                    <h3 className={`text-2xl font-bold mb-2 ${isSelected ? 'text-amber-400' : 'text-white'}`}>{tier.name}</h3>
-                                    <div className="flex items-end justify-center gap-1 mb-4">
-                                        <span className="text-4xl font-black text-white">{tier.price}</span>
-                                        <span className="text-slate-400 text-sm mb-2 font-medium">{tier.period}</span>
+                                    <h3 className={`text-lg md:text-2xl font-bold mb-0.5 md:mb-2 ${isSelected ? 'text-amber-400' : 'text-white'}`}>{tier.name}</h3>
+                                    <div className="flex items-end justify-center gap-1 mb-2 md:mb-4">
+                                        <span className="text-2xl md:text-4xl font-black text-white">{tier.price}</span>
+                                        <span className="text-slate-400 text-[10px] md:text-sm mb-1 md:mb-2 font-medium">{tier.period}</span>
                                     </div>
-                                    <p className="text-slate-400 text-sm mb-6 min-h-[40px] leading-relaxed">{tier.description}</p>
+                                    <p className="text-slate-400 text-[10px] md:text-sm mb-3 md:mb-6 min-h-[24px] md:min-h-[40px] leading-relaxed">{tier.description}</p>
 
-                                    <div className="space-y-2 w-full text-left mb-6 flex-grow">
+                                    <div className="space-y-1 md:space-y-2 w-full text-left mb-3 md:mb-6 flex-grow">
                                         {tier.features.map((feature, idx) => (
-                                            <div key={idx} className="flex items-start gap-3 text-sm text-slate-200">
-                                                <div className="mt-0.5 min-w-[16px]"><Check size={16} className="text-emerald-400" /></div>
-                                                <span>{feature}</span>
+                                            <div key={idx} className="flex items-start gap-2 md:gap-3 text-xs md:text-sm text-slate-200">
+                                                <div className="mt-0.5 min-w-[12px] md:min-w-[16px]"><Check size={12} className="text-emerald-400 md:w-4 md:h-4" /></div>
+                                                <span className="text-[11px] md:text-sm leading-tight">{feature}</span>
                                             </div>
                                         ))}
                                         {tier.unavailable.map((feature, idx) => (
-                                            <div key={`u-${idx}`} className="flex items-start gap-3 text-sm text-slate-600">
+                                            <div key={`u-${idx}`} className="hidden md:flex items-start gap-3 text-sm text-slate-600">
                                                 <div className="mt-0.5 min-w-[16px]"><X size={16} /></div>
                                                 <span className="line-through">{feature}</span>
                                             </div>
@@ -163,7 +163,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                                     </div>
 
                                     <button
-                                        className={`w-full py-3 rounded-xl font-bold transition-all ${isSelected
+                                        className={`w-full py-2 md:py-3 rounded-xl font-bold text-sm md:text-base transition-all ${isSelected
                                             ? 'bg-amber-500 text-black hover:bg-amber-400 shadow-lg shadow-amber-500/20'
                                             : 'bg-white/5 text-white hover:bg-white/10'
                                             }`}
