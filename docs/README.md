@@ -1,6 +1,6 @@
-# CureBird 🏥🐦
+# Curebird 🏥🐦
 
-**CureBird** is an advanced digital health platform designed to bridge the gap between patients and healthcare providers. It leverages cutting-edge **Generative AI** and **Real-time Data Visualization** to provide actionable health insights, digitize medical records, and monitor epidemiological trends across India.
+**Curebird** is an advanced digital health platform designed to bridge the gap between patients and healthcare providers. It leverages cutting-edge **Generative AI** and **Real-time Data Visualization** to provide actionable health insights, digitize medical records, and monitor epidemiological trends across India.
 
 ---
 
@@ -78,7 +78,30 @@ The backend is built as a modular Flask application optimized for AI inference a
 *   **Data Processing**:
     *   **Pandas**: For manipulating epidemiological datasets.
     *   **NumPy**: For statistical analysis of health trends.
-*   **Server**: **Gunicorn** - Production-grade WSGI server for handling concurrent requests.
+*   **Containerization**: **Docker** - Unified environment for consistent deployment.
+
+---
+
+## 🚀 Deployment Infrastructure (New)
+
+The project utilizes a modern serverless architecture for high scalability and low maintenance.
+
+### 1. Frontend Hosting: **Vercel**
+*   **Platform**: Deployed as a React Single Page Application (SPA).
+*   **Features**:
+    *   Global CDN for sub-second page loads.
+    *   **Vercel Analytics**: Real-time visitor tracking and performance metrics.
+    *   Automatic deployments from GitHub main branch.
+
+### 2. Backend Hosting: **Google Cloud Run**
+*   **Platform**: Fully managed serverless container service.
+*   **Configuration**:
+    *   **Auto-scaling**: Scales from 1 to 10 instances based on traffic.
+    *   **Min Instances**: Set to 1 to eliminate cold starts (always active).
+    *   **Memory/CPU**: 1GB RAM / 1 vCPU per instance.
+*   **Benefits**:
+    *   Handles concurrent requests (AI inference) efficiently with Gunicorn workers.
+    *   Integrated logging and monitoring via Google Cloud Console.
 
 ---
 

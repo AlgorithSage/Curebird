@@ -1,4 +1,4 @@
-Contact: mailto:security@curebird-project.vercel.app
+Contact: mailto:security@curebird.tech
 Expires: 2026-12-31T23:59:59.000Z
 Preferred-Languages: en
-Policy: https://curebird-project.vercel.app/privacy
+Policy: https://www.curebird.tech/privacy

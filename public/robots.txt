@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://curebird-project.vercel.app/sitemap.xml
+Sitemap: https://www.curebird.tech/sitemap.xml

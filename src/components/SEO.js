@@ -31,7 +31,7 @@ SEO.defaultProps = {
     description: 'Securely manage your medical history, track vital trends, and get AI-powered health insights.',
     name: 'CureBird',
     type: 'website',
-    image: 'https://curebird-project.vercel.app/og-image.jpg'
+    image: 'https://www.curebird.tech/og-image.jpg'
 };
 
 export default SEO;

@@ -39,12 +39,7 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
         fetchDiseases();
     }, [fetchDiseases]);
 
-    const getStatusColor = (status, severity) => {
-        if (status === 'resolved') return 'text-green-400 bg-green-400/10 border-green-400/20';
-        if (severity === 'critical') return 'text-red-400 bg-red-400/10 border-red-400/20';
-        if (severity === 'high') return 'text-orange-400 bg-orange-400/10 border-orange-400/20';
-        return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
-    };
+
 
     if (loading) return <div className="h-40 animate-pulse bg-slate-800/50 rounded-2xl" />;
 
@@ -107,16 +102,7 @@ const DiseaseList = ({ userId, onSelectDisease }) => {
                                     Diagnosed: {new Date(disease.diagnosisDate).toLocaleDateString()}
                                 </p>
 
-                                <span
-                                    className={`px-2 py-1 rounded-md text-xs font-semibold border ${getStatusColor(
-                                        disease.status,
-                                        disease.severity
-                                    )}`}
-                                >
-                                    {disease.status === 'active'
-                                        ? disease.severity.toUpperCase() + ' SEVERITY'
-                                        : disease.status.toUpperCase()}
-                                </span>
+
                             </div>
 
                             <div className="flex flex-col items-end gap-2">

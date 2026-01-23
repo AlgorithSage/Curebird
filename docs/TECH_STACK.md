@@ -23,7 +23,7 @@ This document outlines the core technologies, frameworks, and libraries used in 
 | **API Interface** | **REST** | Standard HTTP methods for Client-Server communication. |
 | **AI Integration** | **Groq API** | High-performance inference for LLMs (Llama-3). |
 | **Image Processing** | **Pillow / Base64** | Handling and encoding image data for VLM analysis. |
-| **WSGI Server** | **Gunicorn** | Production-grade server runner. |
+| **WSGI Server** | **Gunicorn** / **Cloud Run** | Managed containerized deployment. |
 
 ## 3. Cloud & Infrastructure
 
@@ -32,8 +32,8 @@ This document outlines the core technologies, frameworks, and libraries used in 
 | **Database** | **Firebase Firestore** | NoSQL cloud database for user/patient data. |
 | **Authentication** | **Firebase Auth** | Google Sign-in and Phone authentication. |
 | **Storage** | **Firebase Storage** | Cloud storage for medical reports/images. |
-| **Hosting (Frontend)** | **Vercel** (Implied) | Optimized frontend hosting. |
-| **Hosting (Backend)** | **Google Cloud Run** | Containerized backend deployment. |
+| **Hosting (Frontend)** | **Vercel** | Optimized frontend hosting & Analytics. |
+| **Hosting (Backend)** | **Google Cloud Run** | Auto-scaling containerized deployment. |
 
 ## 4. Key APIs
 
