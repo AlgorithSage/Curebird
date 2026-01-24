@@ -47,8 +47,8 @@ const CureAnalyzer = ({
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
+        staggerChildren: 0.3,
+        delayChildren: 0.4
       }
     }
   };
