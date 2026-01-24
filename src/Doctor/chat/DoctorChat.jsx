@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck, Phone, Video, Calendar, Image, X  } from '../../components/Icons';
+import {  Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck, Phone, Video, Calendar, Image, X, Zap, MessageSquare  } from '../../components/Icons';
 import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
 import { auth, db, storage } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -512,7 +512,62 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             </div>
                         </div>
                     ) : (
-                        <div className="text-stone-500 text-sm">Select a chat to start messaging</div>
+                        <div className="flex-1 flex flex-col items-center justify-center p-12 text-center h-full animate-in fade-in duration-700">
+                            <div className="w-24 h-24 bg-[#261e12] rounded-full flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(245,158,11,0.15)] ring-1 ring-amber-500/20">
+                                <MessageSquare size={48} className="text-amber-500 animate-pulse-slow" />
+                            </div>
+                            <h2 className="text-3xl font-bold text-amber-50 mb-3 tracking-tight">Clinical Communication Hub</h2>
+                            <p className="text-stone-500 max-w-md mb-12 text-sm leading-relaxed">
+                                Securely connect with your patients. Monitor vitals, issue prescriptions, and manage care plans in real-time.
+                            </p>
+
+                            {/* Feature Grid */}
+                            <div className="grid grid-cols-2 gap-4 max-w-lg w-full">
+                                <div className="p-4 bg-[#261e12]/50 border border-amber-500/10 rounded-2xl flex items-center gap-4 hover:bg-[#261e12] transition-colors group cursor-default">
+                                    <div className="p-2.5 bg-amber-500/10 text-amber-500 rounded-xl group-hover:bg-amber-500 group-hover:text-black transition-all">
+                                        <Activity size={20} />
+                                    </div>
+                                    <div className="text-left">
+                                        <h4 className="text-amber-50 font-bold text-sm">Live Vitals</h4>
+                                        <p className="text-stone-500 text-xs">Real-time stats request</p>
+                                    </div>
+                                </div>
+
+                                <div className="p-4 bg-[#261e12]/50 border border-amber-500/10 rounded-2xl flex items-center gap-4 hover:bg-[#261e12] transition-colors group cursor-default">
+                                    <div className="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-xl group-hover:bg-emerald-500 group-hover:text-black transition-all">
+                                        <Pill size={20} />
+                                    </div>
+                                    <div className="text-left">
+                                        <h4 className="text-amber-50 font-bold text-sm">e-Prescriptions</h4>
+                                        <p className="text-stone-500 text-xs">Instant digital Rx</p>
+                                    </div>
+                                </div>
+
+                                <div className="p-4 bg-[#261e12]/50 border border-amber-500/10 rounded-2xl flex items-center gap-4 hover:bg-[#261e12] transition-colors group cursor-default">
+                                    <div className="p-2.5 bg-blue-500/10 text-blue-500 rounded-xl group-hover:bg-blue-500 group-hover:text-black transition-all">
+                                        <Shield size={20} />
+                                    </div>
+                                    <div className="text-left">
+                                        <h4 className="text-amber-50 font-bold text-sm">Protected</h4>
+                                        <p className="text-stone-500 text-xs">End-to-end encrypted</p>
+                                    </div>
+                                </div>
+
+                                <div className="p-4 bg-[#261e12]/50 border border-amber-500/10 rounded-2xl flex items-center gap-4 hover:bg-[#261e12] transition-colors group cursor-default">
+                                    <div className="p-2.5 bg-rose-500/10 text-rose-500 rounded-xl group-hover:bg-rose-500 group-hover:text-black transition-all">
+                                        <Zap size={20} />
+                                    </div>
+                                    <div className="text-left">
+                                        <h4 className="text-amber-50 font-bold text-sm">Smart Triage</h4>
+                                        <p className="text-stone-500 text-xs">Priority risk alerts</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p className="mt-12 text-[10px] text-stone-600 font-mono tracking-widest uppercase opacity-60">
+                                Curebird Clinical Workspace v2.0
+                            </p>
+                        </div>
                     )}
 
                 </div>
