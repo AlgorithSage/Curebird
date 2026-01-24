@@ -421,7 +421,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     return (
         <div className="flex h-[calc(100vh-6rem)] gap-6 animate-in fade-in duration-500">
             {/* Left: Chat Sidebar (Golden Hour Theme) */}
-            <div className="w-80 flex flex-col bg-[#261e12] border-r border-[#382b18] overflow-hidden rounded-l-[2rem] border-y border-l border-amber-500/10 shadow-2xl z-20">
+            <div className="w-80 flex flex-col bg-[#261e12] border border-[#382b18] overflow-hidden rounded-3xl shadow-2xl z-20">
                 {/* Header */}
                 <div className="p-6 border-b border-[#382b18] bg-transparent">
                     <h2 className="text-xl font-bold text-amber-50 mb-6 tracking-tight flex items-center gap-2">
@@ -492,12 +492,12 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
             </div>
 
             {/* Center: Chat Window */}
-            <div className="flex-1 flex flex-col bg-[#17120a] relative overflow-hidden border-y border-amber-500/10 shadow-2xl z-10 mx-[-10px] my-[10px] rounded-2xl">
+            <div className="flex-1 flex flex-col bg-[#17120a] relative overflow-hidden border border-amber-500/10 shadow-2xl z-10 rounded-3xl">
                 {/* Texture Overlay */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#261e12] via-[#17120a] to-[#17120a] opacity-80 pointer-events-none"></div>
                 
                 {/* Chat Header */}
-                <div className="p-4 border-b border-[#382b18] flex justify-between items-center bg-[#17120a]/80 backdrop-blur-md relative z-10">
+                <div className="p-6 border-b border-[#382b18] flex justify-between items-center bg-[#17120a]/80 backdrop-blur-md relative z-10">
                     {activeChatData ? (
                         <div className="flex items-center gap-4">
                             <div
@@ -758,7 +758,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
 
             {/* Right: Patient Info Sidebar (New 3rd Column) */}
             {activeChatData && (
-                <div className="w-72 flex flex-col bg-[#261e12] border-l border-[#382b18] rounded-r-[2rem] border-y border-r border-amber-500/10 shadow-xl z-20 animate-in slide-in-from-right duration-500">
+                <div className="w-80 flex flex-col bg-[#261e12] border border-[#382b18] rounded-3xl shadow-xl z-20 animate-in slide-in-from-right duration-500">
                     
                     {/* Profile Section */}
                     <div className="p-8 flex flex-col items-center border-b border-[#382b18] bg-gradient-to-b from-amber-500/5 to-transparent">
