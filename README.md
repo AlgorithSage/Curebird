@@ -74,21 +74,24 @@
 
 ---
 
-## �️ Backend Technologies
 
-The backend is built as a modular Flask application optimized for AI inference and data processing.
+## 🛠️ Technology Stack
 
-*   **Framework**: **Flask** (Python) - Lightweight and flexible for microservices.
-*   **AI Inference Engine**: **Groq API**
-    *   Delivers ultra-low latency inference for Llama 3 models.
-    *   Used for both VLM (Vision) and Text generation.
-*   **Optical Character Recognition (OCR)**:
-    *   **Groq VLM**: Primary tool for structure extraction.
-    *   **Tesseract OCR** (`pytesseract`): Fallback engine for raw text extraction.
-*   **Data Processing**:
-    *   **Pandas**: For manipulating epidemiological datasets.
-    *   **NumPy**: For statistical analysis of health trends.
-*   **Containerization**: **Docker** - Unified environment for consistent deployment.
+### Frontend
+*   **Framework**: **React.js** (Create React App)
+*   **Styling**: **Tailwind CSS** + **Framer Motion** (Animations)
+*   **Icons**: **Lucide React**
+*   **Routing**: **React Router v6**
+*   **Hosting**: **Vercel** (Global CDN)
+
+### Backend
+*   **Language**: **Python 3.9+**
+*   **Framework**: **Flask** (REST API)
+*   **AI Engine**: **Groq API** (Llama 3.1 8B/70B, Llama 3.2 Vision)
+*   **Database**: **Google Firebase** (Firestore NoSQL, Auth, Storage)
+*   **OCR**: **Groq VLM** (Primary), **Tesseract** (Fallback)
+*   **Containerization**: **Docker**
+*   **Hosting**: **Google Cloud Run** (Serverless)
 
 ---
 
