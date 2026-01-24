@@ -146,13 +146,21 @@ def verify_promo():
 
         if promo_code.strip() == DEV_CODE:
             # Grant Premium Access
+            # Grant Premium Access
             try:
-                from firebase_admin import firestore
-                from . import db # Assuming db is available from app context or import
-            except ImportError:
-                 # Fallback if imports are tricky in this file structure
-                 from .routes import db
-                 from firebase_admin import firestore
+                import firebase_admin
+                from firebase_admin import credentials, firestore
+                
+                # Check if app is already initialized
+                if not firebase_admin._apps:
+                    # Initialize with default credentials (Cloud Run uses Service Account automatically)
+                    firebase_admin.initialize_app()
+                
+                db = firestore.client()
+
+            except Exception as e:
+                print(f"Firebase Init Error: {e}")
+                return jsonify({'success': False, 'error': "Database connection failed"}), 500
             
             user_ref = db.collection('users').document(user_uid)
             user_ref.update({
