@@ -513,7 +513,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                         </div>
                     ) : (
                         <div className="flex-1 flex flex-col items-center justify-center p-12 text-center h-full animate-in fade-in duration-700">
-                            <div className="w-24 h-24 bg-[#261e12] rounded-full flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(245,158,11,0.15)] ring-1 ring-amber-500/20">
+                            <div className="w-24 h-24 bg-[#261e12] rounded-full flex items-center justify-center mb-6 shadow-[0_0_80px_rgba(245,158,11,0.5)] ring-1 ring-amber-500/50 animate-pulse">
                                 <MessageSquare size={48} className="text-amber-500 animate-pulse-slow" />
                             </div>
                             <h2 className="text-3xl font-bold text-amber-50 mb-3 tracking-tight">Clinical Communication Hub</h2>
