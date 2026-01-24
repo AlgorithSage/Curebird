@@ -292,7 +292,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                                         type: "spring",
                                         damping: 20,
                                         stiffness: 100,
-                                        delay: idx * 0.15
+                                        delay: idx * 0.35
                                     }}
                                 >
 

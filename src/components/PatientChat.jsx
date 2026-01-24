@@ -18,8 +18,8 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2
+                staggerChildren: 0.3,
+                delayChildren: 0.4
             }
         }
     };
@@ -342,8 +342,8 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
                                     animate={{ opacity: 1, x: 0 }}
                                     onClick={() => { setActiveChat(chat); setView('chat'); }}
                                     className={`relative p-4 rounded-2xl border transition-all duration-300 cursor-pointer group hover:shadow-lg ${activeChat?.id === chat.id
-                                            ? 'bg-gradient-to-r from-amber-500/10 to-transparent border-amber-500/20 shadow-[0_0_30px_rgba(245,158,11,0.05)]'
-                                            : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.04] hover:border-white/10'
+                                        ? 'bg-gradient-to-r from-amber-500/10 to-transparent border-amber-500/20 shadow-[0_0_30px_rgba(245,158,11,0.05)]'
+                                        : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.04] hover:border-white/10'
                                         }`}
                                 >
                                     {/* Active Indicator Line */}
@@ -354,8 +354,8 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
                                     <div className="flex items-center gap-4">
                                         <div className="relative">
                                             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold shadow-inner ${activeChat?.id === chat.id
-                                                    ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-black shadow-amber-900/20'
-                                                    : 'bg-slate-800 text-slate-400 border border-white/5'
+                                                ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-black shadow-amber-900/20'
+                                                : 'bg-slate-800 text-slate-400 border border-white/5'
                                                 }`}>
                                                 {chat.doctorName.charAt(0)}
                                             </div>
@@ -508,8 +508,8 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
                                                 className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
                                             >
                                                 <div className={`max-w-[85%] sm:max-w-[65%] rounded-3xl p-5 relative group shadow-lg ${isMe
-                                                        ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-black rounded-tr-md shadow-amber-900/10'
-                                                        : 'bg-[#182030] text-slate-200 border border-white/5 rounded-tl-md shadow-black/20'
+                                                    ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-black rounded-tr-md shadow-amber-900/10'
+                                                    : 'bg-[#182030] text-slate-200 border border-white/5 rounded-tl-md shadow-black/20'
                                                     }`}>
                                                     {isFile ? (
                                                         <div className="space-y-3">
@@ -528,8 +528,8 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
                                                                     onClick={() => handleSaveToRecords(msg)}
                                                                     disabled={saveSuccess === msg.id || savingFile === msg.id}
                                                                     className={`w-full py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${saveSuccess === msg.id
-                                                                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20'
-                                                                            : 'bg-white/5 hover:bg-white/10 text-white border border-white/5'
+                                                                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20'
+                                                                        : 'bg-white/5 hover:bg-white/10 text-white border border-white/5'
                                                                         }`}
                                                                 >
                                                                     {savingFile === msg.id ? (

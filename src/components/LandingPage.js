@@ -69,7 +69,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
             opacity: 1,
             y: 0,
             filter: "blur(0px)",
-            transition: { delay: i * 0.2, duration: 1, ease: "easeOut" }
+            transition: { delay: i * 0.35, duration: 1.2, ease: "easeOut" }
         })
     };
 
@@ -78,8 +78,8 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.15,
-                delayChildren: 0.1
+                staggerChildren: 0.3,
+                delayChildren: 0.4
             }
         }
     };
