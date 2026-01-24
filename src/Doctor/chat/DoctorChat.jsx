@@ -674,78 +674,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 </div>
             </div>
 
-            {/* Right: Patient Info Sidebar (New 3rd Column) */}
-            {activeChatData && (
-                <div className="w-80 flex flex-col bg-[#261e12] border border-[#382b18] rounded-3xl shadow-xl z-20 animate-in slide-in-from-right duration-500">
-                    
-                    {/* Profile Section */}
-                    <div className="p-8 flex flex-col items-center border-b border-[#382b18] bg-gradient-to-b from-amber-500/5 to-transparent">
-                        <div className={`w-24 h-24 rounded-[2rem] ${activeChatData.avatarColor} shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] flex items-center justify-center text-white text-3xl font-black mb-4 relative`}>
-                            {activeChatData.patient.charAt(0)}
-                            <div className={`absolute -bottom-2 -right-2 w-6 h-6 rounded-full border-4 border-[#261e12] ${activeChatData.status === 'online' ? 'bg-amber-500' : 'bg-stone-500'}`}></div>
-                        </div>
-                        <h3 className="text-lg font-bold text-amber-50 text-center leading-tight mb-1">{activeChatData.patient}</h3>
-                        <p className="text-xs text-amber-500/60 font-medium uppercase tracking-widest">Male, 45 Years</p>
 
-                        <div className="flex gap-2 mt-6 w-full">
-                            <button className="flex-1 py-2 rounded-xl bg-[#382b18] hover:bg-amber-500 text-amber-500 hover:text-black transition-all flex items-center justify-center gap-2">
-                                <Video size={18} />
-                            </button>
-                            <button className="flex-1 py-2 rounded-xl bg-[#382b18] hover:bg-amber-500 text-amber-500 hover:text-black transition-all flex items-center justify-center gap-2">
-                                <Phone size={18} />
-                            </button>
-                            <button className="flex-1 py-2 rounded-xl bg-[#382b18] hover:bg-amber-500 text-amber-500 hover:text-black transition-all flex items-center justify-center gap-2">
-                                <Calendar size={18} />
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Quick Stats */}
-                    <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
-                        <div className="space-y-6">
-                            
-                            {/* Condition */}
-                            <div>
-                                <h4 className="text-[10px] uppercase font-bold text-stone-500 tracking-widest mb-3">Primary Condition</h4>
-                                <div className="p-3 rounded-xl bg-[#17120a] border border-[#382b18] flex items-center gap-3">
-                                    <div className="p-2 rounded-lg bg-rose-500/10 text-rose-500">
-                                        <Activity size={18} />
-                                    </div>
-                                    <span className="text-stone-300 text-sm font-medium">{activeChatData.condition || 'General Checkup'}</span>
-                                </div>
-                            </div>
-
-                            {/* Shared Media */}
-                            <div>
-                                <h4 className="text-[10px] uppercase font-bold text-stone-500 tracking-widest mb-3 flex justify-between">
-                                    Shared Media <span className="text-amber-500 hover:underline cursor-pointer">View All</span>
-                                </h4>
-                                <div className="grid grid-cols-4 gap-2">
-                                    <div className="aspect-square rounded-lg bg-[#17120a] border border-[#382b18] flex items-center justify-center text-stone-600 hover:text-amber-500 hover:border-amber-500/50 transition-colors cursor-pointer">
-                                        <Image size={14} />
-                                    </div>
-                                    <div className="aspect-square rounded-lg bg-[#17120a] border border-[#382b18] flex items-center justify-center text-stone-600 hover:text-amber-500 hover:border-amber-500/50 transition-colors cursor-pointer">
-                                        <FileText size={14} />
-                                    </div>
-                                    <div className="aspect-square rounded-lg bg-[#17120a] border border-[#382b18] flex items-center justify-center text-stone-600 hover:text-amber-500 hover:border-amber-500/50 transition-colors cursor-pointer">
-                                        <div className="text-[8px] font-bold">+12</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-8 p-4 rounded-xl bg-amber-500/5 border border-amber-500/10">
-                            <h5 className="text-xs font-bold text-amber-500 mb-1 flex items-center gap-2">
-                                <Shield size={12} /> Insurance Verified
-                            </h5>
-                            <p className="text-[10px] text-stone-500 leading-relaxed">
-                                Policy #998-221 active. Coverage includes tele-health consultation.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-            )}
 
             {/* Insight Modal Integration */}
             <InsightReviewModal
