@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck  } from '../../components/Icons';
+import {  Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck, Phone, Video, Calendar, Image, X  } from '../../components/Icons';
 import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
 import { auth, db, storage } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -420,19 +420,21 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
 
     return (
         <div className="flex h-[calc(100vh-6rem)] gap-6 animate-in fade-in duration-500">
-            {/* Left: Chat Sidebar */}
-            <div className="w-80 flex flex-col bg-[#0c0a09] border-r border-white/5 overflow-hidden rounded-l-[2rem] border-y border-l border-amber-500/10">
+            {/* Left: Chat Sidebar (Golden Hour Theme) */}
+            <div className="w-80 flex flex-col bg-[#261e12] border-r border-[#382b18] overflow-hidden rounded-l-[2rem] border-y border-l border-amber-500/10 shadow-2xl z-20">
                 {/* Header */}
-                <div className="p-6 border-b border-white/5 bg-transparent">
-                    <h2 className="text-xl font-bold text-white mb-6 tracking-tight">Messages</h2>
+                <div className="p-6 border-b border-[#382b18] bg-transparent">
+                    <h2 className="text-xl font-bold text-amber-50 mb-6 tracking-tight flex items-center gap-2">
+                        Messages <span className="text-xs bg-amber-500 text-black px-2 py-0.5 rounded-full font-bold">{filteredChats.length}</span>
+                    </h2>
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-500 group-focus-within:text-amber-500 transition-colors" size={16} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500/50 group-focus-within:text-amber-500 transition-colors" size={16} />
                         <input
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search patients..."
-                            className="w-full bg-[#1c1917] border border-white/5 rounded-full py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all placeholder:text-stone-600 shadow-inner"
+                            className="w-full bg-[#17120a] border border-[#382b18] rounded-2xl py-3 pl-10 pr-4 text-sm text-amber-50 focus:outline-none focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all placeholder:text-amber-900/40 shadow-inner"
                         />
                     </div>
                 </div>
@@ -444,19 +446,19 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             <div
                                 key={chat.id}
                                 onClick={() => setActiveChat(chat.id)}
-                                className={`p-4 rounded-xl cursor-pointer transition-all duration-300 group/item relative overflow-hidden ${activeChat === chat.id
-                                    ? 'bg-gradient-to-r from-amber-500/10 to-transparent'
-                                    : 'hover:bg-white/5'
+                                className={`p-4 rounded-xl cursor-pointer transition-all duration-300 group/item relative overflow-hidden mb-1 mx-2 ${activeChat === chat.id
+                                    ? 'bg-[#382b18] border border-amber-500/10 shadow-lg'
+                                    : 'hover:bg-[#382b18]/50 border border-transparent'
                                     }`}
                             >
                                 {/* Active Indicator Bar */}
                                 {activeChat === chat.id && (
-                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-amber-500 rounded-r-full shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
+                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.6)]"></div>
                                 )}
-                                <div className="flex justify-between items-start mb-1">
+                                <div className="flex justify-between items-start mb-1 pl-2">
                                     <div className="flex items-center gap-3">
                                         <div
-                                            className={`w-10 h-10 rounded-full ${chat.avatarColor} flex items-center justify-center text-white font-bold text-sm shadow-lg relative overflow-hidden transition-transform duration-300 hover:scale-110 hover:ring-2 hover:ring-white/50 z-10`}
+                                            className={`w-11 h-11 rounded-2xl ${chat.avatarColor} flex items-center justify-center text-white font-bold text-sm shadow-md relative overflow-hidden transition-transform duration-300 group-hover/item:scale-105 z-10 border border-white/10`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 navigateToProfile(chat);
@@ -466,8 +468,8 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                             {chat.patient.charAt(0)}
                                         </div>
                                         <div>
-                                            <h4 className={`font-bold text-sm ${activeChat === chat.id ? 'text-amber-100' : 'text-stone-300 group-hover/item:text-white transition-colors'}`}>{chat.patient}</h4>
-                                            <p className="text-xs text-stone-500 truncate max-w-[120px]">{chat.lastMsg}</p>
+                                            <h4 className={`font-bold text-sm ${activeChat === chat.id ? 'text-amber-400' : 'text-stone-300 group-hover/item:text-amber-100 transition-colors'}`}>{chat.patient}</h4>
+                                            <p className={`text-xs truncate max-w-[120px] ${activeChat === chat.id ? 'text-amber-500/60' : 'text-stone-500'}`}>{chat.lastMsg}</p>
                                         </div>
                                     </div>
                                     <div className="flex flex-col items-end gap-1">
@@ -489,13 +491,13 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 </div>
             </div>
 
-            {/* Right: Main Chat Window */}
-            <div className="flex-1 flex flex-col bg-[#050402] relative overflow-hidden rounded-r-[2rem] border border-amber-500/20 shadow-2xl">
+            {/* Center: Chat Window */}
+            <div className="flex-1 flex flex-col bg-[#17120a] relative overflow-hidden border-y border-amber-500/10 shadow-2xl z-10 mx-[-10px] my-[10px] rounded-2xl">
                 {/* Texture Overlay */}
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.08),_transparent_60%)] pointer-events-none"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#261e12] via-[#17120a] to-[#17120a] opacity-80 pointer-events-none"></div>
+                
                 {/* Chat Header */}
-                <div className="p-4 border-b border-amber-500/10 flex justify-between items-center bg-white/[0.02] backdrop-blur-sm relative z-10">
+                <div className="p-4 border-b border-[#382b18] flex justify-between items-center bg-[#17120a]/80 backdrop-blur-md relative z-10">
                     {activeChatData ? (
                         <div className="flex items-center gap-4">
                             <div
@@ -511,8 +513,8 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             >
                                 <h3 className="font-bold text-white text-lg group-hover:text-amber-400 transition-colors">{activeChatData.patient}</h3>
                                 <div className="flex items-center gap-2">
-                                    <span className={`w-2 h-2 rounded-full ${activeChatData.status === 'online' ? 'bg-emerald-500 animate-pulse' : 'bg-stone-500'}`}></span>
-                                    <span className="text-xs text-stone-400">{activeChatData.status === 'online' ? 'Online' : 'Offline'}</span>
+                                    <span className={`w-2 h-2 rounded-full ${activeChatData.status === 'online' ? 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]' : 'bg-stone-600'}`}></span>
+                                    <span className="text-xs text-amber-500/60 font-medium uppercase tracking-wider">{activeChatData.status === 'online' ? 'Active Now' : 'Offline'}</span>
                                 </div>
                             </div>
                         </div>
@@ -645,18 +647,18 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                     {messages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender === 'doctor' ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-[70%] rounded-2xl p-5 shadow-lg relative group transition-all duration-200 ${msg.sender === 'doctor'
-                                ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-tr-sm shadow-amber-900/20'
-                                : 'bg-slate-800/60 backdrop-blur-md text-slate-100 border border-white/10 rounded-tl-sm'
+                                ? 'bg-amber-500 text-black rounded-br-sm shadow-[0_5px_20px_-5px_rgba(245,158,11,0.4)]'
+                                : 'bg-[#382b18] text-amber-50 rounded-bl-sm border border-amber-500/5'
                                 }`}>
                                 {/* Message Text */}
                                 {msg.type === 'file' ? (
                                     <div className="flex items-start gap-3">
-                                        <div className="p-3 bg-stone-900/50 rounded-lg text-amber-500">
+                                        <div className={`p-3 rounded-lg ${msg.sender === 'doctor' ? 'bg-black/10 text-black' : 'bg-[#261e12] text-amber-500'}`}>
                                             <FileText size={24} />
                                         </div>
                                         <div>
-                                            <p className="font-bold text-white text-sm mb-1">{msg.fileName}</p>
-                                            <p className="text-xs text-stone-400 mb-2">{msg.text}</p>
+                                            <p className={`font-bold text-sm mb-1 ${msg.sender === 'doctor' ? 'text-black' : 'text-amber-100'}`}>{msg.fileName}</p>
+                                            <p className={`text-xs mb-2 ${msg.sender === 'doctor' ? 'text-black/60' : 'text-amber-500/60'}`}>{msg.text}</p>
 
                                             {/* AI Insight Trigger */}
                                             {msg.hasInsight && (
@@ -692,8 +694,22 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                     ))}
                 </div>
 
-                {/* Input Area */}
+                {/* Input Area (Golden Hour) */}
                 <div className="p-6 bg-transparent relative z-20">
+                    
+                    {/* Quick Action Chips (New) */}
+                    <div className="flex gap-2 mb-3 px-1">
+                        {[
+                            { l: 'Urgent Alert', i: AlertTriangle, c: 'text-rose-500 bg-rose-500/10 border-rose-500/20' },
+                            { l: 'Request Vitals', i: Activity, c: 'text-amber-500 bg-amber-500/10 border-amber-500/20' },
+                            { l: 'Write Rx', i: Pill, c: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' }
+                        ].map((chip, idx) => (
+                            <button key={idx} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border hover:brightness-110 transition-all ${chip.c}`}>
+                                <chip.i size={12} /> {chip.l}
+                            </button>
+                        ))}
+                    </div>
+
                     <form onSubmit={handleSendMessage} className="flex gap-4 items-end">
                         <input 
                             type="file" 
@@ -705,12 +721,12 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             type="button" 
                             onClick={() => fileInputRef.current?.click()}
                             disabled={isUploading}
-                            className={`p-3.5 rounded-full bg-[#1c1917] hover:bg-[#292524] text-stone-400 hover:text-amber-500 border border-white/5 transition-all shadow-lg ${isUploading ? 'animate-pulse text-amber-500' : ''}`}
+                            className={`p-3.5 rounded-2xl bg-[#261e12] hover:bg-[#382b18] text-amber-500/50 hover:text-amber-500 border border-amber-500/10 transition-all ${isUploading ? 'animate-pulse text-amber-500' : ''}`}
                         >
                             <Paperclip size={20} />
                         </button>
                         
-                        <div className="flex-1 bg-[#0a0805] border border-white/10 rounded-2xl flex items-center px-4 py-1.5 focus-within:border-amber-500/50 focus-within:ring-1 focus-within:ring-amber-500/20 transition-all shadow-inner">
+                        <div className="flex-1 bg-[#0c0a09] border border-[#382b18] rounded-2xl flex items-center px-4 py-1.5 focus-within:border-amber-500/50 focus-within:bg-[#17120a] transition-all shadow-inner">
                             <input
                                 type="text"
                                 value={messageInput}
@@ -732,13 +748,86 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                         <button
                             type="submit"
                             disabled={!messageInput.trim()}
-                            className="p-3.5 bg-amber-500 hover:bg-amber-400 text-black rounded-full transition-all shadow-[0_4px_20px_rgba(245,158,11,0.4)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-110 active:scale-95"
+                            className="p-3.5 bg-amber-500 hover:bg-amber-400 text-black rounded-2xl transition-all shadow-[0_4px_20px_rgba(245,158,11,0.2)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
                         >
                             <Send size={22} strokeWidth={2.5} />
                         </button>
                     </form>
                 </div>
             </div>
+
+            {/* Right: Patient Info Sidebar (New 3rd Column) */}
+            {activeChatData && (
+                <div className="w-72 flex flex-col bg-[#261e12] border-l border-[#382b18] rounded-r-[2rem] border-y border-r border-amber-500/10 shadow-xl z-20 animate-in slide-in-from-right duration-500">
+                    
+                    {/* Profile Section */}
+                    <div className="p-8 flex flex-col items-center border-b border-[#382b18] bg-gradient-to-b from-amber-500/5 to-transparent">
+                        <div className={`w-24 h-24 rounded-[2rem] ${activeChatData.avatarColor} shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] flex items-center justify-center text-white text-3xl font-black mb-4 relative`}>
+                            {activeChatData.patient.charAt(0)}
+                            <div className={`absolute -bottom-2 -right-2 w-6 h-6 rounded-full border-4 border-[#261e12] ${activeChatData.status === 'online' ? 'bg-amber-500' : 'bg-stone-500'}`}></div>
+                        </div>
+                        <h3 className="text-lg font-bold text-amber-50 text-center leading-tight mb-1">{activeChatData.patient}</h3>
+                        <p className="text-xs text-amber-500/60 font-medium uppercase tracking-widest">Male, 45 Years</p>
+
+                        <div className="flex gap-2 mt-6 w-full">
+                            <button className="flex-1 py-2 rounded-xl bg-[#382b18] hover:bg-amber-500 text-amber-500 hover:text-black transition-all flex items-center justify-center gap-2">
+                                <Video size={18} />
+                            </button>
+                            <button className="flex-1 py-2 rounded-xl bg-[#382b18] hover:bg-amber-500 text-amber-500 hover:text-black transition-all flex items-center justify-center gap-2">
+                                <Phone size={18} />
+                            </button>
+                            <button className="flex-1 py-2 rounded-xl bg-[#382b18] hover:bg-amber-500 text-amber-500 hover:text-black transition-all flex items-center justify-center gap-2">
+                                <Calendar size={18} />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
+                        <div className="space-y-6">
+                            
+                            {/* Condition */}
+                            <div>
+                                <h4 className="text-[10px] uppercase font-bold text-stone-500 tracking-widest mb-3">Primary Condition</h4>
+                                <div className="p-3 rounded-xl bg-[#17120a] border border-[#382b18] flex items-center gap-3">
+                                    <div className="p-2 rounded-lg bg-rose-500/10 text-rose-500">
+                                        <Activity size={18} />
+                                    </div>
+                                    <span className="text-stone-300 text-sm font-medium">{activeChatData.condition || 'General Checkup'}</span>
+                                </div>
+                            </div>
+
+                            {/* Shared Media */}
+                            <div>
+                                <h4 className="text-[10px] uppercase font-bold text-stone-500 tracking-widest mb-3 flex justify-between">
+                                    Shared Media <span className="text-amber-500 hover:underline cursor-pointer">View All</span>
+                                </h4>
+                                <div className="grid grid-cols-4 gap-2">
+                                    <div className="aspect-square rounded-lg bg-[#17120a] border border-[#382b18] flex items-center justify-center text-stone-600 hover:text-amber-500 hover:border-amber-500/50 transition-colors cursor-pointer">
+                                        <Image size={14} />
+                                    </div>
+                                    <div className="aspect-square rounded-lg bg-[#17120a] border border-[#382b18] flex items-center justify-center text-stone-600 hover:text-amber-500 hover:border-amber-500/50 transition-colors cursor-pointer">
+                                        <FileText size={14} />
+                                    </div>
+                                    <div className="aspect-square rounded-lg bg-[#17120a] border border-[#382b18] flex items-center justify-center text-stone-600 hover:text-amber-500 hover:border-amber-500/50 transition-colors cursor-pointer">
+                                        <div className="text-[8px] font-bold">+12</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 p-4 rounded-xl bg-amber-500/5 border border-amber-500/10">
+                            <h5 className="text-xs font-bold text-amber-500 mb-1 flex items-center gap-2">
+                                <Shield size={12} /> Insurance Verified
+                            </h5>
+                            <p className="text-[10px] text-stone-500 leading-relaxed">
+                                Policy #998-221 active. Coverage includes tele-health consultation.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            )}
 
             {/* Insight Modal Integration */}
             <InsightReviewModal

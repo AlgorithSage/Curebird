@@ -93,6 +93,7 @@ export const History = getIcon('History', 'ClockCounterClockwise');
 export const Home = getIcon('Home');
 export const Hospital = getIcon('Hospital', 'Buildings'); // Approx
 export const Hourglass = getIcon('Hourglass');
+export const Image = getIcon('Image');
 export const Info = getIcon('Info');
 export const Instagram = getIcon('Instagram', 'InstagramLogo');
 export const Key = getIcon('Key');
