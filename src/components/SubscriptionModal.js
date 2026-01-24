@@ -261,8 +261,8 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                         </p>
                     </div>
 
-                    {/* Tiers Grid - Mobile Scroll / Desktop Grid */}
-                    <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-6 mb-8 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0">
+                    {/* Tiers Grid - Vertical Stack on Mobile / Grid on Desktop */}
+                    <div className="flex flex-col md:grid md:grid-cols-3 gap-4 md:gap-6 mb-8 px-1 md:px-0">
                         {tiers.map((tier) => {
                             const Icon = tier.icon;
                             const isSelected = selectedTier === tier.name;
@@ -271,8 +271,9 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                                 <div
                                     key={tier.name}
                                     onClick={() => setSelectedTier(tier.name)}
-                                    className={`relative p-3 md:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col items-center text-center group min-w-[70vw] md:min-w-0 snap-center ${isSelected
-                                        ? `bg-gradient-to-br from-slate-900 to-black border-amber-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] z-10`
+                                    // Reverted to standard vertical stack for logic clarity and clean mobile UI
+                                    className={`relative p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col items-center text-center group ${isSelected
+                                        ? `bg-gradient-to-br from-slate-900 to-black border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.2)] z-10 scale-[1.02] md:scale-100`
                                         : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
                                         }`}
                                 >
