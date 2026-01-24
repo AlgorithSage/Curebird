@@ -27,7 +27,17 @@
     *   The raw JSON data is fed into a **Llama 3.1 8B** model via Groq.
     *   A specialized System Prompt acts as a "Medical Interpreter," translating technical jargon into a customized, empathetic summary for the patient (e.g., explaining that "Hypertension" means "High Blood Pressure").
 
-### 3. Cure AI 🤖
+### 3. Cure Tracker 📈
+**Purpose**: A longitudinal health tracking system that visualizes disease progression markers over time.
+
+*   **Pathology Trend Analysis**: Upload multiple lab reports (dates apart) to automatically plot graphs for key biomarkers (e.g., HbA1c, Thyroid T3/T4, Lipid Profile).
+*   **Disease-Specific Modules**:
+    *   **Diabetes Tracker**: Plots Fasting/PP Glucose and HbA1c trends.
+    *   **Thyroid Tracker**: Monitors TSH, T3, and T4 fluctuations.
+    *   **Liver/Kidney Panels**: Tracks liver enzymes and creatinine levels for chronic patients.
+*   **Clinical Efficacy**: Helps doctors visualize whether a current treatment plan is working by showing the 'slope' of improvement or decline.
+
+### 4. Cure AI 🤖
 **Purpose**: An intelligent, context-aware health assistant.
 
 *   **Context Injection**: The AI is fed real-time disease trend data (cached from CureStat) via a System Prompt. This allows it to give advice relevant to current outbreaks (e.g., advising on Dengue prevention during monsoon season if cases are high).
