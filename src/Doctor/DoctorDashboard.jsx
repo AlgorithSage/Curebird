@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Users, Calendar, Activity, ClipboardList, FilePlus,
@@ -372,6 +373,26 @@ const DoctorDashboard = ({ user }) => {
     // New State for Dashboard Stats
     const [actionCount, setActionCount] = useState(0);
 
+    // --- Router Integration ---
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Sync URL -> activeView
+    useEffect(() => {
+        const path = location.pathname;
+        const subPath = path.split('/doctor/')[1]; // e.g., 'telehealth'
+        
+        if (subPath) {
+            // Map simple paths to views
+            // We only switch if it's a known top-level view
+            if (['dashboard', 'patients', 'telehealth', 'consultations', 'medical_records', 'analytics', 'messages', 'notifications', 'profile', 'security', 'help'].includes(subPath)) {
+                setActiveView(subPath);
+            }
+        }
+    }, [location.pathname]);
+    
+    // --- End Router Integration ---
+
     // Managed Patient State - Synced with Firestore
     const [patients, setPatients] = useState([]);
 
@@ -449,6 +470,8 @@ const DoctorDashboard = ({ user }) => {
 
     const handleNavigate = (view) => {
         setActiveView(view);
+        navigate(`/doctor/${view}`); // Sync state -> URL
+
         if (view !== 'patient_workspace') {
             setWorkspacePatient(null);
         }

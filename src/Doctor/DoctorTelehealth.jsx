@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Calendar, Clock, Video, Phone, MessageSquare, MapPin, Filter, Plus, 
@@ -22,7 +23,7 @@ const AppointmentCard = ({ appt, type, onAction }) => (
         <div className="flex justify-between items-start mb-4 relative z-10">
             <div className="flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-white/5 ${type === 'upcoming' ? 'bg-amber-500 text-black shadow-amber-500/20' :
-                    type === 'request' ? 'bg-slate-800 text-slate-400' :
+                    type === 'request' ? (appt.isIncoming ? 'bg-rose-500 text-white animate-pulse' : 'bg-slate-800 text-slate-400') :
                         'bg-slate-900 text-slate-600'
                     }`}>
                     {appt.patientName.charAt(0)}
@@ -100,8 +101,9 @@ const ScheduleSlot = ({ time, status, patient }) => (
 // --- Main Unified Telehealth Component ---
 
 const DoctorTelehealth = ({ onNavigate, patients = [] }) => {
-    // Internal State for Tab Navigation
     const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'requests', 'schedule'
+    const [requests, setRequests] = useState([]);
+    const [approvedAppts, setApprovedAppts] = useState([]);
 
     // Interactive State (Mapped from Live Patients)
     const baseUpcomingAppts = React.useMemo(() => {
@@ -115,9 +117,34 @@ const DoctorTelehealth = ({ onNavigate, patients = [] }) => {
         }));
     }, [patients]);
 
-    const [requests, setRequests] = useState([]);
-    const [approvedAppts, setApprovedAppts] = useState([]);
     const upcomingAppts = [...baseUpcomingAppts, ...approvedAppts];
+    const location = useLocation();
+    // No navigate needed if we stay here
+
+    useEffect(() => {
+        if (location.state && location.state.incomingCall && location.state.patientId) {
+            console.log("Handling Incoming Call in Dashboard:", location.state);
+            setActiveTab('requests'); // Switch to requests tab to show the call
+            
+            // Add a high-priority request for this call
+            const newRequest = {
+                id: location.state.chatId || `req_${Date.now()}`,
+                patientName: location.state.patientName || ("Patient " + location.state.patientId),
+                time: "Now",
+                date: "Today",
+                reason: "Incoming " + location.state.callType + " call",
+                type: location.state.callType,
+                isIncoming: true
+            };
+            
+            setRequests(prev => {
+                // Avoid duplicates
+                if (prev.find(r => r.id === newRequest.id)) return prev;
+                return [newRequest, ...prev];
+            });
+        }
+    }, [location.state]); // Depend on location state
+    // --- End Incoming Call Handling ---
 
     React.useEffect(() => {
         if (patients.length > 3) {
@@ -129,7 +156,8 @@ const DoctorTelehealth = ({ onNavigate, patients = [] }) => {
                 reason: p.condition || "General Consult",
                 type: "video"
             }));
-            setRequests(reqs);
+            // Only set if requests is empty to avoid overwriting the incoming call
+            setRequests(prev => prev.length === 0 ? reqs : prev);
         }
     }, [patients]);
 

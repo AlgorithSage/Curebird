@@ -301,13 +301,32 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     const handleVideoCall = () => {
         if (!activeChat) return;
         console.log("Redirecting to Telehealth Video Room...");
-        const currentChat = chats.find(c => c.id === activeChat) || { id: activeChat };
+        
+        // Resolve Patient Details
+        const currentChat = chats.find(c => c.id === activeChat);
+        let patientName = "Patient";
+        let patientId = activeChat;
+
+        if (currentChat) {
+            patientName = currentChat.patient || currentChat.patientName || "Patient";
+            patientId = currentChat.patientId;
+        } else {
+            // Try to find in patients list if it's a new/temp chat
+            const pId = activeChat.startsWith('temp_') ? activeChat.replace('temp_', '') : activeChat;
+            const patient = patients.find(p => p.id === pId);
+            if (patient) {
+                patientName = patient.name;
+                patientId = patient.id;
+            }
+        }
+
         navigate('/doctor/telehealth', { 
             state: { 
                 incomingCall: true, 
                 callType: 'video', 
                 chatId: activeChat,
-                patientId: currentChat.patientId 
+                patientId: patientId,
+                patientName: patientName
             } 
         });
     };
