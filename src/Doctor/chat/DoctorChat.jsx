@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {  Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck, Phone, Video, Calendar, Image, X, Zap, MessageSquare  } from '../../components/Icons';
-import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db, storage } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import InsightReviewModal from './InsightReviewModal';
@@ -30,6 +30,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     const [showActionMenu, setShowActionMenu] = useState(false);
     const [activeAction, setActiveAction] = useState(null); // 'summary', 'flag', 'carePlan', 'status', 'escalate'
     const [isRxModalOpen, setIsRxModalOpen] = useState(false); // Quick Rx State
+    const [contextMenu, setContextMenu] = useState(null); // { x, y, messageId }
 
     // Auth Check
     React.useEffect(() => {
@@ -320,6 +321,29 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         }
     };
 
+    // --- Message Deletion Logic ---
+    const handleRightClick = (e, msg) => {
+        if (msg.sender !== 'doctor') return; // Only allow deleting own messages
+        e.preventDefault();
+        setContextMenu({
+            x: e.pageX,
+            y: e.pageY,
+            messageId: msg.id
+        });
+    };
+
+    const performDelete = async () => {
+        if (!contextMenu || !activeChat) return;
+        try {
+            await deleteDoc(doc(db, `chats/${activeChat}/messages`, contextMenu.messageId));
+            setContextMenu(null);
+            
+            // Optional: Update lastMsg if the deleted message was the last one (skipped for simplicity, fine for prototype)
+        } catch (err) {
+            console.error("Error deleting message:", err);
+        }
+    };
+
     // --- Quick Actions Handlers ---
     const handleUrgentAlert = () => {
         handleSendMessage(null, 'alert', { text: 'URGENT: Please respond immediately to this clinical alert.' });
@@ -578,10 +602,13 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar relative z-10">
                     {messages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender === 'doctor' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[70%] rounded-2xl p-5 shadow-lg relative group transition-all duration-200 ${msg.sender === 'doctor'
-                                ? 'bg-amber-500 text-black rounded-br-sm shadow-[0_5px_20px_-5px_rgba(245,158,11,0.4)]'
+                            <div 
+                                onContextMenu={(e) => handleRightClick(e, msg)}
+                                className={`max-w-[70%] rounded-2xl p-5 shadow-lg relative group transition-all duration-200 ${msg.sender === 'doctor'
+                                ? 'bg-amber-500 text-black rounded-br-sm shadow-[0_5px_20px_-5px_rgba(245,158,11,0.4)] cursor-context-menu'
                                 : 'bg-[#382b18] text-amber-50 rounded-bl-sm border border-amber-500/5'
-                                }`}>
+                                }`}
+                            >
                                 {/* Message Text */}
                                 {msg.type === 'file' ? (
                                     <div className="flex items-start gap-3">
@@ -806,6 +833,29 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Context Menu for Deletion */}
+            {contextMenu && (
+                <>
+                    <div 
+                        className="fixed inset-0 z-[100]" 
+                        onClick={() => setContextMenu(null)}
+                        onContextMenu={(e) => { e.preventDefault(); setContextMenu(null); }}
+                    ></div>
+                    <div 
+                        className="fixed z-[101] bg-[#261e12] border border-[#382b18] rounded-xl shadow-2xl overflow-hidden py-1 min-w-[160px] animate-in fade-in zoom-in duration-200"
+                        style={{ top: contextMenu.y, left: contextMenu.x }}
+                    >
+                        <button 
+                            onClick={performDelete}
+                            className="w-full text-left px-4 py-2.5 text-sm font-medium text-rose-500 hover:bg-rose-500/10 hover:text-rose-400 flex items-center gap-2 transition-colors"
+                        >
+                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
+                            Delete Message
+                        </button>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
