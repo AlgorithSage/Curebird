@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {  Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck, Phone, Video, Calendar, Image, X, Zap, MessageSquare  } from '../../components/Icons';
 import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -12,6 +13,7 @@ import ConsultationStatusModal from './actions/ConsultationStatusModal';
 import EscalateRiskModal from './actions/EscalateRiskModal';
 
 const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
+    const navigate = useNavigate();
     // Firestore Hooks
     const [chats, setChats] = React.useState([]);
     const [messages, setMessages] = React.useState([]);
@@ -30,7 +32,9 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     const [showActionMenu, setShowActionMenu] = useState(false);
     const [activeAction, setActiveAction] = useState(null); // 'summary', 'flag', 'carePlan', 'status', 'escalate'
     const [isRxModalOpen, setIsRxModalOpen] = useState(false); // Quick Rx State
+
     const [contextMenu, setContextMenu] = useState(null); // { x, y, messageId }
+    const [isVoiceCallActive, setIsVoiceCallActive] = useState(false); // New: In-App Voice Call State
 
     // Auth Check
     React.useEffect(() => {
@@ -288,6 +292,26 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         }
     };
 
+    const handleVoiceCall = () => {
+        if (!activeChat) return;
+        console.log("Starting Voice Call Interface...");
+        setIsVoiceCallActive(true); // Open in-chat overlay
+    };
+
+    const handleVideoCall = () => {
+        if (!activeChat) return;
+        console.log("Redirecting to Telehealth Video Room...");
+        const currentChat = chats.find(c => c.id === activeChat) || { id: activeChat };
+        navigate('/doctor/telehealth', { 
+            state: { 
+                incomingCall: true, 
+                callType: 'video', 
+                chatId: activeChat,
+                patientId: currentChat.patientId 
+            } 
+        });
+    };
+
     const handleSendMessage = async (e, customType = 'text', customPayload = null) => {
         if (e && e.preventDefault) e.preventDefault();
         
@@ -516,6 +540,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 {/* Chat Header */}
                 <div className="p-6 border-b border-[#382b18] flex justify-between items-center bg-[#17120a]/80 backdrop-blur-md relative z-10">
                     {activeChatData ? (
+                        <>
                         <div className="flex items-center gap-4">
                             <div
                                 className={`w-10 h-10 rounded-full ${activeChatData.avatarColor} shadow-[0_0_15px_rgba(16,185,129,0.3)] flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:scale-110 transition-transform hover:ring-2 hover:ring-white/30`}
@@ -531,7 +556,26 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                 <h3 className="font-bold text-white text-lg group-hover:text-amber-400 transition-colors">{activeChatData.patient}</h3>
 
                             </div>
-                        </div>
+                            </div>
+                            
+                            {/* Call Actions */}
+                            <div className="flex items-center gap-3">
+                                <button 
+                                    onClick={handleVoiceCall}
+                                    className="p-2.5 rounded-xl border border-stone-700 text-stone-400 hover:border-amber-500 hover:text-amber-500 hover:bg-amber-500/10 transition-all active:scale-95"
+                                    title="Voice Call"
+                                >
+                                    <Phone size={20} />
+                                </button>
+                                <button 
+                                    onClick={handleVideoCall}
+                                    className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/50 text-amber-500 hover:bg-amber-500 hover:text-black transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                                    title="Start Telehealth Session"
+                                >
+                                    <Video size={20} />
+                                </button>
+                            </div>
+                        </>
                     ) : (
                         <div className="flex-1 flex flex-col items-center justify-center p-12 text-center h-full animate-in fade-in duration-700">
                             <div className="w-24 h-24 bg-[#261e12] rounded-full flex items-center justify-center mb-6 shadow-[0_0_80px_rgba(245,158,11,0.5)] ring-1 ring-amber-500/50 animate-pulse">
@@ -853,6 +897,56 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                     </div>
                 </>
             )}
+
+            {/* In-App Voice Call Overlay */}
+            <AnimatePresence>
+                {isVoiceCallActive && (
+                    <motion.div 
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 100, opacity: 0 }}
+                        className="fixed bottom-6 right-6 z-50 w-80 bg-[#17120a] border border-amber-500/20 rounded-2xl shadow-2xl overflow-hidden"
+                    >
+                        {/* Header */}
+                        <div className="bg-amber-500/10 p-4 flex items-center justify-between border-b border-amber-500/10">
+                            <div className="flex items-center gap-3">
+                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                <span className="text-amber-500 font-bold text-sm tracking-wide">VOICE CALL ACTIVE</span>
+                            </div>
+                            <span className="text-stone-500 text-xs font-mono">00:00</span>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-6 flex flex-col items-center">
+                            <div className="w-20 h-20 rounded-full bg-[#261e12] border-2 border-amber-500/30 flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
+                                <span className="text-3xl text-white font-bold">
+                                    {activeChatData ? activeChatData.patient.charAt(0) : '?'}
+                                </span>
+                            </div>
+                            <h3 className="text-white font-bold text-lg mb-1">
+                                {activeChatData ? activeChatData.patient : 'Patient'}
+                            </h3>
+                            <p className="text-stone-500 text-xs mb-8">Connecting secure line...</p>
+
+                            {/* Controls */}
+                            <div className="flex items-center gap-6 w-full justify-center">
+                                <button className="p-3 rounded-full bg-[#261e12] text-stone-400 hover:text-white hover:bg-stone-800 transition-all border border-stone-800">
+                                    <Mic size={20} />
+                                </button>
+                                <button 
+                                    onClick={() => setIsVoiceCallActive(false)}
+                                    className="p-4 rounded-full bg-rose-600 text-white hover:bg-rose-500 transition-all shadow-lg transform hover:scale-110"
+                                >
+                                    <Phone size={24} className="rotate-[135deg]" />
+                                </button>
+                                <button className="p-3 rounded-full bg-[#261e12] text-stone-400 hover:text-white hover:bg-stone-800 transition-all border border-stone-800">
+                                    <Video size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
