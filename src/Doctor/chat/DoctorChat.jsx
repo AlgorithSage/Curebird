@@ -404,6 +404,9 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         };
     }
 
+    // Calculate Unread Chats
+    const unreadChatsCount = chats.filter(chat => chat.unread > 0).length;
+
     return (
         <div className="flex h-[calc(100vh-6rem)] gap-6 animate-in fade-in duration-500">
             {/* Left: Chat Sidebar (Golden Hour Theme) */}
@@ -411,7 +414,12 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 {/* Header */}
                 <div className="p-6 border-b border-[#382b18] bg-transparent">
                     <h2 className="text-xl font-bold text-amber-50 mb-6 tracking-tight flex items-center gap-2">
-                        Messages <span className="text-xs bg-amber-500 text-black px-2 py-0.5 rounded-full font-bold">{filteredChats.length}</span>
+                        Messages 
+                        {unreadChatsCount > 0 && (
+                            <span className="text-xs bg-amber-500 text-black px-2 py-0.5 rounded-full font-bold animate-pulse">
+                                {unreadChatsCount} Unread
+                            </span>
+                        )}
                     </h2>
                     <div className="relative group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500/50 group-focus-within:text-amber-500 transition-colors" size={16} />
