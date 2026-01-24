@@ -12,3 +12,4 @@ pymupdf
 cerebras_cloud_sdk
 google-auth-oauthlib
 razorpay
+firebase-admin
