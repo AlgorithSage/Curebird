@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Shield, Zap, Crown } from './Icons';
 import { API_BASE_URL } from '../config';
@@ -69,7 +70,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
     };
 
     // Load Razorpay Script
-    React.useEffect(() => {
+    useEffect(() => {
         const script = document.createElement('script');
         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
         script.async = true;
