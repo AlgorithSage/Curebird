@@ -413,14 +413,13 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
             <div className="w-80 flex flex-col bg-[#261e12] border border-[#382b18] overflow-hidden rounded-3xl shadow-2xl z-20">
                 {/* Header */}
                 <div className="p-6 border-b border-[#382b18] bg-transparent">
-                    <h2 className="text-xl font-bold text-amber-50 mb-6 tracking-tight flex items-center gap-2">
-                        Messages 
-                        {unreadChatsCount > 0 && (
-                            <span className="text-xs bg-amber-500 text-black px-2 py-0.5 rounded-full font-bold animate-pulse">
-                                {unreadChatsCount} Unread
-                            </span>
-                        )}
-                    </h2>
+                    <div className="mb-6">
+                        <h2 className="text-xl font-bold text-amber-50 tracking-tight">Messages</h2>
+                        <p className="text-xs text-stone-500 mt-1 font-medium flex items-center gap-2">
+                             <span className={`w-1.5 h-1.5 rounded-full ${unreadChatsCount > 0 ? 'bg-amber-500 animate-pulse' : 'bg-stone-600'}`}></span>
+                             {unreadChatsCount > 0 ? `${unreadChatsCount} unread conversations` : 'All conversations read'}
+                        </p>
+                    </div>
                     <div className="relative group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500/50 group-focus-within:text-amber-500 transition-colors" size={16} />
                         <input
