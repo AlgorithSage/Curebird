@@ -529,7 +529,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                     </div>
                                     <div className="text-left">
                                         <h4 className="text-amber-50 font-bold text-sm">Live Vitals</h4>
-                                        <p className="text-stone-500 text-xs">Real-time stats request</p>
+                                        <p className="text-stone-500 text-xs">Request health stats</p>
                                     </div>
                                 </div>
 
@@ -544,22 +544,22 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                 </div>
 
                                 <div className="p-4 bg-[#261e12]/50 border border-amber-500/10 rounded-2xl flex items-center gap-4 hover:bg-[#261e12] transition-colors group cursor-default">
-                                    <div className="p-2.5 bg-blue-500/10 text-blue-500 rounded-xl group-hover:bg-blue-500 group-hover:text-black transition-all">
-                                        <Shield size={20} />
+                                    <div className="p-2.5 bg-rose-500/10 text-rose-500 rounded-xl group-hover:bg-rose-500 group-hover:text-black transition-all">
+                                        <AlertTriangle size={20} />
                                     </div>
                                     <div className="text-left">
-                                        <h4 className="text-amber-50 font-bold text-sm">Protected</h4>
-                                        <p className="text-stone-500 text-xs">End-to-end encrypted</p>
+                                        <h4 className="text-amber-50 font-bold text-sm">Urgent Alerts</h4>
+                                        <p className="text-stone-500 text-xs">Flag critical risks</p>
                                     </div>
                                 </div>
 
                                 <div className="p-4 bg-[#261e12]/50 border border-amber-500/10 rounded-2xl flex items-center gap-4 hover:bg-[#261e12] transition-colors group cursor-default">
-                                    <div className="p-2.5 bg-rose-500/10 text-rose-500 rounded-xl group-hover:bg-rose-500 group-hover:text-black transition-all">
-                                        <Zap size={20} />
+                                    <div className="p-2.5 bg-blue-500/10 text-blue-500 rounded-xl group-hover:bg-blue-500 group-hover:text-black transition-all">
+                                        <Mic size={20} />
                                     </div>
                                     <div className="text-left">
-                                        <h4 className="text-amber-50 font-bold text-sm">Smart Triage</h4>
-                                        <p className="text-stone-500 text-xs">Priority risk alerts</p>
+                                        <h4 className="text-amber-50 font-bold text-sm">Voice Notes</h4>
+                                        <p className="text-stone-500 text-xs">Record audio updates</p>
                                     </div>
                                 </div>
                             </div>
