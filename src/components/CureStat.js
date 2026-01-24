@@ -333,6 +333,72 @@ const HealthIndexCard = ({ title, value, status, trend, icon: Icon, color, sourc
 );
 
 const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+    // Animation Variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.2
+            }
+        }
+    };
+
+    const fadeSlideUp = {
+        hidden: { opacity: 0, y: 100, filter: "blur(10px)" },
+        visible: {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+        }
+    };
+
+    const staggerScale = {
+        hidden: { opacity: 0, scale: 0.8, y: 50 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                damping: 15,
+                stiffness: 100
+            }
+        }
+    };
+
+    const slideInLeft = {
+        hidden: { opacity: 0, x: -100, filter: "blur(5px)" },
+        visible: {
+            opacity: 1,
+            x: 0,
+            filter: "blur(0px)",
+            transition: { duration: 0.8, ease: "easeOut" }
+        }
+    };
+
+    const slideInRight = {
+        hidden: { opacity: 0, x: 100, filter: "blur(5px)" },
+        visible: {
+            opacity: 1,
+            x: 0,
+            filter: "blur(0px)",
+            transition: { duration: 0.8, ease: "easeOut" }
+        }
+    };
+
+    const blurReveal = {
+        hidden: { opacity: 0, filter: "blur(20px)", scale: 0.95 },
+        visible: {
+            opacity: 1,
+            filter: "blur(0px)",
+            scale: 1,
+            transition: { duration: 1, ease: "easeOut" }
+        }
+    };
+
     const [resourceData, setResourceData] = useState([]);
     const [trends, setTrends] = useState([]);
     const [filteredTrends, setFilteredTrends] = useState([]);
@@ -635,7 +701,13 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
             <div className={`relative z-10 ${(user?.subscriptionTier !== 'Premium' && user?.subscriptionTier !== 'Basic') ? 'blur-sm pointer-events-none' : ''}`}>
 
                 {/* Premium Hero Section */}
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-6 sm:p-8 mb-8 text-center mt-6">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={blurReveal}
+                    className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-6 sm:p-8 mb-8 text-center mt-6"
+                >
                     <div className="absolute top-0 left-0 -translate-x-1/4 w-96 h-96 bg-amber-500/20 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
 
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] sm:text-sm font-bold mb-4 sm:mb-6 animate-pulse">
@@ -666,82 +738,98 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                             <span className="text-[10px] uppercase tracking-widest font-bold text-slate-500">Predict</span>
                         </div>
                     </div>
-                </div>
+                </motion.div>
 
 
 
                 {/* --- NEW SECTION: National Health Indices --- */}
-                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }} className="mb-12">
-                    <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={containerVariants}
+                    className="mb-12"
+                >
+                    <motion.h2 variants={fadeSlideUp} className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                         <Activity className="text-amber-400" size={24} />
                         National Health Indices
-                    </h2>
+                    </motion.h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         {/* 1. Diabetes Health Index */}
-                        <HealthIndexCard
-                            isMobile={isMobile}
-                            title="Diabetes Index"
-                            value="11.4%"
-                            status="Critical"
-                            trend="Rising prevalence in urban & rural sectors."
-                            icon={Database}
-                            color="text-rose-400"
-                            source="ICMR-INDIAB"
-                            description="Tracks the prevalence of high blood sugar levels across the population."
-                            utility="Vital for preventing long-term complications like kidney failure, nerve damage, and vision loss."
-                        />
+                        <motion.div variants={staggerScale}>
+                            <HealthIndexCard
+                                isMobile={isMobile}
+                                title="Diabetes Index"
+                                value="11.4%"
+                                status="Critical"
+                                trend="Rising prevalence in urban & rural sectors."
+                                icon={Database}
+                                color="text-rose-400"
+                                source="ICMR-INDIAB"
+                                description="Tracks the prevalence of high blood sugar levels across the population."
+                                utility="Vital for preventing long-term complications like kidney failure, nerve damage, and vision loss."
+                            />
+                        </motion.div>
                         {/* 2. Cardiac Health Index */}
-                        <HealthIndexCard
-                            isMobile={isMobile}
-                            title="Cardiac Index"
-                            value="15.2%"
-                            status="Critical"
-                            trend="Leading cause of mortality nationwide."
-                            icon={HeartPulse}
-                            color="text-red-500"
-                            source="GBD Study"
-                            description="Monitors the rate of heart diseases, including heart attacks and hypertension."
-                            utility="Helps identify at-risk populations for early intervention to reduce sudden cardiac deaths."
-                        />
+                        <motion.div variants={staggerScale}>
+                            <HealthIndexCard
+                                isMobile={isMobile}
+                                title="Cardiac Index"
+                                value="15.2%"
+                                status="Critical"
+                                trend="Leading cause of mortality nationwide."
+                                icon={HeartPulse}
+                                color="text-red-500"
+                                source="GBD Study"
+                                description="Monitors the rate of heart diseases, including heart attacks and hypertension."
+                                utility="Helps identify at-risk populations for early intervention to reduce sudden cardiac deaths."
+                            />
+                        </motion.div>
                         {/* 3. Respiratory Health Index */}
-                        <HealthIndexCard
-                            isMobile={isMobile}
-                            title="Respiratory Index"
-                            value="High"
-                            status="Severe"
-                            trend="Seasonal spikes due to pollution & viral load."
-                            icon={Wind}
-                            color="text-sky-400"
-                            source="IDSP Network"
-                            description="Measures lung health trends, impacted by pollution, asthma, and infections."
-                            utility="Crucial for forecasting seasonal outbreaks (like flu) and managing air quality health risks."
-                        />
+                        <motion.div variants={staggerScale}>
+                            <HealthIndexCard
+                                isMobile={isMobile}
+                                title="Respiratory Index"
+                                value="High"
+                                status="Severe"
+                                trend="Seasonal spikes due to pollution & viral load."
+                                icon={Wind}
+                                color="text-sky-400"
+                                source="IDSP Network"
+                                description="Measures lung health trends, impacted by pollution, asthma, and infections."
+                                utility="Crucial for forecasting seasonal outbreaks (like flu) and managing air quality health risks."
+                            />
+                        </motion.div>
                         {/* 4. Renal Health Index */}
-                        <HealthIndexCard
-                            isMobile={isMobile}
-                            title="Renal Index"
-                            value="13.0%"
-                            status="High"
-                            trend="Correlated with diabetes & hypertension trends."
-                            icon={Droplets}
-                            color="text-blue-400"
-                            source="ISN Registry"
-                            description="Tracks chronic kidney disease (CKD) rates and kidney function decline."
-                            utility="Essential for planning dialysis infrastructure and detecting early-stage renal failure."
-                        />
+                        <motion.div variants={staggerScale}>
+                            <HealthIndexCard
+                                isMobile={isMobile}
+                                title="Renal Index"
+                                value="13.0%"
+                                status="High"
+                                trend="Correlated with diabetes & hypertension trends."
+                                icon={Droplets}
+                                color="text-blue-400"
+                                source="ISN Registry"
+                                description="Tracks chronic kidney disease (CKD) rates and kidney function decline."
+                                utility="Essential for planning dialysis infrastructure and detecting early-stage renal failure."
+                            />
+                        </motion.div>
                         {/* 5. Mental Health Index */}
-                        <HealthIndexCard
-                            isMobile={isMobile}
-                            title="Mental Health"
-                            value="10.6%"
-                            status="Moderate"
-                            trend="Increasing reported anxiety disorders."
-                            icon={Brain}
-                            color="text-purple-400"
-                            source="NMHS Survey"
-                            description="Assesses the prevalence of anxiety, depression, and other psychological conditions."
-                            utility="Guides the allocation of psychological support services and destigmatization efforts."
-                        />
+                        <motion.div variants={staggerScale}>
+                            <HealthIndexCard
+                                isMobile={isMobile}
+                                title="Mental Health"
+                                value="10.6%"
+                                status="Moderate"
+                                trend="Increasing reported anxiety disorders."
+                                icon={Brain}
+                                color="text-purple-400"
+                                source="NMHS Survey"
+                                description="Assesses the prevalence of anxiety, depression, and other psychological conditions."
+                                utility="Guides the allocation of psychological support services and destigmatization efforts."
+                            />
+                        </motion.div>
                     </div>
                 </motion.div>
 
@@ -768,7 +856,13 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 px-2 sm:px-0">
-                    <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card p-5 sm:p-6 relative hover:z-[45] transition-all duration-200">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ margin: "-100px" }}
+                        variants={slideInLeft}
+                        className="glass-card p-5 sm:p-6 relative hover:z-[45] transition-all duration-200"
+                    >
                         <div className="flex items-center justify-between mb-4 sm:mb-2">
                             <div>
                                 <div className="flex items-center gap-2">
@@ -838,7 +932,13 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                         </div>
                     </motion.div>
 
-                    <motion.div initial={{ x: 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="glass-card p-6 relative hover:z-[45] transition-all duration-200">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ margin: "-100px" }}
+                        variants={slideInRight}
+                        className="glass-card p-6 relative hover:z-[45] transition-all duration-200"
+                    >
                         <div className="flex items-center justify-between mb-2">
                             <div>
                                 <div className="flex items-center gap-2">
@@ -899,14 +999,26 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
 
 
                 {/* --- NEW SECTION: Environmental Health (Corrected Position) --- */}
-                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.32 }} className="mb-12">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={fadeSlideUp}
+                    className="mb-12"
+                >
                     <EnvironmentalHealth />
                 </motion.div>
 
                 {/* --- NEW SECTION: Resource Disparity (Respectful Presentation) --- */}
                 {
                     resourceData.length > 0 && (
-                        <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.35 }} className="mb-12">
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ margin: "-100px" }}
+                            variants={fadeSlideUp}
+                            className="mb-12"
+                        >
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="bg-emerald-500/20 p-2.5 rounded-xl border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
                                     <Users size={24} className="text-emerald-400" />
@@ -1021,29 +1133,58 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                 }
 
                 {/* --- NEW SECTION: Occupational Health --- */}
-                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.38 }} className="mb-12">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={fadeSlideUp}
+                    className="mb-12"
+                >
                     <OccupationalHealth />
                 </motion.div>
 
                 {/* --- NEW SECTION: SDOH --- */}
-                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.45 }} className="mb-12">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={fadeSlideUp}
+                    className="mb-12"
+                >
                     <SocialDeterminants />
                 </motion.div>
 
 
 
                 {/* --- NEW SECTION: Rare Diseases --- */}
-                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.52 }} className="mb-12">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={fadeSlideUp}
+                    className="mb-12"
+                >
                     <RareDisease />
                 </motion.div>
 
                 {/* --- NEW SECTION: State Health Profile --- */}
-                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.58 }} className="mb-12">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={fadeSlideUp}
+                    className="mb-12"
+                >
                     <StateHealthProfile />
                 </motion.div>
 
-                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
-                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={containerVariants}
+                >
+                    <motion.h2 variants={fadeSlideUp} className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
                         <span className="w-2 h-8 bg-gradient-to-b from-sky-400 to-purple-500 rounded-full block shadow-[0_0_10px_rgba(56,189,248,0.5)]"></span>
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">National Disease Burden</span>
                         <div className="group relative ml-2">
@@ -1053,7 +1194,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                             </div>
                         </div>
                         {searchTerm && (<span className="text-sm text-slate-400 font-normal ml-2">({filteredTrends.length} {filteredTrends.length === 1 ? 'result' : 'results'})</span>)}
-                    </h2>
+                    </motion.h2>
 
 
                     {filteredTrends.length === 0 ? (
@@ -1066,8 +1207,8 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                         <div className="space-y-16">
 
                             {/* 1. Acute Morbidity & General Clinical Burden */}
-                            <section>
-                                <div className="flex flex-col items-center text-center mb-10">
+                            <motion.section variants={containerVariants}>
+                                <motion.div variants={fadeSlideUp} className="flex flex-col items-center text-center mb-10">
                                     <div className="flex items-center gap-3 mb-2">
                                         <div className="p-2 bg-sky-500/10 rounded-lg border border-sky-500/20">
                                             <Activity size={20} className="text-sky-400" />
@@ -1076,17 +1217,19 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                     </div>
                                     <p className="text-sm text-slate-400 font-medium">(Highest national case volumes & primary care diagnostics)</p>
                                     <div className="w-48 h-1 bg-gradient-to-r from-transparent via-sky-500/30 to-transparent mt-4"></div>
-                                </div>
+                                </motion.div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {filteredTrends.filter(d => d.segment === 'High-Burden').map((disease, index) => (
-                                        <DiseaseCard key={index} disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                        <motion.div key={index} variants={staggerScale}>
+                                            <DiseaseCard disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                        </motion.div>
                                     ))}
                                 </div>
-                            </section>
+                            </motion.section>
 
                             {/* 2. Epidemic-Prone & Outbreak Surveillance */}
-                            <section>
-                                <div className="flex flex-col items-center text-center mb-10">
+                            <motion.section variants={containerVariants}>
+                                <motion.div variants={fadeSlideUp} className="flex flex-col items-center text-center mb-10">
                                     <div className="flex items-center gap-3 mb-2">
                                         <div className="p-2 bg-orange-500/10 rounded-lg border border-orange-500/20">
                                             <TrendingUp size={20} className="text-orange-400" />
@@ -1095,17 +1238,19 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                     </div>
                                     <p className="text-sm text-slate-400 font-medium">(Post-Monsoon / Winter Peaks & Seasonal Transmission)</p>
                                     <div className="w-48 h-1 bg-gradient-to-r from-transparent via-orange-500/30 to-transparent mt-4"></div>
-                                </div>
+                                </motion.div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {filteredTrends.filter(d => d.segment === 'Seasonal').map((disease, index) => (
-                                        <DiseaseCard key={index} disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                        <motion.div key={index} variants={staggerScale}>
+                                            <DiseaseCard disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                        </motion.div>
                                     ))}
                                 </div>
-                            </section>
+                            </motion.section>
 
                             {/* 3. Vaccine-Preventable Diseases (VPDs) */}
-                            <section>
-                                <div className="flex flex-col items-center text-center mb-10">
+                            <motion.section variants={containerVariants}>
+                                <motion.div variants={fadeSlideUp} className="flex flex-col items-center text-center mb-10">
                                     <div className="flex items-center gap-3 mb-2">
                                         <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
                                             <ShieldCheck size={20} className="text-emerald-400" />
@@ -1114,17 +1259,19 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                     </div>
                                     <p className="text-sm text-slate-400 font-medium">(Coverage Dependent Reporting & Immunization Targets)</p>
                                     <div className="w-48 h-1 bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent mt-4"></div>
-                                </div>
+                                </motion.div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {filteredTrends.filter(d => d.segment === 'Vaccine-Preventable').map((disease, index) => (
-                                        <DiseaseCard key={index} disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                        <motion.div key={index} variants={staggerScale}>
+                                            <DiseaseCard disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                        </motion.div>
                                     ))}
                                 </div>
-                            </section>
+                            </motion.section>
 
                             {/* 4. Chronic & Non-Communicable Primary Indicators */}
-                            <section>
-                                <div className="flex flex-col items-center text-center mb-10">
+                            <motion.section variants={containerVariants}>
+                                <motion.div variants={fadeSlideUp} className="flex flex-col items-center text-center mb-10">
                                     <div className="flex items-center gap-3 mb-2">
                                         <div className="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
                                             <Layers size={20} className="text-blue-400" />
@@ -1133,13 +1280,15 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
                                     </div>
                                     <p className="text-sm text-slate-400 font-medium">(Long-term Prevalence, Surveillance Notification & NCD Metrics)</p>
                                     <div className="w-48 h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent mt-4"></div>
-                                </div>
+                                </motion.div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {filteredTrends.filter(d => d.segment === 'Chronic').map((disease, index) => (
-                                        <DiseaseCard key={index} disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                        <motion.div key={index} variants={staggerScale}>
+                                            <DiseaseCard disease={disease} onClick={() => setSelectedDisease(disease)} getRiskLevel={getRiskLevel} />
+                                        </motion.div>
                                     ))}
                                 </div>
-                            </section>
+                            </motion.section>
                         </div>
                     )}
                 </motion.div>

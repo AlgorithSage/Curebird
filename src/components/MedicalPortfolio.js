@@ -18,7 +18,51 @@ import HeroSection from './HeroSection';
 
 
 const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar, onNavigate, onSubscribeClick }) => {
+    // Premium Animation Variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.2
+            }
+        }
+    };
 
+    const fadeSlideUp = {
+        hidden: { opacity: 0, y: 100, filter: "blur(10px)" },
+        visible: {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+        }
+    };
+
+    const staggerScale = {
+        hidden: { opacity: 0, scale: 0.8, y: 50 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                damping: 15,
+                stiffness: 100
+            }
+        }
+    };
+
+    const blurReveal = {
+        hidden: { opacity: 0, filter: "blur(20px)", scale: 0.95 },
+        visible: {
+            opacity: 1,
+            filter: "blur(0px)",
+            scale: 1,
+            transition: { duration: 1, ease: "easeOut" }
+        }
+    };
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -229,14 +273,33 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                     {isLoading ? <SkeletonDashboard /> : (
                         <>
                             {/* Standard Stat Cards for Dashboard Overview */}
-                            <div ref={dashboardRef} className="grid grid-cols-1 sm:grid-cols-3 gap-6 scroll-mt-24 px-2 sm:px-6">
-                                <StatCard icon={<FileText size={24} className="text-black" />} label="Total Records" value={records.length} color="bg-yellow-500" />
-                                <StatCard icon={<ShieldCheck size={24} className="text-black" />} label="Identity Verified" value="Active" color="bg-amber-400" />
-                                <StatCard icon={<Calendar size={24} className="text-black" />} label="Last Visit" value={lastVisit} color="bg-yellow-600" />
-                            </div>
-                            <div className="mt-8 px-2 sm:px-6">
+                            <motion.div
+                                ref={dashboardRef}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ margin: "-100px" }}
+                                variants={containerVariants}
+                                className="grid grid-cols-1 sm:grid-cols-3 gap-6 scroll-mt-24 px-2 sm:px-6"
+                            >
+                                <motion.div variants={staggerScale}>
+                                    <StatCard icon={<FileText size={24} className="text-black" />} label="Total Records" value={records.length} color="bg-yellow-500" />
+                                </motion.div>
+                                <motion.div variants={staggerScale}>
+                                    <StatCard icon={<ShieldCheck size={24} className="text-black" />} label="Identity Verified" value="Active" color="bg-amber-400" />
+                                </motion.div>
+                                <motion.div variants={staggerScale}>
+                                    <StatCard icon={<Calendar size={24} className="text-black" />} label="Last Visit" value={lastVisit} color="bg-yellow-600" />
+                                </motion.div>
+                            </motion.div>
+                            <motion.div
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ margin: "-100px" }}
+                                variants={fadeSlideUp}
+                                className="mt-8 px-2 sm:px-6"
+                            >
                                 <RecordsChart data={dashboardData} />
-                            </div>
+                            </motion.div>
 
                         </>
                     )}
@@ -260,7 +323,13 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                     ) : (
                         <>
                             {/* Opaque Amber & High Visibility Category Grid */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 px-2 sm:px-6">
+                            <motion.div
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ margin: "-100px" }}
+                                variants={containerVariants}
+                                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 px-2 sm:px-6"
+                            >
                                 {[
                                     { id: 'prescription', label: 'Prescriptions', icon: <Pill size={32} />, count: records.filter(r => r.type === 'prescription').length },
                                     { id: 'test_report', label: 'Test Reports', icon: <FileText size={32} />, count: records.filter(r => r.type === 'test_report').length },
@@ -308,7 +377,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                         <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                     </motion.div>
                                 ))}
-                            </div>
+                            </motion.div>
 
                             {/* Collapsible Section - Only shows when filter is active */}
                             <AnimatePresence>
