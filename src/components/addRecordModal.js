@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { API_BASE_URL } from '../config'; // Import API wrapper
@@ -188,72 +189,124 @@ const AddRecordModal = ({ closeModal, userId }) => {
     };
 
 
+    const modalVariants = {
+        hidden: { opacity: 0, scale: 0.7, y: 200, rotateX: 20 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            rotateX: 0,
+            transition: {
+                type: "spring",
+                damping: 22,
+                stiffness: 180,
+                duration: 0.7
+            }
+        },
+        exit: { opacity: 0, scale: 0.8, y: 100, transition: { duration: 0.3 } }
+    };
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.08,
+                delayChildren: 0.3
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 50, filter: "blur(10px)", scale: 0.9 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            scale: 1,
+            transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
+        }
+    };
+
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
-            <div className="bg-white rounded-t-2xl sm:rounded-lg shadow-2xl p-6 sm:p-8 w-full max-w-2xl transform transition-all max-h-[92vh] overflow-y-auto">
-                <h2 className="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">Add New Medical Record</h2>
-                <form onSubmit={handleFormSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="relative">
-                            <input type="date" value={date} onChange={e => setDate(e.target.value)} required className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
-                            {isAutofilling && <span className="absolute right-2 top-2 text-xs text-blue-500 font-bold">AI...</span>}
-                        </div>
-                        <select value={recordType} onChange={e => setRecordType(e.target.value)} className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option>Prescription</option>
-                            <option>Blood Test</option>
-                            <option>X-Ray</option>
-                            <option>ECG</option>
-                            <option>Other</option>
-                        </select>
-                        <div className="relative">
-                            <input type="text" placeholder="Doctor's Name" value={doctor} onChange={e => setDoctor(e.target.value)} required className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
-                        </div>
-                        <div className="relative">
-                            <input type="text" placeholder="Details / Diagnosis" value={details} onChange={e => setDetails(e.target.value)} className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
-                        </div>
-                    </div>
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
+            >
+                <motion.div
+                    variants={modalVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    className="bg-white rounded-t-2xl sm:rounded-lg shadow-2xl p-6 sm:p-8 w-full max-w-2xl transform max-h-[92vh] overflow-y-auto"
+                >
+                    <motion.h2 variants={itemVariants} className="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">Add New Medical Record</motion.h2>
+                    <form onSubmit={handleFormSubmit}>
+                        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <motion.div variants={itemVariants} className="relative">
+                                <input type="date" value={date} onChange={e => setDate(e.target.value)} required className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
+                                {isAutofilling && <span className="absolute right-2 top-2 text-xs text-blue-500 font-bold">AI...</span>}
+                            </motion.div>
+                            <motion.select variants={itemVariants} value={recordType} onChange={e => setRecordType(e.target.value)} className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Prescription</option>
+                                <option>Blood Test</option>
+                                <option>X-Ray</option>
+                                <option>ECG</option>
+                                <option>Other</option>
+                            </motion.select>
+                            <motion.div variants={itemVariants} className="relative">
+                                <input type="text" placeholder="Doctor's Name" value={doctor} onChange={e => setDoctor(e.target.value)} required className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
+                            </motion.div>
+                            <motion.div variants={itemVariants} className="relative">
+                                <input type="text" placeholder="Details / Diagnosis" value={details} onChange={e => setDetails(e.target.value)} className={`shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 ${isAutofilling ? 'animate-pulse bg-blue-50' : ''}`} />
+                            </motion.div>
+                        </motion.div>
 
-                    <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="file-upload">
-                            Upload Document (PDF, IMG, etc.)
-                        </label>
-                        <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-all ${isAutofilling ? 'border-blue-400 bg-blue-50' : 'border-gray-300'}`}>
-                            <div className="space-y-1 text-center">
-                                {isAutofilling ? (
-                                    <div className="flex flex-col items-center py-4">
-                                        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
-                                        <p className="text-sm text-blue-600 font-bold animate-pulse">Analyzing Document...</p>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                        <div className="flex text-sm text-gray-600">
-                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                                <span>Upload a file</span>
-                                                <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
-                                            </label>
-                                            <p className="pl-1">or drag and drop</p>
+                        <motion.div variants={itemVariants} initial="hidden" animate="visible" className="mb-6">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="file-upload">
+                                Upload Document (PDF, IMG, etc.)
+                            </label>
+                            <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-all ${isAutofilling ? 'border-blue-400 bg-blue-50' : 'border-gray-300'}`}>
+                                <div className="space-y-1 text-center">
+                                    {isAutofilling ? (
+                                        <div className="flex flex-col items-center py-4">
+                                            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+                                            <p className="text-sm text-blue-600 font-bold animate-pulse">Analyzing Document...</p>
                                         </div>
-                                        {file && <p className="text-xs text-gray-500">{file.name}</p>}
-                                    </>
-                                )}
+                                    ) : (
+                                        <>
+                                            <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                            <div className="flex text-sm text-gray-600">
+                                                <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                                    <span>Upload a file</span>
+                                                    <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
+                                                </label>
+                                                <p className="pl-1">or drag and drop</p>
+                                            </div>
+                                            {file && <p className="text-xs text-gray-500">{file.name}</p>}
+                                        </>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </motion.div>
 
-                    {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
+                        {error && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-500 text-xs italic mb-4">{error}</motion.p>}
 
-                    <div className="flex flex-col sm:flex-row items-center justify-end space-y-3 sm:space-y-0 sm:space-x-4">
-                        <button type="button" onClick={closeModal} className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition-colors text-sm uppercase tracking-wide">
-                            Cancel
-                        </button>
-                        <button type="submit" disabled={isUploading || isAutofilling} className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] text-sm uppercase tracking-wide shadow-lg shadow-blue-500/20">
-                            {isUploading ? `Uploading... ${uploadProgress}%` : 'Add Record'}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                        <motion.div variants={itemVariants} initial="hidden" animate="visible" className="flex flex-col sm:flex-row items-center justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+                            <button type="button" onClick={closeModal} className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition-colors text-sm uppercase tracking-wide">
+                                Cancel
+                            </button>
+                            <button type="submit" disabled={isUploading || isAutofilling} className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] text-sm uppercase tracking-wide shadow-lg shadow-blue-500/20">
+                                {isUploading ? `Uploading... ${uploadProgress}%` : 'Add Record'}
+                            </button>
+                        </motion.div>
+                    </form>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
     );
 };
 

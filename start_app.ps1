@@ -6,5 +6,5 @@ Write-Host "Frontend: http://localhost:3000"
 Write-Host "--------------------------------"
 
 # Use npx concurrently to pipe both outputs to this shell
-# We use 'call' for activate.bat to ensure it runs in the cmd chain properly if needed, though && usually works.
-npx -y concurrently -k -n "BACKEND,WebAPP" -c "bgBlue.bold,bgGreen.bold" "cd backend && venv\\Scripts\\python.exe run.py" "npm start"
+# We point to the venv inside the backend folder as requested.
+npx -y concurrently -k -n "BACKEND,WebAPP" -c "bgBlue.bold,bgGreen.bold" "backend\venv\Scripts\python.exe backend\run.py" "npm start"
