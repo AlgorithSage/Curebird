@@ -19,10 +19,11 @@
 ### 2. Cure Analyzer 🔬
 **Purpose**: A tool to digitize and interpret complex medical documents (prescriptions, lab reports).
 
-**The Two-Step AI Process**:
-1.  **Step 1: Visual Language Model (VLM) Extraction**
-    *   The uploaded image is processed by **Groq's Vision Model** (Model: `meta-llama/llama-4-scout-17b-16e-instruct`).
-    *   It performs OCR (Optical Character Recognition) and Structure Extraction simultaneously to identify medications, dosages, and clinical conditions in strict JSON format.
+**The Two-Step AI Pipeline**:
+
+1.  **Step 1: Visual Language Model (VLM)**
+    *   **Model**: `meta-llama/llama-4-scout-17b-16e-instruct` (via Groq)
+    *   **Function**: Performs simultaneous OCR and Structure Extraction to identify medications, dosages, and clinical conditions in strict JSON format.
 2.  **Step 2: Intelligent Summarization**
     *   The raw JSON data is fed into a **Llama 3.1 8B** model via Groq.
     *   A specialized System Prompt acts as a "Medical Interpreter," translating technical jargon into a customized, empathetic summary for the patient (e.g., explaining that "Hypertension" means "High Blood Pressure").
