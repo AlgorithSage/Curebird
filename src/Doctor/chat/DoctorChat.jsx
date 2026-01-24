@@ -421,18 +421,18 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     return (
         <div className="flex h-[calc(100vh-6rem)] gap-6 animate-in fade-in duration-500">
             {/* Left: Chat Sidebar */}
-            <div className="w-80 flex flex-col glass-card p-0 overflow-hidden border border-amber-500/10">
+            <div className="w-80 flex flex-col bg-[#0c0a09] border-r border-white/5 overflow-hidden rounded-l-[2rem] border-y border-l border-amber-500/10">
                 {/* Header */}
-                <div className="p-6 border-b border-white/5 bg-amber-500/5">
-                    <h2 className="text-xl font-bold text-white mb-4">Messages</h2>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-500" size={16} />
+                <div className="p-6 border-b border-white/5 bg-transparent">
+                    <h2 className="text-xl font-bold text-white mb-6 tracking-tight">Messages</h2>
+                    <div className="relative group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-500 group-focus-within:text-amber-500 transition-colors" size={16} />
                         <input
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search patients..."
-                            className="w-full bg-[#0c0a09] border border-stone-800 rounded-xl py-2 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 transition-colors placeholder:text-stone-700"
+                            className="w-full bg-[#1c1917] border border-white/5 rounded-full py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all placeholder:text-stone-600 shadow-inner"
                         />
                     </div>
                 </div>
@@ -444,11 +444,15 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             <div
                                 key={chat.id}
                                 onClick={() => setActiveChat(chat.id)}
-                                className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border group/item ${activeChat === chat.id
-                                    ? 'bg-amber-500/10 border-amber-500/20 shadow-[inset_0_0_20px_rgba(245,158,11,0.05)]'
-                                    : 'bg-transparent border-transparent hover:bg-white/5'
+                                className={`p-4 rounded-xl cursor-pointer transition-all duration-300 group/item relative overflow-hidden ${activeChat === chat.id
+                                    ? 'bg-gradient-to-r from-amber-500/10 to-transparent'
+                                    : 'hover:bg-white/5'
                                     }`}
                             >
+                                {/* Active Indicator Bar */}
+                                {activeChat === chat.id && (
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-amber-500 rounded-r-full shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
+                                )}
                                 <div className="flex justify-between items-start mb-1">
                                     <div className="flex items-center gap-3">
                                         <div
@@ -486,9 +490,12 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
             </div>
 
             {/* Right: Main Chat Window */}
-            <div className="flex-1 flex flex-col glass-card p-0 overflow-hidden border border-amber-500/10 bg-[#0c0a09] relative animated-border">
+            <div className="flex-1 flex flex-col bg-[#050402] relative overflow-hidden rounded-r-[2rem] border border-amber-500/20 shadow-2xl">
+                {/* Texture Overlay */}
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.08),_transparent_60%)] pointer-events-none"></div>
                 {/* Chat Header */}
-                <div className="p-4 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-amber-900/10 to-transparent">
+                <div className="p-4 border-b border-amber-500/10 flex justify-between items-center bg-white/[0.02] backdrop-blur-sm relative z-10">
                     {activeChatData ? (
                         <div className="flex items-center gap-4">
                             <div
@@ -634,12 +641,12 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 </div>
 
                 {/* Messages Area */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-900 via-[#0c0a09] to-[#0c0a09]">
+                <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar relative z-10">
                     {messages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender === 'doctor' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[70%] rounded-2xl p-4 shadow-lg relative group ${msg.sender === 'doctor'
-                                ? 'bg-amber-500 text-black rounded-tr-none'
-                                : 'bg-stone-800 text-stone-200 border border-white/5 rounded-tl-none'
+                            <div className={`max-w-[70%] rounded-2xl p-5 shadow-lg relative group transition-all duration-200 ${msg.sender === 'doctor'
+                                ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-tr-sm shadow-amber-900/20'
+                                : 'bg-slate-800/60 backdrop-blur-md text-slate-100 border border-white/10 rounded-tl-sm'
                                 }`}>
                                 {/* Message Text */}
                                 {msg.type === 'file' ? (
@@ -686,8 +693,8 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 </div>
 
                 {/* Input Area */}
-                <div className="p-4 border-t border-white/5 bg-stone-950/50">
-                    <form onSubmit={handleSendMessage} className="flex gap-4 items-center">
+                <div className="p-6 bg-transparent relative z-20">
+                    <form onSubmit={handleSendMessage} className="flex gap-4 items-end">
                         <input 
                             type="file" 
                             ref={fileInputRef} 
@@ -698,17 +705,18 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             type="button" 
                             onClick={() => fileInputRef.current?.click()}
                             disabled={isUploading}
-                            className={`p-3 rounded-full hover:bg-white/5 text-stone-400 hover:text-amber-500 transition-colors ${isUploading ? 'animate-pulse text-amber-500' : ''}`}
+                            className={`p-3.5 rounded-full bg-[#1c1917] hover:bg-[#292524] text-stone-400 hover:text-amber-500 border border-white/5 transition-all shadow-lg ${isUploading ? 'animate-pulse text-amber-500' : ''}`}
                         >
                             <Paperclip size={20} />
                         </button>
-                        <div className="flex-1 bg-stone-900/50 border border-white/5 rounded-2xl flex items-center px-4 py-1 focus-within:border-amber-500/30 transition-colors">
+                        
+                        <div className="flex-1 bg-[#0a0805] border border-white/10 rounded-2xl flex items-center px-4 py-1.5 focus-within:border-amber-500/50 focus-within:ring-1 focus-within:ring-amber-500/20 transition-all shadow-inner">
                             <input
                                 type="text"
                                 value={messageInput}
                                 onChange={(e) => setMessageInput(e.target.value)}
                                 placeholder="Type a message..."
-                                className="w-full bg-transparent border-none text-white focus:ring-0 py-3 text-sm placeholder:text-stone-600"
+                                className="w-full bg-transparent border-none text-white focus:ring-0 py-3 text-sm placeholder:text-stone-600 font-medium"
                             />
                             {/* Voice Recording Button */}
                             <button 
@@ -717,15 +725,16 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                 className={`ml-2 p-2 rounded-full transition-all ${isRecording ? 'text-red-500 animate-pulse bg-red-500/10 ring-2 ring-red-500/50' : 'text-stone-500 hover:text-white'}`}
                                 title={isRecording ? "Click to Stop & Send" : "Click to Record Voice Note"}
                             >
-                                {isRecording ? <div className="w-[18px] h-[18px] bg-current rounded-sm" /> : <Mic size={18} />}
+                                {isRecording ? <div className="w-[18px] h-[18px] bg-current rounded-sm" /> : <Mic size={20} />}
                             </button>
                         </div>
+
                         <button
                             type="submit"
                             disabled={!messageInput.trim()}
-                            className="p-3 bg-amber-500 hover:bg-amber-400 text-black rounded-xl transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)] disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
+                            className="p-3.5 bg-amber-500 hover:bg-amber-400 text-black rounded-full transition-all shadow-[0_4px_20px_rgba(245,158,11,0.4)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-110 active:scale-95"
                         >
-                            <Send size={20} />
+                            <Send size={22} strokeWidth={2.5} />
                         </button>
                     </form>
                 </div>
