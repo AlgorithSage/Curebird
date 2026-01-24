@@ -27,7 +27,7 @@ catch {
 
 # Check authentication
 Write-Host "📋 Checking authentication..." -ForegroundColor Blue
-$authAccount = gcloud auth list --filter=status:ACTIVE --format="value(account)" 2>$null
+$authAccount = gcloud auth list --filter="status:ACTIVE" --format='value(account)' 2>$null
 if (-not $authAccount) {
     Write-Host "❌ Not authenticated. Running 'gcloud auth login'..." -ForegroundColor Red
     gcloud auth login
