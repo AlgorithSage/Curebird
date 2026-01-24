@@ -517,8 +517,8 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                 <MessageSquare size={48} className="text-amber-500 animate-pulse-slow" />
                             </div>
                             <h2 className="text-3xl font-bold text-amber-50 mb-3 tracking-tight">Clinical Communication Hub</h2>
-                            <p className="text-stone-500 max-w-md mb-12 text-sm leading-relaxed">
-                                Securely connect with your patients. Monitor vitals, issue prescriptions, and manage care plans in real-time.
+                            <p className="text-stone-500 max-w-2xl mb-12 text-sm leading-relaxed px-8">
+                                Welcome to your centralized telemedicine command center. From this dashboard, you can securely message patients, instantly request and monitor live vital signs, generate digitally signed e-prescriptions, and issue priority clinical alerts. Use voice notes for detailed care instructions and maintain a comprehensive, real-time record of patient interactions.
                             </p>
 
                             {/* Feature Grid */}
