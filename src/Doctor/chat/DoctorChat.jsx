@@ -680,10 +680,10 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                     <p className={`text-sm ${msg.sender === 'doctor' ? 'font-medium' : 'font-normal'}`}>{msg.text}</p>
                                 )}
 
-                                {/* Timestamp */}
-                                <span className={`text-[10px] absolute -bottom-5 ${msg.sender === 'doctor' ? 'right-0 text-stone-500' : 'left-0 text-stone-600'} opacity-0 group-hover:opacity-100 transition-opacity`}>
+                                {/* Timestamp Footer */}
+                                <div className={`text-[11px] font-bold mt-1.5 text-right tracking-wide ${msg.sender === 'doctor' ? 'text-black' : 'text-amber-500'}`}>
                                     {msg.time}
-                                </span>
+                                </div>
                             </div>
                         </div>
                     ))}
