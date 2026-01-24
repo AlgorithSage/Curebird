@@ -272,12 +272,12 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
 
                     {/* Tiers Grid - Vertical Stack on Mobile / Grid on Desktop */}
                     <div className="flex flex-col md:grid md:grid-cols-3 gap-4 md:gap-6 mb-8 px-1 md:px-0">
-                        {tiers.map((tier) => {
+                        {tiers.map((tier, idx) => {
                             const Icon = tier.icon;
                             const isSelected = selectedTier === tier.name;
 
                             return (
-                                <div
+                                <motion.div
                                     key={tier.name}
                                     onClick={() => setSelectedTier(tier.name)}
                                     // Reverted to standard vertical stack for logic clarity and clean mobile UI
@@ -285,6 +285,15 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                                         ? `bg-gradient-to-br from-slate-900 to-black border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.2)] z-10 scale-[1.02] md:scale-100`
                                         : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
                                         }`}
+                                    initial={{ opacity: 0, y: 100, rotateY: 10 }}
+                                    whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+                                    viewport={{ margin: "-100px" }}
+                                    transition={{
+                                        type: "spring",
+                                        damping: 20,
+                                        stiffness: 100,
+                                        delay: idx * 0.15
+                                    }}
                                 >
 
 
@@ -322,7 +331,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                                     >
                                         {isSelected ? 'Selected' : 'Choose Plan'}
                                     </button>
-                                </div>
+                                </motion.div>
                             );
                         })}
                     </div>
@@ -356,7 +365,13 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                     <div className="text-center pb-8 space-y-6">
 
                         {/* DU Hacks Disclaimer */}
-                        <div className="mx-auto max-w-sm bg-gradient-to-r from-amber-500/10 to-amber-900/10 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ margin: "-50px" }}
+                            transition={{ duration: 0.5 }}
+                            className="mx-auto max-w-sm bg-gradient-to-r from-amber-500/10 to-amber-900/10 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm"
+                        >
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <Crown size={14} className="text-amber-500" />
                                 <p className="text-[10px] font-black uppercase tracking-widest text-amber-200">
@@ -376,7 +391,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                             >
                                 Use Code
                             </button>
-                        </div>
+                        </motion.div>
                         {!showPromo ? (
                             <button
                                 onClick={() => setShowPromo(true)}

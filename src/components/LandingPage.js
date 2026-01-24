@@ -1,5 +1,5 @@
 import React from 'react';
-import {  HeartPulse, LogIn, Dna, Pill, Activity, Globe, ShieldCheck, Zap, ArrowRight, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, MessageSquare, Microscope, Crown  } from './Icons';
+import { HeartPulse, LogIn, Dna, Pill, Activity, Globe, ShieldCheck, Zap, ArrowRight, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, MessageSquare, Microscope, Crown } from './Icons';
 import { motion } from 'framer-motion';
 import SEO from './SEO';
 
@@ -53,13 +53,51 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    const sectionVariants = {
+        hidden: { opacity: 0, y: 150, filter: "blur(10px)" },
+        visible: {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
+        }
+    };
+
     const textVariants = {
-        hidden: { opacity: 0, y: 30 },
+        hidden: { opacity: 0, y: 60, filter: "blur(8px)" },
         visible: (i) => ({
             opacity: 1,
             y: 0,
-            transition: { delay: i * 0.3, duration: 0.8, ease: "easeOut" }
+            filter: "blur(0px)",
+            transition: { delay: i * 0.2, duration: 1, ease: "easeOut" }
         })
+    };
+
+    const staggerContainer = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.15,
+                delayChildren: 0.1
+            }
+        }
+    };
+
+    const cardVariants = {
+        hidden: { opacity: 0, y: 120, scale: 0.8, filter: "blur(4px)" },
+        visible: {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            transition: {
+                type: "spring",
+                damping: 20,
+                stiffness: 100,
+                duration: 0.8
+            }
+        }
     };
 
     return (
@@ -90,10 +128,6 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                     {/* Logo & Title */}
                     <motion.div custom={0} variants={textVariants} className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                         <div className="relative w-40 h-40 sm:w-52 sm:h-52 flex items-center justify-center shrink-0">
-
-
-
-                            
                             <img src={CureBirdLogo} alt="CureBird Logo" className="relative z-70 w-full h-full object-contain drop-shadow-[0_0_20px_rgba(245,158,11,0.8)]" />
                         </div>
                         <h1 className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tight text-center sm:text-left">
@@ -132,10 +166,16 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
             </header>
 
             {/* Main Content Area: Authority & Depth */}
-            <main className="relative z-10">
+            <main className="relative z-10 w-full overflow-hidden">
 
                 {/* 1. KEY VALUE PROPOSITION (H2) */}
-                <section className="py-24 px-6 max-w-7xl mx-auto">
+                <motion.section
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={sectionVariants}
+                    className="py-24 px-6 max-w-7xl mx-auto"
+                >
                     <div className="text-center mb-20">
                         <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-6">
                             Why Digitalize Your Medical History?
@@ -145,7 +185,10 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-10">
+                    <motion.div
+                        variants={staggerContainer}
+                        className="grid md:grid-cols-3 gap-10"
+                    >
                         {[
                             {
                                 icon: <ShieldCheck size={48} className="text-emerald-400" />,
@@ -163,25 +206,38 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 desc: "Whether it's a handwritten note from a local clinic or a DICOM file from a major hospital, CureBird creates a unified, graphable patient history accessible globally."
                             }
                         ].map((feature, idx) => (
-                            <article key={idx} className="glass-card">
+                            <motion.article
+                                key={idx}
+                                variants={cardVariants}
+                                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                                className="glass-card transform transition-all duration-300"
+                            >
                                 <div className="mb-8 p-5 rounded-2xl bg-slate-900 inline-block shadow-lg shadow-black/50">{feature.icon}</div>
                                 <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
                                 <p className="text-slate-400 text-lg leading-relaxed">{feature.desc}</p>
-                            </article>
+                            </motion.article>
                         ))}
-                    </div>
-                </section>
+                    </motion.div>
+                </motion.section>
 
                 {/* 2. HOW IT WORKS (H2) */}
-                <section className="py-24 px-6">
+                <motion.section
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    className="py-24 px-6"
+                >
                     <div className="max-w-7xl mx-auto">
-                        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-16 text-slate-100">
+                        <motion.h2
+                            variants={sectionVariants}
+                            className="text-3xl sm:text-4xl font-bold text-center mb-16 text-slate-100"
+                        >
                             The CureBird Ecosystem
-                        </h2>
+                        </motion.h2>
 
                         <div className="grid lg:grid-cols-2 gap-16 items-center">
-                            <div className="space-y-12">
-                                <article className="flex gap-6 group">
+                            <motion.div variants={staggerContainer} className="space-y-12">
+                                <motion.article variants={cardVariants} className="flex gap-6 group">
                                     <div className="text-5xl font-black text-amber-500/80 group-hover:text-amber-400 transition-colors drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">01</div>
                                     <div>
                                         <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Create Your Digital Twin</h3>
@@ -189,9 +245,9 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                             Sign up in seconds. Build a comprehensive medical profile that includes your allergies, surgeries, and family history. This baseline data helps our AI tailor its monitoring specifically to your genetic predispositions.
                                         </p>
                                     </div>
-                                </article>
+                                </motion.article>
 
-                                <article className="flex gap-6 group">
+                                <motion.article variants={cardVariants} className="flex gap-6 group">
                                     <div className="text-5xl font-black text-amber-500/80 group-hover:text-amber-400 transition-colors drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">02</div>
                                     <div>
                                         <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Zero-Entry Digitization</h3>
@@ -199,9 +255,9 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                             Nobody likes typing. Just snap a photo of your prescription or upload a PDF lab report. Our **OCR & NLP engine** instantly extracts values (like HbA1c, Lipid Profile) and plots them on interactive charts.
                                         </p>
                                     </div>
-                                </article>
+                                </motion.article>
 
-                                <article className="flex gap-6 group">
+                                <motion.article variants={cardVariants} className="flex gap-6 group">
                                     <div className="text-5xl font-black text-amber-500/80 group-hover:text-amber-400 transition-colors drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">03</div>
                                     <div>
                                         <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Doctor Collaboration</h3>
@@ -209,11 +265,17 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                             Visiting a specialist? Generate a temporary "Share Link" or QR code. The doctor gets instant, read-only access to your relevant history without needing to install any app.
                                         </p>
                                     </div>
-                                </article>
-                            </div>
+                                </motion.article>
+                            </motion.div>
 
                             {/* Visual Representation */}
-                            <div className="relative h-[600px] w-full bg-slate-800 rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl">
+                            <motion.div
+                                variants={{
+                                    hidden: { opacity: 0, x: 50 },
+                                    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } }
+                                }}
+                                className="relative h-[600px] w-full bg-slate-800 rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl"
+                            >
                                 <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-slate-900 to-black" />
                                 <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
                                     <Activity size={180} className="text-amber-500/80 mb-8 animate-pulse drop-shadow-[0_0_50px_rgba(245,158,11,0.5)]" />
@@ -222,25 +284,39 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                         Tracking <span className="text-emerald-400">Health Metrics</span>, <span className="text-blue-400">Disease Risks</span>, and <span className="text-purple-400">Vital Trends</span> via <span className="text-slate-200 font-semibold">AI-powered medical profiling</span>.
                                     </p>
                                 </div>
-                            </div>
+                            </motion.div>
                         </div>
                     </div>
-                </section>
+                </motion.section>
 
                 {/* 3. CORE INTELLIGENCE MODULES (New Promotional Section) */}
-                <section className="py-24 px-6 max-w-7xl mx-auto relative">
+                <motion.section
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    className="py-24 px-6 max-w-7xl mx-auto relative"
+                >
                     <div className="absolute inset-0 bg-blue-500/5 blur-[100px] rounded-full pointer-events-none"></div>
 
                     <div className="text-center mb-20 relative z-10">
-                        <h2 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">
+                        <motion.h2
+                            variants={sectionVariants}
+                            className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]"
+                        >
                             Power Under the Hood
-                        </h2>
-                        <p className="text-slate-400 text-xl max-w-2xl mx-auto">
+                        </motion.h2>
+                        <motion.p
+                            variants={sectionVariants}
+                            className="text-slate-400 text-xl max-w-2xl mx-auto"
+                        >
                             CureBird isn't just an app; it's a <span className="text-white font-bold">Quad-Core AI Feature System</span> designed to act as your primary health defense system.
-                        </p>
+                        </motion.p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-8 relative z-10">
+                    <motion.div
+                        variants={staggerContainer}
+                        className="grid md:grid-cols-2 gap-8 relative z-10"
+                    >
                         {[
                             {
                                 title: "CureAnalyzer™",
@@ -275,7 +351,12 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 bg: "bg-purple-500/10"
                             }
                         ].map((item, idx) => (
-                            <div key={idx} className="group relative">
+                            <motion.div
+                                key={idx}
+                                variants={cardVariants}
+                                whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
+                                className="group relative"
+                            >
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
                                 <div className={`glass-card h-full p-8 flex flex-col items-start gap-6 hover:border-opacity-100 transition-all duration-300 ${item.color}`}>
                                     <div className={`p-4 rounded-2xl ${item.bg} border border-white/5 shadow-[0_0_30px_rgba(0,0,0,0.3)] group-hover:scale-110 transition-transform duration-500`}>
@@ -292,13 +373,19 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                         LEARN MORE <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
-                    </div>
-                </section>
+                    </motion.div>
+                </motion.section>
 
                 {/* 3. DEEP DIVE CONTENT (H2 -> H3) - For SEO Authority */}
-                <section className="py-24 px-6 max-w-4xl mx-auto text-slate-300 space-y-12">
+                <motion.section
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    variants={sectionVariants}
+                    className="py-24 px-6 max-w-4xl mx-auto text-slate-300 space-y-12"
+                >
                     <div className="prose prose-invert prose-lg max-w-none">
                         <h2 className="text-3xl font-bold text-white mb-6">Redefining Personal Health Records (PHR) in India</h2>
                         <p className="text-lg leading-8 text-slate-400">
@@ -315,20 +402,34 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                             We don't replace doctors; we give them superpowers. Our AI engine scans thousands of data points from your upload history to generate a "Clinician's Summary" before you even walk into the consultation room. This saves valuable time and ensures your doctor focuses on *treating you*, not reading files.
                         </p>
                     </div>
-                </section>
+                </motion.section>
 
                 {/* 4. FAQ SECTION (Schema-Ready) */}
-                <section className="py-24 px-6">
+                <motion.section
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ margin: "-100px" }}
+                    className="py-24 px-6"
+                >
                     <div className="max-w-4xl mx-auto">
-                        <h2 className="text-3xl font-bold text-center text-white mb-16">Frequently Asked Questions</h2>
-                        <div className="space-y-6">
+                        <motion.h2
+                            variants={sectionVariants}
+                            className="text-3xl font-bold text-center text-white mb-16"
+                        >
+                            Frequently Asked Questions
+                        </motion.h2>
+                        <motion.div variants={staggerContainer} className="space-y-6">
                             {[
                                 { q: "Is my medical data sold to third parties?", a: "Absolutely not. CureBird is a privacy-first platform. Your data is encrypted and you are the sole owner. We do not sell, rent, or monetize your personal health information." },
                                 { q: "Can doctors access my files without the app?", a: "Yes. We use a secure, web-based viewer technology. You can send a time-limited link via WhatsApp or Email, and doctors can view your records on any browser securely." },
                                 { q: "What file formats do you support?", a: "We support PDF, JPG, PNG for standard reports. For radiology, we have a built-in DICOM viewer that works directly in the browser—no heavy software required." },
                                 { q: "Is CureBird free for patients?", a: "Our core 'Personal Portfolio' is free forever for individual patients. We offer premium tiers for families and advanced AI analytics." }
                             ].map((faq, i) => (
-                                <details key={i} className="group bg-slate-950 border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 open:border-amber-500/30">
+                                <motion.details
+                                    key={i}
+                                    variants={cardVariants}
+                                    className="group bg-slate-950 border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 open:border-amber-500/30"
+                                >
                                     <summary className="flex justify-between items-center p-6 cursor-pointer list-none text-lg font-medium text-slate-200 group-hover:text-amber-400 transition-colors">
                                         {faq.q}
                                         <span className="text-amber-500 transform group-open:rotate-180 transition-transform duration-300">▼</span>
@@ -336,11 +437,11 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                     <div className="px-6 pb-6 text-slate-400 leading-relaxed border-t border-white/5 pt-4">
                                         {faq.a}
                                     </div>
-                                </details>
+                                </motion.details>
                             ))}
-                        </div>
+                        </motion.div>
                     </div>
-                </section>
+                </motion.section>
 
             </main>
 
