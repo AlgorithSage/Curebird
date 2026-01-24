@@ -5,7 +5,7 @@
 const getApiUrl = () => {
     if (process.env.NODE_ENV === 'production') {
         // Fallback to a production URL if env var is not set, or use the env var
-        return process.env.REACT_APP_API_URL || 'YOUR_CLOUD_RUN_URL_HERE';
+        return process.env.REACT_APP_API_URL || 'https://curebird-backend-sgz7homzqq-uc.a.run.app';
     }
     return 'http://127.0.0.1:5001';
 };
