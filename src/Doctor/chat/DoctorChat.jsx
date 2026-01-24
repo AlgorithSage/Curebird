@@ -529,10 +529,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                 onClick={() => navigateToProfile(activeChatData)}
                             >
                                 <h3 className="font-bold text-white text-lg group-hover:text-amber-400 transition-colors">{activeChatData.patient}</h3>
-                                <div className="flex items-center gap-2">
-                                    <span className={`w-2 h-2 rounded-full ${activeChatData.status === 'online' ? 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]' : 'bg-stone-600'}`}></span>
-                                    <span className="text-xs text-amber-500/60 font-medium uppercase tracking-wider">{activeChatData.status === 'online' ? 'Active Now' : 'Offline'}</span>
-                                </div>
+
                             </div>
                         </div>
                     ) : (
