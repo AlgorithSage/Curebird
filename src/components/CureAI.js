@@ -75,6 +75,38 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
     const [isSummaryLoading, setIsSummaryLoading] = useState(false);
     const messagesEndRef = useRef(null);
 
+    // Premium Animation Variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.2
+            }
+        }
+    };
+
+    const fadeSlideUp = {
+        hidden: { opacity: 0, y: 100, filter: "blur(10px)" },
+        visible: {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+        }
+    };
+
+    const blurReveal = {
+        hidden: { opacity: 0, filter: "blur(20px)", scale: 0.95 },
+        visible: {
+            opacity: 1,
+            filter: "blur(0px)",
+            scale: 1,
+            transition: { duration: 1, ease: "easeOut" }
+        }
+    };
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
@@ -309,7 +341,13 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
             </div>
 
             {/* Premium Hero Section - Compact AI Console Look */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-4 sm:p-8 mb-6 sm:mb-12 text-center mt-4 sm:mt-6">
+            <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ margin: "-100px" }}
+                variants={blurReveal}
+                className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-4 sm:p-8 mb-6 sm:mb-12 text-center mt-4 sm:mt-6"
+            >
                 {/* Decorative background glow */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/20 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
 
@@ -341,14 +379,16 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
                         <span className="text-[10px] sm:text-xs uppercase tracking-widest font-bold text-slate-500">Verify</span>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Recent Medical Context Section (Cerebras AI Powered) */}
             {(medicalSummary || isSummaryLoading) && (
                 <div className="mb-6 px-2">
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ margin: "-100px" }}
+                        variants={fadeSlideUp}
                         className="bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-2xl border border-amber-500/20 p-6 relative overflow-hidden shadow-xl"
                     >
                         <div className="flex items-start gap-4">
@@ -378,7 +418,13 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
                 </div>
             )}
 
-            <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 mt-2 min-h-0 relative z-10 pb-2">
+            <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ margin: "-100px" }}
+                variants={containerVariants}
+                className="flex flex-col lg:flex-row gap-6 sm:gap-8 mt-2 min-h-0 relative z-10 pb-2"
+            >
                 {/* Main Chat Area - Premium Glass Console */}
                 <div className="flex-1 flex flex-col glass-card p-0 h-[600px] sm:h-[800px]">
                     {/* Subtle Grid - Professional */}
@@ -476,9 +522,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
                         </div>
                     </div>
                 </div>
-
-
-            </div>
+            </motion.div>
         </div>
     );
 };

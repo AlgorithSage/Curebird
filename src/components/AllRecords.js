@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, query } from 'firebase/firestore';
 import { AnimatePresence, motion, LayoutGroup } from 'framer-motion';
-import {  FileText, Search  } from './Icons';
+import { FileText, Search } from './Icons';
 
 import Header from './Header';
 import RecordCard from './RecordCard';
@@ -9,6 +9,51 @@ import { RecordFormModal, DeleteConfirmModal } from './Modals';
 import { SkeletonCard } from './SkeletonLoaders';
 
 const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+    // Premium Animation Variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.2
+            }
+        }
+    };
+
+    const fadeSlideUp = {
+        hidden: { opacity: 0, y: 100, filter: "blur(10px)" },
+        visible: {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+        }
+    };
+
+    const staggerScale = {
+        hidden: { opacity: 0, scale: 0.8, y: 50 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                damping: 15,
+                stiffness: 100
+            }
+        }
+    };
+
+    const blurReveal = {
+        hidden: { opacity: 0, filter: "blur(20px)", scale: 0.95 },
+        visible: {
+            opacity: 1,
+            filter: "blur(0px)",
+            scale: 1,
+            transition: { duration: 1, ease: "easeOut" }
+        }
+    };
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -119,9 +164,9 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
                         <motion.div
                             layoutId="search-container"
                             className="w-full max-w-3xl px-6 flex flex-col items-center z-10 -mt-20"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            initial="hidden"
+                            animate="visible"
+                            variants={blurReveal}
                         >
                             <div className="text-center mb-8">
                                 <h2 className="text-4xl md:text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 drop-shadow-sm">
@@ -205,24 +250,30 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
                                 </div>
                             ) : (
                                 filteredRecords.length > 0 ? (
-                                    <div className="space-y-4 pb-20">
+                                    <>
                                         <AnimatePresence mode="popLayout">
-                                            {filteredRecords.map(record => (
-                                                <motion.div
-                                                    key={record.id}
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    exit={{ opacity: 0, scale: 0.95 }}
-                                                    layout
-                                                >
-                                                    <RecordCard
-                                                        record={record}
-                                                        storage={storage}
-                                                        onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }}
-                                                        onDelete={() => { setRecordToDelete(record.id); setIsDeleteModalOpen(true); }}
-                                                    />
-                                                </motion.div>
-                                            ))}
+                                            <motion.div
+                                                initial="hidden"
+                                                animate="visible"
+                                                variants={containerVariants}
+                                                className="space-y-4"
+                                            >
+                                                {filteredRecords.map(record => (
+                                                    <motion.div
+                                                        key={record.id}
+                                                        variants={fadeSlideUp}
+                                                        exit={{ opacity: 0, scale: 0.95 }}
+                                                        layout
+                                                    >
+                                                        <RecordCard
+                                                            record={record}
+                                                            storage={storage}
+                                                            onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }}
+                                                            onDelete={() => { setRecordToDelete(record.id); setIsDeleteModalOpen(true); }}
+                                                        />
+                                                    </motion.div>
+                                                ))}
+                                            </motion.div>
                                         </AnimatePresence>
 
                                         {/* Bottom Retract Button for easy access */}
@@ -234,7 +285,7 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
                                                 Retract View
                                             </button>
                                         </div>
-                                    </div>
+                                    </>
                                 ) : (
                                     <motion.div
                                         initial={{ opacity: 0 }}
@@ -264,7 +315,7 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
                     {isDeleteModalOpen && <DeleteConfirmModal onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDeleteRecord} />}
                 </AnimatePresence>
             </div>
-        </LayoutGroup>
+        </LayoutGroup >
     );
 };
 

@@ -28,6 +28,7 @@ import { db } from "../firebase";
 import curebirdLogo from '../curebird_logo.png';
 import Header from "./Header";
 import ReviewImportModal from "./diseases/ReviewImportModal";
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CureAnalyzer = ({
   user,
@@ -40,6 +41,52 @@ const CureAnalyzer = ({
   onNavigate,
   onAskAI,
 }) => {
+  // Animation Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const fadeSlideUp = {
+    hidden: { opacity: 0, y: 100, filter: "blur(10px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+    }
+  };
+
+  const staggerScale = {
+    hidden: { opacity: 0, scale: 0.8, y: 50 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        damping: 15,
+        stiffness: 100
+      }
+    }
+  };
+
+  const blurReveal = {
+    hidden: { opacity: 0, filter: "blur(20px)", scale: 0.95 },
+    visible: {
+      opacity: 1,
+      filter: "blur(0px)",
+      scale: 1,
+      transition: { duration: 1, ease: "easeOut" }
+    }
+  };
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -384,7 +431,13 @@ const CureAnalyzer = ({
       </div>
 
       {/* Premium Feature Hero Section */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-12 text-center mt-6">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ margin: "-100px" }}
+        variants={blurReveal}
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 p-8 mb-12 text-center mt-6"
+      >
         {/* Decorative background glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/20 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
 
@@ -438,13 +491,19 @@ const CureAnalyzer = ({
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ margin: "-100px" }}
+        variants={containerVariants}
+        className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8"
+      >
         {/* Upload Section */}
         {/* Upload Section - Futuristic Engine Border */}
         {/* Upload Section - Professional High-Fidelity Border */}
-        <div className="relative group rounded-3xl p-[1px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_100px_-20px_rgba(245,158,11,0.3)]">
+        <motion.div variants={fadeSlideUp} className="relative group rounded-3xl p-[1px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_100px_-20px_rgba(245,158,11,0.3)]">
           {/* Animated Gradient Border */}
           <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 group-hover:from-amber-600 group-hover:via-amber-500/20 group-hover:to-orange-900 transition-colors duration-700"></div>
           <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_120deg,rgba(245,158,11,0.5)_180deg,transparent_360deg)] opacity-0 group-hover:opacity-100 animate-[spin_4s_linear_infinite] transition-opacity duration-700"></div>
@@ -564,12 +623,12 @@ const CureAnalyzer = ({
               )}
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Result Section */}
         {/* Result Section - Futuristic Engine Border */}
         {/* Result Section - Professional High-Fidelity Border */}
-        <div className="relative group rounded-3xl p-[1px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_100px_-20px_rgba(14,165,233,0.3)]">
+        <motion.div variants={fadeSlideUp} className="relative group rounded-3xl p-[1px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_100px_-20px_rgba(14,165,233,0.3)]">
           {/* Animated Gradient Border */}
           <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 group-hover:from-sky-600 group-hover:via-sky-500/20 group-hover:to-blue-900 transition-colors duration-700"></div>
           <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_120deg,rgba(14,165,233,0.5)_180deg,transparent_360deg)] opacity-0 group-hover:opacity-100 animate-[spin_4s_linear_infinite] transition-opacity duration-700"></div>
@@ -631,10 +690,18 @@ const CureAnalyzer = ({
               )}
 
               {analysisResult && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  variants={containerVariants}
+                  className="space-y-8"
+                >
                   {/* Comprehensive Summary Section */}
                   {analysisResult.summary && (
-                    <div className="relative overflow-hidden rounded-2xl p-6 group/summary transition-all duration-500 bg-gradient-to-br from-[#eab308] via-[#f59e0b] to-[#d97706]">
+                    <motion.div
+                      variants={fadeSlideUp}
+                      className="relative overflow-hidden rounded-2xl p-6 group/summary transition-all duration-500 bg-gradient-to-br from-[#eab308] via-[#f59e0b] to-[#d97706]"
+                    >
 
                       {/* Decorative Elements - Subtle Pattern */}
                       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
@@ -728,10 +795,10 @@ const CureAnalyzer = ({
                           {analysisResult.summary}
                         </ReactMarkdown>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
 
-                  <div className="grid grid-cols-1 gap-6">
+                  <motion.div variants={fadeSlideUp} className="grid grid-cols-1 gap-6">
                     <div>
                       <h4 className="flex items-center gap-2 text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] mb-4 opacity-70">
                         <Stethoscope size={12} /> Detected Conditions
@@ -754,11 +821,11 @@ const CureAnalyzer = ({
                       )}
                     </div>
 
-                  </div>
+                  </motion.div>
 
                   {/* Lab Results Section */}
                   {(analysisResult.analysis?.test_results || []).length > 0 && (
-                    <div className="mt-6">
+                    <motion.div variants={fadeSlideUp} className="mt-6">
                       <h4 className="flex items-center gap-2 text-[10px] font-black text-sky-500 uppercase tracking-[0.2em] mb-4 opacity-70">
                         <Activity size={12} /> Lab Findings
                       </h4>
@@ -796,10 +863,10 @@ const CureAnalyzer = ({
                           );
                         })}
                       </div>
-                    </div>
+                    </motion.div>
                   )}
 
-                  <div className="relative">
+                  <motion.div variants={fadeSlideUp} className="relative">
                     <h4 className="flex items-center gap-2 text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-4 opacity-70">
                       <Pill size={12} /> Pharmacy Data extract
                     </h4>
@@ -859,8 +926,8 @@ const CureAnalyzer = ({
                         -- No medications detected --
                       </p>
                     )}
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               )}
 
               {!isLoading && !error && !analysisResult && (
@@ -975,8 +1042,8 @@ const CureAnalyzer = ({
               </button>
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
       {
         isImportModalOpen && analysisResult && (
           <ReviewImportModal
