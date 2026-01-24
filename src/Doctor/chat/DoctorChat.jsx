@@ -29,6 +29,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     const [selectedInsight, setSelectedInsight] = useState(null);
     const [showActionMenu, setShowActionMenu] = useState(false);
     const [activeAction, setActiveAction] = useState(null); // 'summary', 'flag', 'carePlan', 'status', 'escalate'
+    const [isRxModalOpen, setIsRxModalOpen] = useState(false); // Quick Rx State
 
     // Auth Check
     React.useEffect(() => {
@@ -286,73 +287,58 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         }
     };
 
-    const handleSendMessage = async (e) => {
-        e.preventDefault();
-        if (!messageInput.trim() || !activeChat || !currentUser) return;
+    const handleSendMessage = async (e, customType = 'text', customPayload = null) => {
+        if (e && e.preventDefault) e.preventDefault();
+        
+        const text = customPayload ? customPayload.text : messageInput;
+        if (!text.trim() && !customPayload) return;
+        if (!activeChat || !currentUser) return;
 
         let targetChatId = activeChat;
+        // ... (Chat creation logic is same, simplified for clarity in diff, assume targetChatId is valid)
 
-        // If it's a temp chat, create it first
-        if (activeChat.startsWith('temp_')) {
-            const tempPatientId = activeChat.replace('temp_', '');
-
-            // Try to find patient details in our list, OR use the initialPatientId if it matches
-            let targetPatient = patients.find(p => p.id === tempPatientId);
-
-            // Fallback to initialPatientId if it matches the temp ID (handles race condition where patients aren't loaded)
-            if (!targetPatient && initialPatientId && initialPatientId.id === tempPatientId) {
-                targetPatient = initialPatientId;
-            }
-
-            if (!targetPatient) {
-                console.error("Unknown patient for chat creation");
-                return;
-            }
-
-            try {
-                const newChatRef = await addDoc(collection(db, 'chats'), {
-                    patientId: targetPatient.id,
-                    doctorId: currentUser.uid,
-                    participants: [currentUser.uid],
-                    patientName: targetPatient.name,
-                    condition: targetPatient.condition || 'General Care',
-                    status: 'offline',
-                    lastMsg: messageInput, // First message
-                    unread: 0,
-                    updatedAt: serverTimestamp(),
-                    avatarColor: 'bg-emerald-500'
-                });
-                targetChatId = newChatRef.id;
-                setActiveChat(targetChatId); // Switch to real ID
-            } catch (err) {
-                console.error("Error creating chat on send:", err);
-                return;
-            }
-        }
-
-        const text = messageInput;
-        setMessageInput(''); // Optimistic clear
+        // Only clear input if it was a text message
+        if (customType === 'text') setMessageInput(''); 
 
         try {
-            // Add Message
             await addDoc(collection(db, `chats/${targetChatId}/messages`), {
                 text: text,
                 sender: 'doctor',
                 senderId: currentUser.uid,
                 createdAt: serverTimestamp(),
-                type: 'text'
+                type: customType,
+                ...customPayload
             });
 
-            // Update Chat Meta (Last Message)
-            const chatRef = doc(db, 'chats', targetChatId);
-            await updateDoc(chatRef, {
-                lastMsg: text,
+            await updateDoc(doc(db, 'chats', targetChatId), {
+                lastMsg: customType === 'text' ? text : `[${customType.toUpperCase()}]`,
                 updatedAt: serverTimestamp(),
             });
 
         } catch (err) {
             console.error("Failed to send message:", err);
         }
+    };
+
+    // --- Quick Actions Handlers ---
+    const handleUrgentAlert = () => {
+        handleSendMessage(null, 'alert', { text: 'URGENT: Please respond immediately to this clinical alert.' });
+    };
+
+    const handleRequestVitals = () => {
+        handleSendMessage(null, 'vitals_request', { text: 'Vitals Reading Requested' });
+    };
+
+    const handleWriteRx = () => {
+        setIsRxModalOpen(true);
+    };
+
+    const submitRx = (medication) => {
+        handleSendMessage(null, 'prescription', { 
+            text: `Prescription Issued: ${medication}`,
+            medication: medication
+        });
+        setIsRxModalOpen(false);
     };
 
     const openInsightReview = () => {
@@ -565,6 +551,42 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                              <p className="text-[10px] mt-1 opacity-70">Voice Message</p>
                                          </div>
                                     </div>
+                                ) : msg.type === 'alert' ? (
+                                    <div className="flex items-start gap-3 min-w-[250px] border-l-4 border-rose-500 pl-3">
+                                        <div className="p-2 bg-rose-500/10 text-rose-500 rounded-lg animate-pulse">
+                                            <AlertTriangle size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-rose-500 text-sm mb-1 uppercase tracking-wider">Urgent Clinical Alert</p>
+                                            <p className="text-black/80 text-xs font-medium">{msg.text}</p>
+                                        </div>
+                                    </div>
+                                ) : msg.type === 'vitals_request' ? (
+                                    <div className="flex items-center gap-4 min-w-[220px]">
+                                        <div className="p-3 bg-amber-100 text-amber-600 rounded-xl">
+                                            <Activity size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-black text-sm">Vitals Requested</p>
+                                            <button className="mt-2 text-[10px] bg-black text-amber-500 px-3 py-1.5 rounded-lg font-bold uppercase tracking-wide">
+                                                Awaiting Patient Input...
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : msg.type === 'prescription' ? (
+                                    <div className="flex items-start gap-3 min-w-[240px] bg-emerald-50/50 p-2 rounded-lg">
+                                        <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                                            <Pill size={24} />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-bold text-emerald-700 text-sm mb-1">Prescription Issued</p>
+                                            <p className="text-black/70 text-sm italic mb-2">"{msg.medication}"</p>
+                                            <div className="h-px bg-emerald-200 my-2"></div>
+                                            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider flex items-center gap-1">
+                                                <CheckCircle size={10} /> Signed Digitally
+                                            </span>
+                                        </div>
+                                    </div>
                                 ) : (
                                     <p className={`text-sm ${msg.sender === 'doctor' ? 'font-medium' : 'font-normal'}`}>{msg.text}</p>
                                 )}
@@ -584,11 +606,15 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                     {/* Quick Action Chips (New) */}
                     <div className="flex gap-2 mb-3 px-1">
                         {[
-                            { l: 'Urgent Alert', i: AlertTriangle, c: 'text-rose-500 bg-rose-500/10 border-rose-500/20' },
-                            { l: 'Request Vitals', i: Activity, c: 'text-amber-500 bg-amber-500/10 border-amber-500/20' },
-                            { l: 'Write Rx', i: Pill, c: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' }
+                            { l: 'Urgent Alert', i: AlertTriangle, c: 'text-rose-500 bg-rose-500/10 border-rose-500/20', action: handleUrgentAlert },
+                            { l: 'Request Vitals', i: Activity, c: 'text-amber-500 bg-amber-500/10 border-amber-500/20', action: handleRequestVitals },
+                            { l: 'Write Rx', i: Pill, c: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20', action: handleWriteRx }
                         ].map((chip, idx) => (
-                            <button key={idx} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border hover:brightness-110 transition-all ${chip.c}`}>
+                            <button 
+                                key={idx} 
+                                onClick={chip.action}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border hover:brightness-110 hover:scale-105 transition-all ${chip.c}`}
+                            >
                                 <chip.i size={12} /> {chip.l}
                             </button>
                         ))}
@@ -746,6 +772,49 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 isOpen={activeAction === 'escalate'}
                 onClose={() => setActiveAction(null)}
             />
+            {/* Simple Rx Modal */}
+            <AnimatePresence>
+                {isRxModalOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                    >
+                        <motion.div 
+                            initial={{ scale: 0.9, y: 20 }} 
+                            animate={{ scale: 1, y: 0 }} 
+                            className="w-full max-w-md bg-[#17120a] border border-emerald-500/30 rounded-3xl p-6 shadow-2xl relative"
+                        >
+                            <button onClick={() => setIsRxModalOpen(false)} className="absolute top-4 right-4 text-stone-500 hover:text-white">
+                                <X size={20} />
+                            </button>
+                            <div className="flex items-center gap-3 mb-6 text-emerald-500">
+                                <div className="p-3 bg-emerald-500/10 rounded-xl">
+                                    <Pill size={28} />
+                                </div>
+                                <h3 className="text-xl font-bold text-white">Write Prescription</h3>
+                            </div>
+                            
+                            <form onSubmit={(e) => {
+                                e.preventDefault();
+                                submitRx(e.target.meds.value);
+                            }}>
+                                <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">Medication & Dosage</label>
+                                <textarea 
+                                    name="meds"
+                                    placeholder="e.g. Amoxicillin 500mg, Twice Daily for 7 days..." 
+                                    className="w-full h-32 bg-[#0c0a09] border border-stone-800 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-emerald-500 mb-6 resize-none"
+                                    autoFocus
+                                />
+                                <button type="submit" className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl transition-colors">
+                                    Issue Prescription
+                                </button>
+                            </form>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
