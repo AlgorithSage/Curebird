@@ -96,7 +96,7 @@
 
 ---
 
-## 🚀 Deployment Infrastructure (New)
+## 🚀 Deployment Infrastructure 
 
 The project utilizes a modern serverless architecture for high scalability and low maintenance.
 
