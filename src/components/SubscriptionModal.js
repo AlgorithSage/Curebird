@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { X, Check, Shield, Zap, Crown } from './Icons';
 import { API_BASE_URL } from '../config';
 
@@ -12,7 +12,16 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
 
     const handlePromoSubmit = async (e) => {
         e.preventDefault();
-        if (!promoCode.trim()) return;
+        const code = promoCode.trim();
+        if (!code) return;
+
+        // Hackathon/Judge Bypass
+        if (code === "DU_HACKS_2026") {
+            alert("Hackathon Judge Access Granted! Welcome to CureBird Premium.");
+            onSubscribe('Premium');
+            onClose();
+            return;
+        }
 
         setIsProcessing(true);
         setPromoError('');
@@ -344,7 +353,30 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                     )}
 
                     {/* Promo Code Code Section */}
-                    <div className="text-center pb-8">
+                    <div className="text-center pb-8 space-y-6">
+
+                        {/* DU Hacks Disclaimer */}
+                        <div className="mx-auto max-w-sm bg-gradient-to-r from-amber-500/10 to-amber-900/10 border border-amber-500/20 rounded-xl p-4 backdrop-blur-sm">
+                            <div className="flex items-center justify-center gap-2 mb-2">
+                                <Crown size={14} className="text-amber-500" />
+                                <p className="text-[10px] font-black uppercase tracking-widest text-amber-200">
+                                    DU Hacks 2026 Judges
+                                </p>
+                            </div>
+                            <p className="text-xs text-slate-400 mb-3 leading-relaxed">
+                                Use code <span className="font-mono font-bold text-white bg-white/5 border border-white/10 px-1.5 py-0.5 rounded mx-1">DU_HACKS_2026</span> for instant Premium access.
+                            </p>
+                            <button
+                                onClick={() => {
+                                    alert("Hackathon Judge Access Granted! Welcome to CureBird Premium.");
+                                    onSubscribe('Premium', true);
+                                    onClose();
+                                }}
+                                className="bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black px-4 py-2 rounded-lg uppercase tracking-widest transition-all shadow-lg shadow-amber-900/20 hover:shadow-amber-500/20 hover:scale-105"
+                            >
+                                Use Code
+                            </button>
+                        </div>
                         {!showPromo ? (
                             <button
                                 onClick={() => setShowPromo(true)}

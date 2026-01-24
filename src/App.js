@@ -99,12 +99,26 @@ export default function App() {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 try {
-                    const { doc, onSnapshot } = await import('firebase/firestore');
+                    const { doc, onSnapshot, updateDoc } = await import('firebase/firestore');
                     const userDocRef = doc(db, 'users', currentUser.uid);
 
-                    profileUnsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                    profileUnsubscribe = onSnapshot(userDocRef, async (docSnap) => {
                         if (docSnap.exists()) {
                             const userData = docSnap.data();
+
+                            // Check for hackathon expiry
+                            if (userData.isHackathonJudge && userData.hackathonExpiry) {
+                                const expiry = userData.hackathonExpiry.toDate();
+                                if (new Date() > expiry) {
+                                    // Local Override (UI only)
+                                    userData.subscriptionStatus = 'expired';
+                                    userData.isHackathonJudge = false;
+
+                                    // Optional: Persist to DB to clean up
+                                    // await updateDoc(userDocRef, { subscriptionStatus: 'expired', isHackathonJudge: false });
+                                }
+                            }
+
                             const fullUser = { ...currentUser, ...userData };
                             setUser(fullUser);
 
@@ -112,7 +126,8 @@ export default function App() {
                                 setIsAuthModalOpen(true);
                             }
 
-                            if (!userData.hasSeenSubscription) {
+                            // Show subscription modal only if not seen AND not already active/judge
+                            if (!userData.hasSeenSubscription && userData.subscriptionStatus !== 'active' && !userData.isHackathonJudge) {
                                 setTimeout(() => setIsSubscriptionModalOpen(true), 1500);
                             }
 
@@ -284,15 +299,25 @@ export default function App() {
                             <SubscriptionModal
                                 isOpen={isSubscriptionModalOpen}
                                 onClose={() => setIsSubscriptionModalOpen(false)}
-                                onSubscribe={async (tier) => {
+                                onSubscribe={async (tier, isJudge = false) => {
                                     if (user) {
                                         try {
                                             const { doc, updateDoc } = await import('firebase/firestore');
-                                            await updateDoc(doc(db, 'users', user.uid), {
+                                            const updateData = {
                                                 subscriptionStatus: 'active',
                                                 subscriptionTier: tier,
-                                                subscriptionUpdatedAt: new Date()
-                                            });
+                                                subscriptionUpdatedAt: new Date(),
+                                                hasSeenSubscription: true // Prevent future popups
+                                            };
+
+                                            if (isJudge) {
+                                                updateData.isHackathonJudge = true;
+                                                const expiryDate = new Date();
+                                                expiryDate.setDate(expiryDate.getDate() + 4); // 4 Days validity
+                                                updateData.hackathonExpiry = expiryDate;
+                                            }
+
+                                            await updateDoc(doc(db, 'users', user.uid), updateData);
                                             // Refresh user context implicitly via onSnapshot
                                         } catch (e) {
                                             console.error("Error updating subscription:", e);
