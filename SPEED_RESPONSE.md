@@ -14,3 +14,5 @@ I apologize for the delays you are experiencing. I understand your frustration.
 - **Direct Execution**: I will focus on the exact request without adding unnecessary "delighters" or extra features unless asked, to speed up the workflow.
 
 I am now ready to proceed with the next task immediately. Please let me know what needs to be adjusted next.
+
+<!-- Refinement for performance benchmarks -->
