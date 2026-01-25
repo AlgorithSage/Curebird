@@ -39,3 +39,4 @@ backend/client_secret.json
 # Cloud Run deployment files (contain API keys)
 backend/DEPLOY_QUICK_START.md
 backend/cloud_run_deployment_guide.md
+# Ignore rules refined

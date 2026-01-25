@@ -36,3 +36,5 @@ If further manual tweaking is needed, the key CSS classes to maintain compatibil
 - **Buttons**: `bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold`
 
 I apologize for the iterations took longer than expected to reach the desired simple aesthetic.
+
+<!-- Refinement for better documentation -->

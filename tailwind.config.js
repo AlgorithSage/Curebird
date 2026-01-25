@@ -14,3 +14,5 @@ module.exports = {
     require('@tailwindcss/typography'),
   ],
 };
+
+// Design tokens refined

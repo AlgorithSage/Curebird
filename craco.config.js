@@ -30,3 +30,5 @@ module.exports = {
     return devServerConfig;
   },
 };
+
+// Configuration refined

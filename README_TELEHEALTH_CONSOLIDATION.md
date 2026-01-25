@@ -29,3 +29,5 @@ This ensures that doctors always start from a context of their schedule/queue be
 
 - The `DoctorSidebar.jsx` file was modified to remove the `consultations` route link.
 - The underlying route handling in `DoctorDashboard.jsx` remains active to support the programmatic navigation from the Telehealth dashboard.
+
+<!-- Refinement for telehealth documentation -->

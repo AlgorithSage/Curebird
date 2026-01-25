@@ -25,3 +25,5 @@ This document lists the files modified or created today to implement the Google 
 ## Dependency / Config
 
 - **`backend/requirements.txt`**: Added `google-auth`, `google-auth-oauthlib`, `google-auth-httplib2`, `google-api-python-client`.
+
+<!-- Refinement for changelog precision -->
