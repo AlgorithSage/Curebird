@@ -31,7 +31,7 @@ CureBird utilizes Firebase as its primary Backend-as-a-Service (BaaS) for secure
 *   **Purpose**: Storing large binary objects (BLOBs).
 *   **Content**: User uploaded medical reports (PDF, JPG, PNG).
 *   **Flow**:
-    1.  Frontend uploads file to Storage Bucket.
+    1.  Frontend uploads file to Storage Bucket inside firebase.
     2.  Storage returns a download URL.
     3.  Frontend saves the download URL + Metadata to Firestore.
 

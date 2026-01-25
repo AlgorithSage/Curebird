@@ -15,7 +15,7 @@ CureBird uses **EmailJS** to handle transactional emails and contact form submis
 ### Configuration
 The service connects using three key parameters (typically stored or hardcoded in the component):
 1.  **Service ID**: Identifies the EmailJS service (e.g., GMail service).
-2.  **Template ID**: Determines the visual format and dynamic variables of the email.
+2.  **Template ID**: Determines the visual format and dynamic variables of the email ID.
 3.  **Public Key**: Authenticates the client request.
 
 ### Code Workflow (`Contact.js`)

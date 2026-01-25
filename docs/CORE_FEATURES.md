@@ -1,6 +1,6 @@
 # Core Feature Architecture
 
-This document maps the primary user-facing features to their underlying technical implementation.
+This document maps the primary user - facing features to their underlying technical implementation.
 
 ## 1. Feature: AI Health Assistant (CureAI)
 

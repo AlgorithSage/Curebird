@@ -43,3 +43,4 @@ This document outlines the core technologies, frameworks, and libraries used in 
 | **Groq (Llama-3)** | Generating medical insights and chat responses. |
 | **WAQI** | Fetching real-time Air Quality Index data. |
 | **Google Maps SDK** | Rendering disease heatmaps. |
+

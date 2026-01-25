@@ -1,6 +1,6 @@
 # Patient Module
 
-The Patient Module focuses on accessibility, education, and self-management. It is the default view for unauthenticated or "Patient" role users.
+The "Patient Module" focuses on accessibility, education, and self-management. It is the default view for unauthenticated or "Patient" role users.
 
 ## 1. Key Features
 
