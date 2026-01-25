@@ -45,6 +45,49 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         return () => unsubAuth();
     }, []);
 
+    // Derived Action: Calculate Active Chat Data EARLY (Moved up for dependencies)
+    const allChats = React.useMemo(() => {
+        const combined = [...chats];
+        const existingPatientIds = new Set(chats.map(c => c.patientId));
+        patients.forEach(p => {
+            if (!existingPatientIds.has(p.id)) {
+                combined.push({
+                    id: `temp_${p.id}`, 
+                    patientId: p.id,
+                    patient: p.name,
+                    patientName: p.name,
+                    condition: p.condition || 'General Care',
+                    lastMsg: 'Start a conversation...',
+                    time: '',
+                    unread: 0,
+                    status: p.status === 'Active' ? 'online' : 'offline',
+                    avatarColor: 'bg-stone-700',
+                    isTemp: true
+                });
+            }
+        });
+        return combined;
+    }, [chats, patients]);
+
+    const filteredChats = allChats.filter(chat =>
+        chat.patient?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    let activeChatData = allChats.find(c => c.id === activeChat);
+
+    if (!activeChatData && activeChat && initialPatientId && activeChat === `temp_${initialPatientId.id}`) {
+        activeChatData = {
+            id: activeChat,
+            patientId: initialPatientId.id,
+            patient: initialPatientId.name,
+            patientName: initialPatientId.name,
+            condition: initialPatientId.condition || 'General Care',
+            status: 'offline',
+            avatarColor: 'bg-stone-700',
+            isTemp: true
+        };
+    }
+
     // 1. Fetch Conversations (Real-time)
     React.useEffect(() => {
         if (!currentUser) return;
@@ -142,6 +185,144 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
             setMessages([]); // Clear messages for temp chat
         }
     }, [activeChat]);
+
+    // --- Feature: Live Patient Snapshot Data Fetching ---
+    const [snapshotRecords, setSnapshotRecords] = useState([]);
+    
+    React.useEffect(() => {
+        // Only fetch if panel is open and we have a valid patient
+        if (!showPatientDetails || !activeChatData || !activeChatData.patientId) return;
+
+        const recordsRef = collection(db, `users/${activeChatData.patientId}/medical_records`);
+        // Fetch last 20 records to derive state
+        const q = query(recordsRef, orderBy('date', 'desc')); // limit not strictly needed/supported without index sometimes, keeping simple
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const fetched = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setSnapshotRecords(fetched);
+        });
+
+        return () => unsubscribe();
+    }, [showPatientDetails, activeChatData?.patientId]);
+
+    // --- Feature: Live Patient Snapshot Data Fetching (Matches PatientWorkspace Record Logic) ---
+    
+    // Robust Regex Parsing Helper
+    const parseVitalsString = (str) => {
+        const v = {};
+
+        // 1. BP: Aggressive Match for "120/80" pattern even without label
+        // Must be 2-3 digits / 2-3 digits. Avoids dates like 1/1/2024.
+        const bpMatch = str.match(/(?:bp|press|sys)[^0-9]*(\d{2,3}\s*[\/-]\s*\d{2,3})/i) ||
+            str.match(/\b(\d{2,3}\s*[\/-]\s*\d{2,3})\s*mmhg/i) ||
+            str.match(/\b(1[0-9]{2}|[9]\d)\s*[\/-]\s*([4-9]\d|1\d{2})\b/); // Heuristic: 90-199 / 40-199
+
+        // 2. HR: Look for 'bpm' or explicit label
+        const hrMatch = str.match(/(?:hr|heart rate|pulse|rate)[^0-9]*(\d{2,3})/i) || str.match(/(\d{2,3})\s*bpm/i);
+
+        // 3. Temp: Look for 'F'/'C' or explicit label
+        const tempMatch = str.match(/(?:temp|t)[^0-9]*(\d{2,3}(?:\.\d+)?)/i) || str.match(/(\d{2,3}(?:\.\d+)?)\s*(?:°|deg)?(?:f|c)\b/i);
+
+        // 4. SpO2: Look for '%' or explicit label
+        const spo2Match = str.match(/(?:spo2|o2|sat)[^0-9]*(\d{2,3})/i) || str.match(/(\d{2,3})%/);
+
+        if (bpMatch) v.bp = bpMatch[1].replace(/\s/g, '');
+        if (hrMatch) v.heartRate = hrMatch[1];
+        if (tempMatch) v.temperature = tempMatch[1];
+        if (spo2Match) v.spo2 = spo2Match[1];
+
+        // Sanity Check: Don't return crazy values
+        if (v.spo2 && parseInt(v.spo2) > 100) delete v.spo2;
+
+        return v;
+    };
+
+    // Helper: Logic to extract latest vitals from records (Deep Scan)
+    const getSnapshotVitals = () => {
+        const sorted = [...snapshotRecords].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+        const aggregatedVitals = {};
+        
+        for (const record of sorted) {
+            if (aggregatedVitals.bp && aggregatedVitals.heartRate && aggregatedVitals.temperature && aggregatedVitals.spo2) break; // Stop if full
+            
+            // 1. EXTRACT FROM STRUCTURED OBJECT
+            if (record.vitals && typeof record.vitals === 'object' && !Array.isArray(record.vitals)) {
+                if (!aggregatedVitals.bp && record.vitals.bp) aggregatedVitals.bp = record.vitals.bp;
+                if (!aggregatedVitals.heartRate && record.vitals.heartRate) aggregatedVitals.heartRate = record.vitals.heartRate;
+                if (!aggregatedVitals.temperature && record.vitals.temperature) aggregatedVitals.temperature = record.vitals.temperature;
+                if (!aggregatedVitals.spo2 && record.vitals.spo2) aggregatedVitals.spo2 = record.vitals.spo2;
+            }
+
+             // 2. TEXT SCANNING (Fallback)
+            let textToScan = '';
+            if (typeof record.vitals === 'string') textToScan += record.vitals + ' ';
+            textToScan += (record.description || '') + ' ' + (record.summary || '');
+            
+            if (textToScan.trim()) {
+                 const text = textToScan.toLowerCase();
+                 const parsed = parseVitalsString(text);
+                 
+                 if (!aggregatedVitals.bp && parsed.bp) aggregatedVitals.bp = parsed.bp;
+                 if (!aggregatedVitals.heartRate && parsed.heartRate) aggregatedVitals.heartRate = parsed.heartRate;
+                 if (!aggregatedVitals.temperature && parsed.temperature) aggregatedVitals.temperature = parsed.temperature;
+                 if (!aggregatedVitals.spo2 && parsed.spo2) aggregatedVitals.spo2 = parsed.spo2;
+            }
+        }
+        return aggregatedVitals;
+    };
+
+    // Helper: Logic to extract active meds (Deep Scan including Descriptions)
+    const getSnapshotMeds = () => {
+        const medicationRecords = snapshotRecords.flatMap(r => {
+            // Priority 1: Modern Structured Array
+            if (r.medications && Array.isArray(r.medications) && r.medications.length > 0) {
+                return r.medications;
+            }
+
+            // Priority 2: Legacy Description Parsing (Backfill)
+            if (r.description && (r.description.includes('Medications:') || r.description.includes('•'))) {
+                const meds = [];
+                const lines = r.description.split('\n');
+                let inMedsSection = false;
+
+                for (let line of lines) {
+                    const trimmed = line.trim();
+                    if (trimmed.toLowerCase().includes('medications:')) {
+                        inMedsSection = true;
+                        continue;
+                    }
+                    if (inMedsSection || trimmed.startsWith('•') || trimmed.startsWith('-')) {
+                        const match = trimmed.match(/^[•\-]?\s*([A-Za-z0-9\s\/\.]+)(\((.*?)\)|$)/);
+                        if (match && match[1] && match[1].length > 3) {
+                            const name = match[1].trim();
+                            if (!['patient', 'diagnosis', 'plan', 'history'].includes(name.toLowerCase())) {
+                                meds.push({
+                                    name: name,
+                                    dosage: match[3] || 'Legacy Record',
+                                    freq: 'See Notes',
+                                    status: 'Active (Legacy)'
+                                });
+                            }
+                        }
+                    }
+                    if (inMedsSection && trimmed === '') inMedsSection = false;
+                }
+                return meds;
+            }
+            return [];
+        });
+
+        // Dedup by name
+        const unique = [];
+        const seen = new Set();
+        medicationRecords.forEach(m => {
+            if (m.name && !seen.has(m.name)) {
+                unique.push(m);
+                seen.add(m.name);
+            }
+        });
+        return unique;
+    };
 
     // 4. Send Message (File)
 
@@ -456,53 +637,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         onNavigateToPatient(patientObj);
     };
 
-    // Derived State: Combine Active Chats + Potential Chats (Patients)
-    const allChats = React.useMemo(() => {
-        // 1. Existing Chats
-        const combined = [...chats];
-        const existingPatientIds = new Set(chats.map(c => c.patientId));
 
-        // 2. Patients without Chats (Potential)
-        patients.forEach(p => {
-            if (!existingPatientIds.has(p.id)) {
-                combined.push({
-                    id: `temp_${p.id}`, // Temporary ID
-                    patientId: p.id,
-                    patient: p.name,
-                    patientName: p.name,
-                    condition: p.condition || 'General Care',
-                    lastMsg: 'Start a conversation...',
-                    time: '',
-                    unread: 0,
-                    status: p.status === 'Active' ? 'online' : 'offline', // simplified mapping
-                    avatarColor: 'bg-stone-700', // Default
-                    isTemp: true
-                });
-            }
-        });
-        return combined;
-    }, [chats, patients]);
-
-    const filteredChats = allChats.filter(chat =>
-        chat.patient?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    // Resolving activeChatData with fallback
-    let activeChatData = allChats.find(c => c.id === activeChat);
-
-    // Fallback: If activeChat matches initialPatientId's temp ID, but not in allChats (e.g. patients not loaded), construct it
-    if (!activeChatData && activeChat && initialPatientId && activeChat === `temp_${initialPatientId.id}`) {
-        activeChatData = {
-            id: activeChat,
-            patientId: initialPatientId.id,
-            patient: initialPatientId.name,
-            patientName: initialPatientId.name,
-            condition: initialPatientId.condition || 'General Care',
-            status: 'offline',
-            avatarColor: 'bg-stone-700',
-            isTemp: true
-        };
-    }
 
     // Calculate Unread Chats
     const unreadChatsCount = chats.filter(chat => chat.unread > 0).length;
@@ -890,73 +1025,111 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                 <p className="text-xs text-stone-500 font-mono">ID: {activeChatData.patientId}</p>
                             </div>
 
-                            {/* Vitals */}
-                            <div className="space-y-3">
-                                <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
-                                    <Activity size={12} /> Recent Vitals
-                                </h4>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-emerald-500/30 transition-colors group">
-                                        <div className="text-stone-500 text-[10px] mb-1 group-hover:text-emerald-500">Heart Rate</div>
-                                        <div className="text-emerald-500 font-mono font-bold text-lg">72 <span className="text-xs text-stone-600">bpm</span></div>
-                                    </div>
-                                    <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-amber-500/30 transition-colors group">
-                                        <div className="text-stone-500 text-[10px] mb-1 group-hover:text-amber-500">BP</div>
-                                        <div className="text-amber-500 font-mono font-bold text-lg">120/80</div>
-                                    </div>
-                                    <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-rose-500/30 transition-colors group col-span-2 flex items-center justify-between">
-                                        <div>
-                                            <div className="text-stone-500 text-[10px] mb-1 group-hover:text-rose-500">Temp</div>
-                                            <div className="text-rose-500 font-mono font-bold text-lg">98.6°F</div>
-                                        </div>
-                                        <div className="text-[10px] text-stone-600 font-mono bg-stone-900 px-2 py-1 rounded">
-                                            Just Now
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            {/* Allergies */}
-                            <div className="space-y-3">
-                                <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
-                                    <AlertTriangle size={12} /> Allergies
-                                </h4>
-                                <div className="flex flex-wrap gap-2">
-                                    <span className="px-3 py-1.5 bg-rose-950/20 text-rose-500 border border-rose-500/20 rounded-lg text-xs font-bold flex items-center gap-1.5">
-                                        <Shield size={10} /> Penicillin
-                                    </span>
-                                    <span className="px-3 py-1.5 bg-rose-950/20 text-rose-500 border border-rose-500/20 rounded-lg text-xs font-bold flex items-center gap-1.5">
-                                        <Shield size={10} /> Peanuts
-                                    </span>
-                                </div>
-                            </div>
+                            {/* Dynamic Patient Data Lookup */}
+                            {(() => {
+                                const realPatient = patients.find(p => p.id === activeChatData.patientId);
+                                
+                                // Source 1: Direct Patient Doc
+                                const patientVitals = realPatient?.vitals || {};
+                                
+                                // Source 2: Derived from Records (Medical Records Sub-collection)
+                                const derivedVitals = getSnapshotVitals();
+                                const derivedMeds = getSnapshotMeds();
 
-                            {/* Current Meds */}
-                            <div className="space-y-3">
-                                <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
-                                    <Pill size={12} /> Active Meds
-                                </h4>
-                                <ul className="space-y-2">
-                                    <li className="flex items-center gap-3 p-3 bg-[#0c0a09] rounded-xl border border-stone-800 group hover:border-amber-500/30 transition-colors">
-                                        <div className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-stone-600 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-colors">
-                                            <Pill size={14} />
+                                // Merge: Derived takes precedence as it scans latest records
+                                const vitals = { ...patientVitals, ...derivedVitals };
+                                
+                                // Safe unwrap for allergies (handle string vs array)
+                                let allergies = realPatient?.allergies || [];
+                                if (typeof allergies === 'string') {
+                                    allergies = allergies.split(',').map(s => s.trim()).filter(Boolean);
+                                }
+                                if (!Array.isArray(allergies)) allergies = [];
+
+                                // Meds: Use derived if available, else patient doc
+                                let meds = derivedMeds.length > 0 ? derivedMeds : (realPatient?.medications || []);
+                                if (Array.isArray(meds) === false) meds = []; // Strict array check
+
+                                return (
+                                    <>
+                                        {/* Vitals */}
+                                        <div className="space-y-3">
+                                            <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
+                                                <Activity size={12} /> Recent Vitals
+                                            </h4>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-emerald-500/30 transition-colors group">
+                                                    <div className="text-stone-500 text-[10px] mb-1 group-hover:text-emerald-500">Heart Rate</div>
+                                                    <div className="text-emerald-500 font-mono font-bold text-lg">
+                                                        {vitals.heartRate || '--'} <span className="text-xs text-stone-600">bpm</span>
+                                                    </div>
+                                                </div>
+                                                <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-amber-500/30 transition-colors group">
+                                                    <div className="text-stone-500 text-[10px] mb-1 group-hover:text-amber-500">BP</div>
+                                                    <div className="text-amber-500 font-mono font-bold text-lg">
+                                                        {vitals.bp || '--/--'}
+                                                    </div>
+                                                </div>
+                                                <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-rose-500/30 transition-colors group col-span-2 flex items-center justify-between">
+                                                    <div>
+                                                        <div className="text-stone-500 text-[10px] mb-1 group-hover:text-rose-500">Temp</div>
+                                                        <div className="text-rose-500 font-mono font-bold text-lg">
+                                                            {vitals.temperature ? `${vitals.temperature}°F` : '--'}
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-[10px] text-stone-600 font-mono bg-stone-900 px-2 py-1 rounded">
+                                                        {vitals.lastUpdated ? new Date(vitals.lastUpdated).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'No Data'}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div className="text-stone-200 text-sm font-medium">Lisinopril</div>
-                                            <div className="text-stone-500 text-[10px]">10mg • Daily</div>
+                                        
+                                        {/* Allergies */}
+                                        <div className="space-y-3">
+                                            <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
+                                                <AlertTriangle size={12} /> Allergies
+                                            </h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                {allergies.length > 0 ? (
+                                                    allergies.map((allergy, idx) => (
+                                                        <span key={idx} className="px-3 py-1.5 bg-rose-950/20 text-rose-500 border border-rose-500/20 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                                                            <Shield size={10} /> {typeof allergy === 'string' ? allergy : allergy.name}
+                                                        </span>
+                                                    ))
+                                                ) : (
+                                                    <span className="text-stone-600 text-xs italic opacity-50">No known allergies</span>
+                                                )}
+                                            </div>
                                         </div>
-                                    </li>
-                                    <li className="flex items-center gap-3 p-3 bg-[#0c0a09] rounded-xl border border-stone-800 group hover:border-amber-500/30 transition-colors">
-                                        <div className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-stone-600 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-colors">
-                                            <Pill size={14} />
+
+                                        {/* Current Meds */}
+                                        <div className="space-y-3">
+                                            <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
+                                                <Pill size={12} /> Active Meds
+                                            </h4>
+                                            <ul className="space-y-2">
+                                                {meds.length > 0 ? (
+                                                    meds.map((med, idx) => (
+                                                        <li key={idx} className="flex items-center gap-3 p-3 bg-[#0c0a09] rounded-xl border border-stone-800 group hover:border-amber-500/30 transition-colors">
+                                                            <div className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-stone-600 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-colors">
+                                                                <Pill size={14} />
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-stone-200 text-sm font-medium">{med.name}</div>
+                                                                <div className="text-stone-500 text-[10px]">{med.dosage || 'Dosage N/A'} • {med.frequency || 'Freq N/A'}</div>
+                                                            </div>
+                                                        </li>
+                                                    ))
+                                                ) : (
+                                                    <div className="text-center p-4 border border-stone-800 border-dashed rounded-xl">
+                                                        <span className="text-stone-600 text-xs italic opacity-50">No active medications</span>
+                                                    </div>
+                                                )}
+                                            </ul>
                                         </div>
-                                        <div>
-                                            <div className="text-stone-200 text-sm font-medium">Metformin</div>
-                                            <div className="text-stone-500 text-[10px]">500mg • Twice Daily</div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
+                                    </>
+                                );
+                            })()}
                         </div>
                     </motion.div>
                 )}
