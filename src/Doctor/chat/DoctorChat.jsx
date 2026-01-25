@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck, Phone, Video, Calendar, Image, X, Zap, MessageSquare  } from '../../components/Icons';
+import {  Search, MoreVertical, Paperclip, Send, Mic, FileText, CheckCircle, Clock, Bot, Flag, Pill, AlertTriangle, Activity, ChevronRight, Shield, ClipboardCheck, Phone, Video, Calendar, Image, X, Zap, MessageSquare, Sparkles } from '../../components/Icons';
 import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db, storage } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -11,6 +11,8 @@ import FlagObservationModal from './actions/FlagObservationModal';
 import UpdateCarePlanModal from './actions/UpdateCarePlanModal';
 import ConsultationStatusModal from './actions/ConsultationStatusModal';
 import EscalateRiskModal from './actions/EscalateRiskModal';
+import AddClinicalRecordModal from '../AddClinicalRecordModal';
+import { analyzeChatContext } from '../../utils/chatToNote';
 
 const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     const navigate = useNavigate();
@@ -30,8 +32,11 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     const [isInsightModalOpen, setIsInsightModalOpen] = useState(false);
     const [selectedInsight, setSelectedInsight] = useState(null);
     const [showActionMenu, setShowActionMenu] = useState(false);
-    const [activeAction, setActiveAction] = useState(null); // 'summary', 'flag', 'carePlan', 'status', 'escalate'
+    const [activeAction, setActiveAction] = useState(null); // 'summary', 'add_record', 'flag', 'carePlan', 'status', 'escalate'
     const [isRxModalOpen, setIsRxModalOpen] = useState(false); // Quick Rx State
+
+    // Feature 2 State
+    const [generatedNoteData, setGeneratedNoteData] = useState(null);
 
     const [contextMenu, setContextMenu] = useState(null); // { x, y, messageId }
     const [isVoiceCallActive, setIsVoiceCallActive] = useState(false); // New: In-App Voice Call State
@@ -341,7 +346,23 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     // 4. Send Message (File)
 
 
-    // --- Voice Recording Logic ---
+    // --- Feature 2: Chat-to-Note Logic ---
+    const handleGenerateNote = async () => {
+        if (!activeChat || !messages.length) return;
+        
+        let patientName = activeChatData?.patient || 'Patient';
+        
+        // Analyze the context
+        const noteData = analyzeChatContext(messages, patientName);
+        
+        if (noteData) {
+            setGeneratedNoteData(noteData);
+            setActiveAction('summary');
+        } else {
+            alert("Not enough chat context to generate a note.");
+        }
+    };
+
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = React.useRef(null);
     const audioChunksRef = React.useRef([]);
@@ -761,6 +782,16 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             
                             {/* Call Actions */}
                             <div className="flex items-center gap-3">
+                                {/* Feature 2: Summarize Button */}
+                                <button
+                                    onClick={handleGenerateNote}
+                                    className="p-2.5 rounded-xl border border-stone-700 text-amber-500 hover:border-amber-500 hover:bg-amber-500/10 transition-all active:scale-95 group relative"
+                                    title="AI Summarize (Chat-to-Note)"
+                                >
+                                    <Sparkles size={20} className="group-hover:animate-pulse" />
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full animate-ping opacity-75"></span>
+                                </button>
+
                                 <button
                                     onClick={() => setShowPatientDetails(!showPatientDetails)}
                                     className={`p-2.5 rounded-xl border transition-all active:scale-95 ${showPatientDetails 
@@ -1014,10 +1045,10 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                         animate={{ width: 320, opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, mass: 0.8 }}
-                        className="bg-[#17120a] border border-[#382b18] rounded-3xl shadow-2xl overflow-hidden flex flex-col z-10"
+                        className="bg-gradient-to-br from-[#1c170d] to-[#0c0a09] border border-amber-900/20 rounded-3xl shadow-[0_0_40px_-5px_rgba(245,158,11,0.1)] overflow-hidden flex flex-col z-10"
                     >
                          {/* Header */}
-                        <div className="p-6 border-b border-[#382b18] bg-[#261e12]/50 flex justify-between items-center">
+                        <div className="p-6 border-b border-amber-900/20 bg-amber-900/5 flex justify-between items-center">
                             <h3 className="text-amber-50 font-bold flex items-center gap-2 text-sm uppercase tracking-wider">
                                 <Activity size={16} className="text-amber-500" />
                                 Patient Snapshot
@@ -1195,7 +1226,21 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
             <GenerateSummaryModal
                 isOpen={activeAction === 'summary'}
                 onClose={() => setActiveAction(null)}
+                generatedData={generatedNoteData}
+                onApprove={() => {
+                   // Close summary, open add record
+                   setActiveAction('add_record');
+                }}
             />
+
+            <AddClinicalRecordModal
+                isOpen={activeAction === 'add_record'}
+                onClose={() => setActiveAction(null)}
+                patients={patients}
+                user={currentUser}
+                initialData={generatedNoteData}
+            />
+
             <FlagObservationModal
                 isOpen={activeAction === 'flag'}
                 onClose={() => setActiveAction(null)}
