@@ -178,3 +178,5 @@ Once set up:
 3.  Doctor clicks **"Create Google Meet Room"**.
 4.  Frontend calls Backend -> Backend calls Google API -> Returns `meet.google.com/xyz` link.
 5.  Link displays in your nicely styled HUD.
+
+<!-- Refinement for integration guide -->
