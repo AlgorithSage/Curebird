@@ -1,5 +1,9 @@
 // PostCSS configuration for processing Tailwind CSS and Autoprefixer
-export const plugins = {
-  tailwindcss: {},
-  autoprefixer: {},
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
 };
+
+// Refined for hackathon submission
