@@ -245,12 +245,26 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         for (const record of sorted) {
             if (aggregatedVitals.bp && aggregatedVitals.heartRate && aggregatedVitals.temperature && aggregatedVitals.spo2) break; // Stop if full
             
-            // 1. EXTRACT FROM STRUCTURED OBJECT
+            // 0. CHECK METADATA (Vitals Monitor Source)
+            if (record.metadata?.vitals) {
+                const mv = record.metadata.vitals;
+                if (!aggregatedVitals.bp && mv.bp) aggregatedVitals.bp = mv.bp;
+                if (!aggregatedVitals.heartRate && mv.heartRate) aggregatedVitals.heartRate = mv.heartRate;
+                if (!aggregatedVitals.temperature && (mv.temperature || mv.temp)) aggregatedVitals.temperature = mv.temperature || mv.temp;
+                if (!aggregatedVitals.spo2 && (mv.spo2 || mv.spO2)) aggregatedVitals.spo2 = mv.spo2 || mv.spO2;
+                
+                // Track update time if found in a valid record
+                if (!aggregatedVitals.lastUpdated) aggregatedVitals.lastUpdated = record.date || record.createdAt?.toDate?.() || new Date().toISOString();
+            }
+
+            // 1. EXTRACT FROM STRUCTURED OBJECT (AddRecord Source)
             if (record.vitals && typeof record.vitals === 'object' && !Array.isArray(record.vitals)) {
                 if (!aggregatedVitals.bp && record.vitals.bp) aggregatedVitals.bp = record.vitals.bp;
                 if (!aggregatedVitals.heartRate && record.vitals.heartRate) aggregatedVitals.heartRate = record.vitals.heartRate;
                 if (!aggregatedVitals.temperature && record.vitals.temperature) aggregatedVitals.temperature = record.vitals.temperature;
                 if (!aggregatedVitals.spo2 && record.vitals.spo2) aggregatedVitals.spo2 = record.vitals.spo2;
+                
+                if (!aggregatedVitals.lastUpdated) aggregatedVitals.lastUpdated = record.date;
             }
 
              // 2. TEXT SCANNING (Fallback)
