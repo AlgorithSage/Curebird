@@ -43,5 +43,5 @@ Encapsulates all interactions with Large Language Models.
 
 ### C. Data Handling
 *   **Static Data**: To ensure reliability and speed, core health statistics are served from `india_epidemiology_data.json` rather than a live scraping process, ensuring validated data availability.
-*   **NoSQL Database**: User-specific data (chat history, persistent records) is offloaded to Firebase, keeping the Flask backend stateless.
+*   **NoSQL Database**: User-specific data (chat history, persistent records) is offloaded to Firebase, keeping the Flask backend stateless and active at the same time.
 
