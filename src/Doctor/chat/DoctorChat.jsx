@@ -363,6 +363,13 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         }
     };
 
+    const handleRegenerate = () => {
+        setActiveAction(null); // Close modal to reset state
+        setTimeout(() => {
+            handleGenerateNote(); // Re-analyze and open
+        }, 300);
+    };
+
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = React.useRef(null);
     const audioChunksRef = React.useRef([]);
@@ -870,7 +877,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                 </div>
                             </div>
                             
-                            <p className="mt-12 text-[10px] text-stone-600 font-mono tracking-widest uppercase opacity-60">
+                            <p className="mt-12 text-xs font-black text-stone-600 font-mono tracking-[0.25em] uppercase opacity-75">
                                 Curebird Clinical Workspace v2.0
                             </p>
                         </div>
@@ -1231,6 +1238,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                    // Close summary, open add record
                    setActiveAction('add_record');
                 }}
+                onRegenerate={handleRegenerate}
             />
 
             <AddClinicalRecordModal

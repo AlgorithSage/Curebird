@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {  X, RefreshCw, Check, FileText, Bot, Cpu, History, ChevronRight, CheckCircle  } from '../../../components/Icons';
 
-const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove }) => {
+const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onRegenerate }) => {
     const [isGenerating, setIsGenerating] = useState(true);
     const [step, setStep] = useState(0); 
 
@@ -147,7 +147,10 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove }) => 
 
                     {/* Footer */}
                     <div className="p-8 border-t border-amber-500/10 bg-[#140c00] flex justify-between items-center relative z-20">
-                        <button className="px-6 py-3.5 rounded-xl border border-amber-500/20 text-stone-400 hover:text-amber-200 hover:bg-amber-500/5 hover:border-amber-500/40 transition-all flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider group">
+                        <button 
+                            onClick={onRegenerate}
+                            className="px-6 py-3.5 rounded-xl border border-amber-500/20 text-stone-400 hover:text-amber-200 hover:bg-amber-500/5 hover:border-amber-500/40 transition-all flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider group"
+                        >
                             <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
                             Regenerate
                         </button>
