@@ -608,3 +608,4 @@ def analyze_comprehensive(file_stream):
             "analysis": {"medications": [], "diseases": []},
             "summary": "An error occurred while creating your medical summary. Please try again."
         }
+

@@ -66,7 +66,7 @@
 
 ## �️ Backend Technologies
 
-The backend is built as a modular Flask application optimized for AI inference and data processing.
+The backend is built as a modular Flask application optimized for AI inference and data processing utilising REST API.
 
 *   **Framework**: **Flask** (Python) - Lightweight and flexible for microservices.
 *   **AI Inference Engine**: **Groq API**

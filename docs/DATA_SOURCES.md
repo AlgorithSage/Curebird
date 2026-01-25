@@ -9,7 +9,7 @@ This document audits the data sources, API integrations, and research methodolog
 | **EnvironmentalHealth.js** | Air Quality | WAQI (World Air Quality Index) | `api.waqi.info/feed` | Real-time PM2.5, PM10, AQI | Active |
 | **CureStat.js** (HeatmapModal) | Disease Heatmap | Google Maps JS API | `google.maps.visualization` | Geolocation coordinates | Active |
 
-## 2. Static Data Sources (Research-Based)
+## 2. Static Data Sources (Research - Based)
 
 | Component | Primary Data File | Source / Authority | Key Metrics/Insights |
 | :--- | :--- | :--- | :--- |

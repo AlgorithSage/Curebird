@@ -42,5 +42,5 @@ The app uses a layout-based structure where `App.js` defines the routing and glo
 ## 4. Routing Strategy
 **React Router 7** handles client-side navigation.
 *   **Public Routes**: `/`, `/cure-stat`
-*   **Protected Routes**: `/doctor-dashboard` (Redirects to Login if no Auth token found).
+*   **Protected Routes**: `/doctor-dashboard` (Redirects to Login, if no Auth token found).
 

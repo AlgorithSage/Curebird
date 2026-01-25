@@ -82,3 +82,4 @@ def get_patient_service():
     if _patient_service is None:
         _patient_service = PatientPersonaService()
     return _patient_service
+    

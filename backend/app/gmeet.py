@@ -144,3 +144,4 @@ def create_meet():
         print(f"Meet API Error: {e}")
         # Fallback to Calendar if Meet V2 fails (optional but good for robustness)
         return jsonify({"error": str(e)}), 500
+

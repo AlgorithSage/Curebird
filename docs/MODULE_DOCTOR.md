@@ -20,7 +20,7 @@ The Doctor Module is a secure, role-gated environment designed for efficiency an
 
 ### A. Dashboard (`src/Doctor/DoctorDashboard.js`)
 *   **Data Source**: `db.collection('appointments').where('doctorId', '==', currentUser.uid)`
-*   **Layout**: Sidebar navigation (Patients, Schedule, Settings) + Main Content Area.
+*   **Layout**: Sidebar navigation (Patients, Schedule, Settings) and Main Content Area.
 
 ### B. Doctor Chat (`src/Doctor/chat/DoctorChat.jsx`)
 *   **Real-time**: Uses Firestore listeners (`onSnapshot`) to reflect new messages instantly.
