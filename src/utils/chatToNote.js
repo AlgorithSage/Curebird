@@ -8,39 +8,49 @@
  * @param {String} patientName - Name of the patient
  * @returns {Object} { title, description, diagnosis, vitals, subjective, objective }
  */
+/**
+ * Chat-to-Note Heuristic Engine
+ * 
+ * Analyzes a list of chat messages and generates a structured clinical summary.
+ * STRICT MODE: Only uses what is actually in the chat.
+ * 
+ * @param {Array} messages - List of message objects { text, sender, type }
+ * @param {String} patientName - Name of the patient
+ * @returns {Object} { title, description, diagnosis, vitals, subjective, objective }
+ */
 export const analyzeChatContext = (messages, patientName) => {
     if (!messages || messages.length === 0) return null;
 
     // Filter relevant text messages
     const textMessages = messages
         .filter(m => m.text && (m.type === 'text' || !m.type))
-        .map(m => `[${m.sender === 'doctor' ? 'Dr.' : 'Pt.'}]: ${m.text}`)
-        .join('\n');
+        .sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0)); // Ensure chronological order
 
-    // 1. Subjective (Patient Complaints)
-    const symptoms = [];
-    const symptomKeywords = ['pain', 'ache', 'fever', 'cough', 'swelling', 'dizzy', 'tired', 'fatigue', 'vomit', 'nausea', 'rash', 'headache', 'stomach'];
-    
-    messages.forEach(msg => {
+    // 1. Subjective (What the PATIENT said)
+    const patientQuotes = [];
+    const symptomsFound = [];
+    const symptomKeywords = ['pain', 'ache', 'fever', 'cough', 'swelling', 'dizzy', 'tired', 'fatigue', 'vomit', 'nausea', 'rash', 'headache', 'stomach', 'feeling', 'hurt'];
+
+    textMessages.forEach(msg => {
         if (msg.sender !== 'doctor') {
+            // It's the patient
+            patientQuotes.push(msg.text); // Capture everything
+            
             symptomKeywords.forEach(k => {
-                if (msg.text.toLowerCase().includes(k)) {
-                    // Extract the sentence containing the keyword
-                    const sentence = msg.text.match(new RegExp(`[^.!]*${k}[^.!]*`, 'i'));
-                    if (sentence) symptoms.push(sentence[0].trim());
-                }
+                if (msg.text.toLowerCase().includes(k)) symptomsFound.push(k);
             });
         }
     });
 
-    const uniqueSymptoms = [...new Set(symptomKeywords.filter(k => textMessages.toLowerCase().includes(k)))];
-    
-    // 2. Objective (Vitals Extraction)
+    const uniqueSymptoms = [...new Set(symptomsFound)];
+
+    // 2. Objective (Vitals Extraction - Strict)
     const vitals = {};
-    const lowerText = textMessages.toLowerCase();
+    const fullText = textMessages.map(m => m.text).join(' '); // Scan whole text block
+    const lowerText = fullText.toLowerCase();
 
     // BP
-    const bpMatch = textMessages.match(/\b(\d{2,3}\/\d{2,3})\b/);
+    const bpMatch = fullText.match(/\b(\d{2,3}\/\d{2,3})\b/);
     if (bpMatch) vitals.bp = bpMatch[1];
     
     // Temp
@@ -50,53 +60,67 @@ export const analyzeChatContext = (messages, patientName) => {
     // HR
     const hrMatch = lowerText.match(/\b(\d{2,3})\s*(?:bpm|heart|pulse)\b/i);
     if (hrMatch) vitals.heartRate = hrMatch[1];
+    
+    // SpO2
+    const spo2Match = lowerText.match(/\b(\d{2,3})\s*%/);
+    if (spo2Match) vitals.spo2 = spo2Match[1];
 
     // 3. Assessment (Diagnosis Guess)
-    let diagnosis = 'Undiagnosed';
-    if (uniqueSymptoms.includes('fever') && uniqueSymptoms.includes('cough')) diagnosis = 'Viral Upper Respiratory Infection';
-    else if (uniqueSymptoms.includes('headache') && uniqueSymptoms.includes('nausea')) diagnosis = 'Migraine';
-    else if (uniqueSymptoms.includes('chest') && uniqueSymptoms.includes('pain')) diagnosis = 'Chest Pain (Requires Rule-Out)';
-    else if (uniqueSymptoms.length > 0) diagnosis = `Symptomatic: ${uniqueSymptoms[0]}`;
+    let diagnosis = 'Consultation';
+    if (uniqueSymptoms.length > 0) {
+        if (uniqueSymptoms.includes('fever') && uniqueSymptoms.includes('cough')) diagnosis = 'Viral URI (Suspected)';
+        else if (uniqueSymptoms.includes('headache')) diagnosis = 'Cephalalgia / Headache';
+        else diagnosis = `Observation: ${uniqueSymptoms[0]}`;
+    }
 
-    // 4. Plan (Doctor Instructions)
-    const planItems = [];
-    const planKeywords = ['take', 'prescribe', 'rest', 'drink', 'monitor', 'refer', 'follow up'];
-    messages.forEach(msg => {
+    // 4. Plan (What the DOCTOR said)
+    const doctorAdvice = [];
+    textMessages.forEach(msg => {
         if (msg.sender === 'doctor') {
-            planKeywords.forEach(k => {
-                if (msg.text.toLowerCase().includes(k)) {
-                     const sentence = msg.text.match(new RegExp(`[^.!]*${k}[^.!]*`, 'i'));
-                     if (sentence) planItems.push(sentence[0].trim());
-                }
-            });
+            doctorAdvice.push(msg.text);
         }
     });
 
-    // formatted description (SOAP style)
+    // --- FORMULATION ---
+    // If conversation is just "Hi", we shouldn't hallucinate a headache.
+    
+    const submittedSubjective = patientQuotes.length > 0 
+        ? patientQuotes.map(q => `• "${q}"`).join('\n')
+        : "Patient provided no input.";
+
+    const submittedPlan = doctorAdvice.length > 0
+        ? doctorAdvice.map(q => `• ${q}`).join('\n')
+        : "No specific medical advice recorded in chat.";
+
+    // Objective Section Construction
+    let objectiveText = "Vitals extracted from chat:";
+    let hasVitals = false;
+    if (vitals.bp) { objectiveText += `\n- BP: ${vitals.bp}`; hasVitals = true; }
+    if (vitals.temp) { objectiveText += `\n- Temp: ${vitals.temp}`; hasVitals = true; }
+    if (vitals.heartRate) { objectiveText += `\n- HR: ${vitals.heartRate}`; hasVitals = true; }
+    if (!hasVitals) objectiveText = "No vitals shared in conversation.";
+
     const description = `
 **SUBJECTIVE:**
-Patient ${patientName} presents with: ${uniqueSymptoms.join(', ') || 'general concerns'}.
-Patient reports: "${symptoms.slice(0, 2).join('"; "')}"
+Patient conversation log:
+${submittedSubjective}
 
 **OBJECTIVE:**
-Review of systems via chat.
-${vitals.bp ? `- BP: ${vitals.bp}` : ''}
-${vitals.temp ? `- Temp: ${vitals.temp}` : ''}
-${vitals.heartRate ? `- HR: ${vitals.heartRate}` : ''}
+${objectiveText}
 
 **ASSESSMENT:**
-Possible ${diagnosis}.
+${diagnosis}
 
 **PLAN:**
-${planItems.map(p => `- ${p}`).join('\n') || '- Monitor symptoms\n- Follow up if regular'}
+Doctor's instructions:
+${submittedPlan}
     `.trim();
 
     return {
         title: `Consultation Note: ${patientName}`,
-        type: 'consultation_note', // Fixed type
+        type: 'consultation_note',
         description: description,
         diagnosis: diagnosis,
         vitals: vitals.bp ? vitals.bp : (vitals.heartRate ? `${vitals.heartRate} bpm` : ''),
-        // pass raw vitals object if needed by modal, but usually modal takes text 'vitals' field or separate
     };
 };

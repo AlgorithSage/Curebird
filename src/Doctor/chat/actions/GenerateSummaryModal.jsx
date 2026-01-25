@@ -2,28 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {  X, RefreshCw, Check, FileText, Bot, Cpu, History, ChevronRight, CheckCircle  } from '../../../components/Icons';
 
-const GenerateSummaryModal = ({ isOpen, onClose }) => {
+const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove }) => {
     const [isGenerating, setIsGenerating] = useState(true);
-    const [step, setStep] = useState(0); // 0: Analyzing, 1: Complete
+    const [step, setStep] = useState(0); 
 
     useEffect(() => {
         if (isOpen) {
             setIsGenerating(true);
             setStep(0);
-            // Simulate generation delay
             const timer = setTimeout(() => {
                 setIsGenerating(false);
                 setStep(1);
-            }, 2500);
+            }, 2000); // Slightly faster for real feel
             return () => clearTimeout(timer);
         }
     }, [isOpen]);
 
-    const soapNote = {
-        subjective: "Patient reports feeling 'slightly better' than yesterday but complains of persistent fatigue. Mentions adherence to evening medication but missed morning dose once due to nausea.",
-        objective: "Heart Rate avg: 78 bpm (stable). BP: 120/80. Latest blood work (imported): Hemoglobin 13.5 g/dL, WBC 14.2 (Elevated).",
-        assessment: "Patient showing signs of post-viral fatigue syndrome. WBC count suggests resolving infection vs residual inflammation. Medication adherence is 90%, nausea may be a side effect of current antibiotic regimen.",
-        plan: "1. Continue current antibiotic course to completion.\n2. Recommend taking medication with food to reduce nausea.\n3. Schedule follow-up blood work in 5 days to monitor WBC trend.\n4. Advise rest and hydration."
+    // Construct SOAP from the heuristic data or fallback
+    const soapNote = generatedData ? {
+        subjective: generatedData.description.split('**OBJECTIVE:**')[0].replace('**SUBJECTIVE:**', '').trim(),
+        objective: (generatedData.description.split('**OBJECTIVE:**')[1] || '').split('**ASSESSMENT:**')[0].trim(),
+        assessment: (generatedData.description.split('**ASSESSMENT:**')[1] || '').split('**PLAN:**')[0].trim(),
+        plan: (generatedData.description.split('**PLAN:**')[1] || '').trim()
+    } : {
+        subjective: "No sufficient chat context found.",
+        objective: "Vitals: --",
+        assessment: "Unable to generate.",
+        plan: "Please add more details to the conversation."
     };
 
     if (!isOpen) return null;
@@ -147,7 +152,9 @@ const GenerateSummaryModal = ({ isOpen, onClose }) => {
                             Regenerate
                         </button>
                         <div className="flex items-center gap-3">
-                            <button className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-[#1c1200] font-bold shadow-[0_0_25px_rgba(245,158,11,0.25)] hover:shadow-[0_0_40px_rgba(245,158,11,0.4)] transition-all flex items-center gap-3 transform active:scale-95 text-sm tracking-wide">
+                            <button 
+                                onClick={onApprove}
+                                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-[#1c1200] font-bold shadow-[0_0_25px_rgba(245,158,11,0.25)] hover:shadow-[0_0_40px_rgba(245,158,11,0.4)] transition-all flex items-center gap-3 transform active:scale-95 text-sm tracking-wide">
                                 <Check size={20} strokeWidth={3} />
                                 <span>Approve & Save Note</span>
                             </button>
