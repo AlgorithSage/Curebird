@@ -14,3 +14,5 @@ module.exports = {
     require('@tailwindcss/typography'),
   ],
 };
+
+// Refined for hackathon submission
