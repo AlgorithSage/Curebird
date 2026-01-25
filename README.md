@@ -1,12 +1,12 @@
-# Curebird 🏥🐦
+# Curebird 
 
 **Curebird** is an advanced digital health platform designed to bridge the gap between patients and healthcare providers. It leverages cutting-edge **Generative AI** and **Real-time Data Visualization** to provide actionable health insights, digitize medical records, and monitor epidemiological trends across India.
 
 ---
 
-## 🏗️ Project Architecture & Organization
+## Project Architecture & Organization
 
-### 1. CureStat 📊
+### 1. CureStat 
 **Purpose**: A comprehensive public health dashboard that visualizes epidemiological data to help users stay informed about disease outbreaks and environmental risks.
 
 *   **National Health Indices**: Displays critical health metrics (Diabetes, Cardiac, Respiratory, Renal, Mental) derived from national surveys (ICMR, IDSP), giving a quick snapshot of the country's health burden.
@@ -16,7 +16,7 @@
 *   **Environmental Health**: Tracks Air Quality Index (AQI) and other environmental factors that directly correlate with respiratory and cardiovascular health.
 *   **Resource Disparity**: Analyzes the gap between urban and rural healthcare infrastructure (bed density, doctor availability).
 
-### 2. Cure Analyzer 🔬
+### 2. Cure Analyzer 
 **Purpose**: A tool to digitize and interpret complex medical documents (prescriptions, lab reports).
 
 **The Two-Step AI Pipeline**:
@@ -28,7 +28,7 @@
     *   The raw JSON data is fed into a **Llama 3.1 8B** model via Groq.
     *   A specialized System Prompt acts as a "Medical Interpreter," translating technical jargon into a customized, empathetic summary for the patient (e.g., explaining that "Hypertension" means "High Blood Pressure").
 
-### 3. Cure Tracker 📈
+### 3. Cure Tracker 
 **Purpose**: A longitudinal health tracking system that visualizes disease progression markers over time.
 
 *   **Pathology Trend Analysis**: Upload multiple lab reports (dates apart) to automatically plot graphs for key biomarkers (e.g., HbA1c, Thyroid T3/T4, Lipid Profile).
@@ -38,7 +38,7 @@
     *   **Liver/Kidney Panels**: Tracks liver enzymes and creatinine levels for chronic patients.
 *   **Clinical Efficacy**: Helps doctors visualize whether a current treatment plan is working by showing the 'slope' of improvement or decline.
 
-### 4. Cure AI 🤖
+### 4. Cure AI 
 **Purpose**: An intelligent, context-aware health assistant.
 
 *   **Context Injection**: The AI is fed real-time disease trend data (cached from CureStat) via a System Prompt. This allows it to give advice relevant to current outbreaks (e.g., advising on Dengue prevention during monsoon season if cases are high).
@@ -48,9 +48,9 @@
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-### 🧑‍⚕️ For Patients (Active Module)
+### For Patients (Active Module)
 *   **Medical Portfolio**: A central hub for health stats (BP, BMI, Heart Rate), upcoming appointments, and active prescriptions.
 *   **Digital Health Locker**: Securely upload, store, and categorize medical records (Lab Reports, Prescriptions, Imaging).
 *   **Cure Analyzer**: Instantly convert physical reports into digital, understandable summaries using the dual-core AI pipeline.
@@ -58,7 +58,7 @@
 *   **Medication Tracker**: Visual tracking of active medicines with dosage and frequency details extracted from your records.
 *   **Doctor Discovery**: Browse specialist profiles and book appointments.
 
-### 👨‍⚕️ For Doctors (Active Module - Beta)
+### For Doctors (Active Module - Beta)
 *   **Premium Clinical Workspace**: A sophisticated, glassmorphic dashboard designed for high-performance clinical workflows.
 *   **Secure Authentication**: Role-based access via Email/Google Sign-In with strict Firestore security rules.
 *   **Patient Management**: 
@@ -76,7 +76,7 @@
 ---
 
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Frontend
 *   **Framework**: **React.js** (Create React App)
@@ -96,7 +96,7 @@
 
 ---
 
-## 🚀 Deployment Infrastructure 
+## Deployment Infrastructure 
 
 The project utilizes a modern serverless architecture for high scalability and low maintenance.
 
@@ -119,7 +119,7 @@ The project utilizes a modern serverless architecture for high scalability and l
 
 ---
 
-## 💾 Storage & Database (Firebase)
+## Storage & Database (Firebase)
 
 The project relies on a serverless **Firebase** architecture for security and scalability.
 
@@ -140,7 +140,7 @@ The project relies on a serverless **Firebase** architecture for security and sc
 
 ---
 
-## 📡 API Setup & Endpoints
+## API Setup & Endpoints
 
 The Flask backend exposes RESTful endpoints for the frontend React application.
 
