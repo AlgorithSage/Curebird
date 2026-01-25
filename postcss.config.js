@@ -3,3 +3,5 @@ export const plugins = {
   tailwindcss: {},
   autoprefixer: {},
 };
+
+// Refined for hackathon submission
