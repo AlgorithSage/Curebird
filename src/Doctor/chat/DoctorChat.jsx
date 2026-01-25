@@ -1052,77 +1052,107 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
 
                                 return (
                                     <>
-                                        {/* Vitals */}
-                                        <div className="space-y-3">
-                                            <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
-                                                <Activity size={12} /> Recent Vitals
+                                        {/* Vitals Section */}
+                                        <div className="space-y-4">
+                                            <h4 className="text-[11px] font-black text-stone-500 uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
+                                                <Activity size={14} /> Recent Vitals
                                             </h4>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-emerald-500/30 transition-colors group">
-                                                    <div className="text-stone-500 text-[10px] mb-1 group-hover:text-emerald-500">Heart Rate</div>
-                                                    <div className="text-emerald-500 font-mono font-bold text-lg">
-                                                        {vitals.heartRate || '--'} <span className="text-xs text-stone-600">bpm</span>
-                                                    </div>
-                                                </div>
-                                                <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-amber-500/30 transition-colors group">
-                                                    <div className="text-stone-500 text-[10px] mb-1 group-hover:text-amber-500">BP</div>
-                                                    <div className="text-amber-500 font-mono font-bold text-lg">
-                                                        {vitals.bp || '--/--'}
-                                                    </div>
-                                                </div>
-                                                <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-rose-500/30 transition-colors group col-span-2 flex items-center justify-between">
+                                            <div className="grid grid-cols-2 gap-4">
+                                                {/* Heart Rate */}
+                                                <div className="p-5 bg-stone-900/50 rounded-2xl border border-stone-800 hover:border-emerald-500/20 transition-all group flex flex-col justify-between h-32">
+                                                    <div className="text-stone-500 text-[11px] font-bold uppercase tracking-wider group-hover:text-emerald-500 transition-colors">Heart Rate</div>
                                                     <div>
-                                                        <div className="text-stone-500 text-[10px] mb-1 group-hover:text-rose-500">Temp</div>
-                                                        <div className="text-rose-500 font-mono font-bold text-lg">
+                                                        <div className={`font-mono font-bold text-3xl ${vitals.heartRate ? 'text-emerald-500' : 'text-stone-700'}`}>
+                                                            {vitals.heartRate || '--'}
+                                                        </div>
+                                                        <div className="text-[10px] text-stone-600 font-bold uppercase tracking-widest mt-1">bpm</div>
+                                                    </div>
+                                                </div>
+
+                                                {/* BP */}
+                                                <div className="p-5 bg-stone-900/50 rounded-2xl border border-stone-800 hover:border-amber-500/20 transition-all group flex flex-col justify-between h-32">
+                                                    <div className="text-stone-500 text-[11px] font-bold uppercase tracking-wider group-hover:text-amber-500 transition-colors">BP</div>
+                                                    <div>
+                                                        <div className={`font-mono font-bold text-3xl ${vitals.bp ? 'text-amber-500' : 'text-stone-700'}`}>
+                                                            {vitals.bp || '--/--'}
+                                                        </div>
+                                                        <div className="text-[10px] text-stone-600 font-bold uppercase tracking-widest mt-1">mmHg</div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Temp */}
+                                                <div className="col-span-2 p-5 bg-stone-900/50 rounded-2xl border border-stone-800 hover:border-rose-500/20 transition-all group flex items-center justify-between h-24">
+                                                    <div className="flex flex-col justify-between h-full">
+                                                        <div className="text-stone-500 text-[11px] font-bold uppercase tracking-wider group-hover:text-rose-500 transition-colors">Temp</div>
+                                                        <div className={`font-mono font-bold text-3xl ${vitals.temperature ? 'text-rose-500' : 'text-stone-700'}`}>
                                                             {vitals.temperature ? `${vitals.temperature}°F` : '--'}
                                                         </div>
                                                     </div>
-                                                    <div className="text-[10px] text-stone-600 font-mono bg-stone-900 px-2 py-1 rounded">
-                                                        {vitals.lastUpdated ? new Date(vitals.lastUpdated).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'No Data'}
+                                                    <div className="h-full flex items-end">
+                                                        <div className="text-[10px] font-bold text-stone-600 bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 uppercase tracking-widest">
+                                                            {vitals.lastUpdated ? new Date(vitals.lastUpdated).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'No Data'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* SpO2 (Added to match logic) */}
+                                                 <div className="col-span-2 p-5 bg-stone-900/50 rounded-2xl border border-stone-800 hover:border-cyan-500/20 transition-all group flex items-center justify-between h-24">
+                                                    <div className="flex flex-col justify-between h-full">
+                                                        <div className="text-stone-500 text-[11px] font-bold uppercase tracking-wider group-hover:text-cyan-500 transition-colors">SpO2</div>
+                                                        <div className={`font-mono font-bold text-3xl ${vitals.spo2 ? 'text-cyan-500' : 'text-stone-700'}`}>
+                                                            {vitals.spo2 ? `${vitals.spo2}%` : '--'}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         
-                                        {/* Allergies */}
-                                        <div className="space-y-3">
-                                            <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
-                                                <AlertTriangle size={12} /> Allergies
+                                        {/* Allergies Section */}
+                                        <div className="space-y-4 pt-4 border-t border-white/5">
+                                            <h4 className="text-[11px] font-black text-stone-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                                                <AlertTriangle size={14} /> Allergies
                                             </h4>
                                             <div className="flex flex-wrap gap-2">
                                                 {allergies.length > 0 ? (
                                                     allergies.map((allergy, idx) => (
-                                                        <span key={idx} className="px-3 py-1.5 bg-rose-950/20 text-rose-500 border border-rose-500/20 rounded-lg text-xs font-bold flex items-center gap-1.5">
-                                                            <Shield size={10} /> {typeof allergy === 'string' ? allergy : allergy.name}
+                                                        <span key={idx} className="px-4 py-2 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded-xl text-xs font-bold uppercase tracking-wide flex items-center gap-2 shadow-sm">
+                                                            <Shield size={12} /> {typeof allergy === 'string' ? allergy : allergy.name}
                                                         </span>
                                                     ))
                                                 ) : (
-                                                    <span className="text-stone-600 text-xs italic opacity-50">No known allergies</span>
+                                                    <span className="px-4 py-2 bg-stone-900/50 text-stone-600 border border-stone-800 rounded-xl text-xs font-bold uppercase tracking-wide flex items-center gap-2">
+                                                        <Shield size={12} /> No Known Allergies
+                                                    </span>
                                                 )}
                                             </div>
                                         </div>
 
-                                        {/* Current Meds */}
-                                        <div className="space-y-3">
-                                            <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
-                                                <Pill size={12} /> Active Meds
+                                        {/* Active Meds Section (Card Style) */}
+                                        <div className="space-y-4 pt-4 border-t border-white/5">
+                                            <h4 className="text-[11px] font-black text-stone-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                                                <Pill size={14} /> Active Meds
                                             </h4>
-                                            <ul className="space-y-2">
+                                            <ul className="space-y-3">
                                                 {meds.length > 0 ? (
                                                     meds.map((med, idx) => (
-                                                        <li key={idx} className="flex items-center gap-3 p-3 bg-[#0c0a09] rounded-xl border border-stone-800 group hover:border-amber-500/30 transition-colors">
-                                                            <div className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-stone-600 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-colors">
-                                                                <Pill size={14} />
+                                                        <li key={idx} className="flex items-center gap-4 p-4 bg-stone-900/80 rounded-2xl border border-stone-800 group hover:border-amber-500/50 hover:bg-amber-900/5 transition-all duration-300 shadow-sm hover:shadow-[0_4px_20px_-12px_rgba(245,158,11,0.3)] hover:-translate-y-0.5 cursor-default">
+                                                            <div className="w-10 h-10 rounded-full bg-[#1c1917] flex items-center justify-center text-stone-600 group-hover:bg-amber-500/20 group-hover:text-amber-400 transition-all duration-300 shadow-inner border border-white/5 group-hover:border-amber-500/30 group-hover:scale-110">
+                                                                <Pill size={16} />
                                                             </div>
-                                                            <div>
-                                                                <div className="text-stone-200 text-sm font-medium">{med.name}</div>
-                                                                <div className="text-stone-500 text-[10px]">{med.dosage || 'Dosage N/A'} • {med.frequency || 'Freq N/A'}</div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex justify-between items-center mb-0.5">
+                                                                    <div className="text-stone-200 text-sm font-bold truncate pr-2 group-hover:text-amber-100 transition-colors">{med.name}</div>
+                                                                    <div className="text-stone-500 text-[10px] font-bold uppercase tracking-wider bg-black/20 px-1.5 py-0.5 rounded border border-white/5 group-hover:border-amber-500/40 group-hover:text-amber-400 group-hover:bg-amber-500/10 transition-colors">{med.dosage || 'N/A'}</div>
+                                                                </div>
+                                                                <div className="text-stone-500 text-[10px] font-medium truncate opacity-60 group-hover:opacity-100 group-hover:text-stone-400 transition-all">
+                                                                    {med.frequency || med.freq || 'Follow instructions'}
+                                                                </div>
                                                             </div>
                                                         </li>
                                                     ))
                                                 ) : (
-                                                    <div className="text-center p-4 border border-stone-800 border-dashed rounded-xl">
-                                                        <span className="text-stone-600 text-xs italic opacity-50">No active medications</span>
+                                                    <div className="text-center p-8 border border-stone-800 border-dashed rounded-2xl bg-stone-900/20">
+                                                        <span className="text-stone-600 text-xs font-bold uppercase tracking-widest opacity-50">No active medications</span>
                                                     </div>
                                                 )}
                                             </ul>
