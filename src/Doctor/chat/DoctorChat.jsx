@@ -35,6 +35,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
 
     const [contextMenu, setContextMenu] = useState(null); // { x, y, messageId }
     const [isVoiceCallActive, setIsVoiceCallActive] = useState(false); // New: In-App Voice Call State
+    const [showPatientDetails, setShowPatientDetails] = useState(false); // Feature 1: Patient Snapshot Panel State
 
     // Auth Check
     React.useEffect(() => {
@@ -611,6 +612,15 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             
                             {/* Call Actions */}
                             <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => setShowPatientDetails(!showPatientDetails)}
+                                    className={`p-2.5 rounded-xl border transition-all active:scale-95 ${showPatientDetails 
+                                        ? 'bg-amber-500 text-black border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.4)]' 
+                                        : 'border-stone-700 text-stone-400 hover:border-amber-500 hover:text-amber-500 hover:bg-amber-500/10'}`}
+                                    title="Toggle Patient Snapshot"
+                                >
+                                    <ClipboardCheck size={20} />
+                                </button>
                                 <button 
                                     onClick={handleVoiceCall}
                                     className="p-2.5 rounded-xl border border-stone-700 text-stone-400 hover:border-amber-500 hover:text-amber-500 hover:bg-amber-500/10 transition-all active:scale-95"
@@ -847,7 +857,110 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 </div>
             </div>
 
+            {/* Feature 1: Patient Snapshot Panel (Collapsible) */}
+            <AnimatePresence>
+                {showPatientDetails && activeChatData && (
+                    <motion.div
+                        initial={{ width: 0, opacity: 0, marginLeft: 0 }}
+                        animate={{ width: 320, opacity: 1, marginLeft: 0 }}
+                        exit={{ width: 0, opacity: 0, marginLeft: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className="bg-[#17120a] border border-[#382b18] rounded-3xl shadow-2xl overflow-hidden flex flex-col z-10"
+                    >
+                         {/* Header */}
+                        <div className="p-6 border-b border-[#382b18] bg-[#261e12]/50 flex justify-between items-center">
+                            <h3 className="text-amber-50 font-bold flex items-center gap-2 text-sm uppercase tracking-wider">
+                                <Activity size={16} className="text-amber-500" />
+                                Patient Snapshot
+                            </h3>
+                            <button onClick={() => setShowPatientDetails(false)} className="text-stone-500 hover:text-white transition-colors">
+                                <X size={16} />
+                            </button>
+                        </div>
+                        
+                        {/* Scrollable Content */}
+                        <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
+                            
+                            {/* Patient Info Header */}
+                            <div className="text-center pb-4 border-b border-white/5">
+                                <div className="w-16 h-16 rounded-2xl bg-stone-800 mx-auto mb-3 flex items-center justify-center text-2xl font-bold text-stone-500 shadow-inner">
+                                    {activeChatData.patient.charAt(0)}
+                                </div>
+                                <h2 className="text-lg font-bold text-white mb-1">{activeChatData.patient}</h2>
+                                <p className="text-xs text-stone-500 font-mono">ID: {activeChatData.patientId}</p>
+                            </div>
 
+                            {/* Vitals */}
+                            <div className="space-y-3">
+                                <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
+                                    <Activity size={12} /> Recent Vitals
+                                </h4>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-emerald-500/30 transition-colors group">
+                                        <div className="text-stone-500 text-[10px] mb-1 group-hover:text-emerald-500">Heart Rate</div>
+                                        <div className="text-emerald-500 font-mono font-bold text-lg">72 <span className="text-xs text-stone-600">bpm</span></div>
+                                    </div>
+                                    <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-amber-500/30 transition-colors group">
+                                        <div className="text-stone-500 text-[10px] mb-1 group-hover:text-amber-500">BP</div>
+                                        <div className="text-amber-500 font-mono font-bold text-lg">120/80</div>
+                                    </div>
+                                    <div className="p-3 bg-[#0c0a09] rounded-xl border border-stone-800 hover:border-rose-500/30 transition-colors group col-span-2 flex items-center justify-between">
+                                        <div>
+                                            <div className="text-stone-500 text-[10px] mb-1 group-hover:text-rose-500">Temp</div>
+                                            <div className="text-rose-500 font-mono font-bold text-lg">98.6°F</div>
+                                        </div>
+                                        <div className="text-[10px] text-stone-600 font-mono bg-stone-900 px-2 py-1 rounded">
+                                            Just Now
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Allergies */}
+                            <div className="space-y-3">
+                                <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
+                                    <AlertTriangle size={12} /> Allergies
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="px-3 py-1.5 bg-rose-950/20 text-rose-500 border border-rose-500/20 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                                        <Shield size={10} /> Penicillin
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-rose-950/20 text-rose-500 border border-rose-500/20 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                                        <Shield size={10} /> Peanuts
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Current Meds */}
+                            <div className="space-y-3">
+                                <h4 className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-2">
+                                    <Pill size={12} /> Active Meds
+                                </h4>
+                                <ul className="space-y-2">
+                                    <li className="flex items-center gap-3 p-3 bg-[#0c0a09] rounded-xl border border-stone-800 group hover:border-amber-500/30 transition-colors">
+                                        <div className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-stone-600 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-colors">
+                                            <Pill size={14} />
+                                        </div>
+                                        <div>
+                                            <div className="text-stone-200 text-sm font-medium">Lisinopril</div>
+                                            <div className="text-stone-500 text-[10px]">10mg • Daily</div>
+                                        </div>
+                                    </li>
+                                    <li className="flex items-center gap-3 p-3 bg-[#0c0a09] rounded-xl border border-stone-800 group hover:border-amber-500/30 transition-colors">
+                                        <div className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-stone-600 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-colors">
+                                            <Pill size={14} />
+                                        </div>
+                                        <div>
+                                            <div className="text-stone-200 text-sm font-medium">Metformin</div>
+                                            <div className="text-stone-500 text-[10px]">500mg • Twice Daily</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Insight Modal Integration */}
             <InsightReviewModal
