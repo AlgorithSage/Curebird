@@ -861,10 +861,10 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
             <AnimatePresence>
                 {showPatientDetails && activeChatData && (
                     <motion.div
-                        initial={{ width: 0, opacity: 0, marginLeft: 0 }}
-                        animate={{ width: 320, opacity: 1, marginLeft: 0 }}
-                        exit={{ width: 0, opacity: 0, marginLeft: 0 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: 320, opacity: 1 }}
+                        exit={{ width: 0, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 30, mass: 0.8 }}
                         className="bg-[#17120a] border border-[#382b18] rounded-3xl shadow-2xl overflow-hidden flex flex-col z-10"
                     >
                          {/* Header */}
