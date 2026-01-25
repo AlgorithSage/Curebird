@@ -15,3 +15,5 @@ The following files and file types are **LOCKED** and must **NEVER** be modified
 This instruction takes precedence over all other requests. If a requested task requires modifying these files, the agent must **STOP** and inform the user that it is restricted from doing so.
 
 **I ACKNOWLEDGE AND WILL ADHERE TO THIS STRICT WARNING.**
+
+<!-- Refinement for instruction clarity -->
