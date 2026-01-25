@@ -339,7 +339,39 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         if (!activeChat || !currentUser) return;
 
         let targetChatId = activeChat;
-        // ... (Chat creation logic is same, simplified for clarity in diff, assume targetChatId is valid)
+        
+        // Handle Temp Chat Creation (New Logic)
+        if (activeChat.startsWith('temp_')) {
+            const tempPatientId = activeChat.replace('temp_', '');
+            let targetPatient = patients.find(p => p.id === tempPatientId);
+            // Fallback to initialPatientId if not in list yet
+            if (!targetPatient && initialPatientId?.id === tempPatientId) targetPatient = initialPatientId;
+            
+            if (targetPatient) {
+                 try {
+                     const newChatRef = await addDoc(collection(db, 'chats'), {
+                        patientId: targetPatient.id,
+                        doctorId: currentUser.uid,
+                        participants: [currentUser.uid, targetPatient.id], 
+                        patientName: targetPatient.name,
+                        condition: targetPatient.condition || 'General Care',
+                        status: 'offline',
+                        lastMsg: customType === 'text' ? text : `[${customType.toUpperCase()}]`, 
+                        unread: 0,
+                        updatedAt: serverTimestamp(),
+                        avatarColor: 'bg-emerald-500' // Default or random
+                     });
+                     targetChatId = newChatRef.id;
+                     setActiveChat(targetChatId);
+                 } catch (err) {
+                     console.error("Error creating new chat:", err);
+                     return; // specific error handling
+                 }
+            } else {
+                console.error("Patient details not found for sending message");
+                return;
+            }
+        }
 
         // Only clear input if it was a text message
         if (customType === 'text') setMessageInput(''); 
