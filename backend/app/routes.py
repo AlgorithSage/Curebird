@@ -202,3 +202,4 @@ def get_disease_insight():
         return jsonify({'error': str(e)}), 500
 
 
+

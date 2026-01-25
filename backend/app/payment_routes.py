@@ -182,3 +182,4 @@ def verify_promo():
     except Exception as e:
         print(f"Promo Error: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+

@@ -241,4 +241,3 @@ def get_health_assistant():
     if _health_assistant is None:
         _health_assistant = GeminiHealthAssistant()
     return _health_assistant
-

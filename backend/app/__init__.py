@@ -20,3 +20,4 @@ def create_app():
         app.register_blueprint(payment_routes.payment_bp)
 
         return app
+
