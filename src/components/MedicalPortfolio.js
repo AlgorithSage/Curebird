@@ -18,25 +18,33 @@ import HeroSection from './HeroSection';
 
 
 const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar, onNavigate, onSubscribeClick, isRecordModalOpen, onAddRecordClick, onCloseRecordModal }) => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     // Premium Animation Variants
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.3,
-                delayChildren: 0.4
+                staggerChildren: isMobile ? 0.1 : 0.3,
+                delayChildren: isMobile ? 0.1 : 0.4
             }
         }
     };
 
     const fadeSlideUp = {
-        hidden: { opacity: 0, y: 100, filter: "blur(10px)" },
+        hidden: { opacity: 0, y: isMobile ? 30 : 100, filter: isMobile ? "blur(0px)" : "blur(10px)" },
         visible: {
             opacity: 1,
             y: 0,
             filter: "blur(0px)",
-            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+            transition: { duration: isMobile ? 0.5 : 0.8, ease: [0.16, 1, 0.3, 1] }
         }
     };
 
@@ -55,12 +63,12 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     };
 
     const blurReveal = {
-        hidden: { opacity: 0, filter: "blur(20px)", scale: 0.95 },
+        hidden: { opacity: 0, filter: isMobile ? "blur(0px)" : "blur(20px)", scale: 0.95 },
         visible: {
             opacity: 1,
             filter: "blur(0px)",
             scale: 1,
-            transition: { duration: 1, ease: "easeOut" }
+            transition: { duration: isMobile ? 0.5 : 1, ease: "easeOut" }
         }
     };
     const [records, setRecords] = useState([]);

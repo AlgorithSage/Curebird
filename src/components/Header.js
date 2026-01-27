@@ -121,18 +121,7 @@ const NotificationDropdown = ({ alerts, onClose }) => {
 // This Header component is now fully responsive
 const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate, onNotificationClick, alerts = [], navItems: propNavItems = [] }) => {
     const [isNotifOpen, setIsNotifOpen] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false);
     const { triggerHaptic } = useHaptics();
-
-    useEffect(() => {
-        const onScroll = (e) => {
-            const scrollTop = e.target.scrollTop || window.scrollY;
-            setIsScrolled(scrollTop > 10);
-        };
-
-        window.addEventListener('scroll', onScroll, true); // Capture phase is key here
-        return () => window.removeEventListener('scroll', onScroll, true);
-    }, []);
 
     // Default Navigation Items (Patient Portal Defaults)
     const defaultNavItems = [
@@ -283,20 +272,10 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
 
             </header>
 
-            {/* Mobile/Zoomed Text: Visible OUTSIDE Header on Smaller Screens (< XL) */}
-            <AnimatePresence>
-                {!isScrolled && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto', marginTop: 24, marginBottom: 8 }}
-                        exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="xl:hidden w-full px-4 flex justify-center overflow-hidden"
-                    >
-                        <HeaderText />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Mobile/Zoomed Text: Visible OUTSIDE Header on Smaller Screens (< XL) - FIXED SPACE */}
+            <div className="xl:hidden w-full px-4 flex justify-center mt-6 mb-2 min-h-[60px]">
+                <HeaderText />
+            </div>
         </>
     );
 }

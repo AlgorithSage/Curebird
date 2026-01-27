@@ -54,22 +54,22 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
     }, []);
 
     const sectionVariants = {
-        hidden: { opacity: 0, y: 150, filter: "blur(10px)" },
+        hidden: { opacity: 0, y: isMobile ? 50 : 150, filter: isMobile ? "blur(0px)" : "blur(10px)" },
         visible: {
             opacity: 1,
             y: 0,
             filter: "blur(0px)",
-            transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
+            transition: { duration: isMobile ? 0.8 : 1.2, ease: [0.22, 1, 0.36, 1] }
         }
     };
 
     const textVariants = {
-        hidden: { opacity: 0, y: 60, filter: "blur(8px)" },
+        hidden: { opacity: 0, y: isMobile ? 30 : 60, filter: isMobile ? "blur(0px)" : "blur(8px)" },
         visible: (i) => ({
             opacity: 1,
             y: 0,
             filter: "blur(0px)",
-            transition: { delay: i * 0.35, duration: 1.2, ease: "easeOut" }
+            transition: { delay: i * (isMobile ? 0.1 : 0.35), duration: isMobile ? 0.8 : 1.2, ease: "easeOut" }
         })
     };
 
@@ -78,14 +78,14 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.3,
-                delayChildren: 0.4
+                staggerChildren: isMobile ? 0.1 : 0.3,
+                delayChildren: isMobile ? 0.2 : 0.4
             }
         }
     };
 
     const cardVariants = {
-        hidden: { opacity: 0, y: 120, scale: 0.8, filter: "blur(4px)" },
+        hidden: { opacity: 0, y: isMobile ? 40 : 120, scale: isMobile ? 0.95 : 0.8, filter: isMobile ? "blur(0px)" : "blur(4px)" },
         visible: {
             opacity: 1,
             y: 0,
@@ -95,7 +95,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                 type: "spring",
                 damping: 20,
                 stiffness: 100,
-                duration: 0.8
+                duration: isMobile ? 0.5 : 0.8
             }
         }
     };

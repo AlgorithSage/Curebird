@@ -4,6 +4,13 @@ import { X, Check, Shield, Zap, Crown } from './Icons';
 import { API_BASE_URL } from '../config';
 
 const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
     const [selectedTier, setSelectedTier] = useState('Premium'); // Default to Premium
     const [isProcessing, setIsProcessing] = useState(false);
     const [showPromo, setShowPromo] = useState(false);
@@ -236,15 +243,17 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 onClick={onClose}
                 className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
 
             {/* Modal Content - Visual Wrapper */}
             <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                initial={isMobile ? { opacity: 0, y: 50 } : { scale: 0.9, opacity: 0, y: 20 }}
+                animate={isMobile ? { opacity: 1, y: 0 } : { scale: 1, opacity: 1, y: 0 }}
+                exit={isMobile ? { opacity: 0, y: 50 } : { scale: 0.9, opacity: 0, y: 20 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
                 className="relative w-full max-w-7xl h-[90vh] glass-card-amber border border-white/10 flex flex-col overflow-hidden"
             >
                 {/* Background Glow */}
@@ -285,14 +294,14 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                                         ? `bg-gradient-to-br from-slate-900 to-black border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.2)] z-10 scale-[1.02] md:scale-100`
                                         : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
                                         }`}
-                                    initial={{ opacity: 0, y: 100, rotateY: 10 }}
-                                    whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-                                    viewport={{ margin: "-100px" }}
+                                    initial={isMobile ? { opacity: 0, y: 20 } : { opacity: 0, y: 100, rotateY: 10 }}
+                                    whileInView={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, rotateY: 0 }}
+                                    viewport={{ margin: "-50px 0px" }} // Tighter viewport for mobile
                                     transition={{
                                         type: "spring",
                                         damping: 20,
                                         stiffness: 100,
-                                        delay: idx * 0.35
+                                        delay: isMobile ? 0 : idx * 0.15 // Reduced delay
                                     }}
                                 >
 
