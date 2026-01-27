@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react'; // v2.0
 import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
