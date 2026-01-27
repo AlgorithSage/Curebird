@@ -88,10 +88,8 @@ export default function App() {
     };
 
     useEffect(() => {
-        // Redirect legacy domain to new custom domain
-        if (window.location.hostname.includes('vercel.app')) {
-            window.location.replace('https://www.curebird.tech' + window.location.pathname + window.location.search);
-        }
+        // Redirect logic removed as per user request to keep Vercel standalone
+
 
         const params = new URLSearchParams(window.location.search);
         const shareToken = params.get('share');
