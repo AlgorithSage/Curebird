@@ -152,13 +152,11 @@ export default function App() {
                 }
             }
 
-            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-            const isSlow = connection && (['slow-2g', '2g', '3g'].includes(connection.effectiveType));
-            const finalDelay = isSlow ? 3500 : 1000;
 
-            setTimeout(() => {
-                setLoading(false);
-            }, finalDelay);
+
+            // OPTIMIZATION: Removed artificial delay. 
+            // The app is ready as soon as Auth check completes.
+            setLoading(false);
         });
 
         return () => {
