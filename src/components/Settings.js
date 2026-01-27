@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getAuth, updateProfile, updateEmail, updatePassword, deleteUser } from 'firebase/auth';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  User, Mail, Shield, Save, Camera, AlertTriangle, BadgeCheck, FileText, ArrowRight, Settings as SettingsIcon  } from './Icons';
+import { User, Mail, Shield, Save, Camera, AlertTriangle, BadgeCheck, FileText, ArrowRight, Settings as SettingsIcon, Crown, HelpCircle } from './Icons';
 
 import Header from './Header';
 import { DeleteAccountModal } from './Modals';
@@ -68,6 +68,29 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
         } catch (error) {
             console.error("Error deleting account:", error);
             alert("For security, you may need to re-login before deleting your account.");
+        }
+    };
+
+    const handleCancelSubscription = async () => {
+        if (window.confirm("Are you sure you want to cancel your Premium subscription? You will lose access to AI features immediately.")) {
+            try {
+                const { doc, updateDoc } = await import('firebase/firestore');
+                const userRef = doc(db, 'users', user.uid);
+
+                // Downgrade to Free
+                await updateDoc(userRef, {
+                    subscriptionStatus: 'cancelled', // or 'active' but relying on Tier
+                    subscriptionTier: 'Free',
+                    cancelledAt: new Date().toISOString()
+                });
+
+                alert("Subscription cancelled. You have been downgraded to the Free plan.");
+                // Optionally trigger a reload or context update if not reactive
+                window.location.reload();
+            } catch (error) {
+                console.error("Error cancelling subscription:", error);
+                alert("Failed to cancel subscription. Please try again or contact support.");
+            }
         }
     };
 
@@ -213,6 +236,62 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
                             </div>
                         </div>
                     </motion.div>
+
+                    {/* Subscription Management Section */}
+                    {user?.subscriptionTier !== 'Free' && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.05 }}
+                            className="glass-card relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 right-0 p-4 opacity-50">
+                                <Crown className="text-amber-500/20 w-32 h-32 -mr-10 -mt-10" />
+                            </div>
+
+                            <div className="relative z-10">
+                                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                                    <Crown className="text-amber-500" size={24} weight="fill" />
+                                    Subscription Management
+                                </h2>
+
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div>
+                                        <p className="text-slate-400 text-sm mb-1 uppercase tracking-wider font-bold">Current Plan</p>
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <span className="text-3xl font-black text-white">{user.subscriptionTier || 'Free'}</span>
+                                            <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                                                Active
+                                            </span>
+                                        </div>
+                                        <p className="text-slate-400 text-sm leading-relaxed">
+                                            You currently have access to all Premium features including Cure Analyzer, AI Health Coach, and Family Profiles.
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-slate-900/40 rounded-2xl p-6 border border-white/5 flex flex-col justify-between">
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <HelpCircle className="text-slate-400" size={18} />
+                                                <h4 className="font-bold text-slate-200">Cancellation Policy</h4>
+                                            </div>
+                                            <p className="text-xs text-slate-400 mb-4">
+                                                You can cancel anytime. Your access will be downgraded to the Free tier immediately.
+                                                <br /><br />
+                                                <span className="text-amber-500 font-bold">Note:</span> If you have an active auto-pay mandate (UPI/Card), please ensure you also cancel it in your banking app to prevent future charges.
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={handleCancelSubscription}
+                                            className="w-full py-2.5 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white font-bold text-sm transition-all"
+                                        >
+                                            Cancel Subscription
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
 
                     {/* Security & Danger Zone Grid */}
                     <div className="grid md:grid-cols-2 gap-8">
