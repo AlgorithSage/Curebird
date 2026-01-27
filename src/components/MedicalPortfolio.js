@@ -123,14 +123,17 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                 const diseases = dSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
                 // 2. Fetch Recent Metrics for each disease
-                const allMetrics = [];
-                for (const d of diseases) {
+                // 2. Fetch Recent Metrics for each disease (PARALLEL)
+                const metricsPromises = diseases.map(d => {
                     const mRef = collection(db, 'users', userId, 'diseases', d.id, 'metrics');
                     const q = query(mRef, orderBy('timestamp', 'desc'), limit(10));
-                    const mSnap = await getDocs(q);
-                    const metrics = mSnap.docs.map(m => ({ id: m.id, diseaseId: d.id, ...m.data() }));
-                    allMetrics.push(...metrics);
-                }
+                    return getDocs(q).then(mSnap =>
+                        mSnap.docs.map(m => ({ id: m.id, diseaseId: d.id, ...m.data() }))
+                    );
+                });
+
+                const metricsArrays = await Promise.all(metricsPromises);
+                const allMetrics = metricsArrays.flat();
 
                 // 3. Run Analysis
                 const result = AnalysisService.calculateHealthScore(allMetrics, diseases);

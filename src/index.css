@@ -55,9 +55,28 @@ body {
   .glass-card:hover::before,
   .rotating-amber-border {
     animation: none !important;
-    opacity: 0.3 !important;
-    /* Static, subtle border instead */
+    opacity: 1 !important;
+    /* Ensure border is visible but static */
+    border-image: none !important;
+    background: none !important;
     transition: none !important;
+  }
+
+  /* CRITICAL PERFORMANCE FIX: Remove backdrop-filter on mobile */
+  .glass-card,
+  .glass,
+  .glass-card-amber,
+  .glass-card-indigo,
+  .glass-card-sky,
+  .glass-card-rose {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important;
+    background: rgba(15, 23, 42, 0.95) !important;
+    /* Fallback to solid dark color */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transform: none !important;
+    /* Disable hover transforms on scroll */
   }
 
   /* Ensure smooth scrolling is enforced */
