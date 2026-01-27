@@ -1,12 +1,14 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {  LayoutDashboard, FileText, Calendar, Settings, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users, Pill, TrendingUp, Microscope, BarChart2, Stethoscope, Bot  } from './Icons';
+import { LayoutDashboard, FileText, Calendar, Settings, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users, Pill, TrendingUp, Microscope, BarChart2, Stethoscope, Bot } from './Icons';
 import CureBirdLogo from '../curebird_logo.png';
+import useHaptics from '../hooks/useHaptics';
 
 const Sidebar = ({ isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    
+    const { triggerHaptic } = useHaptics();
+
     const isActive = (path) => {
         if (!path) return false;
         // Exact match or sub-path logic could go here
@@ -111,6 +113,7 @@ const Sidebar = ({ isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) 
                                         <li key={item.name}>
                                             <button
                                                 onClick={() => {
+                                                    triggerHaptic('light');
                                                     if (item.isAction) {
                                                         if (item.name === 'Subscription') onSubscribeClick();
                                                         onClose();
@@ -128,7 +131,7 @@ const Sidebar = ({ isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) 
                                                 <span className={`transition-colors duration-200 ${active ? 'text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]' : 'text-amber-500/80 group-hover:text-white group-hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]'}`}>
                                                     <Icon size={20} weight={active ? "fill" : "duotone"} />
                                                 </span>
-                                                
+
                                                 {/* Text: Slate default -> White (Active/Hover) */}
                                                 <span className={`font-bold tracking-wide text-sm transition-colors duration-200 ${active ? 'text-white' : 'text-slate-400 group-hover:text-amber-100'}`}>
                                                     {item.name}

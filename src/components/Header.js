@@ -7,6 +7,7 @@ import {
 } from './Icons';
 import { AnimatePresence, motion } from 'framer-motion';
 import CureBirdLogo from '../curebird_logo.png';
+import useHaptics from '../hooks/useHaptics';
 
 const UserProfile = ({ user, onLogout, onNavigate }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -121,6 +122,7 @@ const NotificationDropdown = ({ alerts, onClose }) => {
 const Header = ({ title, description, user, onAddClick, onShareClick, onLoginClick, onLogout, onToggleSidebar, onNavigate, onNotificationClick, alerts = [], navItems: propNavItems = [] }) => {
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const { triggerHaptic } = useHaptics();
 
     useEffect(() => {
         const onScroll = (e) => {
@@ -174,7 +176,10 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 <div className="flex items-center gap-2 sm:gap-4 order-1 min-w-0">
                     {/* Mobile Hamburger Menu Button */}
                     <motion.button
-                        onClick={onToggleSidebar}
+                        onClick={() => {
+                            triggerHaptic('medium');
+                            onToggleSidebar();
+                        }}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         className="p-2 rounded-full border border-white/10 text-slate-300 hover:text-amber-400 hover:border-amber-400/50 transition-colors shadow-lg shadow-black/20 shrink-0"
@@ -198,7 +203,10 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                 return (
                                     <motion.button
                                         key={item.name}
-                                        onClick={() => onNavigate && onNavigate(item.id || item.name)}
+                                        onClick={() => {
+                                            triggerHaptic('light');
+                                            onNavigate && onNavigate(item.id || item.name);
+                                        }}
                                         whileHover={{ scale: 1.1 }}
                                         whileTap={{ scale: 0.95 }}
                                         animate={isActive ? {
@@ -248,7 +256,10 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                 </AnimatePresence>
                             </div>
                             <button
-                                onClick={onAddClick}
+                                onClick={() => {
+                                    triggerHaptic('heavy');
+                                    onAddClick();
+                                }}
                                 className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-3 py-2 sm:px-4 sm:py-2 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-xs sm:text-sm font-bold border border-white/10 whitespace-nowrap"
                             >
                                 <Plus size={18} />

@@ -325,13 +325,13 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                         </div>
                     ) : (
                         <>
-                            {/* Opaque Amber & High Visibility Category Grid */}
+                            {/* Category Grid / Scroll Snap Container */}
                             <motion.div
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ margin: "-100px" }}
                                 variants={containerVariants}
-                                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 px-2 sm:px-6"
+                                className="flex overflow-x-auto snap-x snap-mandatory space-x-4 pb-4 px-2 sm:px-6 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4 md:space-x-0 md:overflow-visible no-scrollbar"
                             >
                                 {[
                                     { id: 'prescription', label: 'Prescriptions', icon: <Pill size={32} />, count: records.filter(r => r.type === 'prescription').length },
@@ -346,7 +346,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                         whileTap={{ scale: 0.98 }}
                                         onClick={() => handleCategoryClick(cat.id)}
                                         // Solid Amber/Orange Gradient Style to match reference
-                                        className={`relative aspect-[4/5] sm:aspect-square flex flex-col items-center justify-center p-6 rounded-3xl cursor-pointer transition-all duration-300 group overflow-hidden ${activeTypeFilter === cat.id
+                                        className={`relative flex-shrink-0 w-[40vw] sm:w-auto aspect-[4/5] sm:aspect-square flex flex-col items-center justify-center p-6 rounded-3xl cursor-pointer transition-all duration-300 group overflow-hidden snap-center ${activeTypeFilter === cat.id
                                             ? `bg-gradient-to-kb from-amber-500 to-amber-700 ring-4 ring-amber-400/50 scale-105 z-10 shadow-2xl`
                                             : `bg-gradient-to-br from-amber-500 to-amber-700 shadow-xl hover:shadow-amber-500/40 border border-white/10`
                                             }`}

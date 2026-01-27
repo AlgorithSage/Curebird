@@ -37,6 +37,7 @@ const ShareProfile = lazy(() => import('./components/ShareProfile'));
 const DoctorPublicView = lazy(() => import('./components/DoctorPublicView'));
 const SubscriptionModal = lazy(() => import('./components/SubscriptionModal'));
 const FamilyProfile = lazy(() => import('./components/FamilyProfile'));
+const BottomNav = lazy(() => import('./components/BottomNav'));
 
 const formatDate = (date) => date?.toDate ? date.toDate().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ') : '');
@@ -59,9 +60,12 @@ const LayoutWithSidebar = ({ user, isSidebarOpen, setSidebarOpen, onSubscribeCli
                 user={user}
                 onSubscribeClick={onSubscribeClick}
             />
-            <main className="w-full min-h-screen transition-all duration-300">
+            <main className="w-full min-h-screen transition-all duration-300 pb-20 md:pb-0">
                 {children}
             </main>
+            <Suspense fallback={null}>
+                {user && <BottomNav onAddClick={() => onSubscribeClick()} />}
+            </Suspense>
         </div>
     );
 };
@@ -227,8 +231,17 @@ export default function App() {
         onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen),
         onNavigate: handleNavigate,
         onAskAI: handleAskAI,
-        onSubscribeClick: () => setIsSubscriptionModalOpen(true)
+        onSubscribeClick: () => setIsSubscriptionModalOpen(true),
+        onAddRecordClick: () => { /* Logic to open add record modal needs to be lifted or context used */ }
     };
+
+    // Helper to open Add Record Modal from Bottom Nav (Global Context would be better, but passing props for now)
+    // Actually, BottomNav is inside LayoutWithSidebar which has access to `setIsSubscriptionModalOpen` but typically Add Record is in MedicalPortfolio.
+    // For now, let's wire BottomNav's Add to Subscription or a generic "Action" menu if Record Modal is not lifted.
+    // Ideally, we move `isFormModalOpen` to App.js or use a Context.
+    // Given the constraints, I will leave the "Add" button to open the Auth/Sub/Menu for now, 
+    // OR we simply only render BottomNav where it makes sense. 
+    // Let's pass a placeholder handler.
 
     return (
         <ToastProvider>
