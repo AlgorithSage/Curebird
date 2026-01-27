@@ -49,7 +49,7 @@ const RequireAuth = ({ user, children, redirectTo = "/" }) => {
     return children;
 };
 
-const LayoutWithSidebar = ({ user, isSidebarOpen, setSidebarOpen, onSubscribeClick, children }) => {
+const LayoutWithSidebar = ({ user, isSidebarOpen, setSidebarOpen, onSubscribeClick, onAddRecordClick, children }) => {
     return (
         <div className="relative min-h-screen flex">
             <Sidebar
@@ -64,7 +64,7 @@ const LayoutWithSidebar = ({ user, isSidebarOpen, setSidebarOpen, onSubscribeCli
                 {children}
             </main>
             <Suspense fallback={null}>
-                {user && <BottomNav onAddClick={() => onSubscribeClick()} />}
+                {user && <BottomNav onAddClick={() => onAddRecordClick && onAddRecordClick()} />}
             </Suspense>
         </div>
     );
@@ -77,6 +77,7 @@ export default function App() {
     const [authError, setAuthError] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+    const [isRecordModalOpen, setIsRecordModalOpen] = useState(false); // GLOBALLY LIFTED STATE
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -232,7 +233,10 @@ export default function App() {
         onNavigate: handleNavigate,
         onAskAI: handleAskAI,
         onSubscribeClick: () => setIsSubscriptionModalOpen(true),
-        onAddRecordClick: () => { /* Logic to open add record modal needs to be lifted or context used */ }
+        onSubscribeClick: () => setIsSubscriptionModalOpen(true),
+        onAddRecordClick: () => setIsRecordModalOpen(true),
+        onCloseRecordModal: () => setIsRecordModalOpen(false),
+        isRecordModalOpen: isRecordModalOpen
     };
 
     // Helper to open Add Record Modal from Bottom Nav (Global Context would be better, but passing props for now)
@@ -274,18 +278,18 @@ export default function App() {
                             } />
 
                             {/* Protected Routes */}
-                            <Route path="/dashboard" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><MedicalPortfolio {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/all-records" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><AllRecords {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/appointments" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><Appointments {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/medications" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><Medications {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/cure-tracker" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><CureTracker {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/cure-analyzer" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><CureAnalyzer {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/cure-stat" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><CureStat {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/messages" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><PatientChat {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/cure-ai" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><CureAI {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/doctor-access" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><ShareProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/settings" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><Settings {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
-                            <Route path="/family-profile" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)}><FamilyProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/dashboard" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><MedicalPortfolio {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/all-records" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><AllRecords {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/appointments" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><Appointments {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/medications" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><Medications {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/cure-tracker" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><CureTracker {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/cure-analyzer" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><CureAnalyzer {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/cure-stat" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><CureStat {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/messages" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><PatientChat {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/cure-ai" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><CureAI {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/doctor-access" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><ShareProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/settings" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><Settings {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+                            <Route path="/family-profile" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><FamilyProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
 
                             <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>
@@ -329,7 +333,7 @@ export default function App() {
                                                 if (isJudge) {
                                                     updateData.isHackathonJudge = true;
                                                     const expiryDate = new Date();
-                                                    expiryDate.setDate(expiryDate.getDate() + 4); // 4 Days validity
+                                                    expiryDate.setDate(expiryDate.getDate() + 14); // 2 Weeks validity (Extended)
                                                     updateData.hackathonExpiry = expiryDate;
                                                 }
 

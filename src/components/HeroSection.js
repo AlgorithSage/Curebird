@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import {  HeartPulse, Activity, ShieldPlus, FileText, Pill, Calendar, Bot, BarChart2, CheckCircle2, Volume2, VolumeX, MessageSquare, Microscope  } from './Icons';
+import { HeartPulse, Activity, ShieldPlus, FileText, Pill, Calendar, Bot, BarChart2, CheckCircle2, Volume2, VolumeX, MessageSquare, Microscope } from './Icons';
 
 const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) => {
     const [isMobile, setIsMobile] = React.useState(false);
@@ -186,7 +186,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                                         ? "Good progress. A few improvements can get you to A."
                                                         : "Let's focus on consistency to improve your score."}
                                             </p>
-                                            
+
                                             <p className="text-[10px] text-slate-500 mt-3 leading-relaxed border-t border-white/5 pt-2 max-w-[240px]">
                                                 <span className="text-amber-500 font-bold">Tip:</span> Upload documents for all your health metrics (e.g., blood reports, disease history) to improve the accuracy of your CHI score.
                                             </p>
@@ -210,37 +210,42 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                                 </motion.div>
                             )}
 
-                            <div className="p-4 bg-white/5 backdrop-blur-2xl rounded-[3rem] border border-white/10 shadow-[0_0_120px_-30px_rgba(0,0,0,0.8)] w-full">
-                                <div className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden border border-white/5 bg-slate-900/80 group">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-purple-500/5 z-10 pointer-events-none" />
-                                    <video
-                                        ref={videoRef}
-                                        autoPlay
-                                        loop
-                                        muted={isMuted} // Controlled by state
-                                        playsInline
-                                        className="w-full h-full object-cover opacity-90 mix-blend-screen group-hover:opacity-100 transition-opacity duration-500"
-                                    >
-                                        <source
-                                            src="/assets/hero_video.mp4"
-                                            type="video/mp4"
-                                        />
-                                    </video>
 
-                                    {/* Mute Toggle Button */}
-                                    <button
-                                        onClick={toggleMute}
-                                        className="absolute bottom-6 left-6 z-20 p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 transition-colors text-white/80 hover:text-white"
-                                    >
-                                        {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                                    </button>
 
-                                    <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
-                                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                                        <span className="text-xs font-medium text-white/80">LIVE DEMO</span>
+                            {/* Video Section - Desktop Only */}
+                            {!isMobile && (
+                                <div className="p-4 bg-white/5 backdrop-blur-2xl rounded-[3rem] border border-white/10 shadow-[0_0_120px_-30px_rgba(0,0,0,0.8)] w-full">
+                                    <div className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden border border-white/5 bg-slate-900/80 group">
+                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-purple-500/5 z-10 pointer-events-none" />
+                                        <video
+                                            ref={videoRef}
+                                            autoPlay
+                                            loop
+                                            muted={isMuted} // Controlled by state
+                                            playsInline
+                                            className="w-full h-full object-cover opacity-90 mix-blend-screen group-hover:opacity-100 transition-opacity duration-500"
+                                        >
+                                            <source
+                                                src="/assets/hero_video.mp4"
+                                                type="video/mp4"
+                                            />
+                                        </video>
+
+                                        {/* Mute Toggle Button */}
+                                        <button
+                                            onClick={toggleMute}
+                                            className="absolute bottom-6 left-6 z-20 p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 transition-colors text-white/80 hover:text-white"
+                                        >
+                                            {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                                        </button>
+
+                                        <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+                                            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                            <span className="text-xs font-medium text-white/80">LIVE DEMO</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
 
@@ -350,8 +355,8 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
                         </div>
                     </motion.div>
                 </div>
-            </motion.div>
-        </div>
+            </motion.div >
+        </div >
     );
 };
 

@@ -17,7 +17,7 @@ import HeroSection from './HeroSection';
 
 
 
-const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar, onNavigate, onSubscribeClick }) => {
+const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, onLogout, onLoginClick, onToggleSidebar, onNavigate, onSubscribeClick, isRecordModalOpen, onAddRecordClick, onCloseRecordModal }) => {
     // Premium Animation Variants
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -65,7 +65,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     };
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+    // const [isFormModalOpen, setIsFormModalOpen] = useState(false); // LIFTED TO APP.JS
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [recordToDelete, setRecordToDelete] = useState(null);
@@ -218,7 +218,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
             <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
                 <Header
                     user={user}
-                    onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
+                    onAddClick={() => { setEditingRecord(null); onAddRecordClick && onAddRecordClick(); }}
                     onShareClick={() => setIsShareModalOpen(true)}
                     onLogout={onLogout}
                     onLoginClick={onLoginClick}
@@ -235,7 +235,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                     <div className="mb-10">
                         <HeroSection
                             onOverviewClick={scrollToDashboard}
-                            onAddClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
+                            onAddClick={() => { setEditingRecord(null); onAddRecordClick && onAddRecordClick(); }}
                             onNavigate={onNavigate}
                             healthScore={healthScore}
                         />
@@ -415,7 +415,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                                                     userId={userId}
                                                                     appId={appId}
                                                                     storage={storage}
-                                                                    onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }}
+                                                                    onEdit={() => { setEditingRecord(record); onAddRecordClick && onAddRecordClick(); }}
                                                                     onDelete={() => { setRecordToDelete(record.id); setIsDeleteModalOpen(true); }}
                                                                     userTier={user?.subscriptionTier || 'Free'}
                                                                 />
@@ -431,7 +431,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                                     <h3 className="text-xl font-bold text-white">No {activeTypeFilter.replace('_', ' ')} records found.</h3>
                                                     <p className="text-slate-400 mt-2">There are no uploaded records for this category yet.</p>
                                                     <button
-                                                        onClick={() => { setEditingRecord(null); setIsFormModalOpen(true); }}
+                                                        onClick={() => { setEditingRecord(null); onAddRecordClick && onAddRecordClick(); }}
                                                         className="mt-6 px-6 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg font-semibold transition-colors"
                                                     >
                                                         Add New Record
@@ -463,7 +463,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
 
             <AnimatePresence>
 
-                {isFormModalOpen && <RecordFormModal onClose={() => setIsFormModalOpen(false)} record={editingRecord} userId={user?.uid} appId={appId} db={db} storage={storage} />}
+                {isRecordModalOpen && <RecordFormModal onClose={() => { setEditingRecord(null); onCloseRecordModal && onCloseRecordModal(); }} record={editingRecord} userId={user?.uid} appId={appId} db={db} storage={storage} />}
                 {isShareModalOpen && <ShareModal onClose={() => setIsShareModalOpen(false)} userId={userId} />}
                 {isDeleteModalOpen && <DeleteConfirmModal onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDeleteRecord} />}
             </AnimatePresence>
