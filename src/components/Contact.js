@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import {  Mail, Send, Phone  } from './Icons';
+import { Mail, Send, Phone } from './Icons';
 import Header from './Header';
 
 const Contact = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
@@ -76,17 +76,11 @@ const Contact = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate
                                 <a href="mailto:carchisman2@gmail.com" className="flex items-start gap-4 hover:opacity-80 transition-opacity">
                                     <Mail className="mt-1 opacity-80" />
                                     <div>
-                                        <h4 className="font-semibold text-lg">Chat to us</h4>
+                                        <h4 className="font-semibold text-lg">Support Email</h4>
                                         <p className="text-amber-100 text-sm">carchisman2@gmail.com</p>
+                                        <p className="text-amber-200/50 text-xs mt-1">Typical Reply: &lt; 24hrs</p>
                                     </div>
                                 </a>
-                                <div className="flex items-start gap-4">
-                                    <Phone className="mt-1 opacity-80" />
-                                    <div>
-                                        <h4 className="font-semibold text-lg">Phone</h4>
-                                        <p className="text-amber-100 text-sm">XXXXX</p>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 

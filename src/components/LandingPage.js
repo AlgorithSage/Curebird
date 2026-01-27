@@ -43,7 +43,7 @@ const FloatingIcon = ({ icon, className, duration, delay }) => (
     </motion.div>
 );
 
-const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClick, onSubscribeClick }) => {
+const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClick, onSubscribeClick, onRefundClick }) => {
     const [isMobile, setIsMobile] = React.useState(false);
 
     React.useEffect(() => {
@@ -465,9 +465,10 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                         </div>
                     ))}
                 </div>
-                <div className="flex justify-center gap-8 mb-8 text-sm text-slate-300">
+                <div className="flex justify-center flex-wrap gap-x-8 gap-y-4 mb-8 text-sm text-slate-300">
                     <button onClick={onTermsClick} className="hover:text-amber-400 transition-colors">Terms of Service</button>
                     <button onClick={onPrivacyClick} className="hover:text-amber-400 transition-colors">Privacy Policy</button>
+                    <button onClick={onRefundClick} className="hover:text-amber-400 transition-colors">Refund Policy</button>
                     <button onClick={onContactClick} className="hover:text-amber-400 transition-colors">Contact Us</button>
                 </div>
                 <div className="mb-4 text-slate-400 text-sm">

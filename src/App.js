@@ -32,6 +32,7 @@ const LandingPage = lazy(() => import('./components/LandingPage'));
 const TermsOfService = lazy(() => import('./components/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const Contact = lazy(() => import('./components/Contact'));
+const RefundPolicy = lazy(() => import('./components/RefundPolicy'));
 
 const ShareProfile = lazy(() => import('./components/ShareProfile'));
 const DoctorPublicView = lazy(() => import('./components/DoctorPublicView'));
@@ -219,7 +220,9 @@ export default function App() {
             'Family Profile': '/family-profile',
             'Contact': '/contact',
             'Terms': '/terms',
-            'Privacy': '/privacy'
+            'Terms': '/terms',
+            'Privacy': '/privacy',
+            'Refund': '/refund-policy'
         };
         const target = routeMap[pathOrViewName] || pathOrViewName;
         navigate(target);
@@ -260,6 +263,7 @@ export default function App() {
                                         onLoginClick={() => setIsAuthModalOpen(true)}
                                         onTermsClick={() => navigate('/terms')}
                                         onPrivacyClick={() => navigate('/privacy')}
+                                        onRefundClick={() => navigate('/refund-policy')}
                                         onContactClick={() => navigate('/contact')}
                                         onSubscribeClick={() => setIsSubscriptionModalOpen(true)}
                                     />
@@ -267,6 +271,7 @@ export default function App() {
 
                             <Route path="/terms" element={<TermsOfService onBack={() => navigate(-1)} {...pageProps} />} />
                             <Route path="/privacy" element={<PrivacyPolicy onBack={() => navigate(-1)} {...pageProps} />} />
+                            <Route path="/refund-policy" element={<RefundPolicy onBack={() => navigate(-1)} {...pageProps} />} />
                             <Route path="/contact" element={<Contact onBack={() => navigate(-1)} db={db} {...pageProps} />} />
                             <Route path="/doctor-view" element={
                                 <DoctorPublicView
