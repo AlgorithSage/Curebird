@@ -13,11 +13,13 @@ const DashboardOverview = ({ user, onNavigateToHistory }) => {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="relative w-full overflow-hidden rounded-[2rem] bg-slate-900/90 sm:bg-slate-900/60 sm:bg-gradient-to-br sm:from-amber-500/20 sm:via-slate-900/60 sm:to-slate-900/80 backdrop-blur-sm sm:backdrop-blur-xl border border-white/5 sm:border-amber-500/10 shadow-2xl isolate"
         >
+            {/* MOBILE: Static Inner Glow (replaces expensive gradients) */}
+            <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 to-transparent sm:hidden pointer-events-none" />
             {/* Ambient Background Glows - Desktop Only */}
             <div className="hidden sm:block absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-3/4 bg-yellow-400/10 blur-[120px] rounded-full pointer-events-none opacity-40"></div>
             <div className="hidden sm:block absolute bottom-0 right-0 w-1/2 h-1/2 bg-blue-500/5 blur-[100px] rounded-full pointer-events-none opacity-30"></div>
 
-            <div className="relative z-10 px-6 py-12 sm:px-12 sm:py-16 text-center">
+            <div className="relative z-10 px-6 py-8 sm:px-12 sm:py-16 text-center">
 
                 {/* Top Badge */}
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-400/10 border border-sky-400/40 text-sky-400 text-xs font-bold tracking-widest uppercase mb-6">

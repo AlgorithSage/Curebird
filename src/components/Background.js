@@ -82,37 +82,40 @@ const Background = () => {
         </div>
       )}
 
-      {/* Animated Elements */}
+      {/* Animated Elements (Desktop Only) OR Static Aurora (Mobile) */}
       <div className="absolute inset-0">
-        {visibleOrbs.map((orb, i) => (
+        {isMobile ? (
+          // ✅ MOBILE: Static "Aurora" Gradient - Zero Animation Cost
           <div
-            key={i}
-            className={`absolute rounded-full ${isMobile ? "" : "blur-2xl"} ${orb.color}`}
+            className="absolute inset-0 bg-slate-950"
             style={{
-              width: isMobile ? orb.size * 1.5 : orb.size,
-              height: isMobile ? orb.size * 1.5 : orb.size,
-              top: orb.top,
-              left: orb.left,
-              right: orb.right,
-              bottom: orb.bottom,
-
-              // ✅ Mobile Optimization: Use CSS gradients for "light" blur instead of expensive filters
-              // ✅ Mobile Optimization: Use CSS gradients for "light" blur instead of expensive filters
-              background: isMobile
-                ? `radial-gradient(circle, ${i === 0 ? 'rgba(245, 158, 11, 0.35)' : 'rgba(251, 191, 36, 0.3)'} 0%, transparent 70%)`
-                : undefined,
-
-              animation: `${orb.anim} ${isMobile ? "40s" : "20s"} ease-in-out infinite`,
-
-              // ✅ Feature: Pause animations while scrolling on mobile
-              animationPlayState: (isMobile && isScrolling) ? 'paused' : 'running',
-
-              // ✅ Performance: Forced GPU acceleration
-              willChange: "transform",
-              transform: "translate3d(0,0,0)"
+              background: `
+                        radial-gradient(circle at 10% 20%, rgba(251, 191, 36, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 60%, rgba(245, 158, 11, 0.12) 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(180, 83, 9, 0.08) 0%, transparent 60%)
+                    `
             }}
           />
-        ))}
+        ) : (
+          // DESKTOP: Full Animated Orbs
+          visibleOrbs.map((orb, i) => (
+            <div
+              key={i}
+              className={`absolute rounded-full blur-2xl ${orb.color}`}
+              style={{
+                width: orb.size,
+                height: orb.size,
+                top: orb.top,
+                left: orb.left,
+                right: orb.right,
+                bottom: orb.bottom,
+                animation: `${orb.anim} 20s ease-in-out infinite`,
+                willChange: "transform",
+                transform: "translate3d(0,0,0)"
+              }}
+            />
+          ))
+        )}
       </div>
 
       {/* Glass/Noise Overlay - Simplified for Mobile */}
