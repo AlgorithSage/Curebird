@@ -272,9 +272,11 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
 
             </header>
 
-            {/* Mobile/Zoomed Text: Visible OUTSIDE Header on Smaller Screens (< XL) - FIXED SPACE */}
-            <div className="xl:hidden w-full px-4 flex justify-center mt-6 mb-2 min-h-[60px]">
+            {/* Mobile/Zoomed Text: Page Title Section - Scrolls with content */}
+            <div className="xl:hidden w-full px-4 flex flex-col justify-center mt-8 mb-6 min-h-[80px] space-y-1">
                 <HeaderText />
+                {/* Optional Divider for clear separation */}
+                <div className="w-12 h-1 bg-gradient-to-r from-amber-500/50 to-transparent rounded-full mx-auto xl:mx-0 mt-2"></div>
             </div>
         </>
     );
