@@ -20,13 +20,13 @@ const getIcon = (name, phosphorName = null) => {
     // Try explicit phosphor name if provided, else try matching name
     const pName = phosphorName || name;
     if (PhosphorIcons[pName]) return PhosphorIcons[pName];
-    
+
     // Fallback to Lucide
     console.warn(`Icon fallback triggered for: ${name} (tried ${pName})`);
     if (LucideIcons[name]) return LucideIcons[name];
 
     // Final fallback (shouldn't happen if Lucide has it)
-    return LucideIcons.HelpCircle; 
+    return LucideIcons.HelpCircle;
 };
 
 export const Activity = getIcon('Activity');
@@ -65,6 +65,7 @@ export const Clock = getIcon('Clock');
 export const CloudFog = getIcon('CloudFog');
 export const Copy = getIcon('Copy');
 export const Cpu = getIcon('Cpu');
+export const CreditCard = getIcon('CreditCard');
 export const Crown = getIcon('Crown');
 export const Database = getIcon('Database');
 export const Dna = getIcon('Dna');
