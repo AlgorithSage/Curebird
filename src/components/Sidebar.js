@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, Calendar, Settings, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users, Pill, TrendingUp, Microscope, BarChart2, Stethoscope, Bot } from './Icons';
+import { LayoutDashboard, FileText, Calendar, Settings, X, MessageSquare, Mail, Shield, ScrollText, Crown, Users, Pill, TrendingUp, Microscope, BarChart2, Stethoscope, Bot, CreditCard } from './Icons';
 import CureBirdLogo from '../curebird_logo.png';
 import useHaptics from '../hooks/useHaptics';
 
@@ -51,6 +51,7 @@ const Sidebar = ({ isOpen, onClose, user, onSubscribeClick, onEmergencyClick }) 
                 { name: 'Contact', path: '/contact', icon: Mail },
                 { name: 'Terms', path: '/terms', icon: ScrollText },
                 { name: 'Privacy', path: '/privacy', icon: Shield },
+                { name: 'Refund Policy', path: '/refund-policy', icon: CreditCard },
             ]
         }
     ];
