@@ -122,5 +122,10 @@ ${submittedPlan}
         description: description,
         diagnosis: diagnosis,
         vitals: vitals.bp ? vitals.bp : (vitals.heartRate ? `${vitals.heartRate} bpm` : ''),
+        stats: {
+            messageCount: textMessages.length,
+            vitalsCount: Object.keys(vitals).length,
+            symptomCount: uniqueSymptoms.length
+        }
     };
 };

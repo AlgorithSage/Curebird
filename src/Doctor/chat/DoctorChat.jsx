@@ -356,6 +356,11 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         const noteData = analyzeChatContext(messages, patientName);
         
         if (noteData) {
+            // Inject patientId for auto-filling the record
+            if (activeChatData?.patientId) {
+                noteData.patientId = activeChatData.patientId;
+            }
+
             setGeneratedNoteData(noteData);
             setActiveAction('summary');
         } else {

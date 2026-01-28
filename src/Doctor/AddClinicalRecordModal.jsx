@@ -42,7 +42,7 @@ const TabButton = ({ children, active, onClick, colorClass = "text-amber-400" })
     );
 };
 
-const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecordAdded }) => {
+const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecordAdded, initialData }) => {
     // Firebase instances
     const storage = getStorage();
 
@@ -127,12 +127,12 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
     React.useEffect(() => {
         if (isOpen) {
             setFormData({
-                patientId: '',
-                title: '',
-                diagnosis: '',
-                vitals: '',
-                type: 'consultation_note',
-                description: '',
+                patientId: initialData?.patientId || '',
+                title: initialData?.title || '',
+                diagnosis: initialData?.diagnosis || '',
+                vitals: initialData?.vitals || '',
+                type: initialData?.type || 'consultation_note',
+                description: initialData?.description || '',
                 date: new Date().toISOString().split('T')[0],
                 priority: 'routine',
                 medications: [],
@@ -143,7 +143,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
             setError('');
             setLoading(false);
         }
-    }, [isOpen]);
+    }, [isOpen, initialData]);
 
     // Patient Search/Autofill State
     const [patientSearchQuery, setPatientSearchQuery] = useState('');

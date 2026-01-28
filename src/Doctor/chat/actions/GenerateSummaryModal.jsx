@@ -110,7 +110,7 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
                                     <div>
                                         <h4 className="text-emerald-200 font-bold text-base tracking-wide">Context Analysis Complete</h4>
                                         <p className="text-emerald-300/60 text-sm mt-1.5 font-medium leading-relaxed">
-                                            Processed 14 messages, 1 lab report (CBC), and 3 days of vitals history.
+                                            Processed {generatedData?.stats?.messageCount || 0} messages, {generatedData?.stats?.vitalsCount || 0} vitals points, and identified {generatedData?.stats?.symptomCount || 0} symptoms.
                                         </p>
                                     </div>
                                 </div>
