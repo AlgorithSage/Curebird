@@ -117,7 +117,7 @@ ${submittedPlan}
     `.trim();
 
     return {
-        title: `Consultation Note: ${patientName}`,
+        title: `Note from Patient Messages`,
         type: 'consultation_note',
         description: description,
         diagnosis: diagnosis,

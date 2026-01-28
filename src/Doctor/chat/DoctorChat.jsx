@@ -42,6 +42,14 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     const [isVoiceCallActive, setIsVoiceCallActive] = useState(false); // New: In-App Voice Call State
     const [showPatientDetails, setShowPatientDetails] = useState(false); // Feature 1: Patient Snapshot Panel State
 
+    // Toast State (New)
+    const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+    const showToast = (message, type = 'success') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => setToast(prev => ({ ...prev, show: false })), 3000);
+    };
+
     // Auth Check
     React.useEffect(() => {
         const unsubAuth = auth.onAuthStateChanged(user => {
@@ -1252,7 +1260,27 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 patients={patients}
                 user={currentUser}
                 initialData={generatedNoteData}
+                onRecordAdded={() => showToast('Clinical Record Successfully Saved', 'success')}
             />
+
+            {/* Global Toast Notification */}
+            <AnimatePresence>
+                {toast.show && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-6 py-4 bg-[#0f0b05] border border-amber-500/20 shadow-2xl rounded-full"
+                    >
+                        <div className="p-2 bg-emerald-500/20 rounded-full text-emerald-500">
+                            <CheckCircle size={20} weight="fill" />
+                        </div>
+                        <div>
+                            <p className="text-white font-bold text-sm tracking-wide">{toast.message}</p>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <FlagObservationModal
                 isOpen={activeAction === 'flag'}

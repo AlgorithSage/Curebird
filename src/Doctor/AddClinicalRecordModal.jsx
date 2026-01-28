@@ -461,9 +461,7 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                 });
             }
 
-            const patientRecordRef = collection(db, `users/${formData.patientId}/medical_records`);
-
-            await addDoc(patientRecordRef, {
+            const recordData = {
                 type: formData.type,
                 title: formData.title,
                 diagnosis: formData.diagnosis || '',
@@ -480,7 +478,15 @@ const AddClinicalRecordModal = ({ isOpen, onClose, patients = [], user, onRecord
                 fileName,
                 createdAt: serverTimestamp(),
                 status: 'finalized'
-            });
+            };
+
+            // 1. Save to Patient's Record (Subcollection)
+            const patientRecordRef = collection(db, `users/${formData.patientId}/medical_records`);
+            await addDoc(patientRecordRef, recordData);
+
+            // 2. Save to Main Medical Records Collection (For Doctor Dashboard)
+            const mainRecordRef = collection(db, 'medical_records');
+            await addDoc(mainRecordRef, recordData);
 
             setSuccess(true);
 
