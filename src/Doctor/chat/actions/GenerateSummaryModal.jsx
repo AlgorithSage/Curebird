@@ -53,7 +53,7 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
                     transition={{ type: "spring", damping: 25, stiffness: 300 }}
                     className="w-full max-w-3xl flex flex-col max-h-[85vh] !p-0 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative rounded-3xl border border-amber-500/10 backdrop-blur-xl"
                     style={{ 
-                        background: 'linear-gradient(145deg, rgba(251, 191, 36, 0.1) 0%, rgba(10, 5, 0, 0.4) 60%, rgba(251, 191, 36, 0.05) 100%)',
+                        background: 'linear-gradient(145deg, rgba(251, 191, 36, 0.05) 0%, rgba(20, 20, 20, 0.2) 50%, rgba(251, 191, 36, 0.02) 100%)',
                         boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1), 0 0 20px rgba(251, 191, 36, 0.05)',
                     }}
                 >
