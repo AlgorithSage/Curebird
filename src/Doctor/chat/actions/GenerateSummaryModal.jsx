@@ -51,7 +51,8 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
                     transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                    className="glass-card w-full max-w-3xl flex flex-col max-h-[85vh] !p-0 overflow-hidden shadow-[0_0_50px_rgba(245,158,11,0.15)] relative border border-amber-500/20"
+                    className="glass-card w-full max-w-3xl flex flex-col max-h-[85vh] !p-0 overflow-hidden shadow-[0_0_50px_rgba(245,158,11,0.15)] relative border border-amber-500/20 backdrop-blur-2xl"
+                    style={{ background: 'linear-gradient(145deg, rgba(251, 191, 36, 0.05) 0%, rgba(0, 0, 0, 0.6) 100%)' }}
                 >
                     {/* Background Ambience */}
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
@@ -126,7 +127,7 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
                                                 <h3 className="text-amber-600/60 font-black uppercase tracking-[0.2em] text-sm transition-colors group-hover:text-amber-500/80">{key}</h3>
                                             </div>
                                             <div className="pl-12">
-                                                <div className="relative p-6 rounded-2xl bg-black/40 border border-white/5 text-stone-300 leading-relaxed font-normal hover:border-amber-500/30 transition-all duration-300 overflow-hidden shadow-inner hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                                                <div className="relative p-6 rounded-2xl bg-amber-950/20 border border-white/5 text-stone-300 leading-relaxed font-normal hover:border-amber-500/30 transition-all duration-300 overflow-hidden shadow-inner hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
 
                                                     {/* Dynamic Gradient Overlay */}
                                                     <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
@@ -146,7 +147,7 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
                     </div>
 
                     {/* Footer */}
-                    <div className="p-8 border-t border-amber-500/10 bg-black/20 flex justify-between items-center relative z-20">
+                    <div className="p-8 border-t border-amber-500/10 bg-amber-900/10 flex justify-between items-center relative z-20">
                         <button 
                             onClick={onRegenerate}
                             className="px-6 py-3.5 rounded-xl border border-amber-500/20 text-stone-400 hover:text-amber-200 hover:bg-amber-500/5 hover:border-amber-500/40 transition-all flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider group"
