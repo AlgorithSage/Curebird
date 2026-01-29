@@ -35,29 +35,29 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[60] flex justify-end pointer-events-none">
+            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 font-sans">
                 {/* Backdrop */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={onClose}
-                    className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto"
+                    className="absolute inset-0 bg-black/80 backdrop-blur-md"
                 />
 
-                {/* Slide-over Panel */}
+                {/* Main Card */}
                 <motion.div
-                    initial={{ x: '100%' }}
-                    animate={{ x: 0 }}
-                    exit={{ x: '100%' }}
-                    transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                    className="relative w-full max-w-2xl h-full bg-[#1c1200] border-l border-amber-500/20 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto overflow-hidden"
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    className="glass-card w-full max-w-3xl flex flex-col max-h-[85vh] !p-0 overflow-hidden shadow-[0_0_50px_rgba(245,158,11,0.15)] relative border border-amber-500/20 bg-[#120f0a]/90 backdrop-blur-xl"
                 >
                     {/* Background Ambience */}
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
 
                     {/* Header */}
-                    <div className="p-8 border-b border-amber-500/10 flex justify-between items-center bg-gradient-to-r from-[#2a1c05] to-[#1c1200] relative z-10">
+                    <div className="p-6 border-b border-amber-500/10 flex justify-between items-center bg-gradient-to-r from-amber-500/5 to-transparent relative z-10">
                         <div className="flex items-center gap-5">
                             <div className="p-3.5 rounded-xl bg-gradient-to-br from-amber-500/20 to-purple-500/20 border border-amber-500/30 shadow-[0_0_25px_rgba(245,158,11,0.15)] relative overflow-hidden group">
                                 <Bot size={30} className="text-amber-400 relative z-10 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]" />
