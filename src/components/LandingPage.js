@@ -141,8 +141,8 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                         </motion.h2>
 
                         <motion.p custom={2} variants={textVariants} className="text-lg sm:text-xl text-slate-300 leading-relaxed">
-                            CureBird revolutionizes how you manage healthcare. Consolidate records, track appointments, and unlock
-                            <span className="text-amber-400 font-semibold"> AI-driven insights</span> for a healthier future.
+                            CureBird elevates your healthcare experience. Seamlessly unify your medical records, manage appointments, and unlock
+                            <span className="text-amber-400 font-semibold"> Predictive AI Insights</span> to transition from reactive care to proactive wellness.
                         </motion.p>
                     </div>
 
@@ -192,18 +192,18 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                         {[
                             {
                                 icon: <ShieldCheck size={48} className="text-emerald-400" />,
-                                title: "Bank-Grade HIPAA Security (epHI)",
-                                desc: "Your health data is your property. We secure it with AES-256 encryption and strict access controls. You decide who sees your records—whether it's for 5 minutes or 5 years."
+                                title: "Enterprise-Grade Data Security",
+                                desc: "Your health privacy is paramount. We employ AES-256 end-to-end encryption and are fully compliant with Indian Digital Health (ABDM) and HIPAA standards. You retain absolute sovereignty over your data."
                             },
                             {
                                 icon: <Zap size={48} className="text-amber-400" />,
-                                title: "AI-Powered Diagnostics",
-                                desc: "Stop guessing. Our advanced LLMs analyze your blood reports to flag anomalies like pre-diabetes or hypertension trends long before they become critical issues."
+                                title: "Predictive Health Intelligence",
+                                desc: "Move beyond storage. Our Clinical LLMs analyze trends in your pathology reports to identify risk markers for chronic conditions like hypertension or diabetes significantly earlier than traditional methods."
                             },
                             {
                                 icon: <Globe size={48} className="text-blue-400" />,
-                                title: "Universal Interoperability",
-                                desc: "Whether it's a handwritten note from a local clinic or a DICOM file from a major hospital, CureBird creates a unified, graphable patient history accessible globally."
+                                title: "Interoperable Health Standards",
+                                desc: "CureBird bridges the gap between fragmented providers. Whether it's a handwritten prescription or a DICOM scan, we standardize your history into a globally readable FHIR-compliant format."
                             }
                         ].map((feature, idx) => (
                             <motion.article
@@ -240,9 +240,9 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 <motion.article variants={cardVariants} className="flex gap-6 group">
                                     <div className="text-5xl font-black text-amber-500/80 group-hover:text-amber-400 transition-colors drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">01</div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Create Your Digital Twin</h3>
+                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Establish Your Clinical Profile</h3>
                                         <p className="text-slate-400 text-lg">
-                                            Sign up in seconds. Build a comprehensive medical profile that includes your allergies, surgeries, and family history. This baseline data helps our AI tailor its monitoring specifically to your genetic predispositions.
+                                            Create a comprehensive medical baseline. Input family history, allergies, and surgical records to allow our algorithms to tailor health recommendations specific to your genetic and environmental context.
                                         </p>
                                     </div>
                                 </motion.article>
@@ -250,9 +250,9 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 <motion.article variants={cardVariants} className="flex gap-6 group">
                                     <div className="text-5xl font-black text-amber-500/80 group-hover:text-amber-400 transition-colors drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">02</div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Zero-Entry Digitization</h3>
+                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Smart Record Digitization</h3>
                                         <p className="text-slate-400 text-lg">
-                                            Nobody likes typing. Just snap a photo of your prescription or upload a PDF lab report. Our **OCR & NLP engine** instantly extracts values (like HbA1c, Lipid Profile) and plots them on interactive charts.
+                                            Eliminate manual data entry. Our proprietary <span className="text-white font-semibold">OCR & Clinical NLP Engine</span> instantly extracts vital metrics (e.g., HbA1c, Lipid Profile) from images or PDFs and plots them on interactive, medical-grade charts.
                                         </p>
                                     </div>
                                 </motion.article>
@@ -260,9 +260,9 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 <motion.article variants={cardVariants} className="flex gap-6 group">
                                     <div className="text-5xl font-black text-amber-500/80 group-hover:text-amber-400 transition-colors drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">03</div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Doctor Collaboration</h3>
+                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Digital Doctor Collaboration</h3>
                                         <p className="text-slate-400 text-lg">
-                                            Visiting a specialist? Generate a temporary "Share Link" or QR code. The doctor gets instant, read-only access to your relevant history without needing to install any app.
+                                            Streamline your consultations. Generate secure, time-bound "Clinical View" links for specialists. Doctors gain instant, read-only access to your structured history without requiring software installation.
                                         </p>
                                     </div>
                                 </motion.article>
@@ -389,17 +389,17 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                     <div className="prose prose-invert prose-lg max-w-none">
                         <h2 className="text-3xl font-bold text-white mb-6">Redefining Personal Health Records (PHR) in India</h2>
                         <p className="text-lg leading-8 text-slate-400">
-                            The traditional healthcare model is reactive: you get sick, you visit a doctor, you get treated. CureBird shifts this paradigm to **proactive wellness**. By maintaining a clean, digitized, and analyzed longitudinal record of your health, we empower you to catch silent killers like cardiac issues or metabolic disorders early.
+                            The traditional healthcare model is reactive: you get sick, you visit a doctor, and you receive treatment. CureBird shifts this paradigm to <span className="text-white font-bold">proactive wellness</span>. By maintaining a clean, digitized, and analyzed longitudinal record of your health history, we empower you to detect silent health risks—like cardiac anomalies or metabolic disorders—at their inception.
                         </p>
 
                         <h3 className="text-2xl font-bold text-white mt-12 mb-4">Why Manual Records Fail</h3>
                         <p className="text-lg leading-8 text-slate-400">
-                            Paper records degrade. They get lost. Most importantly, they are **siloed**. A cardiologist in Mumbai doesn't know what your dermatologist in Delhi prescribed last month. This lack of interoperability leads to dangerous drug interactions and redundant testing. CureBird solves this by being the **single source of truth** for your medical existence.
+                            Paper records degrade, get lost, and most critically, remain <span className="text-white font-bold">siloed data points</span>. A cardiologist in Mumbai typically lacks visibility into what a dermatologist in Delhi prescribed last month. This fragmentation leads to adverse drug interactions and redundant diagnostics. CureBird resolves this by establishing a <span className="text-white font-bold">single source of truth</span> for your entire medical existence.
                         </p>
 
-                        <h3 className="text-2xl font-bold text-white mt-12 mb-4">AI: The New Stethoscope</h3>
+                        <h3 className="text-2xl font-bold text-white mt-12 mb-4">AI: The New Clinical Assistant</h3>
                         <p className="text-lg leading-8 text-slate-400">
-                            We don't replace doctors; we give them superpowers. Our AI engine scans thousands of data points from your upload history to generate a "Clinician's Summary" before you even walk into the consultation room. This saves valuable time and ensures your doctor focuses on *treating you*, not reading files.
+                            We don't replace clinicians; we augment their capabilities. Our AI engine scans thousands of data points from your longitudinal history to generate a comprehensive "Clinician's Summary" before you even enter the consultation room. This optimization ensures your doctor focuses on <em className="text-amber-400 font-semibold not-italic">treating you</em>, not deciphering unorganized files.
                         </p>
                     </div>
                 </motion.section>
