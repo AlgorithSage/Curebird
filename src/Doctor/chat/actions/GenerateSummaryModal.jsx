@@ -45,38 +45,40 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
                     className="absolute inset-0 bg-black/80 backdrop-blur-md"
                 />
 
-                {/* Main Card */}
+                {/* Main Card - Ultra Thin Glass Effect */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
                     transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                    className="glass-card w-full max-w-3xl flex flex-col max-h-[85vh] !p-0 overflow-hidden shadow-[0_0_50px_rgba(245,158,11,0.15)] relative border border-amber-500/20 backdrop-blur-2xl"
-                    style={{ background: 'linear-gradient(145deg, rgba(251, 191, 36, 0.05) 0%, rgba(0, 0, 0, 0.6) 100%)' }}
+                    className="w-full max-w-3xl flex flex-col max-h-[85vh] !p-0 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative rounded-3xl border border-white/10 backdrop-blur-2xl"
+                    style={{ 
+                        background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(245, 158, 11, 0.05) 100%)',
+                        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                    }}
                 >
-                    {/* Background Ambience */}
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
+                    {/* Subtle Amber Glow Top Right */}
+                    <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-amber-500/20 rounded-full blur-[120px] pointer-events-none opacity-60" />
 
-                    {/* Header */}
-                    <div className="p-6 border-b border-amber-500/10 flex justify-between items-center bg-white/5 relative z-10">
+                    {/* Header - Fully Transparent */}
+                    <div className="p-6 border-b border-white/5 flex justify-between items-center relative z-10">
                         <div className="flex items-center gap-5">
-                            <div className="p-3.5 rounded-xl bg-gradient-to-br from-amber-500/20 to-purple-500/20 border border-amber-500/30 shadow-[0_0_25px_rgba(245,158,11,0.15)] relative overflow-hidden group">
-                                <Bot size={30} className="text-amber-400 relative z-10 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]" />
-                                <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className="p-3.5 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)] relative overflow-hidden group">
+                                <Bot size={30} className="text-amber-400 relative z-10" />
                             </div>
                             <div>
-                                <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-100 to-amber-500 tracking-tight">
+                                <h2 className="text-3xl font-black text-white/90 tracking-tight drop-shadow-sm">
                                     AI Consultation Summary
                                 </h2>
-                                <p className="text-stone-500 text-xs font-bold uppercase tracking-[0.2em] mt-1.5 flex items-center gap-2">
-                                    <Bot size={12} className="text-amber-500 animate-pulse" />
+                                <p className="text-amber-500/80 text-xs font-bold uppercase tracking-[0.2em] mt-1.5 flex items-center gap-2">
+                                    <Bot size={12} className="animate-pulse" />
                                     Powered by CureBird Clinical Engine
                                 </p>
                             </div>
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-3 rounded-full hover:bg-white/5 text-stone-500 hover:text-white transition-colors"
+                            className="p-3 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-colors"
                         >
                             <X size={26} />
                         </button>
@@ -89,22 +91,21 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
                         {isGenerating ? (
                             <div className="h-full flex flex-col items-center justify-center space-y-8 opacity-90">
                                 <div className="relative">
-                                    <div className="w-24 h-24 rounded-full border-4 border-amber-500/10 border-t-amber-500 animate-spin"></div>
+                                    <div className="w-24 h-24 rounded-full border-4 border-white/5 border-t-amber-500 animate-spin"></div>
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <Cpu size={36} className="text-amber-500 animate-pulse" />
                                     </div>
-                                    <div className="absolute inset-0 rounded-full shadow-[0_0_50px_rgba(245,158,11,0.2)] animate-pulse" />
                                 </div>
                                 <div className="text-center space-y-3">
-                                    <h3 className="text-2xl font-bold text-amber-200 tracking-tight">Analyzing Clinical Context...</h3>
-                                    <p className="text-stone-500 font-medium">Processing recent messages, vitals logs, and lab reports.</p>
+                                    <h3 className="text-2xl font-bold text-white/80 tracking-tight">Analyzing Clinical Context...</h3>
+                                    <p className="text-white/40 font-medium">Processing recent messages, vitals logs, and lab reports.</p>
                                 </div>
                             </div>
                         ) : (
                             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
                                 {/* Info Box */}
-                                <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex items-start gap-5 shadow-[0_0_20px_rgba(16,185,129,0.05)]">
+                                <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex items-start gap-5">
                                     <div className="p-2.5 rounded-full bg-emerald-500/10 text-emerald-400">
                                         <CheckCircle size={20} />
                                     </div>
@@ -117,24 +118,23 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
                                 </div>
 
                                 {/* SOAP Note Section */}
-                                <div className="space-y-10">
+                                <div className="space-y-8">
                                     {Object.entries(soapNote).map(([key, value]) => (
                                         <div key={key} className="group">
-                                            <div className="flex items-center gap-4 mb-3.5">
-                                                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500/20 to-transparent flex items-center justify-center border border-amber-500/20 group-hover:border-amber-500/50 transition-colors shadow-[0_0_10px_rgba(245,158,11,0.1)]">
-                                                    <span className="text-amber-500 font-black text-sm uppercase">{key.charAt(0)}</span>
+                                            <div className="flex items-center gap-4 mb-3">
+                                                <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                                                    <span className="text-amber-500 font-black text-xs uppercase">{key.charAt(0)}</span>
                                                 </div>
-                                                <h3 className="text-amber-600/60 font-black uppercase tracking-[0.2em] text-sm transition-colors group-hover:text-amber-500/80">{key}</h3>
+                                                <h3 className="text-white/50 font-bold uppercase tracking-[0.2em] text-xs transition-colors group-hover:text-amber-400">{key}</h3>
                                             </div>
                                             <div className="pl-12">
-                                                <div className="relative p-6 rounded-2xl bg-amber-950/20 border border-white/5 text-stone-300 leading-relaxed font-normal hover:border-amber-500/30 transition-all duration-300 overflow-hidden shadow-inner hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-
-                                                    {/* Dynamic Gradient Overlay */}
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-                                                    <div className="relative z-10 text-base">
+                                                <div className="relative p-6 rounded-2xl bg-white/5 border border-white/5 text-stone-200 leading-relaxed font-normal hover:bg-white/10 transition-all duration-300 shadow-sm">
+                                                    {/* Side Accent Line */}
+                                                    <div className="absolute left-0 top-6 bottom-6 w-1 bg-amber-500/30 rounded-r-full" />
+                                                    
+                                                    <div className="relative z-10 text-sm">
                                                         {value.split('\n').map((line, i) => (
-                                                            <p key={i} className={i > 0 ? 'mt-3 pl-4 border-l-2 border-stone-800' : ''}>{line}</p>
+                                                            <p key={i} className={i > 0 ? 'mt-2' : ''}>{line}</p>
                                                         ))}
                                                     </div>
                                                 </div>
@@ -146,8 +146,8 @@ const GenerateSummaryModal = ({ isOpen, onClose, generatedData, onApprove, onReg
                         )}
                     </div>
 
-                    {/* Footer */}
-                    <div className="p-8 border-t border-amber-500/10 bg-amber-900/10 flex justify-between items-center relative z-20">
+                    {/* Footer - Fully Transparent */}
+                    <div className="p-8 border-t border-white/5 flex justify-between items-center relative z-20">
                         <button 
                             onClick={onRegenerate}
                             className="px-6 py-3.5 rounded-xl border border-amber-500/20 text-stone-400 hover:text-amber-200 hover:bg-amber-500/5 hover:border-amber-500/40 transition-all flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider group"
