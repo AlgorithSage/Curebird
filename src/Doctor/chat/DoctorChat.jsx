@@ -1247,9 +1247,43 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                 isOpen={activeAction === 'summary'}
                 onClose={() => setActiveAction(null)}
                 generatedData={generatedNoteData}
-                onApprove={() => {
-                   // Close summary, open add record
-                   setActiveAction('add_record');
+                onApprove={async () => {
+                    if (!generatedNoteData || !generatedNoteData.patientId) {
+                        showToast('Error: Missing patient data', 'error');
+                        return;
+                    }
+
+                    try {
+                        const recordData = {
+                            type: generatedNoteData.type || 'consultation_note',
+                            title: generatedNoteData.title || 'Note from Patient Messages',
+                            diagnosis: generatedNoteData.diagnosis || '',
+                            vitals: generatedNoteData.vitals || '',
+                            description: generatedNoteData.description || '',
+                            date: new Date().toISOString().split('T')[0],
+                            doctorId: currentUser?.uid,
+                            doctorName: currentUser?.displayName || currentUser?.name || 'Dr. CureBird',
+                            patientId: generatedNoteData.patientId,
+                            patientName: activeChatData?.patient || 'Unknown Patient',
+                            priority: 'routine',
+                            medications: [],
+                            createdAt: serverTimestamp(),
+                            status: 'finalized'
+                        };
+
+                        // 1. Save to Patient's Record (Subcollection)
+                        await addDoc(collection(db, `users/${generatedNoteData.patientId}/medical_records`), recordData);
+
+                        // 2. Save to Main Medical Records Collection
+                        await addDoc(collection(db, 'medical_records'), recordData);
+
+                        showToast('Clinical Note Saved Successfully', 'success');
+                        setActiveAction(null); // Close Modal
+
+                    } catch (error) {
+                        console.error("Error saving note directly:", error);
+                        showToast('Failed to save note', 'error');
+                    }
                 }}
                 onRegenerate={handleRegenerate}
             />
