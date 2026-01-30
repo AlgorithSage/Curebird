@@ -196,7 +196,10 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                             triggerHaptic('light');
                                             onNavigate && onNavigate(item.id || item.name);
                                         }}
-                                        whileHover={{ scale: 1.1 }}
+                                        whileHover={{ 
+                                            scale: 1.1,
+                                            backgroundColor: "rgba(245, 158, 11, 0.15)"
+                                        }}
                                         whileTap={{ scale: 0.95 }}
                                         animate={isActive ? {
                                             scale: 1.1,
@@ -205,9 +208,9 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                             scale: 1,
                                             backgroundColor: "rgba(0,0,0,0)"
                                         }}
-                                        className={`p-1.5 rounded-full relative z-10 shrink-0 ${isActive
+                                        className={`p-1.5 rounded-full relative z-10 shrink-0 transition-colors duration-300 ${isActive
                                             ? 'text-amber-400'
-                                            : 'text-slate-400 hover:text-slate-200'
+                                            : 'text-slate-400 hover:text-amber-200'
                                             }`}
                                         title={item.name}
                                     >
