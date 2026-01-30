@@ -6,21 +6,22 @@ import SEO from './SEO';
 import CureBirdLogo from '../curebird_logo.png';
 
 // --- Video Background Component (Mobile Optimized) ---
-const VideoBackground = ({ isMobile }) => (
+const VideoBackground = () => (
     <div className="fixed inset-0 overflow-hidden z-0">
-        {!isMobile ? (
-            <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover opacity-60"
-            >
-                <source src="/medical-bg.mp4" type="video/mp4" />
-            </video>
-        ) : (
-            <div className="w-full h-full bg-gradient-to-br from-slate-900 via-stone-900 to-amber-950 opacity-80" />
-        )}
+        {/* Desktop Video - Hidden on mobile, visible on md+ */}
+        <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover opacity-60 hidden md:block"
+        >
+            <source src="/medical-bg.mp4" type="video/mp4" />
+        </video>
+
+        {/* Mobile Gradient - Visible on mobile, hidden on md+ */}
+        <div className="w-full h-full bg-gradient-to-br from-slate-900 via-stone-900 to-amber-950 opacity-80 block md:hidden" />
+
         <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
     </div>
 );
@@ -106,7 +107,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                 title="CureBird | AI-Powered Personal Medical Portfolio"
                 description="Securely manage your medical records, track vitals, and get AI-powered health insights with CureBird. The comprehensive digital health dashboard for modern patient care."
             />
-            <VideoBackground isMobile={isMobile} />
+            <VideoBackground />
 
             {/* Hero Section */}
             <header className="relative min-h-screen flex flex-col items-center justify-center p-4">
@@ -128,7 +129,15 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                     {/* Logo & Title */}
                     <motion.div custom={0} variants={textVariants} className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                         <div className="relative w-40 h-40 sm:w-52 sm:h-52 flex items-center justify-center shrink-0">
-                            <img src={CureBirdLogo} alt="CureBird Logo" className="relative z-70 w-full h-full object-contain drop-shadow-[0_0_20px_rgba(245,158,11,0.8)]" />
+                            {/* LCP Optimization: Explicit Sizing + Priority */}
+                            <img
+                                src={CureBirdLogo}
+                                alt="CureBird Logo"
+                                width="208"
+                                height="208"
+                                fetchPriority="high"
+                                className="relative z-70 w-full h-full object-contain drop-shadow-[0_0_20px_rgba(245,158,11,0.8)]"
+                            />
                         </div>
                         <h1 className="text-6xl sm:text-8xl lg:text-9xl font-extrabold tracking-tight text-center sm:text-left">
                             Cure<span className="text-amber-400">Bird</span>
