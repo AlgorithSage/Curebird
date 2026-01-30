@@ -1168,7 +1168,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                                             <command.icon size={16} />
                                                         </div>
                                                         <div className="flex flex-col">
-                                                            <span className="text-stone-200 font-bold font-mono text-sm group-hover:text-amber-400 transition-colors">{command.cmd}</span>
+                                                            <span className="text-slate-100 font-black text-[15px] tracking-wide group-hover:text-amber-400 transition-colors drop-shadow-sm font-sans">{command.cmd}</span>
                                                             <span className="text-stone-500 text-[10px] uppercase font-bold tracking-wide group-hover:text-stone-400">{command.desc}</span>
                                                         </div>
                                                     </div>
