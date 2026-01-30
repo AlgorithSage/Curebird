@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, query, orderBy, getDocs, limit } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, X, ChevronUp, Bell, Activity, Crown } from './Icons';
+import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, X, ChevronUp, Bell, Activity, Crown, Volume2, VolumeX } from './Icons';
 import { AnalysisService } from '../services/AnalysisService';
 
 import Header from './Header';
@@ -13,7 +13,8 @@ import { RecordFormModal, ShareModal, DeleteConfirmModal } from './Modals';
 import { SkeletonDashboard, SkeletonCard } from './SkeletonLoaders';
 import DashboardOverview from './DashboardOverview';
 
-import HeroSection from './HeroSection';
+import RotatingText from './RotatingText';
+// import HeroSection from './HeroSection'; // Removed per refactor
 
 
 
@@ -239,16 +240,102 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
             <main className="mt-8">
                 {/* Content Removed - Moved to Cure Tracker */}
                 <>
-                    {/* Flashy Hero Section - Always visible */}
-                    <div className="mb-10">
-                        <HeroSection
-                            onOverviewClick={scrollToDashboard}
-                            onAddClick={() => { setEditingRecord(null); onAddRecordClick && onAddRecordClick(); }}
-                            onNavigate={onNavigate}
-                            healthScore={healthScore}
-                        />
+                    {/* Welcome Text Block */}
+                    <div className="mb-8 px-2 sm:px-6">
+                        <div className="max-w-4xl text-center lg:text-left mx-auto lg:mx-0">
+                            <h1 className="text-lg sm:text-2xl xl:text-3xl font-extrabold tracking-tight leading-tight mb-2 whitespace-nowrap overflow-hidden text-ellipsis">
+                                <span className="inline">
+                                    <span className="text-white">Welcome {user?.firstName || 'User'}</span>
+                                    <span className="hidden sm:inline text-white opacity-40 mx-2">|</span>
+                                    <span className="ml-1 sm:ml-0 text-white">Cure</span><span className="text-amber-200">Bird</span>
+                                    <span className="hidden md:inline text-white"> is at your service!</span>
+                                </span>
+                            </h1>
+                            <div className="flex items-center justify-center lg:justify-start gap-2 text-slate-400 text-xs sm:text-sm font-medium">
+                                <span className="text-amber-500/90 uppercase tracking-wider font-bold truncate">Medical Portfolio</span>
+                                <span className="hidden md:inline truncate max-w-xl text-slate-400/80">Your centralized health dashboard</span>
+                            </div>
+                        </div>
                     </div>
 
+                    {/* Dynamic Hero Section - Refactored */}
+                    <div className="mb-16 mt-4 px-2 sm:px-6">
+                        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
+                            {/* Left Side: Text Content */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.8 }}
+                                className="w-full lg:w-1/2"
+                            >
+                                <div className="max-w-4xl text-center lg:text-left mx-auto lg:mx-0">
+                                    <span className="inline-block py-1 px-3 rounded-full bg-slate-800/50 border border-slate-700 text-amber-500 text-xs font-bold tracking-wider mb-6 backdrop-blur-sm">
+                                        AI-POWERED MEDICAL INTELLIGENCE
+                                    </span>
+
+                                    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-tight mb-8 sm:mb-10">
+                                        Redefining Healthcare with <span className="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent font-black tracking-tight whitespace-nowrap">
+                                            Cure <RotatingText
+                                                words={["Analyzer", "Stat", "AI", "Tracker"]}
+                                                interval={2500}
+                                            />
+                                        </span>
+                                    </h1>
+
+                                    <p className="text-lg sm:text-xl text-slate-400 max-w-2xl leading-relaxed mt-4 sm:mt-0 relative z-10">
+                                        Revolutionizing and Digitizing Healthcare with <span className="text-amber-400 font-semibold">Clinical Precision</span>.
+                                        Secure file sharing, event management, and advanced protocol technology for your health.
+                                    </p>
+
+                                    <div className="mt-8 sm:mt-10 flex flex-row flex-wrap gap-3 sm:gap-4">
+                                        <button
+                                            onClick={() => { setEditingRecord(null); onAddRecordClick && onAddRecordClick(); }}
+                                            className="bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold py-2.5 px-5 sm:py-3 sm:px-8 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] hover:scale-105 transition-all text-sm sm:text-lg whitespace-nowrap flex-1 sm:flex-none justify-center flex items-center"
+                                        >
+                                            Add Health Record
+                                        </button>
+                                        <button
+                                            onClick={onNavigate ? () => onNavigate('/cure-ai') : undefined}
+                                            className="bg-slate-800 text-white border border-slate-700 font-bold py-2.5 px-5 sm:py-3 sm:px-8 rounded-full hover:bg-slate-700 transition-all text-sm sm:text-lg whitespace-nowrap flex-1 sm:flex-none justify-center flex items-center"
+                                        >
+                                            Ask AI Assistant
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            {/* Right Side: Video */}
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                                className="w-full lg:w-1/2 hidden lg:block"
+                            >
+                                <div className="p-4 bg-white/5 backdrop-blur-2xl rounded-[3rem] border border-white/10 shadow-[0_0_120px_-30px_rgba(0,0,0,0.8)] w-full transform rotate-y-12 hover:rotate-y-0 transition-transform duration-700 perspective-1000">
+                                    <div className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden border border-white/5 bg-slate-900/80 group">
+                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-purple-500/5 z-10 pointer-events-none" />
+                                        <video
+                                            autoPlay
+                                            loop
+                                            muted
+                                            playsInline
+                                            className="w-full h-full object-cover opacity-90 mix-blend-screen group-hover:opacity-100 transition-opacity duration-500"
+                                        >
+                                            <source
+                                                src="/assets/hero_video.mp4"
+                                                type="video/mp4"
+                                            />
+                                        </video>
+
+                                        <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+                                            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                            <span className="text-xs font-medium text-white/80">LIVE SYSTEM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
 
                     {/* Dashboard Overview Banner */}
                     <div className="mb-12 px-2 sm:px-6">

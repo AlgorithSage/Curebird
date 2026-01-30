@@ -129,6 +129,8 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
         { name: 'Cure Analyzer', icon: <Microscope size={20} /> },
         { name: 'Cure Stat', icon: <BarChart2 size={20} /> },
         { name: 'Cure AI', icon: <Bot size={20} /> },
+        { name: 'Cure Tracker', icon: <Activity size={20} /> },
+        { name: 'Doctors Access', id: 'Doctor Access', icon: <Stethoscope size={20} /> }, // ID matches App.js route key
         { name: 'Settings', icon: <Settings size={20} /> },
         { name: 'Contact', icon: <Mail size={20} /> }
     ];
@@ -136,22 +138,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     const navItems = propNavItems.length > 0 ? propNavItems : defaultNavItems;
 
 
-    const HeaderText = () => (
-        <div className="text-center xl:text-left px-4">
-            <h1 className="text-lg sm:text-2xl xl:text-3xl font-extrabold tracking-tight leading-tight mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                <span className="inline">
-                    <span className="text-white">Welcome {user?.firstName || 'User'}</span>
-                    <span className="hidden sm:inline text-white opacity-40 mx-2">|</span>
-                    <span className="ml-1 sm:ml-0 text-white">Cure</span><span className="text-amber-200">Bird</span>
-                    <span className="hidden md:inline text-white"> is at your service!</span>
-                </span>
-            </h1>
-            <div className="flex items-center justify-center xl:justify-start gap-2 text-slate-400 text-xs sm:text-sm font-medium">
-                <span className="text-amber-500/90 uppercase tracking-wider font-bold truncate">{title}</span>
-                <span className="hidden md:inline truncate max-w-xl text-slate-400/80">{description}</span>
-            </div>
-        </div>
-    );
+
 
     return (
 
@@ -183,54 +170,29 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                             className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-[pulse_3s_ease-in-out_infinite] hover:drop-shadow-[0_0_20px_rgba(245,158,11,1)] transition-all duration-300"
                         />
                     </div>
-
-                    {/* Quick Navigation Chain */}
-                    <div className='bg-slate-900/50 p-1 rounded-full border border-white/5 backdrop-blur-sm shadow-inner block min-w-0'>
-                        <div className='flex items-center gap-1 overflow-x-auto max-w-[30vw] sm:max-w-none [scrollbar-width:none]'>
-                            {navItems.map((item, i) => {
-                                const isActive = title === item.name;
-                                return (
-                                    <motion.button
-                                        key={item.name}
-                                        onClick={() => {
-                                            triggerHaptic('light');
-                                            onNavigate && onNavigate(item.id || item.name);
-                                        }}
-                                        whileHover={{ 
-                                            scale: 1.1,
-                                            backgroundColor: "rgba(245, 158, 11, 0.15)"
-                                        }}
-                                        whileTap={{ scale: 0.95 }}
-                                        animate={isActive ? {
-                                            scale: 1.1,
-                                            backgroundColor: "rgba(245, 158, 11, 0.1)"
-                                        } : {
-                                            scale: 1,
-                                            backgroundColor: "rgba(0,0,0,0)"
-                                        }}
-                                        className={`p-1.5 rounded-full relative z-10 shrink-0 transition-colors duration-300 ${isActive
-                                            ? 'text-amber-400'
-                                            : 'text-slate-400 hover:text-amber-200'
-                                            }`}
-                                        title={item.name}
-                                    >
-                                        {React.cloneElement(item.icon, {
-                                            size: 18,
-                                            className: isActive ? "text-amber-400 w-[18px] h-[18px]" : "currentColor w-[18px] h-[18px]"
-                                        })}
-                                    </motion.button>
-                                );
-                            })}
-                        </div>
-                    </div>
                 </div>
 
-                {/* Center Text: Visible ONLY on Large Screens (XL+) inside Header */}
-                <div className="hidden xl:flex flex-1 justify-center px-4 xl:order-2">
-                    <HeaderText />
+                {/* Center Navigation: Text Links (Visible on Large Screens) */}
+                <div className="hidden xl:flex items-center gap-6 2xl:gap-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max">
+                    {navItems.map((item) => {
+                        const isActive = title === item.name;
+                        return (
+                            <button
+                                key={item.name}
+                                onClick={() => {
+                                    triggerHaptic('light');
+                                    onNavigate && onNavigate(item.id || item.name);
+                                }}
+                                className={`text-[0.65rem] 2xl:text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 relative group py-2 ${isActive ? 'text-amber-400' : 'text-amber-100/70 hover:text-amber-300'
+                                    }`}
+                            >
+                                {item.name}
+                                {/* Glow effect on hover */}
+                                <span className={`absolute inset-0 bg-amber-400/0 group-hover:bg-amber-400/5 rounded-lg transition-colors duration-300 -z-10 -mx-2`}></span>
+                            </button>
+                        );
+                    })}
                 </div>
-
-                {/* Right Group: Actions - Order 2 on small/zoom, Order 3 on wide */}
                 <div className="flex items-center gap-2 sm:gap-3 order-2 xl:order-3 ml-auto shrink-0">
                     {user && onAddClick && (
                         <>
@@ -276,11 +238,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
             </header>
 
             {/* Mobile/Zoomed Text: Page Title Section - Scrolls with content */}
-            <div className="xl:hidden w-full px-4 flex flex-col justify-center mt-8 mb-6 min-h-[80px] space-y-1">
-                <HeaderText />
-                {/* Optional Divider for clear separation */}
-                <div className="w-12 h-1 bg-gradient-to-r from-amber-500/50 to-transparent rounded-full mx-auto xl:mx-0 mt-2"></div>
-            </div>
+
         </>
     );
 }
