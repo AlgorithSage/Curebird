@@ -1167,9 +1167,9 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                                         <div className="w-8 h-8 rounded-lg bg-stone-900 flex items-center justify-center text-stone-500 group-hover:text-amber-400 group-hover:bg-amber-500/10 border border-white/5 transition-colors">
                                                             <command.icon size={16} />
                                                         </div>
-                                                        <div className="flex flex-col">
+                                                        <div className="flex flex-col gap-0.5">
                                                             <span className="text-slate-100 font-black text-[15px] tracking-wide group-hover:text-amber-400 transition-colors drop-shadow-sm font-sans">{command.cmd}</span>
-                                                            <span className="text-stone-500 text-[10px] uppercase font-bold tracking-wide group-hover:text-stone-400">{command.desc}</span>
+                                                            <span className="text-stone-400 text-[11px] font-medium group-hover:text-stone-300 font-sans tracking-normal">{command.desc}</span>
                                                         </div>
                                                     </div>
                                                     <div className="opacity-0 group-hover:opacity-100 text-stone-500 text-[10px] font-bold uppercase tracking-wider bg-black/40 px-2 py-1 rounded-md border border-white/5 group-hover:border-amber-500/20 group-hover:text-amber-500 transition-all transform translate-x-2 group-hover:translate-x-0">
