@@ -86,6 +86,9 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     const [alerts, setAlerts] = useState([]);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
 
+    // Video Mute State
+    const [isMuted, setIsMuted] = useState(true);
+
     const dashboardRef = useRef(null);
     const medicalHistoryRef = useRef(null); // Ref for scrolling to history
 
@@ -242,7 +245,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                 <>
                     {/* Welcome Text Block */}
                     <div className="mb-8 px-2 sm:px-6">
-                        <div className="max-w-4xl text-center lg:text-left mx-auto lg:mx-0">
+                        <div className="max-w-4xl text-center mx-auto">
                             <h1 className="text-lg sm:text-2xl xl:text-3xl font-extrabold tracking-tight leading-tight mb-2 whitespace-nowrap overflow-hidden text-ellipsis">
                                 <span className="inline">
                                     <span className="text-white">Welcome {user?.firstName || 'User'}</span>
@@ -251,7 +254,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     <span className="hidden md:inline text-white"> is at your service!</span>
                                 </span>
                             </h1>
-                            <div className="flex items-center justify-center lg:justify-start gap-2 text-slate-400 text-xs sm:text-sm font-medium">
+                            <div className="flex items-center justify-center gap-2 text-slate-400 text-xs sm:text-sm font-medium">
                                 <span className="text-amber-500/90 uppercase tracking-wider font-bold truncate">Medical Portfolio</span>
                                 <span className="hidden md:inline truncate max-w-xl text-slate-400/80">Your centralized health dashboard</span>
                             </div>
@@ -317,15 +320,24 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                         <video
                                             autoPlay
                                             loop
-                                            muted
+                                            muted={isMuted}
                                             playsInline
                                             className="w-full h-full object-cover opacity-90 mix-blend-screen group-hover:opacity-100 transition-opacity duration-500"
                                         >
                                             <source
-                                                src="/assets/hero_video.mp4"
+                                                src="/assets/Hero_video.mp4"
                                                 type="video/mp4"
                                             />
                                         </video>
+
+                                        {/* Mute Toggle Button */}
+                                        <button
+                                            onClick={() => setIsMuted(!isMuted)}
+                                            className="absolute top-6 right-6 z-30 p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white/80 hover:bg-black/60 hover:text-white transition-all hover:scale-110 active:scale-95 group-hover:block"
+                                            aria-label={isMuted ? "Unmute video" : "Mute video"}
+                                        >
+                                            {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                                        </button>
 
                                         <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
                                             <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
