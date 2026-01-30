@@ -1172,8 +1172,9 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                                             <span className="text-stone-400 text-[11px] font-medium group-hover:text-stone-300 font-sans tracking-normal">{command.desc}</span>
                                                         </div>
                                                     </div>
-                                                    <div className="opacity-0 group-hover:opacity-100 text-stone-500 text-[10px] font-bold uppercase tracking-wider bg-black/40 px-2 py-1 rounded-md border border-white/5 group-hover:border-amber-500/20 group-hover:text-amber-500 transition-all transform translate-x-2 group-hover:translate-x-0">
-                                                        ↵ Enter
+                                                    <div className="opacity-0 group-hover:opacity-100 flex items-center gap-2 bg-stone-900/80 border border-amber-500/30 rounded-lg px-3 py-1.5 shadow-[0_0_15px_rgba(245,158,11,0.15)] transition-all duration-300 transform translate-x-4 group-hover:translate-x-0 backdrop-blur-md">
+                                                        <span className="text-amber-400 text-[10px] font-black">↵</span>
+                                                        <span className="text-[10px] font-black text-amber-500 tracking-widest uppercase shadow-black drop-shadow-md">ENTER</span>
                                                     </div>
                                                 </button>
                                             ))}
