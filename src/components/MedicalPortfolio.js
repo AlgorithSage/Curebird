@@ -321,7 +321,9 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                             <span className="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">Cure</span>
                                             <RotatingText
                                                 words={["Analyzer", "Stat", "AI", "Tracker"]}
-                                                interval={2500}
+                                                interval={80}
+                                                typingSpeed={120}
+                                                deletingSpeed={40}
                                             />
                                         </span>
                                     </h1>
