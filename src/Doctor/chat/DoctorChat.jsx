@@ -45,6 +45,50 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
     // Toast State (New)
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
+    // Feature 3: Slash Commands State
+    const [showSlashMenu, setShowSlashMenu] = useState(false);
+    const [slashFilter, setSlashFilter] = useState('');
+    const slashMenuRef = React.useRef(null);
+
+    const slashCommands = [
+        { 
+            cmd: '/vitals', 
+            desc: 'Request Vitals Update', 
+            type: 'text', 
+            text: "Could you please update your latest vitals (BP, Heart Rate, Temp) in the dashboard? It helps me track your progress." 
+        },
+        { 
+            cmd: '/book', 
+            desc: 'Booking Link', 
+            type: 'text', 
+            text: "Please book a follow-up appointment for next week using this link: [Link]" 
+        },
+        { 
+            cmd: '/fasting', 
+            desc: 'Fasting Instructions', 
+            type: 'text', 
+            text: "Please ensure you are fasting for 12 hours before this test (water is okay, but no food/coffee)." 
+        },
+        { 
+            cmd: '/obs', 
+            desc: 'Observation Safety Net', 
+            type: 'text', 
+            text: "Please monitor your symptoms for the next 24 hours. If you experience chest pain, shortness of breath, or high fever, go to the ER immediately." 
+        },
+        { 
+            cmd: '/diet', 
+            desc: 'Diabetic Diet Plan', 
+            type: 'text', 
+            text: "Here is the standard low-glycemic diet plan we discussed: [PDF Link]" 
+        },
+        { 
+            cmd: '/note', 
+            desc: 'Generate Clinical Note', 
+            type: 'action', 
+            action: () => setActiveAction('summary') 
+        }
+    ];
+
     const showToast = (message, type = 'success') => {
         setToast({ show: true, message, type });
         setTimeout(() => setToast(prev => ({ ...prev, show: false })), 3000);
@@ -1031,10 +1075,89 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             <input
                                 type="text"
                                 value={messageInput}
-                                onChange={(e) => setMessageInput(e.target.value)}
-                                placeholder="Type a message..."
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setMessageInput(val);
+                                    
+                                    // Slash Command Detection
+                                    if (val.startsWith('/')) {
+                                        setShowSlashMenu(true);
+                                        setSlashFilter(val);
+                                    } else {
+                                        setShowSlashMenu(false);
+                                    }
+                                }}
+                                onKeyDown={(e) => {
+                                    if (showSlashMenu && (e.key === 'Enter' || e.key === 'Tab')) {
+                                        e.preventDefault();
+                                        const filtered = slashCommands.filter(c => c.cmd.toLowerCase().includes(slashFilter.toLowerCase()));
+                                        if (filtered.length > 0) {
+                                            const command = filtered[0];
+                                            if (command.type === 'text') {
+                                                setMessageInput(command.text);
+                                            } else if (command.type === 'action') {
+                                                command.action();
+                                                setMessageInput('');
+                                            }
+                                            setShowSlashMenu(false);
+                                        }
+                                    }
+                                    if(showSlashMenu && e.key === 'Escape') {
+                                        setShowSlashMenu(false);
+                                    }
+                                }}
+                                placeholder="Type a message... (Type '/' for commands)"
                                 className="w-full bg-transparent border-none text-white focus:ring-0 py-3 text-sm placeholder:text-stone-600 font-medium"
                             />
+                            
+                            {/* Slash Command Menu */}
+                            <AnimatePresence>
+                                {showSlashMenu && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        className="absolute bottom-full left-0 mb-4 w-72 bg-[#1c1917] border border-amber-500/20 rounded-xl shadow-2xl overflow-hidden z-50 flex flex-col"
+                                    >
+                                        <div className="bg-amber-500/10 px-4 py-2 text-[10px] font-bold text-amber-500 uppercase tracking-widest border-b border-amber-500/10">
+                                            Quick Commands
+                                        </div>
+                                        <div className="max-h-60 overflow-y-auto custom-scrollbar p-1">
+                                            {slashCommands
+                                                .filter(c => c.cmd.toLowerCase().includes(slashFilter.toLowerCase()))
+                                                .map((command, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (command.type === 'text') {
+                                                            setMessageInput(command.text);
+                                                        } else if (command.type === 'action') {
+                                                            command.action();
+                                                            setMessageInput('');
+                                                        }
+                                                        setShowSlashMenu(false);
+                                                    }}
+                                                    className="w-full text-left px-3 py-2.5 hover:bg-white/5 rounded-lg flex items-center justify-between group transition-colors"
+                                                >
+                                                    <div className="flex flex-col">
+                                                        <span className="text-stone-200 font-bold font-mono text-sm group-hover:text-amber-400 transition-colors">{command.cmd}</span>
+                                                        <span className="text-stone-500 text-xs">{command.desc}</span>
+                                                    </div>
+                                                    <div className="opacity-0 group-hover:opacity-100 text-stone-600 text-[10px] font-bold uppercase tracking-wider bg-black/20 px-1.5 py-0.5 rounded border border-white/5">
+                                                        Enter
+                                                    </div>
+                                                </button>
+                                            ))}
+                                            {slashCommands.filter(c => c.cmd.toLowerCase().includes(slashFilter.toLowerCase())).length === 0 && (
+                                                <div className="p-4 text-center text-stone-500 text-xs italic">
+                                                    No commands found
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                             {/* Voice Recording Button */}
                             <button 
                                 type="button" 
