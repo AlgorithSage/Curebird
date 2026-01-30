@@ -39,6 +39,7 @@ const DoctorPublicView = lazy(() => import('./components/DoctorPublicView'));
 const SubscriptionModal = lazy(() => import('./components/SubscriptionModal'));
 const FamilyProfile = lazy(() => import('./components/FamilyProfile'));
 const BottomNav = lazy(() => import('./components/BottomNav'));
+const RecordFormModal = lazy(() => import('./components/Modals').then(module => ({ default: module.RecordFormModal })));
 
 const formatDate = (date) => date?.toDate ? date.toDate().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ') : '');
@@ -67,6 +68,7 @@ const LayoutWithSidebar = ({ user, isSidebarOpen, setSidebarOpen, onSubscribeCli
             <Suspense fallback={null}>
                 {user && <BottomNav onAddClick={() => onAddRecordClick && onAddRecordClick()} />}
             </Suspense>
+
         </div>
     );
 };
@@ -347,6 +349,17 @@ export default function App() {
                                             }
                                         }
                                     }}
+                                />
+                            </Suspense>
+                        )}
+                        {isRecordModalOpen && (
+                            <Suspense fallback={null}>
+                                <RecordFormModal
+                                    onClose={() => setIsRecordModalOpen(false)}
+                                    userId={user?.uid}
+                                    appId={appId}
+                                    db={db}
+                                    storage={storage}
                                 />
                             </Suspense>
                         )}

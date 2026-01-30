@@ -237,7 +237,32 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
 
             </header>
 
-            {/* Mobile/Zoomed Text: Page Title Section - Scrolls with content */}
+            {/* Mobile Navigation Bar – ICON BASED (Mobile Only) */}
+            <div className="xl:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
+                <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-full px-3 py-2 shadow-2xl">
+                    {navItems.map((item) => {
+                        const isActive = title === item.name;
+                        return (
+                            <motion.button
+                                key={item.name}
+                                onClick={() => {
+                                    triggerHaptic('light');
+                                    onNavigate && onNavigate(item.id || item.name);
+                                }}
+                                whileTap={{ scale: 0.9 }}
+                                className={`p-2 rounded-full transition-colors ${isActive
+                                    ? 'bg-amber-500/20 text-amber-400'
+                                    : 'text-slate-300 hover:text-amber-300'
+                                    }`}
+                            >
+                                {React.cloneElement(item.icon, {
+                                    size: 20,
+                                })}
+                            </motion.button>
+                        );
+                    })}
+                </div>
+            </div>
 
         </>
     );
