@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, query, orderBy, getDocs, limit } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, X, ChevronUp, Bell, Activity, Crown, Volume2, VolumeX } from './Icons';
+import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, X, ChevronUp, Bell, Activity, Crown, Volume2, VolumeX, Play, Pause, Maximize } from './Icons';
 import { AnalysisService } from '../services/AnalysisService';
 
 import Header from './Header';
@@ -86,8 +86,30 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     const [alerts, setAlerts] = useState([]);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
 
-    // Video Mute State
+    // Video State
     const [isMuted, setIsMuted] = useState(true);
+    const [isPlaying, setIsPlaying] = useState(true);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const heroVideoRef = useRef(null);
+
+    const formatTime = (time) => {
+        if (isNaN(time)) return "0:00";
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    };
+
+    const togglePlay = () => {
+        if (heroVideoRef.current) {
+            if (isPlaying) {
+                heroVideoRef.current.pause();
+            } else {
+                heroVideoRef.current.play();
+            }
+            setIsPlaying(!isPlaying);
+        }
+    };
 
     const dashboardRef = useRef(null);
     const medicalHistoryRef = useRef(null); // Ref for scrolling to history
@@ -314,15 +336,21 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                 transition={{ duration: 0.8, delay: 0.2 }}
                                 className="w-full lg:w-1/2 hidden lg:block"
                             >
-                                <div className="p-4 bg-white/5 backdrop-blur-2xl rounded-[3rem] border border-white/10 shadow-[0_0_120px_-30px_rgba(0,0,0,0.8)] w-full transform rotate-y-12 hover:rotate-y-0 transition-transform duration-700 perspective-1000">
-                                    <div className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden border border-white/5 bg-slate-900/80 group">
+                                <div className="p-2.5 bg-white/5 backdrop-blur-3xl rounded-[3.5rem] border border-amber-500/20 shadow-[0_0_100px_-30px_rgba(245,158,11,0.25)] w-full transform rotate-y-12 hover:rotate-y-0 transition-transform duration-700 perspective-1000">
+                                    <div className="relative w-full aspect-video rounded-[3rem] overflow-hidden border border-white/5 bg-slate-900/80 group">
                                         <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-purple-500/5 z-10 pointer-events-none" />
                                         <video
+                                            ref={heroVideoRef}
                                             autoPlay
                                             loop
                                             muted={isMuted}
                                             playsInline
+                                            onTimeUpdate={() => setCurrentTime(heroVideoRef.current?.currentTime || 0)}
+                                            onLoadedMetadata={() => setDuration(heroVideoRef.current?.duration || 0)}
+                                            onPlay={() => setIsPlaying(true)}
+                                            onPause={() => setIsPlaying(false)}
                                             className="w-full h-full object-cover opacity-90 mix-blend-screen group-hover:opacity-100 transition-opacity duration-500"
+                                            onClick={togglePlay}
                                         >
                                             <source
                                                 src="/assets/Hero_video.mp4"
@@ -330,18 +358,74 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                             />
                                         </video>
 
-                                        {/* Mute Toggle Button */}
-                                        <button
-                                            onClick={() => setIsMuted(!isMuted)}
-                                            className="absolute top-6 right-6 z-30 p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white/80 hover:bg-black/60 hover:text-white transition-all hover:scale-110 active:scale-95 group-hover:block"
-                                            aria-label={isMuted ? "Unmute video" : "Mute video"}
-                                        >
-                                            {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                                        </button>
+                                        {/* Unified YouTube-Style Video Controls */}
+                                        <div className="absolute bottom-0 left-0 right-0 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 via-black/20 to-transparent pt-12 pb-2 px-4 flex flex-col gap-2">
+                                            {/* Top Row: Buttons & Time */}
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-4">
+                                                    <button
+                                                        onClick={togglePlay}
+                                                        className="text-white hover:text-amber-400 transition-colors drop-shadow-md"
+                                                    >
+                                                        {isPlaying ? <Pause size={24} weight="fill" /> : <Play size={24} weight="fill" />}
+                                                    </button>
+                                                    <div className="text-white text-sm font-medium drop-shadow-md tabular-nums">
+                                                        {formatTime(currentTime)} / {formatTime(duration)}
+                                                    </div>
+                                                </div>
 
-                                        <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
-                                            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                                            <span className="text-xs font-medium text-white/80">LIVE SYSTEM</span>
+                                                <div className="flex items-center gap-4">
+                                                    <button
+                                                        onClick={() => setIsMuted(!isMuted)}
+                                                        className="text-white hover:text-amber-400 transition-colors drop-shadow-md"
+                                                    >
+                                                        {isMuted ? <VolumeX size={22} weight="fill" /> : <Volume2 size={22} weight="fill" />}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => heroVideoRef.current?.requestFullscreen?.()}
+                                                        className="text-white hover:text-amber-400 transition-colors drop-shadow-md"
+                                                    >
+                                                        <Maximize size={22} weight="fill" />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Bottom Row: Scrubber (Progress Bar) */}
+                                            <div
+                                                className="relative h-1 bg-white/20 cursor-pointer group/progress overflow-visible rounded-full"
+                                                onMouseDown={(e) => {
+                                                    const rect = e.currentTarget.getBoundingClientRect();
+                                                    const handleMove = (moveEvent) => {
+                                                        const x = Math.max(0, Math.min(moveEvent.clientX - rect.left, rect.width));
+                                                        const percentage = x / rect.width;
+                                                        if (heroVideoRef.current) {
+                                                            heroVideoRef.current.currentTime = percentage * duration;
+                                                        }
+                                                    };
+
+                                                    const handleUp = () => {
+                                                        window.removeEventListener('mousemove', handleMove);
+                                                        window.removeEventListener('mouseup', handleUp);
+                                                    };
+
+                                                    window.addEventListener('mousemove', handleMove);
+                                                    window.addEventListener('mouseup', handleUp);
+                                                    handleMove(e);
+                                                }}
+                                            >
+                                                <div
+                                                    className="h-full bg-amber-500 relative rounded-full"
+                                                    style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
+                                                >
+                                                    {/* Scrubber Knob */}
+                                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-3.5 h-3.5 bg-amber-500 border-2 border-white rounded-full shadow-[0_0_10px_rgba(245,158,11,0.5)] scale-0 group-hover/progress:scale-100 transition-transform" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="absolute top-6 left-6 z-20 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 opacity-60">
+                                            <div className="flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-black text-[10px] font-black">2</div>
+                                            <span className="text-xs font-medium text-white/80 uppercase tracking-tighter">Live Player</span>
                                         </div>
                                     </div>
                                 </div>
