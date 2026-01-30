@@ -55,36 +55,42 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
             cmd: '/vitals', 
             desc: 'Request Vitals Update', 
             type: 'text', 
+            icon: Activity,
             text: "Could you please update your latest vitals (BP, Heart Rate, Temp) in the dashboard? It helps me track your progress." 
         },
         { 
             cmd: '/book', 
             desc: 'Booking Link', 
             type: 'text', 
+            icon: Calendar,
             text: "Please book a follow-up appointment for next week using this link: [Link]" 
         },
         { 
             cmd: '/fasting', 
             desc: 'Fasting Instructions', 
             type: 'text', 
+            icon: Clock,
             text: "Please ensure you are fasting for 12 hours before this test (water is okay, but no food/coffee)." 
         },
         { 
             cmd: '/obs', 
             desc: 'Observation Safety Net', 
             type: 'text', 
+            icon: Shield,
             text: "Please monitor your symptoms for the next 24 hours. If you experience chest pain, shortness of breath, or high fever, go to the ER immediately." 
         },
         { 
             cmd: '/diet', 
             desc: 'Diabetic Diet Plan', 
             type: 'text', 
+            icon: FileText,
             text: "Here is the standard low-glycemic diet plan we discussed: [PDF Link]" 
         },
         { 
             cmd: '/note', 
             desc: 'Generate Clinical Note', 
             type: 'action', 
+            icon: Sparkles,
             action: () => setActiveAction('summary') 
         }
     ];
@@ -1117,12 +1123,12 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute bottom-full left-0 mb-4 w-72 bg-[#1c1917] border border-amber-500/20 rounded-xl shadow-2xl overflow-hidden z-50 flex flex-col"
+                                        className="absolute bottom-full left-0 mb-4 w-80 bg-black/80 backdrop-blur-xl border border-amber-500/20 rounded-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.8),0_0_20px_rgba(245,158,11,0.05)] overflow-hidden z-50 flex flex-col"
                                     >
-                                        <div className="bg-amber-500/10 px-4 py-2 text-[10px] font-bold text-amber-500 uppercase tracking-widest border-b border-amber-500/10">
-                                            Quick Commands
+                                        <div className="bg-gradient-to-r from-amber-500/20 to-transparent px-5 py-3 text-[11px] font-black text-amber-500 uppercase tracking-widest border-b border-amber-500/10 flex items-center gap-2">
+                                            <Zap size={14} className="fill-amber-500" /> Quick Commands
                                         </div>
-                                        <div className="max-h-60 overflow-y-auto custom-scrollbar p-1">
+                                        <div className="max-h-60 overflow-y-auto custom-scrollbar p-2 space-y-1">
                                             {slashCommands
                                                 .filter(c => c.cmd.toLowerCase().includes(slashFilter.toLowerCase()))
                                                 .map((command, idx) => (
@@ -1138,20 +1144,28 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                                         }
                                                         setShowSlashMenu(false);
                                                     }}
-                                                    className="w-full text-left px-3 py-2.5 hover:bg-white/5 rounded-lg flex items-center justify-between group transition-colors"
+                                                    className="w-full text-left px-3 py-3 hover:bg-white/5 rounded-xl flex items-center justify-between group transition-all border border-transparent hover:border-amber-500/10 hover:shadow-lg"
                                                 >
-                                                    <div className="flex flex-col">
-                                                        <span className="text-stone-200 font-bold font-mono text-sm group-hover:text-amber-400 transition-colors">{command.cmd}</span>
-                                                        <span className="text-stone-500 text-xs">{command.desc}</span>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-lg bg-stone-900 flex items-center justify-center text-stone-500 group-hover:text-amber-400 group-hover:bg-amber-500/10 border border-white/5 transition-colors">
+                                                            <command.icon size={16} />
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-stone-200 font-bold font-mono text-sm group-hover:text-amber-400 transition-colors">{command.cmd}</span>
+                                                            <span className="text-stone-500 text-[10px] uppercase font-bold tracking-wide group-hover:text-stone-400">{command.desc}</span>
+                                                        </div>
                                                     </div>
-                                                    <div className="opacity-0 group-hover:opacity-100 text-stone-600 text-[10px] font-bold uppercase tracking-wider bg-black/20 px-1.5 py-0.5 rounded border border-white/5">
-                                                        Enter
+                                                    <div className="opacity-0 group-hover:opacity-100 text-stone-500 text-[10px] font-bold uppercase tracking-wider bg-black/40 px-2 py-1 rounded-md border border-white/5 group-hover:border-amber-500/20 group-hover:text-amber-500 transition-all transform translate-x-2 group-hover:translate-x-0">
+                                                        ↵ Enter
                                                     </div>
                                                 </button>
                                             ))}
                                             {slashCommands.filter(c => c.cmd.toLowerCase().includes(slashFilter.toLowerCase())).length === 0 && (
-                                                <div className="p-4 text-center text-stone-500 text-xs italic">
-                                                    No commands found
+                                                <div className="p-6 text-center">
+                                                    <div className="w-10 h-10 rounded-full bg-stone-900 mx-auto flex items-center justify-center text-stone-600 mb-2">
+                                                        <Search size={18} />
+                                                    </div>
+                                                    <p className="text-stone-500 text-xs font-medium">No active commands found</p>
                                                 </div>
                                             )}
                                         </div>
