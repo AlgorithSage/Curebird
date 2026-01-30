@@ -1123,7 +1123,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute bottom-full left-0 mb-4 w-80 bg-stone-900/40 backdrop-blur-2xl border border-amber-500/30 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_20px_rgba(245,158,11,0.1)] overflow-hidden z-50 flex flex-col bg-gradient-to-b from-white/5 to-transparent"
+                                        className="absolute bottom-full left-0 mb-4 w-80 bg-stone-900/60 backdrop-blur-2xl border border-amber-500/40 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.6),0_0_30px_rgba(245,158,11,0.25)] overflow-hidden z-50 flex flex-col bg-gradient-to-b from-amber-500/20 to-stone-950/60"
                                     >
                                         <div className="bg-gradient-to-r from-amber-500/20 to-transparent px-5 py-3 text-[11px] font-black text-amber-500 uppercase tracking-widest border-b border-amber-500/10 flex items-center gap-2">
                                             <Zap size={14} className="fill-amber-500" /> Quick Commands
