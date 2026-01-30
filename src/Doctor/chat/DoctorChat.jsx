@@ -100,6 +100,22 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
         setTimeout(() => setToast(prev => ({ ...prev, show: false })), 3000);
     };
 
+    // Feature 3b: Click Outside to Close Slash Menu
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (slashMenuRef.current && !slashMenuRef.current.contains(event.target)) {
+                setShowSlashMenu(false);
+            }
+        };
+
+        if (showSlashMenu) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showSlashMenu]);
+
     // Auth Check
     React.useEffect(() => {
         const unsubAuth = auth.onAuthStateChanged(user => {
@@ -1120,6 +1136,7 @@ const DoctorChat = ({ onNavigateToPatient, initialPatientId }) => {
                             <AnimatePresence>
                                 {showSlashMenu && (
                                     <motion.div
+                                        ref={slashMenuRef}
                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
