@@ -5,11 +5,11 @@ import { ChevronLeft } from './Icons';
 
 import Header from './Header';
 
-const CureTracker = ({ user, userId, onNavigate, onLogout, onLoginClick, onToggleSidebar }) => {
+const CureTracker = ({ user, onLoginClick, onLogout, onToggleSidebar, onNavigate, onAddRecordClick }) => {
     const [selectedDisease, setSelectedDisease] = useState(null);
 
     // Use userId from props or fallback to user.uid if object passed
-    const activeUserId = userId || (user ? user.uid : null);
+    const activeUserId = user ? user.uid : null;
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto">
@@ -22,6 +22,7 @@ const CureTracker = ({ user, userId, onNavigate, onLogout, onLoginClick, onToggl
                     onLoginClick={onLoginClick}
                     onToggleSidebar={onToggleSidebar}
                     onNavigate={onNavigate}
+                    onAddClick={() => onAddRecordClick && onAddRecordClick()}
                 />
             </div>
 

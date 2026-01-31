@@ -81,6 +81,7 @@ export default function App() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
     const [isRecordModalOpen, setIsRecordModalOpen] = useState(false); // GLOBALLY LIFTED STATE
+    const [editingRecord, setEditingRecord] = useState(null); // GLOBALLY LIFTED STATE
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -236,10 +237,16 @@ export default function App() {
         onNavigate: handleNavigate,
         onAskAI: handleAskAI,
         onSubscribeClick: () => setIsSubscriptionModalOpen(true),
-        onSubscribeClick: () => setIsSubscriptionModalOpen(true),
-        onAddRecordClick: () => setIsRecordModalOpen(true),
-        onCloseRecordModal: () => setIsRecordModalOpen(false),
-        isRecordModalOpen: isRecordModalOpen
+        onAddRecordClick: (record = null) => {
+            setEditingRecord(record);
+            setIsRecordModalOpen(true);
+        },
+        onCloseRecordModal: () => {
+            setEditingRecord(null);
+            setIsRecordModalOpen(false);
+        },
+        isRecordModalOpen: isRecordModalOpen,
+        editingRecord: editingRecord
     };
 
     // Helper to open Add Record Modal from Bottom Nav (Global Context would be better, but passing props for now)
@@ -355,7 +362,11 @@ export default function App() {
                         {isRecordModalOpen && (
                             <Suspense fallback={null}>
                                 <RecordFormModal
-                                    onClose={() => setIsRecordModalOpen(false)}
+                                    onClose={() => {
+                                        setEditingRecord(null);
+                                        setIsRecordModalOpen(false);
+                                    }}
+                                    record={editingRecord}
                                     userId={user?.uid}
                                     appId={appId}
                                     db={db}

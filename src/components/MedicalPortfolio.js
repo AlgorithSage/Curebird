@@ -74,11 +74,9 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     };
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    // const [isFormModalOpen, setIsFormModalOpen] = useState(false); // LIFTED TO APP.JS
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [recordToDelete, setRecordToDelete] = useState(null);
-    const [editingRecord, setEditingRecord] = useState(null);
     const [activeTypeFilter, setActiveTypeFilter] = useState(null); // Default to null (collapsed)
 
     // Phase 8: Health Score & Alerts
@@ -289,7 +287,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
             <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
                 <Header
                     user={user}
-                    onAddClick={() => { setEditingRecord(null); onAddRecordClick && onAddRecordClick(); }}
+                    onAddClick={() => onAddRecordClick && onAddRecordClick()}
                     onShareClick={() => setIsShareModalOpen(true)}
                     onLogout={onLogout}
                     onLoginClick={onLoginClick}
@@ -354,7 +352,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
 
                                     <div className="mt-8 sm:mt-10 flex flex-row flex-wrap gap-3 sm:gap-4">
                                         <button
-                                            onClick={() => { setEditingRecord(null); onAddRecordClick && onAddRecordClick(); }}
+                                            onClick={() => onAddRecordClick && onAddRecordClick()}
                                             className="bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold py-2.5 px-5 sm:py-3 sm:px-8 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] hover:scale-105 transition-all text-sm sm:text-lg whitespace-nowrap flex-1 sm:flex-none justify-center flex items-center"
                                         >
                                             Add Health Record
@@ -652,7 +650,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                                                         userId={userId}
                                                                         appId={appId}
                                                                         storage={storage}
-                                                                        onEdit={() => { setEditingRecord(record); onAddRecordClick && onAddRecordClick(); }}
+                                                                        onEdit={() => onAddRecordClick && onAddRecordClick(record)}
                                                                         onDelete={() => { setRecordToDelete(record.id); setIsDeleteModalOpen(true); }}
                                                                         userTier={user?.subscriptionTier || 'Free'}
                                                                     />
@@ -668,7 +666,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                                         <h3 className="text-xl font-bold text-white">No {activeTypeFilter.replace('_', ' ')} records found.</h3>
                                                         <p className="text-slate-400 mt-2">There are no uploaded records for this category yet.</p>
                                                         <button
-                                                            onClick={() => { setEditingRecord(null); onAddRecordClick && onAddRecordClick(); }}
+                                                            onClick={() => onAddRecordClick && onAddRecordClick()}
                                                             className="mt-6 px-6 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg font-semibold transition-colors"
                                                         >
                                                             Add New Record
@@ -701,7 +699,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
 
             < AnimatePresence >
 
-                {isRecordModalOpen && <RecordFormModal onClose={() => { setEditingRecord(null); onCloseRecordModal && onCloseRecordModal(); }} record={editingRecord} userId={user?.uid} appId={appId} db={db} storage={storage} />}
+                {/* Removed local RecordFormModal rendering, now handled in App.js */}
                 {isShareModalOpen && <ShareModal onClose={() => setIsShareModalOpen(false)} userId={userId} />}
                 {isDeleteModalOpen && <DeleteConfirmModal onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDeleteRecord} />}
             </AnimatePresence >

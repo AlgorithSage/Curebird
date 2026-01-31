@@ -40,6 +40,7 @@ const CureAnalyzer = ({
   onToggleSidebar,
   onNavigate,
   onAskAI,
+  onAddRecordClick,
 }) => {
   // Animation Variants
   const containerVariants = {
@@ -427,6 +428,7 @@ const CureAnalyzer = ({
           onLoginClick={onLoginClick}
           onToggleSidebar={onToggleSidebar}
           onNavigate={onNavigate}
+          onAddClick={() => onAddRecordClick && onAddRecordClick()}
         />
       </div>
 

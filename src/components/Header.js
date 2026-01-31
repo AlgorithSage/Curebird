@@ -173,7 +173,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 </div>
 
                 {/* Center Navigation: Text Links (Visible on Large Screens) */}
-                <div className="hidden xl:flex items-center gap-6 2xl:gap-10 order-2 flex-1 justify-center w-auto mx-4">
+                <div className="hidden 2xl:flex items-center gap-6 2xl:gap-10 order-2 flex-1 justify-center w-auto mx-4">
                     {navItems.map((item) => {
                         const isActive = title === item.name;
                         return (
@@ -193,7 +193,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         );
                     })}
                 </div>
-                <div className="flex items-center gap-2 sm:gap-3 order-2 xl:order-3 ml-auto shrink-0">
+                <div className="flex items-center gap-2 sm:gap-3 order-2 2xl:order-3 ml-auto shrink-0">
                     {user && onAddClick && (
                         <>
                             {/* Hidden on very small screens if needed, or keep for access */}
@@ -217,7 +217,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                 className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-3 py-2 sm:px-4 sm:py-2 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-xs sm:text-sm font-bold border border-white/10 whitespace-nowrap"
                             >
                                 <Plus size={18} />
-                                <span className="hidden sm:inline">Add Record</span>
+                                <span className="hidden lg:inline">Add Record</span>
                             </button>
                         </>
                     )}

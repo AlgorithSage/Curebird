@@ -63,7 +63,7 @@ const TypingIndicator = () => (
     </motion.div>
 );
 
-const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db, appId, initialContext }) => {
+const CureAI = ({ user, onLogout, onLoginClick, onAddRecordClick, onToggleSidebar, onNavigate, db, appId, initialContext }) => {
     const location = useLocation();
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
@@ -336,7 +336,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, db,
                     onLogout={onLogout}
                     onLoginClick={onLoginClick}
                     onToggleSidebar={onToggleSidebar}
-                    onNavigate={onNavigate}
+                    onAddClick={() => onAddRecordClick && onAddRecordClick()}
                 />
             </div>
 

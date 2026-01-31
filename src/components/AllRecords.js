@@ -8,7 +8,7 @@ import RecordCard from './RecordCard';
 import { RecordFormModal, DeleteConfirmModal } from './Modals';
 import { SkeletonCard } from './SkeletonLoaders';
 
-const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggleSidebar, onNavigate, onAddRecordClick }) => {
     // Premium Animation Variants
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -56,10 +56,8 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
     };
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [recordToDelete, setRecordToDelete] = useState(null);
-    const [editingRecord, setEditingRecord] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [typeFilter, setTypeFilter] = useState('All'); // New state for dropdown filter
     const [isSearchActive, setIsSearchActive] = useState(false);
@@ -155,6 +153,7 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
                         onLoginClick={onLoginClick}
                         onToggleSidebar={onToggleSidebar}
                         onNavigate={onNavigate}
+                        onAddClick={() => onAddRecordClick && onAddRecordClick()}
                     />
                 </div>
 
@@ -268,7 +267,7 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
                                                         <RecordCard
                                                             record={record}
                                                             storage={storage}
-                                                            onEdit={() => { setEditingRecord(record); setIsFormModalOpen(true); }}
+                                                            onEdit={() => onAddRecordClick && onAddRecordClick(record)}
                                                             onDelete={() => { setRecordToDelete(record.id); setIsDeleteModalOpen(true); }}
                                                         />
                                                     </motion.div>
@@ -311,7 +310,7 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
                 </main>
 
                 <AnimatePresence>
-                    {isFormModalOpen && <RecordFormModal onClose={() => setIsFormModalOpen(false)} record={editingRecord} userId={userId} appId={appId} db={db} storage={storage} />}
+                    {/* Removed local RecordFormModal rendering, now handled in App.js */}
                     {isDeleteModalOpen && <DeleteConfirmModal onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDeleteRecord} />}
                 </AnimatePresence>
             </div>

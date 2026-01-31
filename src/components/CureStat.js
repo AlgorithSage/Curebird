@@ -332,7 +332,7 @@ const HealthIndexCard = ({ title, value, status, trend, icon: Icon, color, sourc
     </div>
 );
 
-const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
+const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, onAddRecordClick }) => {
     // Animation Variants
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -675,7 +675,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate })
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto relative text-white selection:bg-sky-500/30">
             <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
-                <Header title="Cure Stat" description="Real-time disease intelligence, medication insights, and predictive analytics for a healthier India." user={user} onLogout={onLogout} onLoginClick={onLoginClick} onToggleSidebar={onToggleSidebar} onNavigate={onNavigate} />
+                <Header title="Cure Stat" description="Real-time disease intelligence, medication insights, and predictive analytics for a healthier India." user={user} onLogout={onLogout} onLoginClick={onLoginClick} onToggleSidebar={onToggleSidebar} onNavigate={onNavigate} onAddClick={() => onAddRecordClick && onAddRecordClick()} />
             </div>
 
             {/* FREE TIER LOCK OVERLAY */}
