@@ -193,7 +193,47 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         );
                     })}
                 </div>
+                <div className="flex items-center gap-2 sm:gap-3 order-2 2xl:order-3 ml-auto shrink-0">
+                    {user && onAddClick && (
+                        <>
+                            {/* Hidden on very small screens if needed, or keep for access */}
+                            <button onClick={onShareClick} className="hidden sm:block p-2 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
+                                <Share2 size={18} />
+                            </button>
+                            <div className="relative relative-notif-container">
+                                <button onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)} className="p-2 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white relative">
+                                    <Bell size={18} />
+                                    {alerts.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>}
+                                </button>
+                                <AnimatePresence>
+                                    {isNotifOpen && <NotificationDropdown alerts={alerts} onClose={() => setIsNotifOpen(false)} />}
+                                </AnimatePresence>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    triggerHaptic('heavy');
+                                    onAddClick();
+                                }}
+                                className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-3 py-2 sm:px-4 sm:py-2 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-xs sm:text-sm font-bold border border-white/10 whitespace-nowrap"
+                            >
+                                <Plus size={18} />
+                                <span className="hidden lg:inline">Add Record</span>
+                            </button>
+                        </>
+                    )}
 
+                    {user ? (
+                        <UserProfile user={user} onLogout={onLogout} onNavigate={onNavigate} />
+                    ) : (
+                        <button
+                            onClick={onLoginClick}
+                            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-4 py-2 rounded-xl shadow-lg transition-all text-sm font-bold"
+                        >
+                            <LogIn size={18} />
+                            <span className="hidden sm:inline">Login</span>
+                        </button>
+                    )}
+                </div>
 
             </header>
         </div>
