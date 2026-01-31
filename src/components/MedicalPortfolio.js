@@ -599,50 +599,49 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                                 )}
 
                                                 {/* Card Background: Latest Image or Gradient */}
-                                                <div className={`absolute inset-0 rounded-3xl overflow-hidden -z-10 bg-slate-800 ${!latestRecord?.fileUrl ? 'bg-gradient-to-br from-amber-500 to-amber-700' : ''}`}>
-                                                    {latestRecord?.fileUrl && (latestRecord.fileUrl.includes('.jpg') || latestRecord.fileUrl.includes('.png') || latestRecord.fileUrl.includes('.jpeg') || latestRecord.fileUrl.includes('firebasestorage')) && (
-                                                        <>
-                                                            <img
-                                                                src={latestRecord.fileUrl}
-                                                                alt="Latest Record"
-                                                                className="w-full h-full object-cover opacity-60 group-hover:opacity-70 group-hover:scale-110 transition-all duration-700 filter grayscale-[0.3] group-hover:grayscale-0"
-                                                            />
-                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
-                                                        </>
-                                                    )}
-                                                    {/* Fallback Gradient Overlay if no image but record exists */}
-                                                    {count > 0 && !latestRecord?.fileUrl && (
-                                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-amber-700 opacity-100" />
-                                                    )}
+                                                {/* PREMIUM MATTE DESIGN - Clean, Minimalist, Professional */}
+
+                                                {/* Card Container */}
+                                                <div className={`absolute inset-0 rounded-[1.5rem] -z-10 transition-all duration-300
+                                                    bg-slate-900
+                                                    border border-white/10
+                                                    group-hover:border-amber-500/50
+                                                    shadow-xl
+                                                `}></div>
+
+                                                {/* 2. Amber Gradient Bottom Fade (Subtle) */}
+                                                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-amber-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-b-[1.5rem]" />
+
+                                                {/* Icon Container - Clean & Sharp */}
+                                                <div className={`mb-5 p-4 rounded-xl relative
+                                                    bg-slate-800
+                                                    border border-white/5
+                                                    text-amber-500
+                                                    shadow-lg
+                                                    transition-all duration-300
+                                                    group-hover:scale-105 group-hover:bg-amber-500 group-hover:text-black group-hover:shadow-amber-500/20
+                                                `}>
+                                                    {React.cloneElement(cat.icon, { strokeWidth: 1.5 })}
                                                 </div>
 
-                                                {/* Icon Container - Darkened Squircle */}
-                                                <div className={`mb-6 p-4 rounded-2xl ${activeTypeFilter === cat.id
-                                                    ? 'bg-amber-500 text-black'
-                                                    : 'bg-black/40 text-white group-hover:bg-amber-500 group-hover:text-black'
-                                                    } transition-all duration-300 backdrop-blur-md border border-white/10 shadow-lg relative z-10`}>
-                                                    {React.cloneElement(cat.icon, { strokeWidth: 2 })}
-                                                </div>
-
-                                                {/* Typography */}
+                                                {/* Typography - Inter/Clean */}
                                                 <div className="text-center z-10 flex flex-col items-center">
-                                                    <h3 className={`text-4xl sm:text-5xl font-black mb-1 leading-none tracking-tighter text-white drop-shadow-lg`}>
+                                                    <h3 className={`text-4xl sm:text-5xl font-bold mb-2 leading-none tracking-tight text-white group-hover:text-amber-100 transition-colors`}>
                                                         {count}
                                                     </h3>
 
-                                                    <p className={`text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-white/80 group-hover:text-amber-200 transition-colors`}>
+                                                    <p className={`text-[11px] font-semibold uppercase tracking-widest text-slate-400 group-hover:text-amber-400/80 transition-colors`}>
                                                         {cat.label}
                                                     </p>
 
                                                     {latestRecord && (
-                                                        <span className="mt-2 text-[10px] bg-black/50 px-2 py-0.5 rounded text-slate-300 border border-white/10">
-                                                            Latest: {formatDate(latestRecord.date)}
-                                                        </span>
+                                                        <div className="mt-4 opacity-100">
+                                                            <span className="text-[10px] font-medium text-slate-500 group-hover:text-slate-400 transition-colors">
+                                                                Last: {formatDate(latestRecord.date)}
+                                                            </span>
+                                                        </div>
                                                     )}
                                                 </div>
-
-                                                {/* Subtle sheen effect */}
-                                                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-3xl" />
                                             </motion.div>
                                         );
                                     })}
