@@ -143,13 +143,13 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     return (
 
         <>
-            <header className="z-50 rounded-full bg-slate-900/90 backdrop-blur-3xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.08)] flex flex-nowrap items-center justify-between px-4 py-3 sm:px-6 sm:py-4 transition-all duration-500 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group relative">
+            <header className="z-50 rounded-full bg-slate-900/90 backdrop-blur-3xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.08)] flex flex-nowrap items-center justify-between px-4 py-3 sm:px-6 sm:py-4 transition-all duration-500 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group relative xl:gap-4">
                 {/* Subtle sheen reflection for metallic/glass rim effect */}
                 <div className="absolute inset-0 rounded-full border border-white/5 pointer-events-none"></div>
                 <div className="absolute -inset-[1px] rounded-full border border-amber-500/10 opacity-50 blur-[1px] pointer-events-none"></div>
 
                 {/* Left Group: Menu, Logo - Always First */}
-                <div className="flex items-center gap-6 sm:gap-8 order-1 min-w-0 xl:mr-24">
+                <div className="flex items-center gap-6 sm:gap-8 order-1 flex-none">
                     {/* Mobile Hamburger Menu Button */}
                     <motion.button
                         onClick={() => {
@@ -173,7 +173,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 </div>
 
                 {/* Center Navigation: Text Links (Visible on Large Screens) */}
-                <div className="hidden xl:flex items-center gap-6 2xl:gap-10 order-2 flex-1 justify-center w-auto mx-8 ml-16">
+                <div className="hidden xl:flex items-center gap-2 xl:gap-3 2xl:gap-6 order-2 flex-1 justify-center w-auto px-4">
                     {navItems.map((item) => {
                         const isActive = title === item.name;
                         return (
@@ -183,7 +183,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                     triggerHaptic('light');
                                     onNavigate && onNavigate(item.id || item.name);
                                 }}
-                                className={`text-[0.65rem] 2xl:text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 relative group py-2 ${isActive ? 'text-amber-400' : 'text-amber-100/70 hover:text-amber-300'
+                                className={`text-[0.6rem] 2xl:text-xs font-bold uppercase tracking-wide transition-all duration-300 relative group py-2 whitespace-nowrap ${isActive ? 'text-amber-400' : 'text-amber-100/70 hover:text-amber-300'
                                     }`}
                             >
                                 {item.name}
