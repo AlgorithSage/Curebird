@@ -135,9 +135,28 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                     setDuration(video.duration);
                 }
             };
+
+            // Explicitly try to play for lazy-loaded components
+            const attemptPlay = async () => {
+                try {
+                    await video.play();
+                    setIsPlaying(true);
+                } catch (err) {
+                    console.log("Autoplay prevented, user interaction might be needed:", err);
+                    setIsPlaying(false);
+                }
+            };
+
             video.addEventListener('loadedmetadata', handleMetadata);
             video.addEventListener('durationchange', handleMetadata);
-            if (video.duration) handleMetadata();
+
+            if (video.readyState >= 2) {
+                handleMetadata();
+                attemptPlay();
+            } else {
+                video.addEventListener('loadeddata', attemptPlay, { once: true });
+            }
+
             return () => {
                 video.removeEventListener('loadedmetadata', handleMetadata);
                 video.removeEventListener('durationchange', handleMetadata);
@@ -366,6 +385,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                             loop
                                             muted={isMuted}
                                             playsInline
+                                            preload="auto"
                                             onTimeUpdate={() => setCurrentTime(heroVideoRef.current?.currentTime || 0)}
                                             onLoadedMetadata={() => setDuration(heroVideoRef.current?.duration || 0)}
                                             onPlay={() => setIsPlaying(true)}
@@ -374,7 +394,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                             onClick={togglePlay}
                                         >
                                             <source
-                                                src="/assets/Hero_video.mp4"
+                                                src="/assets/hero_video.mp4"
                                                 type="video/mp4"
                                             />
                                         </video>
