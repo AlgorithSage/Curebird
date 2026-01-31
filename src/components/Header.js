@@ -203,7 +203,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         {/* Share Button */}
                         <button
                             onClick={onShareClick}
-                            className="hidden sm:block w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900/50 hover:bg-slate-800 border border-white/10 transition-colors text-slate-300 hover:text-white"
+                            className="hidden sm:block w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900/50 border border-white/10 transition-all duration-300 text-slate-300 hover:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]"
                         >
                             <Share2 size={18} />
                         </button>
@@ -212,7 +212,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         <div className="relative relative-notif-container">
                             <button
                                 onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)}
-                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900/50 hover:bg-slate-800 border border-white/10 transition-colors text-slate-300 hover:text-white relative"
+                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900/50 border border-white/10 transition-all duration-300 text-slate-300 hover:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)] relative"
                             >
                                 <Bell size={18} />
                                 {alerts.length > 0 && <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>}
