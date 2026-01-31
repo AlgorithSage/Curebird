@@ -142,8 +142,8 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
 
     return (
 
-        <>
-            <header className="z-50 rounded-full bg-slate-900/90 backdrop-blur-3xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.08)] flex flex-nowrap items-center justify-between px-6 xl:px-8 py-3 sm:px-6 sm:py-4 transition-all duration-500 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group relative xl:gap-4">
+        <div className="flex items-center w-full p-2 z-50 relative">
+            <header className="w-full rounded-full bg-slate-900/90 backdrop-blur-3xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.08)] flex flex-nowrap items-center justify-between px-6 xl:px-8 py-3 sm:px-6 sm:py-4 transition-all duration-500 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group relative xl:gap-4">
                 {/* Subtle sheen reflection for metallic/glass rim effect */}
                 <div className="absolute inset-0 rounded-full border border-white/5 pointer-events-none"></div>
                 <div className="absolute -inset-[1px] rounded-full border border-amber-500/10 opacity-50 blur-[1px] pointer-events-none"></div>
@@ -193,53 +193,63 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         );
                     })}
                 </div>
-                <div className="flex items-center gap-2 sm:gap-3 order-2 xl:order-3 ml-4 shrink-0 mr-1">
-                    {user && onAddClick && (
-                        <>
-                            {/* Hidden on very small screens if needed, or keep for access */}
-                            <button onClick={onShareClick} className="hidden sm:block p-2 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white">
-                                <Share2 size={18} />
-                            </button>
-                            <div className="relative relative-notif-container">
-                                <button onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)} className="p-2 rounded-xl hover:bg-white/10 border border-white/10 transition-colors text-slate-300 hover:text-white relative">
-                                    <Bell size={18} />
-                                    {alerts.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>}
-                                </button>
-                                <AnimatePresence>
-                                    {isNotifOpen && <NotificationDropdown alerts={alerts} onClose={() => setIsNotifOpen(false)} />}
-                                </AnimatePresence>
-                            </div>
-                            <button
-                                onClick={() => {
-                                    triggerHaptic('heavy');
-                                    onAddClick();
-                                }}
-                                className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-3 py-2 sm:px-4 sm:py-2 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-xs sm:text-sm font-bold border border-white/10 whitespace-nowrap"
-                            >
-                                <Plus size={18} />
-                                <span className="hidden sm:inline">Add Record</span>
-                            </button>
-                        </>
-                    )}
-
-                    {user ? (
-                        <UserProfile user={user} onLogout={onLogout} onNavigate={onNavigate} />
-                    ) : (
-                        <button
-                            onClick={onLoginClick}
-                            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-4 py-2 rounded-xl shadow-lg transition-all text-sm font-bold"
-                        >
-                            <LogIn size={18} />
-                            <span className="hidden sm:inline">Login</span>
-                        </button>
-                    )}
-                </div>
 
             </header>
 
-            {/* Mobile Navigation Removed - Using BottomNav.js now */}
+            {/* External Right Group: Share, Bell, Add Record, Profile */}
+            <div className="flex items-center gap-2 sm:gap-3 ml-4 shrink-0 z-50">
+                {user && onAddClick && (
+                    <>
+                        {/* Share Button */}
+                        <button
+                            onClick={onShareClick}
+                            className="hidden sm:block w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900/50 hover:bg-slate-800 border border-white/10 transition-colors text-slate-300 hover:text-white"
+                        >
+                            <Share2 size={18} />
+                        </button>
 
-        </>
+                        {/* Notification Button */}
+                        <div className="relative relative-notif-container">
+                            <button
+                                onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)}
+                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900/50 hover:bg-slate-800 border border-white/10 transition-colors text-slate-300 hover:text-white relative"
+                            >
+                                <Bell size={18} />
+                                {alerts.length > 0 && <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>}
+                            </button>
+                            <AnimatePresence>
+                                {isNotifOpen && <NotificationDropdown alerts={alerts} onClose={() => setIsNotifOpen(false)} />}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Add Record Button */}
+                        <button
+                            onClick={() => {
+                                triggerHaptic('heavy');
+                                onAddClick();
+                            }}
+                            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-4 py-2.5 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-sm font-bold border border-white/10 whitespace-nowrap"
+                        >
+                            <Plus size={18} />
+                            <span className="hidden sm:inline">Add Record</span>
+                        </button>
+                    </>
+                )}
+
+                {/* Profile Section */}
+                {user ? (
+                    <UserProfile user={user} onLogout={onLogout} onNavigate={onNavigate} />
+                ) : (
+                    <button
+                        onClick={onLoginClick}
+                        className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-4 py-2 rounded-xl shadow-lg transition-all text-sm font-bold"
+                    >
+                        <LogIn size={18} />
+                        <span className="hidden sm:inline">Login</span>
+                    </button>
+                )}
+            </div>
+        </div>
     );
 }
 
