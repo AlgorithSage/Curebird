@@ -569,52 +569,83 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     className="flex overflow-x-auto snap-x snap-mandatory space-x-4 pb-4 px-2 sm:px-6 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4 md:space-x-0 md:overflow-visible no-scrollbar"
                                 >
                                     {[
-                                        { id: 'prescription', label: 'Prescriptions', icon: <Pill size={32} />, count: records.filter(r => r.type === 'prescription').length },
-                                        { id: 'test_report', label: 'Test Reports', icon: <FileText size={32} />, count: records.filter(r => r.type === 'test_report').length },
-                                        { id: 'diagnosis', label: 'Diagnoses', icon: <Stethoscope size={32} />, count: records.filter(r => r.type === 'diagnosis').length },
-                                        { id: 'admission', label: 'Admissions', icon: <Hospital size={32} />, count: records.filter(r => r.type === 'admission').length },
-                                        { id: 'ecg', label: 'ECG Records', icon: <HeartPulse size={32} />, count: records.filter(r => r.type === 'ecg').length },
-                                    ].map((cat) => (
-                                        <motion.div
-                                            key={cat.id}
-                                            whileHover={{ scale: 1.02, translateY: -5 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            onClick={() => handleCategoryClick(cat.id)}
-                                            // Solid Amber/Orange Gradient Style to match reference
-                                            className={`relative flex-shrink-0 w-[40vw] sm:w-auto aspect-[4/5] sm:aspect-square flex flex-col items-center justify-center p-6 rounded-3xl cursor-pointer transition-all duration-300 group overflow-hidden snap-center ${activeTypeFilter === cat.id
-                                                ? `bg-gradient-to-kb from-amber-500 to-amber-700 ring-4 ring-amber-400/50 scale-105 z-10 shadow-2xl`
-                                                : `bg-gradient-to-br from-amber-500 to-amber-700 shadow-xl hover:shadow-amber-500/40 border border-white/10`
-                                                }`}
-                                        >
-                                            {/* Icon Container - Darkened Squircle */}
-                                            <div className={`mb-6 p-4 rounded-2xl ${activeTypeFilter === cat.id
-                                                ? 'bg-black/40 text-white'
-                                                : 'bg-black/20 text-black/80 group-hover:bg-black/30 group-hover:text-black'
-                                                } transition-all duration-300 backdrop-blur-sm border border-black/5 shadow-inner`}>
-                                                {React.cloneElement(cat.icon, { strokeWidth: 2 })}
-                                            </div>
+                                        { id: 'prescription', label: 'Prescriptions', icon: <Pill size={32} /> },
+                                        { id: 'test_report', label: 'Test Reports', icon: <FileText size={32} /> },
+                                        { id: 'diagnosis', label: 'Diagnoses', icon: <Stethoscope size={32} /> },
+                                        { id: 'admission', label: 'Admissions', icon: <Hospital size={32} /> },
+                                        { id: 'ecg', label: 'ECG Records', icon: <HeartPulse size={32} /> },
+                                    ].map((cat) => {
+                                        const catRecords = records.filter(r => r.type === cat.id);
+                                        const latestRecord = catRecords.length > 0 ? catRecords[0] : null;
+                                        const count = catRecords.length;
 
-                                            {/* Typography - Centered & Bold */}
-                                            <div className="text-center z-10 flex flex-col items-center">
-                                                <h3 className={`text-4xl sm:text-5xl font-black mb-2 leading-none tracking-tighter ${activeTypeFilter === cat.id
-                                                    ? 'text-white drop-shadow-md'
-                                                    : 'text-black/90 group-hover:text-black'
-                                                    } transition-colors`}>
-                                                    {cat.count}
-                                                </h3>
+                                        return (
+                                            <motion.div
+                                                key={cat.id}
+                                                whileHover={{ scale: 1.02, translateY: -5 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => handleCategoryClick(cat.id)}
+                                                className={`relative flex-shrink-0 w-[40vw] sm:w-auto aspect-[4/5] sm:aspect-square flex flex-col items-center justify-center p-6 rounded-3xl cursor-pointer transition-all duration-300 group overflow-visible snap-center ${activeTypeFilter === cat.id
+                                                    ? `ring-4 ring-amber-400/50 scale-105 z-10 shadow-2xl`
+                                                    : `shadow-xl hover:shadow-amber-500/40 border border-white/10`
+                                                    } isolate`}
+                                            >
+                                                {/* Stack Backend Effect (Visual Depth) */}
+                                                {count > 0 && (
+                                                    <div className="absolute inset-0 bg-white/5 rounded-3xl transform rotate-3 scale-95 -z-10 group-hover:rotate-6 transition-transform duration-300 border border-white/5"></div>
+                                                )}
+                                                {count > 1 && (
+                                                    <div className="absolute inset-0 bg-white/5 rounded-3xl transform -rotate-2 scale-90 -z-20 group-hover:-rotate-4 transition-transform duration-300 border border-white/5"></div>
+                                                )}
 
-                                                <p className={`text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] ${activeTypeFilter === cat.id
-                                                    ? 'text-white/90'
-                                                    : 'text-black/60 group-hover:text-black/80'
-                                                    } transition-colors`}>
-                                                    {cat.label}
-                                                </p>
-                                            </div>
+                                                {/* Card Background: Latest Image or Gradient */}
+                                                <div className={`absolute inset-0 rounded-3xl overflow-hidden -z-10 bg-slate-800 ${!latestRecord?.fileUrl ? 'bg-gradient-to-br from-amber-500 to-amber-700' : ''}`}>
+                                                    {latestRecord?.fileUrl && (latestRecord.fileUrl.includes('.jpg') || latestRecord.fileUrl.includes('.png') || latestRecord.fileUrl.includes('.jpeg') || latestRecord.fileUrl.includes('firebasestorage')) && (
+                                                        <>
+                                                            <img
+                                                                src={latestRecord.fileUrl}
+                                                                alt="Latest Record"
+                                                                className="w-full h-full object-cover opacity-60 group-hover:opacity-70 group-hover:scale-110 transition-all duration-700 filter grayscale-[0.3] group-hover:grayscale-0"
+                                                            />
+                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+                                                        </>
+                                                    )}
+                                                    {/* Fallback Gradient Overlay if no image but record exists */}
+                                                    {count > 0 && !latestRecord?.fileUrl && (
+                                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-amber-700 opacity-100" />
+                                                    )}
+                                                </div>
 
-                                            {/* Subtle sheen effect */}
-                                            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                                        </motion.div>
-                                    ))}
+                                                {/* Icon Container - Darkened Squircle */}
+                                                <div className={`mb-6 p-4 rounded-2xl ${activeTypeFilter === cat.id
+                                                    ? 'bg-amber-500 text-black'
+                                                    : 'bg-black/40 text-white group-hover:bg-amber-500 group-hover:text-black'
+                                                    } transition-all duration-300 backdrop-blur-md border border-white/10 shadow-lg relative z-10`}>
+                                                    {React.cloneElement(cat.icon, { strokeWidth: 2 })}
+                                                </div>
+
+                                                {/* Typography */}
+                                                <div className="text-center z-10 flex flex-col items-center">
+                                                    <h3 className={`text-4xl sm:text-5xl font-black mb-1 leading-none tracking-tighter text-white drop-shadow-lg`}>
+                                                        {count}
+                                                    </h3>
+
+                                                    <p className={`text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-white/80 group-hover:text-amber-200 transition-colors`}>
+                                                        {cat.label}
+                                                    </p>
+
+                                                    {latestRecord && (
+                                                        <span className="mt-2 text-[10px] bg-black/50 px-2 py-0.5 rounded text-slate-300 border border-white/10">
+                                                            Latest: {formatDate(latestRecord.date)}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {/* Subtle sheen effect */}
+                                                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-3xl" />
+                                            </motion.div>
+                                        );
+                                    })}
                                 </motion.div>
 
                                 {/* Collapsible Section - Only shows when filter is active */}
