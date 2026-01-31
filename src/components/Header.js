@@ -58,7 +58,7 @@ const UserProfile = ({ user, onLogout, onNavigate }) => {
                                 } else {
                                     onNavigate && onNavigate('Settings');
                                 }
-                            }} className="w-full text-left flex items-center gap-3 px-3 py-2 text-slate-200 hover:bg-white/10 rounded-xl transition-colors text-sm font-medium">
+                            }} className="w-full text-left flex items-center gap-3 px-3 py-2 text-slate-200 hover:text-amber-300 hover:bg-amber-500/10 rounded-xl transition-all duration-300 text-sm font-medium hover:shadow-[0_0_15px_rgba(245,158,11,0.15)]">
                                 <Settings size={16} />
                                 <span>Profile Settings</span>
                             </button>
