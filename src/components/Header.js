@@ -142,14 +142,14 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
 
     return (
 
-        <>
-            <header className="z-50 rounded-full bg-slate-900/40 backdrop-blur-2xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.08)] flex flex-nowrap items-center justify-between px-4 py-3 sm:px-6 sm:py-4 transition-all duration-500 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group relative">
+        <div className="flex items-center w-full p-2 z-50 relative">
+            <header className="w-full rounded-full bg-slate-900/90 backdrop-blur-3xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.08)] flex flex-nowrap items-center justify-between px-6 xl:px-8 py-3 sm:px-6 sm:py-4 transition-all duration-500 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group relative xl:gap-4">
                 {/* Subtle sheen reflection for metallic/glass rim effect */}
                 <div className="absolute inset-0 rounded-full border border-white/5 pointer-events-none"></div>
                 <div className="absolute -inset-[1px] rounded-full border border-amber-500/10 opacity-50 blur-[1px] pointer-events-none"></div>
 
-                {/* Left Group: Menu, Logo, Nav - Always First */}
-                <div className="flex items-center gap-2 sm:gap-4 order-1 min-w-0">
+                {/* Left Group: Menu, Logo - Always First */}
+                <div className="flex items-center gap-6 sm:gap-8 order-1 flex-none">
                     {/* Mobile Hamburger Menu Button */}
                     <motion.button
                         onClick={() => {
@@ -173,7 +173,11 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 </div>
 
                 {/* Center Navigation: Text Links (Visible on Large Screens) */}
+<<<<<<< HEAD
                 <div className="hidden 2xl:flex items-center gap-6 2xl:gap-10 order-2 flex-1 justify-center w-auto mx-4">
+=======
+                <div className="hidden xl:flex items-center gap-1 xl:gap-2 2xl:gap-6 order-2 flex-1 justify-center w-auto px-2">
+>>>>>>> 40bccbdbb84309d70d310bee4656e2d3aa04b548
                     {navItems.map((item) => {
                         const isActive = title === item.name;
                         return (
@@ -183,7 +187,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                     triggerHaptic('light');
                                     onNavigate && onNavigate(item.id || item.name);
                                 }}
-                                className={`text-[0.65rem] 2xl:text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 relative group py-2 ${isActive ? 'text-amber-400' : 'text-amber-100/70 hover:text-amber-300'
+                                className={`text-[0.55rem] xl:text-[0.6rem] 2xl:text-xs font-bold uppercase tracking-tight transition-all duration-300 relative group py-2 whitespace-nowrap ${isActive ? 'text-amber-400' : 'text-amber-100/70 hover:text-amber-300'
                                     }`}
                             >
                                 {item.name}
@@ -193,6 +197,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         );
                     })}
                 </div>
+<<<<<<< HEAD
                 <div className="flex items-center gap-2 sm:gap-3 order-2 2xl:order-3 ml-auto shrink-0">
                     {user && onAddClick && (
                         <>
@@ -234,12 +239,65 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         </button>
                     )}
                 </div>
+=======
+>>>>>>> 40bccbdbb84309d70d310bee4656e2d3aa04b548
 
             </header>
 
-            {/* Mobile Navigation Removed - Using BottomNav.js now */}
+            {/* External Right Group: Share, Bell, Add Record, Profile */}
+            <div className="flex items-center gap-2 sm:gap-3 ml-4 shrink-0 z-50">
+                {user && onAddClick && (
+                    <>
+                        {/* Share Button */}
+                        <button
+                            onClick={onShareClick}
+                            className="hidden sm:block w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900/50 border border-white/10 transition-all duration-300 text-slate-300 hover:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                        >
+                            <Share2 size={18} />
+                        </button>
 
-        </>
+                        {/* Notification Button */}
+                        <div className="relative relative-notif-container">
+                            <button
+                                onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)}
+                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900/50 border border-white/10 transition-all duration-300 text-slate-300 hover:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)] relative"
+                            >
+                                <Bell size={18} />
+                                {alerts.length > 0 && <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>}
+                            </button>
+                            <AnimatePresence>
+                                {isNotifOpen && <NotificationDropdown alerts={alerts} onClose={() => setIsNotifOpen(false)} />}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Add Record Button */}
+                        <button
+                            onClick={() => {
+                                triggerHaptic('heavy');
+                                onAddClick();
+                            }}
+                            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-4 py-2.5 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-sm font-bold border border-white/10 whitespace-nowrap"
+                        >
+                            <Plus size={18} />
+                            <span className="hidden sm:inline">Add Record</span>
+                        </button>
+                    </>
+                )}
+
+                {/* Profile Section */}
+                {user ? (
+                    <UserProfile user={user} onLogout={onLogout} onNavigate={onNavigate} />
+                ) : (
+                    <button
+                        onClick={onLoginClick}
+                        className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-4 py-2 rounded-xl shadow-lg transition-all text-sm font-bold"
+                    >
+                        <LogIn size={18} />
+                        <span className="hidden sm:inline">Login</span>
+                    </button>
+                )}
+            </div>
+        </div>
     );
 }
 

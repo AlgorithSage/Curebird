@@ -156,36 +156,38 @@ const DoctorSidebar = ({ isOpen, onClose, activeView, onNavigate, onLogout, unre
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                         // EMERALD GLASS WITH AMBER BORDERS
                         // Reverted to the 30% opacity Green glass
-                        // HYBRID THEME: Gold Borders, Deep Emerald Shadow/Depth
-                        className="fixed top-0 left-0 bottom-0 w-72 bg-gradient-to-b from-slate-950/40 via-slate-950/40 to-emerald-950/30 backdrop-blur-3xl border-r border-amber-400/30 z-50 shadow-[20px_0_60px_rgba(16,185,129,0.1)] flex flex-col"
+                        // HYBRID THEME: Gold Borders, Deep Emerald Shadow/Depth with High Opacity to prevent overlap clutter
+                        className="fixed top-0 left-0 bottom-0 w-72 bg-slate-950 border-r border-amber-400/30 z-[100] shadow-[20px_0_60px_rgba(16,185,129,0.1)] flex flex-col"
                     >
                         {/* Header with Warm Amber Hue */}
                         {/* Header: Tab-Style UX */}
-                        <div className="px-5 pt-6 pb-2">
-                            <div className="relative bg-black rounded-2xl p-4 border border-amber-500/20 shadow-[0_0_25px_rgba(245,158,11,0.1)] flex items-center justify-between group overflow-hidden transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_0_35px_rgba(245,158,11,0.25)]">
+                        <div className="px-5 pt-6 pb-2 shrink-0 relative z-20 mb-6">
+                            <div className="relative bg-black/90 backdrop-blur-xl rounded-2xl p-4 border border-amber-500/20 shadow-[0_0_25px_rgba(245,158,11,0.1)] flex items-center justify-between group overflow-hidden transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_0_35px_rgba(245,158,11,0.25)]">
 
                                 {/* Lively Amber Glow */}
                                 <div className="absolute top-1/2 left-8 w-16 h-16 bg-amber-500/30 blur-[40px] rounded-full pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
 
-                                <div className="flex items-center gap-4 relative z-10">
+                                <div className="flex items-center gap-4 relative z-10 w-full">
                                     {/* Logo */}
-                                    <div className="w-10 h-10 flex items-center justify-center relative">
+                                    <div className="w-10 h-10 flex items-center justify-center relative shrink-0">
                                         <div className="absolute inset-0 bg-amber-400 blur-md rounded-full opacity-25"></div>
                                         <img src={CureBirdLogo} alt="Logo" className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" />
                                     </div>
 
-                                    {/* Text Identity */}
-                                    <div className="flex flex-col justify-center">
-                                        <h2 className="text-xl font-black text-white tracking-tight leading-none drop-shadow-md">CureBird</h2>
-                                        <p className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] leading-none mt-1.5 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">Doctor Portal</p>
+                                    {/* Text Identity - Uncluttered */}
+                                    <div className="flex flex-col justify-center min-w-0">
+                                        <h2 className="text-xl font-black text-white tracking-tight leading-none drop-shadow-md truncate">CureBird</h2>
+                                        <p className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] leading-none mt-1.5 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] truncate">Doctor Portal</p>
                                     </div>
                                 </div>
 
                             </div>
+                            {/* Visual Divider to prevent clash with menu */}
+                            <div className="h-px w-full bg-gradient-to-r from-transparent via-amber-500/20 to-transparent mt-6"></div>
                         </div>
 
                         {/* Scrollable Content */}
-                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 pt-4 space-y-8">
                             {menuGroups.map((group, idx) => (
                                 <div key={idx}>
                                     <h3 className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 uppercase tracking-[0.2em] mb-4 pl-2 drop-shadow-[0_0_10px_rgba(245,158,11,0.2)]">{group.title}</h3>
