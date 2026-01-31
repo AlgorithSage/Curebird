@@ -56,10 +56,14 @@ const InteractiveHexGrid = () => {
         const hexSize = 35;
         const hexWidth = Math.sqrt(3) * hexSize;
         const hexHeight = 2 * hexSize;
-        const baseWidth = dimensions.width * 1.5;
-        const baseHeight = dimensions.height * 1.5;
-        const cols = Math.ceil(baseWidth / hexWidth) + 6;
-        const rows = Math.ceil(baseHeight / (hexHeight * 0.75)) + 6;
+        
+        // Extended Bounds to ensure Top-Left and edges are fully covered
+        const baseWidth = dimensions.width * 2.2; 
+        const baseHeight = dimensions.height * 2.2;
+        
+        const cols = Math.ceil(baseWidth / hexWidth) + 20;
+        const rows = Math.ceil(baseHeight / (hexHeight * 0.75)) + 20;
+        
         const offsetX = (baseWidth - dimensions.width) / 2;
         const offsetY = (baseHeight - dimensions.height) / 2;
 
@@ -69,7 +73,8 @@ const InteractiveHexGrid = () => {
                 const xOffset = (r % 2 === 0) ? 0 : hexWidth / 2;
                 const x = (c * hexWidth + xOffset) - offsetX;
                 const y = (r * (hexHeight * 0.75)) - offsetY;
-                grid.push({ x, y, intensity: 0, baseOpacity: 0.05, c });
+                // Slightly boosted baseOpacity for better visibility in corners
+                grid.push({ x, y, intensity: 0, baseOpacity: 0.07, c });
             }
         }
         const wavePath = new Path2D("M-18 0 L-10 0 L-7 -4 L-4 0 L-2 14 L2 -16 L6 4 L9 0 L18 0");
