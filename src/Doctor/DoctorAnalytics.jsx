@@ -196,10 +196,40 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         fetchReports();
     }, []);
 
-    // --- Derived Metrics from Live Data ---
+    // --- Live Clinical Activity (Heatmap) ---
+    const [clinicalActivity, setClinicalActivity] = useState([]);
+
+    React.useEffect(() => {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        // Fetch recent medical records to visualize "Clinic Load" / Activity
+        // We fetch the last 100 records to map over the last month
+        const q = query(
+            collection(db, 'medical_records'),
+            where('doctorId', '==', user.uid),
+            orderBy('date', 'desc') // Ensure we have index for 'date', else strict client sort
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const activities = snapshot.docs.map(doc => ({
+                date: doc.data().date, // ISO string or timestamp
+                type: doc.data().type
+            }));
+            setClinicalActivity(activities);
+        }, (error) => {
+            console.warn("Analytics: Could not fetch activity (requires index?)", error);
+            // Fallback: don't crash, just show empty or partial
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+
+    // --- Derived Metrics ---
     const totalPatients = patients.length;
 
-    // 1. Calculate Risk Stratification & Health Score
+    // 1. Risk Stratification (Enhanced Logic)
     const riskMap = {
         'Hypertension': 0, 'Diabetes': 0, 'Cardiac': 0, 'Obesity': 0, 'Mobility': 0, 'Respiratory': 0
     };
@@ -207,37 +237,37 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
     const criticalList = [];
 
     patients.forEach(p => {
-        const condition = p.condition ? p.condition.toLowerCase() : '';
-        // Broader keyword matching
-        if (condition.includes('hypertens') || condition.includes('bp') || condition.includes('pressure')) riskMap['Hypertension']++;
-        if (condition.includes('diabet') || condition.includes('sugar') || condition.includes('insulin') || condition.includes('glucose')) riskMap['Diabetes']++;
-        if (condition.includes('cardiac') || condition.includes('heart') || condition.includes('arrhythmia') || condition.includes('pulse')) riskMap['Cardiac']++;
-        if (condition.includes('obes') || condition.includes('weight') || condition.includes('bmi')) riskMap['Obesity']++;
-        if (condition.includes('mobil') || condition.includes('arthrit') || condition.includes('joint') || condition.includes('pain')) riskMap['Mobility']++;
-        if (condition.includes('respir') || condition.includes('lung') || condition.includes('asthma') || condition.includes('copd')) riskMap['Respiratory']++;
+        // combine relevant fields for searching
+        const textToScan = `${p.condition || ''} ${p.medicalHistory || ''} ${p.notes || ''}`.toLowerCase();
+        
+        if (textToScan.match(/hypertens|bp|pressure|hbp/)) riskMap['Hypertension']++;
+        if (textToScan.match(/diabet|sugar|insulin|glucose|t2d|t1d/)) riskMap['Diabetes']++;
+        if (textToScan.match(/cardiac|heart|arrhythmia|pulse|coronary|chf/)) riskMap['Cardiac']++;
+        if (textToScan.match(/obes|weight|bmi|fat|bariatric/)) riskMap['Obesity']++;
+        if (textToScan.match(/mobil|arthrit|joint|pain|spine|knee|fracture/)) riskMap['Mobility']++;
+        if (textToScan.match(/respir|lung|asthma|copd|breath|pneumonia/)) riskMap['Respiratory']++;
 
-        if (condition.includes('critical') || condition.includes('urgent') || condition.includes('alert') || condition.includes('severe') || condition.includes('acute')) {
+        if (textToScan.match(/critical|urgent|alert|severe|acute|emergency/)) {
             riskCount++;
             criticalList.push(p);
         }
     });
 
-    // Scale dynamically based on population size, ensuring at least some visibility
     const maxVal = Math.max(...Object.values(riskMap), 1);
     const derivedRadarData = [
-        { subject: 'Hypertension', A: (riskMap['Hypertension'] / maxVal) * 100 + 20, B: 110, fullMark: 150 },
-        { subject: 'Diabetes', A: (riskMap['Diabetes'] / maxVal) * 100 + 20, B: 130, fullMark: 150 },
-        { subject: 'Cardiac', A: (riskMap['Cardiac'] / maxVal) * 100 + 20, B: 120, fullMark: 150 },
-        { subject: 'Obesity', A: (riskMap['Obesity'] / maxVal) * 100 + 20, B: 90, fullMark: 150 },
-        { subject: 'Mobility', A: (riskMap['Mobility'] / maxVal) * 100 + 20, B: 85, fullMark: 150 },
-        { subject: 'Respiratory', A: (riskMap['Respiratory'] / maxVal) * 100 + 20, B: 65, fullMark: 150 },
+        { subject: 'Hypertension', A: (riskMap['Hypertension'] / maxVal) * 100 + 10, B: 110, fullMark: 150 },
+        { subject: 'Diabetes', A: (riskMap['Diabetes'] / maxVal) * 100 + 10, B: 130, fullMark: 150 },
+        { subject: 'Cardiac', A: (riskMap['Cardiac'] / maxVal) * 100 + 10, B: 120, fullMark: 150 },
+        { subject: 'Obesity', A: (riskMap['Obesity'] / maxVal) * 100 + 10, B: 90, fullMark: 150 },
+        { subject: 'Mobility', A: (riskMap['Mobility'] / maxVal) * 100 + 10, B: 85, fullMark: 150 },
+        { subject: 'Respiratory', A: (riskMap['Respiratory'] / maxVal) * 100 + 10, B: 65, fullMark: 150 },
     ];
 
     const finalWatchlist = criticalList.length > 0 ? criticalList.slice(0, 3) : patients.slice(0, 3);
     const healthScore = totalPatients > 0 ? Math.round(((totalPatients - riskCount) / totalPatients) * 100) : 100;
 
-    // 2. Growth Trends (Live from createdAt)
-    const monthCounts = { 'Jan': 0, 'Feb': 0, 'Mar': 0, 'Apr': 0, 'May': 0, 'Jun': 0 };
+    // ... (Growth Trends logic remains same) ...
+     const monthCounts = { 'Jan': 0, 'Feb': 0, 'Mar': 0, 'Apr': 0, 'May': 0, 'Jun': 0 };
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
     patients.forEach(p => {
@@ -247,51 +277,49 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         }
     });
 
-    // Accumulate for growth curve
+    // Accumulate for growth curve (simplified)
     let runningTotal = 0;
     const trendData = months.map(m => {
         runningTotal += monthCounts[m];
-        // Only baseline if total is 0 to show *something*, otherwise pure real data
-        const displayVal = runningTotal;
         return {
             month: m,
-            rate: displayVal,
-            projected: Math.round(displayVal * 1.3) + 2 // A bit optimistic projection
+            rate: runningTotal,
+            projected: Math.round(runningTotal * 1.2) + 2 
         };
     });
-    // Fallback if absolutely 0 data (fresh install)
-    if (totalPatients === 0) {
-        trendData.forEach((d, i) => { d.rate = i * 2; d.projected = i * 2 + 5; });
-    }
 
-    // 3. Clinic Load Heatmap (Last 28 Days Activity - mapped from createdAt for demo)
+
+    // 3. Clinic Load Heatmap (Live from Medical Records)
     const heatmapBuckets = new Array(28).fill(0);
     const now = new Date();
-    patients.forEach(p => {
+    
+    // Use `clinicalActivity` instead of `patients` for load
+    const sourceData = clinicalActivity.length > 0 ? clinicalActivity : patients; // Fallback to patients if no records
+
+    sourceData.forEach(item => {
         let d = null;
-        // Robust date parsing
-        if (p.createdAt?.toDate) {
-            d = p.createdAt.toDate();
-        } else if (p.createdAt?.seconds) {
-            d = new Date(p.createdAt.seconds * 1000);
-        } else if (typeof p.createdAt === 'string') {
-            d = new Date(p.createdAt);
-        } else if (p.date) {
-            d = new Date(p.date);
+        const dateStr = item.date || item.createdAt; // Handle both record date and patient createdAt
+        
+         if (dateStr?.toDate) {
+            d = dateStr.toDate();
+        } else if (typeof dateStr === 'object' && dateStr.seconds) { // Firestore Timestamp
+             d = new Date(dateStr.seconds * 1000);
+        } else if (dateStr) {
+            d = new Date(dateStr);
         }
 
         if (d && !isNaN(d.getTime())) {
             const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
             if (diffDays >= 0 && diffDays < 28) {
-                heatmapBuckets[27 - diffDays]++; // 27 is today (end of array)
+                heatmapBuckets[27 - diffDays]++; // 27 = today
             }
         }
     });
 
     const heatmapData = heatmapBuckets.map((count, i) => ({
         day: i + 1,
-        // More sensitive thresholds for visual impact with small data
-        intensity: count >= 2 ? 'high' : count > 0 ? 'high' : 'low'
+        // Intensity logic: 0=low, 1-2=med, 3+=high (adjusted for typical low-volume demo data)
+        intensity: count >= 3 ? 'high' : count > 0 ? 'medium' : 'low'
     }));
 
 
