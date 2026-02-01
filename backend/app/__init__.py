@@ -19,5 +19,8 @@ def create_app():
         from . import payment_routes
         app.register_blueprint(payment_routes.payment_bp)
 
+        from . import research_routes
+        app.register_blueprint(research_routes.research_bp)
+
         return app
 

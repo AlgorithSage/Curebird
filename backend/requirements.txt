@@ -11,6 +11,7 @@ gunicorn
 pymupdf
 cerebras_cloud_sdk
 google-auth-oauthlib
+google-apps-meet
 razorpay
 firebase-admin
 
