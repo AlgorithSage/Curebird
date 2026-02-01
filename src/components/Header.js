@@ -199,11 +199,11 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                     {user && onAddClick && (
                         <>
                             {/* Hidden on very small screens if needed, or keep for access */}
-                            <button onClick={onShareClick} className="hidden sm:block p-2 rounded-xl border border-white/10 transition-all duration-300 text-slate-300 hover:text-amber-400 hover:border-amber-500/30 hover:shadow-[0_0_12px_rgba(245,158,11,0.4)] hover:bg-white/5">
+                            <button onClick={onShareClick} className="hidden sm:block p-2 rounded-xl border border-white/10 transition-all duration-300 text-slate-300 hover:text-amber-400 hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.6)] hover:bg-amber-500/10">
                                 <Share2 size={18} />
                             </button>
                             <div className="relative relative-notif-container">
-                                <button onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)} className="p-2 rounded-xl border border-white/10 transition-all duration-300 text-slate-300 relative hover:text-amber-400 hover:border-amber-500/30 hover:shadow-[0_0_12px_rgba(245,158,11,0.4)] hover:bg-white/5">
+                                <button onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)} className="p-2 rounded-xl border border-white/10 transition-all duration-300 text-slate-300 relative hover:text-amber-400 hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.6)] hover:bg-amber-500/10">
                                     <Bell size={18} />
                                     {alerts.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>}
                                 </button>
