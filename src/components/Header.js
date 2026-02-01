@@ -183,7 +183,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                     triggerHaptic('light');
                                     onNavigate && onNavigate(item.id || item.name);
                                 }}
-                                className={`text-[0.55rem] xl:text-[0.6rem] 2xl:text-xs font-bold uppercase tracking-tight transition-all duration-300 relative group py-2 whitespace-nowrap ${isActive ? 'text-amber-400' : 'text-amber-100/70 hover:text-amber-300'
+                                className={`text-[0.55rem] xl:text-[0.6rem] 2xl:text-xs font-black uppercase tracking-wider transition-all duration-300 relative group py-2 whitespace-nowrap drop-shadow-sm ${isActive ? 'text-amber-400' : 'text-amber-100/70 hover:text-amber-300'
                                     }`}
                             >
                                 {item.name}
