@@ -309,12 +309,7 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                     </h2>
                     <p className="text-slate-400 font-medium">Population health intelligence & operational metrics.</p>
                 </div>
-                <button
-                    onClick={() => setIsAnalyzeModalOpen(true)}
-                    className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] flex items-center gap-2"
-                >
-                    <BrainCircuit size={20} /> Generate AI Report
-                </button>
+
             </div>
 
             <AIReportModal
