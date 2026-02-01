@@ -363,6 +363,8 @@ const PatientSearchLanding = ({ onSelectPatient, patients = [], onAddPatientClic
 // --- Main Dashboard Component ---
 const DoctorDashboard = ({ user }) => {
     const [activeView, setActiveView] = useState('dashboard');
+    // Managed Patient State - Synced with Firestore
+    const [patients, setPatients] = useState([]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [workspacePatient, setWorkspacePatient] = useState(null);
     const [targetChatPatient, setTargetChatPatient] = useState(null); // For Profile -> Chat Nav
@@ -385,21 +387,36 @@ const DoctorDashboard = ({ user }) => {
     // Sync URL -> activeView
     useEffect(() => {
         const path = location.pathname;
-        const subPath = path.split('/doctor/')[1]; // e.g., 'telehealth'
+        const subPath = path.split('/doctor/')[1]; // e.g., 'telehealth' or 'patient/123'
         
         if (subPath) {
-            // Map simple paths to views
-            // We only switch if it's a known top-level view
-            if (['dashboard', 'patients', 'telehealth', 'consultations', 'medical_records', 'analytics', 'messages', 'notifications', 'profile', 'security', 'help'].includes(subPath)) {
+            // 1. Handle Patient Workspace Route (e.g. /doctor/patient/P-101)
+            if (subPath.startsWith('patient/')) {
+                const patientId = subPath.split('patient/')[1];
+                if (patientId && patients.length > 0) {
+                    const foundPatient = patients.find(p => p.id === patientId);
+                    if (foundPatient) {
+                        setWorkspacePatient(foundPatient);
+                        setActiveView('patient_workspace');
+                    }
+                } else if (patientId && patients.length === 0) {
+                    // Start loading state if needed, or just wait for patients to load
+                }
+            } 
+            // 2. Handle Sub-Views (e.g. /doctor/telehealth)
+            else if (['dashboard', 'patients', 'telehealth', 'consultations', 'medical_records', 'analytics', 'messages', 'notifications', 'profile', 'security', 'help'].includes(subPath)) {
                 setActiveView(subPath);
+                // Clear workspace if we navigate away from it
+                if (activeView === 'patient_workspace' && subPath !== 'patient_workspace') {
+                   setWorkspacePatient(null);
+                }
             }
         }
-    }, [location.pathname]);
+    }, [location.pathname, patients]);
     
     // --- End Router Integration ---
 
-    // Managed Patient State - Synced with Firestore
-    const [patients, setPatients] = useState([]);
+
 
     // Fetch patients from Firestore
     useEffect(() => {
@@ -493,7 +510,7 @@ const DoctorDashboard = ({ user }) => {
                 return (
                     <PatientWorkspace
                         patient={workspacePatient}
-                        onBack={() => setWorkspacePatient(null)}
+                        onBack={() => navigate('/doctor/patients')}
                         onOpenChat={(patient) => {
                             console.log('Dashboard: Switching to Chat for:', patient.name);
                             setTargetChatPatient(patient);
@@ -539,8 +556,7 @@ const DoctorDashboard = ({ user }) => {
                 </>
             );
             case 'patients': return <PatientManagement onViewPatient={(p) => {
-                setWorkspacePatient(p);
-                setActiveView('patient_workspace');
+                navigate(`/doctor/patient/${p.id}`);
             }} />;
             case 'telehealth': return <DoctorTelehealth onNavigate={handleNavigate} patients={patients} />;
             case 'consultations': return <ConsultationWorkflow user={user} patients={patients} />;
@@ -554,16 +570,16 @@ const DoctorDashboard = ({ user }) => {
             case 'analytics': return <DoctorAnalytics
                 patients={patients}
                 onNavigate={handleNavigate}
-                onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
+                onNavigateToPatient={(p) => navigate(`/doctor/patient/${p.id}`)}
             />;
             case 'messages': return <DoctorChat
                 initialPatientId={targetChatPatient} // Pass target Patient Object
-                onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
+                onNavigateToPatient={(p) => navigate(`/doctor/patient/${p.id}`)}
             />;
             case 'notifications': return <DoctorNotifications
                 patients={patients}
                 onNavigate={handleNavigate}
-                onNavigateToPatient={(p) => { setWorkspacePatient(p); setActiveView('patient_workspace'); }}
+                onNavigateToPatient={(p) => navigate(`/doctor/patient/${p.id}`)}
             />;
             case 'profile': return <DoctorProfile user={user} />;
             case 'security': return <DoctorSecurity />;
