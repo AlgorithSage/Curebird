@@ -142,8 +142,8 @@ export default function App() {
                                 setIsAuthModalOpen(true);
                             }
 
-                            // Show subscription modal only if not seen AND not already active/judge
-                            if (!userData.hasSeenSubscription && userData.subscriptionStatus !== 'active' && !userData.isHackathonJudge) {
+                            // Show subscription modal only if not seen AND not already active/judge AND not in Research Module
+                            if (!userData.hasSeenSubscription && userData.subscriptionStatus !== 'active' && !userData.isHackathonJudge && !window.location.pathname.startsWith('/research')) {
                                 setTimeout(() => setIsSubscriptionModalOpen(true), 1500);
                             }
 
@@ -229,7 +229,6 @@ export default function App() {
             'Family Profile': '/family-profile',
             'Contact': '/contact',
             'Terms': '/terms',
-            'Terms': '/terms',
             'Privacy': '/privacy',
             'Refund': '/refund-policy'
         };
@@ -244,7 +243,6 @@ export default function App() {
         onToggleSidebar: () => setIsSidebarOpen(!isSidebarOpen),
         onNavigate: handleNavigate,
         onAskAI: handleAskAI,
-        onSubscribeClick: () => setIsSubscriptionModalOpen(true),
         onSubscribeClick: () => setIsSubscriptionModalOpen(true),
         onAddRecordClick: () => setIsRecordModalOpen(true),
         onCloseRecordModal: () => setIsRecordModalOpen(false),
@@ -264,7 +262,7 @@ export default function App() {
             <IconContext.Provider value={{ weight: "duotone", color: "currentColor", size: "1em" }}>
                 <div className="min-h-screen font-sans text-slate-200 relative isolate overflow-hidden">
                     <Suspense fallback={<LoadingScreen />}>
-                        <Background />
+                        {!location.pathname.startsWith('/research') && <Background />}
                         <Routes>
                             <Route path="/" element={
                                 user ? <Navigate to="/dashboard" replace /> :

@@ -11,7 +11,13 @@ const ResearcherSidebar = ({ isOpen, onClose, user, onBackToApp }) => {
 
     const isActive = (path) => {
         if (!path) return false;
-        // Exact match or sub-path logic could go here
+
+        // Special case for root /research path to prevent it from matching sub-routes like /research/data
+        if (path === '/research') {
+            return location.pathname === path;
+        }
+
+        // For other paths, allow specific sub-path matching
         return location.pathname === path || location.pathname.startsWith(path + '/');
     };
 
@@ -43,7 +49,7 @@ const ResearcherSidebar = ({ isOpen, onClose, user, onBackToApp }) => {
 
             {/* Sidebar with universal slide-in behavior and premium glass look */}
             <aside
-                className={`w-72 flex-shrink-0 bg-black/95 backdrop-blur-2xl border-r border-yellow-500/20 h-screen fixed inset-y-0 left-0 z-[150] lg:static lg:translate-x-0
+                className={`w-72 flex-shrink-0 bg-black/95 backdrop-blur-2xl border-r border-yellow-500/20 h-screen fixed inset-y-0 left-0 z-[150] 
                            transition-transform duration-300 ease-in-out
                            ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
