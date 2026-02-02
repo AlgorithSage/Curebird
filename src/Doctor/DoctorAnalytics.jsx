@@ -13,26 +13,7 @@ import AnalyzeDataModal from './AnalyzeDataModal';
 import { collection, query, where, onSnapshot, orderBy, doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
-// --- Improved Mock Data ---
 
-const riskRadarData = [
-    { subject: 'Hypertension', A: 120, B: 110, fullMark: 150 },
-    { subject: 'Diabetes', A: 98, B: 130, fullMark: 150 },
-    { subject: 'Cardiac', A: 86, B: 130, fullMark: 150 },
-    { subject: 'Obesity', A: 99, B: 100, fullMark: 150 },
-    { subject: 'Mobility', A: 85, B: 90, fullMark: 150 },
-    { subject: 'Respiratory', A: 65, B: 85, fullMark: 150 },
-];
-
-const adherenceTrendData = [
-    { month: 'Jan', rate: 45, projected: 65 },
-    { month: 'Feb', rate: 52, projected: 70 },
-    { month: 'Mar', rate: 48, projected: 68 },
-    { month: 'Apr', rate: 60, projected: 75 },
-    { month: 'May', rate: 55, projected: 72 },
-    { month: 'Jun', rate: 70, projected: 85 },
-];
-// Removed heatmapData and aiInsights mocks as they are now live derived
 
 
 // --- Components ---
@@ -204,22 +185,26 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         if (!user) return;
 
         // Fetch recent medical records to visualize "Clinic Load" / Activity
-        // We fetch the last 100 records to map over the last month
+        // Removing server-side ordering to prevent potential index missing errors
         const q = query(
             collection(db, 'medical_records'),
-            where('doctorId', '==', user.uid),
-            orderBy('date', 'desc') // Ensure we have index for 'date', else strict client sort
+            where('doctorId', '==', user.uid)
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const activities = snapshot.docs.map(doc => ({
-                date: doc.data().date, // ISO string or timestamp
+                date: doc.data().date || doc.data().createdAt, // Support both formats
                 type: doc.data().type
             }));
+            // Client-side sort: Newest first
+            activities.sort((a, b) => {
+                const dateA = new Date(a.date?.seconds ? a.date.seconds * 1000 : a.date);
+                const dateB = new Date(b.date?.seconds ? b.date.seconds * 1000 : b.date);
+                return dateB - dateA;
+            });
             setClinicalActivity(activities);
         }, (error) => {
-            console.warn("Analytics: Could not fetch activity (requires index?)", error);
-            // Fallback: don't crash, just show empty or partial
+            console.warn("Analytics: Could not fetch activity", error);
         });
 
         return () => unsubscribe();
@@ -253,14 +238,21 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         }
     });
 
-    const maxVal = Math.max(...Object.values(riskMap), 1);
+    // Simple Scaling: Normalize against total patients to show prevalence % (scaled to chart domain 0-150)
+    // If we have 10 patients and 5 have diabetes, that's 50%. Chart 150 -> 75. 
+    // We boost visualization slightly (1.2x) so small values are visible.
+    const getVal = (count) => {
+        if (totalPatients === 0) return 0;
+        return (count / totalPatients) * 150 * 1.2; 
+    };
+
     const derivedRadarData = [
-        { subject: 'Hypertension', A: (riskMap['Hypertension'] / maxVal) * 100 + 10, B: 110, fullMark: 150 },
-        { subject: 'Diabetes', A: (riskMap['Diabetes'] / maxVal) * 100 + 10, B: 130, fullMark: 150 },
-        { subject: 'Cardiac', A: (riskMap['Cardiac'] / maxVal) * 100 + 10, B: 120, fullMark: 150 },
-        { subject: 'Obesity', A: (riskMap['Obesity'] / maxVal) * 100 + 10, B: 90, fullMark: 150 },
-        { subject: 'Mobility', A: (riskMap['Mobility'] / maxVal) * 100 + 10, B: 85, fullMark: 150 },
-        { subject: 'Respiratory', A: (riskMap['Respiratory'] / maxVal) * 100 + 10, B: 65, fullMark: 150 },
+        { subject: 'Hypertension', A: getVal(riskMap['Hypertension']), fullMark: 150 },
+        { subject: 'Diabetes', A: getVal(riskMap['Diabetes']), fullMark: 150 },
+        { subject: 'Cardiac', A: getVal(riskMap['Cardiac']), fullMark: 150 },
+        { subject: 'Obesity', A: getVal(riskMap['Obesity']), fullMark: 150 },
+        { subject: 'Mobility', A: getVal(riskMap['Mobility']), fullMark: 150 },
+        { subject: 'Respiratory', A: getVal(riskMap['Respiratory']), fullMark: 150 },
     ];
 
     const finalWatchlist = criticalList.length > 0 ? criticalList.slice(0, 3) : patients.slice(0, 3);
@@ -511,15 +503,7 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                                     fill="#f59e0b"
                                     fillOpacity={0.3}
                                 />
-                                <Radar
-                                    name="National Avg"
-                                    dataKey="B"
-                                    stroke="#57534e"
-                                    strokeWidth={1}
-                                    fill="transparent"
-                                    fillOpacity={0.1}
-                                    strokeDasharray="4 4"
-                                />
+
                                 <Tooltip
                                     contentStyle={{ backgroundColor: '#0c0a09', borderColor: '#f59e0b', color: '#fff' }}
                                     itemStyle={{ color: '#fcd34d' }}
