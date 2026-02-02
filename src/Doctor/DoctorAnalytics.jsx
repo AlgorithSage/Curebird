@@ -193,9 +193,17 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const activities = snapshot.docs.map(doc => ({
-                date: doc.data().date || doc.data().createdAt, // Support both formats
-                type: doc.data().type
+                id: doc.id,
+                date: doc.data().date || doc.data().createdAt, 
+                type: doc.data().type,
+                // Fields for Risk Analysis
+                patientId: doc.data().patientId,
+                title: doc.data().title || '',
+                diagnosis: doc.data().diagnosis || '',
+                description: doc.data().description || '',
+                findings: doc.data().findings || ''
             }));
+            
             // Client-side sort: Newest first
             activities.sort((a, b) => {
                 const dateA = new Date(a.date?.seconds ? a.date.seconds * 1000 : a.date);
@@ -214,45 +222,71 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
     // --- Derived Metrics ---
     const totalPatients = patients.length;
 
-    // 1. Risk Stratification (Enhanced Logic)
-    const riskMap = {
-        'Hypertension': 0, 'Diabetes': 0, 'Cardiac': 0, 'Obesity': 0, 'Mobility': 0, 'Respiratory': 0
+    // 1. Risk Stratification (Record-Aware + Patient Profile Aware)
+    // We use Sets to ensure unique patients are counted per condition
+    const riskSets = {
+        'Hypertension': new Set(), 
+        'Diabetes': new Set(), 
+        'Cardiac': new Set(), 
+        'Obesity': new Set(), 
+        'Mobility': new Set(), 
+        'Respiratory': new Set()
     };
-    let riskCount = 0;
-    const criticalList = [];
+    
+    let riskCount = 0; // Total unique critical patients
+    const criticalSet = new Set();
+    const criticalList = []; // For display
 
+    // Helper to scan text and add to sets
+    const scanAndCategorize = (text, patientId, fullPatientObj = null) => {
+       const t = text.toLowerCase();
+       if (t.match(/hypertens|bp|pressure|hbp/)) riskSets['Hypertension'].add(patientId);
+       if (t.match(/diabet|sugar|insulin|glucose|t2d|t1d|a1c/)) riskSets['Diabetes'].add(patientId);
+       if (t.match(/cardiac|heart|arrhythmia|pulse|coronary|chf|angina/)) riskSets['Cardiac'].add(patientId);
+       if (t.match(/obes|weight|bmi|fat|bariatric/)) riskSets['Obesity'].add(patientId);
+       if (t.match(/mobil|arthrit|joint|pain|spine|knee|fracture|ortho/)) riskSets['Mobility'].add(patientId);
+       if (t.match(/respir|lung|asthma|copd|breath|pneumonia|bronch/)) riskSets['Respiratory'].add(patientId);
+
+       if (t.match(/critical|urgent|alert|severe|acute|emergency/)) {
+            if (fullPatientObj && !criticalSet.has(patientId)) {
+                criticalSet.add(patientId);
+                criticalList.push(fullPatientObj);
+            } else if (!criticalSet.has(patientId)) {
+                criticalSet.add(patientId);
+                // If we don't have the full object (from record), we can't push to list easily without lookup
+                // But we mainly need the count for the stat card
+            }
+       }
+    };
+
+    // Pass 1: Scan Patient Profiles
     patients.forEach(p => {
-        // combine relevant fields for searching
-        const textToScan = `${p.condition || ''} ${p.medicalHistory || ''} ${p.notes || ''}`.toLowerCase();
-        
-        if (textToScan.match(/hypertens|bp|pressure|hbp/)) riskMap['Hypertension']++;
-        if (textToScan.match(/diabet|sugar|insulin|glucose|t2d|t1d/)) riskMap['Diabetes']++;
-        if (textToScan.match(/cardiac|heart|arrhythmia|pulse|coronary|chf/)) riskMap['Cardiac']++;
-        if (textToScan.match(/obes|weight|bmi|fat|bariatric/)) riskMap['Obesity']++;
-        if (textToScan.match(/mobil|arthrit|joint|pain|spine|knee|fracture/)) riskMap['Mobility']++;
-        if (textToScan.match(/respir|lung|asthma|copd|breath|pneumonia/)) riskMap['Respiratory']++;
-
-        if (textToScan.match(/critical|urgent|alert|severe|acute|emergency/)) {
-            riskCount++;
-            criticalList.push(p);
-        }
+        const text = `${p.condition || ''} ${p.medicalHistory || ''} ${p.notes || ''}`;
+        scanAndCategorize(text, p.id, p);
     });
 
-    // Simple Scaling: Normalize against total patients to show prevalence % (scaled to chart domain 0-150)
-    // If we have 10 patients and 5 have diabetes, that's 50%. Chart 150 -> 75. 
-    // We boost visualization slightly (1.2x) so small values are visible.
-    const getVal = (count) => {
+    // Pass 2: Scan Medical Records (Live Workspace Data)
+    clinicalActivity.forEach(rec => {
+        if (!rec.patientId) return;
+        const text = `${rec.title} ${rec.diagnosis} ${rec.description} ${rec.findings}`;
+        scanAndCategorize(text, rec.patientId);
+    });
+
+    // Simple Scaling: Normalize against total patients or fixed max
+    const getVal = (set) => {
+        const count = set.size;
         if (totalPatients === 0) return 0;
-        return (count / totalPatients) * 150 * 1.2; 
+        // Display raw relative strength, boosted
+        return (count / (totalPatients || 1)) * 150 * 1.5; 
     };
 
     const derivedRadarData = [
-        { subject: 'Hypertension', A: getVal(riskMap['Hypertension']), fullMark: 150 },
-        { subject: 'Diabetes', A: getVal(riskMap['Diabetes']), fullMark: 150 },
-        { subject: 'Cardiac', A: getVal(riskMap['Cardiac']), fullMark: 150 },
-        { subject: 'Obesity', A: getVal(riskMap['Obesity']), fullMark: 150 },
-        { subject: 'Mobility', A: getVal(riskMap['Mobility']), fullMark: 150 },
-        { subject: 'Respiratory', A: getVal(riskMap['Respiratory']), fullMark: 150 },
+        { subject: 'Hypertension', A: getVal(riskSets['Hypertension']), fullMark: 150 },
+        { subject: 'Diabetes', A: getVal(riskSets['Diabetes']), fullMark: 150 },
+        { subject: 'Cardiac', A: getVal(riskSets['Cardiac']), fullMark: 150 },
+        { subject: 'Obesity', A: getVal(riskSets['Obesity']), fullMark: 150 },
+        { subject: 'Mobility', A: getVal(riskSets['Mobility']), fullMark: 150 },
+        { subject: 'Respiratory', A: getVal(riskSets['Respiratory']), fullMark: 150 },
     ];
 
     const finalWatchlist = criticalList.length > 0 ? criticalList.slice(0, 3) : patients.slice(0, 3);
