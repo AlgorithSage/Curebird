@@ -41,6 +41,15 @@ const FamilyProfile = lazy(() => import('./components/FamilyProfile'));
 const BottomNav = lazy(() => import('./components/BottomNav'));
 const RecordFormModal = lazy(() => import('./components/Modals').then(module => ({ default: module.RecordFormModal })));
 
+// Researchers Module
+const ResearchersLayout = lazy(() => import('./components/researchers/ResearchersLayout'));
+const DataExplorer = lazy(() => import('./components/researchers/DataExplorer'));
+const ModelPlayground = lazy(() => import('./components/researchers/ModelPlayground'));
+const ModelRepository = lazy(() => import('./components/researchers/ModelRepository'));
+const ResearchDashboard = lazy(() => import('./components/researchers/ResearchDashboard'));
+const ResearcherLogin = lazy(() => import('./components/researchers/ResearcherLogin'));
+const RequireResearcherAuth = lazy(() => import('./components/researchers/RequireResearcherAuth')); // Lazy load guard
+
 const formatDate = (date) => date?.toDate ? date.toDate().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ') : '');
 
@@ -134,8 +143,8 @@ export default function App() {
                                 setIsAuthModalOpen(true);
                             }
 
-                            // Show subscription modal only if not seen AND not already active/judge
-                            if (!userData.hasSeenSubscription && userData.subscriptionStatus !== 'active' && !userData.isHackathonJudge) {
+                            // Show subscription modal only if not seen AND not already active/judge AND not in Research Module
+                            if (!userData.hasSeenSubscription && userData.subscriptionStatus !== 'active' && !userData.isHackathonJudge && !window.location.pathname.startsWith('/research')) {
                                 setTimeout(() => setIsSubscriptionModalOpen(true), 1500);
                             }
 
@@ -221,7 +230,6 @@ export default function App() {
             'Family Profile': '/family-profile',
             'Contact': '/contact',
             'Terms': '/terms',
-            'Terms': '/terms',
             'Privacy': '/privacy',
             'Refund': '/refund-policy'
         };
@@ -262,7 +270,7 @@ export default function App() {
             <IconContext.Provider value={{ weight: "duotone", color: "currentColor", size: "1em" }}>
                 <div className="min-h-screen font-sans text-slate-200 relative isolate overflow-hidden">
                     <Suspense fallback={<LoadingScreen />}>
-                        <Background />
+                        {!location.pathname.startsWith('/research') && <Background />}
                         <Routes>
                             <Route path="/" element={
                                 user ? <Navigate to="/dashboard" replace /> :
@@ -302,6 +310,18 @@ export default function App() {
                             <Route path="/doctor-access" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><ShareProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
                             <Route path="/settings" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><Settings {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
                             <Route path="/family-profile" element={<RequireAuth user={user}><LayoutWithSidebar user={user} isSidebarOpen={isSidebarOpen} setSidebarOpen={setIsSidebarOpen} onSubscribeClick={() => setIsSubscriptionModalOpen(true)} onAddRecordClick={() => setIsRecordModalOpen(true)}><FamilyProfile {...pageProps} /></LayoutWithSidebar></RequireAuth>} />
+
+                            {/* Researchers Module Routes */}
+                            <Route path="/research/login" element={<ResearcherLogin />} />
+
+                            <Route element={<RequireResearcherAuth user={user} />}>
+                                <Route path="/research" element={<ResearchersLayout user={user} />}>
+                                    <Route index element={<ResearchDashboard />} />
+                                    <Route path="data" element={<DataExplorer />} />
+                                    <Route path="playground" element={<ModelPlayground />} />
+                                    <Route path="models" element={<ModelRepository />} />
+                                </Route>
+                            </Route>
 
                             <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>

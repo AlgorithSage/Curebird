@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Existing User Rules (Preserve these)
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Allow researchers/admins to read user profiles if needed? (optional, usually restricted)
+    }
+
+    // --- RESEARCHER MODULE RULES ---
+    
+    // 1. Data Access (Anonymized Records)
+    // Only researchers can read from 'anonymized_records' collection
+    match /anonymized_records/{recordId} {
+      allow read: if isResearcher();
+      allow write: if false; // Read-only for now
+    }
+    
+    // 2. Models Access
+    match /models/{modelId} {
+      allow read: if isResearcher();
+      allow write: if isAdmin();
+    }
+    
+    // 3. Research Logs (Audit Trail)
+    match /research_logs/{logId} {
+      allow create: if isResearcher();
+      allow read: if isAdmin();
+    }
+
+    // --- HELPER FUNCTIONS ---
+    
+    function isResearcher() {
+      return request.auth != null && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'researcher' || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    function isAdmin() {
+      return request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+  }
+}
