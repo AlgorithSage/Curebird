@@ -505,7 +505,8 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     color: "text-amber-400",
                                     borderGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(251,191,36,0.3)]",
                                     gradient: "from-amber-500/20 via-amber-500/5 to-transparent",
-                                    animClass: "animated-border"
+                                    animClass: "animated-border",
+                                    route: "/cure-ai"
                                 },
                                 {
                                     id: "analyzer",
@@ -517,7 +518,8 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     color: "text-sky-400",
                                     borderGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(56,189,248,0.3)]",
                                     gradient: "from-sky-500/20 via-sky-500/5 to-transparent",
-                                    animClass: "animated-border animated-border-sky"
+                                    animClass: "animated-border animated-border-sky",
+                                    route: "/cure-analyzer"
                                 },
                                 {
                                     id: "stat",
@@ -529,7 +531,8 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     color: "text-emerald-400",
                                     borderGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.3)]",
                                     gradient: "from-emerald-500/20 via-emerald-500/5 to-transparent",
-                                    animClass: "animated-border animated-border-emerald"
+                                    animClass: "animated-border animated-border-emerald",
+                                    route: "/cure-stat"
                                 },
                                 {
                                     id: "tracker",
@@ -541,7 +544,8 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     color: "text-purple-400",
                                     borderGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]",
                                     gradient: "from-purple-500/20 via-purple-500/5 to-transparent",
-                                    animClass: "animated-border animated-border-indigo"
+                                    animClass: "animated-border animated-border-indigo",
+                                    route: "/cure-tracker"
                                 }
                             ].map((feature, idx) => (
                                 <div
@@ -552,10 +556,11 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                         border border-white/10
                                         flex flex-col items-center text-center
                                         group transition-all duration-300 hover:-translate-y-2
-                                        shadow-2xl overflow-hidden
+                                        shadow-2xl overflow-hidden cursor-pointer
                                         ${feature.borderGlow}
                                         ${feature.animClass}
                                     `}
+                                    onClick={() => onNavigate && onNavigate(feature.route)}
                                 >
                                     {/* Ultra-Glass Shine Effect */}
                                     <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
