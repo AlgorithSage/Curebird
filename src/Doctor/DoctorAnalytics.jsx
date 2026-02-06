@@ -11,6 +11,7 @@ import {
 import AIReportModal from './AIReportModal';
 import AnalyzeDataModal from './AnalyzeDataModal';
 import { collection, query, where, onSnapshot, orderBy, doc, deleteDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
 
 
@@ -168,41 +169,46 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
     const [clinicalActivity, setClinicalActivity] = useState([]);
 
     React.useEffect(() => {
-        const user = auth.currentUser;
-        if (!user) return;
+        // Robust Auth Listener to prevent race conditions
+        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, set up listener
+                const q = query(
+                    collection(db, 'medical_records'),
+                    where('doctorId', '==', user.uid)
+                );
 
-        // Fetch recent medical records to visualize "Clinic Load" / Activity
-        // Removing server-side ordering to prevent potential index missing errors
-        const q = query(
-            collection(db, 'medical_records'),
-            where('doctorId', '==', user.uid)
-        );
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const activities = snapshot.docs.map(doc => ({
-                id: doc.id,
-                date: doc.data().date || doc.data().createdAt, 
-                type: doc.data().type,
-                // Fields for Risk Analysis
-                patientId: doc.data().patientId,
-                title: doc.data().title || '',
-                diagnosis: doc.data().diagnosis || '',
-                description: doc.data().description || '',
-                findings: doc.data().findings || ''
-            }));
-            
-            // Client-side sort: Newest first
-            activities.sort((a, b) => {
-                const dateA = new Date(a.date?.seconds ? a.date.seconds * 1000 : a.date);
-                const dateB = new Date(b.date?.seconds ? b.date.seconds * 1000 : b.date);
-                return dateB - dateA;
-            });
-            setClinicalActivity(activities);
-        }, (error) => {
-            console.warn("Analytics: Could not fetch activity", error);
+                const unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
+                    const activities = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        date: doc.data().date || doc.data().createdAt, 
+                        type: doc.data().type,
+                        patientId: doc.data().patientId,
+                        title: doc.data().title || '',
+                        diagnosis: doc.data().diagnosis || '',
+                        description: doc.data().description || '',
+                        findings: doc.data().findings || ''
+                    }));
+                    
+                    // Client-side sort: Newest first
+                    activities.sort((a, b) => {
+                        const dateA = new Date(a.date?.seconds ? a.date.seconds * 1000 : a.date);
+                        const dateB = new Date(b.date?.seconds ? b.date.seconds * 1000 : b.date);
+                        return dateB - dateA;
+                    });
+                    setClinicalActivity(activities);
+                }, (error) => {
+                    console.warn("Analytics: Could not fetch activity", error);
+                });
+                
+                // Cleanup snapshot listener when auth changes or component unmounts
+                return () => unsubscribeSnapshot();
+            } else {
+                setClinicalActivity([]);
+            }
         });
 
-        return () => unsubscribe();
+        return () => unsubscribeAuth();
     }, []);
 
 
@@ -462,14 +468,32 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
 
                     {/* Logic for Status Counts */}
                     {(() => {
-                        const statusCounts = { Stable: 0, Critical: 0, Monitoring: 0, Recovering: 0 };
+                        // Dynamically count ALL statuses found in patient data
+                        const statusCounts = {};
                         patients.forEach(p => {
-                            const s = p.status || 'Stable';
-                            if (statusCounts[s] !== undefined) statusCounts[s]++;
-                            else statusCounts['Stable']++; // Fallback
+                            const rawStatus = p.status || 'Stable';
+                            // Normalize Key
+                            const key = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1); 
+                            statusCounts[key] = (statusCounts[key] || 0) + 1;
                         });
+                        
+                        // Convert to array
                         const data = Object.keys(statusCounts).map(k => ({ name: k, value: statusCounts[k] }));
-                        const COLORS = { Stable: '#10b981', Critical: '#ef4444', Monitoring: '#f59e0b', Recovering: '#3b82f6' };
+                        
+                        // Sort by value desc (so largest slices are consistent)
+                        data.sort((a, b) => b.value - a.value);
+
+                        // Dynamic Color Mapping (Fallbacks + Hash-like generation for new statuses)
+                        const getColor = (name) => {
+                            const map = { 
+                                'Stable': '#10b981', 
+                                'Critical': '#ef4444', 
+                                'Monitoring': '#f59e0b', 
+                                'Recovering': '#3b82f6',
+                                'Discharged': '#64748b'
+                            };
+                            return map[name] || '#8b5cf6'; // Default Purple for custom statuses
+                        };
                         
                         return (
                             <div className="h-[250px] w-full relative z-10 flex items-center justify-center">
@@ -484,7 +508,7 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                                             stroke="none"
                                         >
                                             {data.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[entry.name] || '#ffffff'} />
+                                                <Cell key={`cell-${index}`} fill={getColor(entry.name)} />
                                             ))}
                                         </Pie>
                                         <Tooltip 
@@ -523,24 +547,47 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
 
                     {/* Logic for Workload Counts */}
                     {(() => {
-                        const typeCounts = {
-                            consultation_note: 0,
-                            prescription: 0,
-                            lab_report: 0,
-                            referral: 0
-                        };
+                        // Dynamically count ALL record types
+                        const typeCounts = {};
                         clinicalActivity.forEach(a => {
-                             const t = a.type || 'consultation_note';
-                             if (typeCounts[t] !== undefined) typeCounts[t]++;
-                             else typeCounts['consultation_note']++;
+                             const rawType = a.type || 'Other';
+                             typeCounts[rawType] = (typeCounts[rawType] || 0) + 1;
                         });
                         
-                        const workloadData = [
-                            { name: 'Consults', count: typeCounts.consultation_note, fill: '#3b82f6', full: 'Consultation Note' },
-                            { name: 'Rx', count: typeCounts.prescription, fill: '#f59e0b', full: 'Prescription' },
-                            { name: 'Labs', count: typeCounts.lab_report, fill: '#10b981', full: 'Lab Report' },
-                            { name: 'Referrals', count: typeCounts.referral, fill: '#8b5cf6', full: 'Referral' }
-                        ];
+                        // Map to Chart Data
+                        const formatLabel = (t) => {
+                            const map = {
+                                'consultation_note': 'Consults',
+                                'prescription': 'Rx',
+                                'lab_report': 'Labs',
+                                'referral': 'Ref',
+                                'vitals_log': 'Vitals'
+                            };
+                            if (map[t]) return map[t];
+                            // Fallback: title case
+                            return t.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').slice(0, 8);
+                        };
+
+                        const getColor = (t) => {
+                             const map = {
+                                'consultation_note': '#3b82f6', // Blue
+                                'prescription': '#f59e0b',    // Amber
+                                'lab_report': '#10b981',      // Emerald
+                                'referral': '#8b5cf6',        // Violet
+                                'vitals_log': '#ec4899'       // Pink
+                            };
+                            return map[t] || '#64748b';
+                        };
+
+                        const workloadData = Object.keys(typeCounts).map(type => ({
+                            name: formatLabel(type),
+                            count: typeCounts[type],
+                            fill: getColor(type),
+                            full: type.replace(/_/g, ' ').toUpperCase()
+                        }));
+
+                        // Sort by count for better viz
+                        workloadData.sort((a, b) => b.count - a.count);
 
                         return (
                              <div className="h-[250px] w-full relative z-10">
