@@ -310,21 +310,22 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         return {
             month: m,
             rate: runningTotal,
-            projected: Math.round(runningTotal * 1.2) + 2 
+        projected: Math.round(runningTotal * 1.2) + 2 
         };
     });
 
 
-    // 3. Clinic Load Heatmap (Live from Medical Records)
+    // 3. Clinic Load Heatmap (Live from Medical Records ONLY)
     const heatmapBuckets = new Array(28).fill(0);
     const now = new Date();
     
-    // Use `clinicalActivity` instead of `patients` for load
-    const sourceData = clinicalActivity.length > 0 ? clinicalActivity : patients; // Fallback to patients if no records
+    // STRICT: Only use Clinical Activity (Medical Records)
+    // If no records exist, the heatmap will be empty, accurately reflecting "No Activity".
+    const sourceData = clinicalActivity; 
 
     sourceData.forEach(item => {
         let d = null;
-        const dateStr = item.date || item.createdAt; // Handle both record date and patient createdAt
+        const dateStr = item.date || item.createdAt; 
         
          if (dateStr?.toDate) {
             d = dateStr.toDate();
@@ -337,15 +338,15 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         if (d && !isNaN(d.getTime())) {
             const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
             if (diffDays >= 0 && diffDays < 28) {
-                heatmapBuckets[27 - diffDays]++; // 27 = today
+                heatmapBuckets[27 - diffDays]++; // 27 = today (End of grid)
             }
         }
     });
 
     const heatmapData = heatmapBuckets.map((count, i) => ({
         day: i + 1,
-        // Intensity logic: 0=low, 1-2=med, 3+=high (adjusted for typical low-volume demo data)
-        intensity: count >= 3 ? 'high' : count > 0 ? 'medium' : 'low'
+        // Sensitivity: 1 visit = Medium, 2+ visits = High
+        intensity: count >= 2 ? 'high' : count === 1 ? 'medium' : 'low'
     }));
 
 
