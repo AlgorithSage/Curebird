@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    AreaChart, Area, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
+    AreaChart, Area, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, PieChart, Pie, Cell
 } from 'recharts';
 import { 
     TrendingUp, Users, Activity, AlertTriangle, Calendar,
@@ -541,37 +541,65 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                 {/* 1. Population Risk Radar (Dark Olive/Gold Theme) */}
-                <div className="relative rounded-[2rem] p-6 border border-yellow-500/10 bg-gradient-to-br from-[#1a1c10] to-[#020617] shadow-[0_4px_20px_rgba(0,0,0,0.2)] overflow-hidden animated-border">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 blur-[60px] pointer-events-none" />
+                {/* 1. Patient Health Status (Donut Chart) */}
+                <div className="relative rounded-[2rem] p-6 border border-emerald-500/10 bg-gradient-to-br from-[#1a1c10] to-[#020617] shadow-[0_4px_20px_rgba(0,0,0,0.2)] overflow-hidden animated-border">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-[60px] pointer-events-none" />
 
                     <h3 className="font-bold text-white mb-6 flex items-center gap-3 relative z-10">
-                        <Activity className="text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]" size={24} />
-                        <span className="tracking-tight">Population Risk Stratification</span>
+                        <Activity className="text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.6)]" size={24} />
+                        <span className="tracking-tight">Patient Health Status</span>
                     </h3>
 
-                    <div className="h-[250px] w-full relative z-10">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <RadarChart cx="50%" cy="50%" outerRadius="75%" data={derivedRadarData}>
-                                <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                                <PolarAngleAxis dataKey="subject" tick={{ fill: '#78716c', fontSize: 11, fontWeight: '600' }} />
-                                <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
-                                <Radar
-                                    name="This Clinic"
-                                    dataKey="A"
-                                    stroke="#f59e0b"
-                                    strokeWidth={2}
-                                    fill="#f59e0b"
-                                    fillOpacity={0.3}
-                                />
-
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: '#0c0a09', borderColor: '#f59e0b', color: '#fff' }}
-                                    itemStyle={{ color: '#fcd34d' }}
-                                />
-                                <Legend iconType="rect" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                            </RadarChart>
-                        </ResponsiveContainer>
-                    </div>
+                    {/* Logic for Status Counts */}
+                    {(() => {
+                        const statusCounts = { Stable: 0, Critical: 0, Monitoring: 0, Recovering: 0 };
+                        patients.forEach(p => {
+                            const s = p.status || 'Stable';
+                            if (statusCounts[s] !== undefined) statusCounts[s]++;
+                            else statusCounts['Stable']++; // Fallback
+                        });
+                        const data = Object.keys(statusCounts).map(k => ({ name: k, value: statusCounts[k] }));
+                        const COLORS = { Stable: '#10b981', Critical: '#ef4444', Monitoring: '#f59e0b', Recovering: '#3b82f6' };
+                        
+                        return (
+                            <div className="h-[250px] w-full relative z-10 flex items-center justify-center">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={data}
+                                            innerRadius={60}
+                                            outerRadius={80}
+                                            paddingAngle={5}
+                                            dataKey="value"
+                                            stroke="none"
+                                        >
+                                            {data.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[entry.name] || '#ffffff'} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip 
+                                            contentStyle={{ backgroundColor: '#0c0a09', borderColor: '#333', borderRadius: '12px', color: '#fff' }}
+                                            itemStyle={{ color: '#fff' }}
+                                        />
+                                        <Legend 
+                                            verticalAlign="middle" 
+                                            layout="vertical" 
+                                            align="right"
+                                            iconType="circle"
+                                            formatter={(value, entry) => (
+                                                <span className="text-xs font-bold text-stone-400 ml-1">{value} ({entry.payload.value})</span>
+                                            )}
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                                {/* Center Total */}
+                                <div className="absolute top-1/2 left-[38%] -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+                                    <div className="text-3xl font-black text-white">{patients.length}</div>
+                                    <div className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">Patients</div>
+                                </div>
+                            </div>
+                        );
+                    })()}
                 </div>
 
                 {/* 2. Clinic Load Heatmap (Dark Olive/Gold Theme) */}
