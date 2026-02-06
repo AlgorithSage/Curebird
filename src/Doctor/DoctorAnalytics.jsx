@@ -40,7 +40,8 @@ const HeatmapCell = ({ intensity, day }) => {
         // Amber/Gold Theme
         if (intensity === 'high') return 'bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.6)] border border-amber-400'; // High Activity
         if (intensity === 'medium') return 'bg-amber-700/60 border border-amber-600/30'; // Medium
-        return 'bg-stone-800/40 border border-stone-700/30'; // Low
+        if (intensity === 'future') return 'bg-transparent border border-dashed border-stone-800/30 opacity-30 cursor-default'; // Future
+        return 'bg-stone-800/40 border border-stone-700/30'; // Low / Empty
     };
     return (
         <div className={`w-full aspect-square rounded-lg ${getColor()} transition-all hover:scale-110 cursor-pointer relative group`}>
@@ -316,38 +317,62 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
 
 
     // 3. Clinic Load Heatmap (Live from Medical Records ONLY)
-    const heatmapBuckets = new Array(28).fill(0);
-    const now = new Date();
+    // Grid: 7 cols (M, T, W, T, F, S, S) x 4 rows = 28 cells.
+    // To align columns, we must start on a Monday.
+    // Strategy: Show "Current Week" + "Previous 3 Weeks".
     
-    // STRICT: Only use Clinical Activity (Medical Records)
-    // If no records exist, the heatmap will be empty, accurately reflecting "No Activity".
-    const sourceData = clinicalActivity; 
+    const now = new Date();
+    const currentDay = now.getDay(); // 0=Sun, 1=Mon, ... 6=Sat
+    // Convert to Mon=0, ..., Sun=6
+    const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
+    
+    // Start of current week (Monday)
+    const startOfCurrentWeek = new Date(now);
+    startOfCurrentWeek.setDate(now.getDate() - daysSinceMonday);
+    startOfCurrentWeek.setHours(0, 0, 0, 0);
 
-    sourceData.forEach(item => {
-        let d = null;
-        const dateStr = item.date || item.createdAt; 
+    // Start of Grid (Monday, 3 weeks prior)
+    const gridStartDate = new Date(startOfCurrentWeek);
+    gridStartDate.setDate(gridStartDate.getDate() - 21); // Go back 3 weeks
+
+    const heatmapData = [];
+    const sourceData = clinicalActivity; // STRICT Live Data
+
+    for (let i = 0; i < 28; i++) {
+        // Calculate date for this cell
+        const cellDate = new Date(gridStartDate);
+        cellDate.setDate(gridStartDate.getDate() + i);
         
-         if (dateStr?.toDate) {
-            d = dateStr.toDate();
-        } else if (typeof dateStr === 'object' && dateStr.seconds) { // Firestore Timestamp
-             d = new Date(dateStr.seconds * 1000);
-        } else if (dateStr) {
-            d = new Date(dateStr);
-        }
+        // Define Day Boundaries
+        const startOfDay = new Date(cellDate); startOfDay.setHours(0,0,0,0);
+        const endOfDay = new Date(cellDate); endOfDay.setHours(23,59,59,999);
+        
+        // Check if future
+        const isFuture = startOfDay > now;
 
-        if (d && !isNaN(d.getTime())) {
-            const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
-            if (diffDays >= 0 && diffDays < 28) {
-                heatmapBuckets[27 - diffDays]++; // 27 = today (End of grid)
-            }
-        }
-    });
+        if (isFuture) {
+             heatmapData.push({ day: i, intensity: 'future', dateLabel: cellDate.toLocaleDateString() });
+        } else {
+            // Count records for this specific day
+            let count = 0;
+            sourceData.forEach(item => {
+                let d = null;
+                const rDate = item.date || item.createdAt;
+                if (rDate?.toDate) d = rDate.toDate();
+                else if (rDate?.seconds) d = new Date(rDate.seconds * 1000);
+                else if (rDate) d = new Date(rDate);
 
-    const heatmapData = heatmapBuckets.map((count, i) => ({
-        day: i + 1,
-        // Sensitivity: 1 visit = Medium, 2+ visits = High
-        intensity: count >= 2 ? 'high' : count === 1 ? 'medium' : 'low'
-    }));
+                if (d && d >= startOfDay && d <= endOfDay) {
+                    count++;
+                }
+            });
+             heatmapData.push({ 
+                 day: i, 
+                 intensity: count >= 2 ? 'high' : count === 1 ? 'medium' : 'low',
+                 dateLabel: cellDate.toLocaleDateString()
+             });
+        }
+    }
 
 
 
