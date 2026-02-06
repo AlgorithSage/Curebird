@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, query, orderBy, getDocs, limit } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, X, ChevronUp, Bell, Activity, Crown, Volume2, VolumeX, Play, Pause, Maximize } from './Icons';
+import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, X, ChevronUp, Bell, Activity, Crown, Volume2, VolumeX, Play, Pause, Maximize, ScanEye, TrendingUp, Brain } from './Icons';
 import { AnalysisService } from '../services/AnalysisService';
 
 import Header from './Header';
@@ -473,6 +473,145 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                             </motion.div>
                         </div>
                     </div>
+
+
+                    {/* Core Features Showcase - Reference Design Match */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                        className="mb-16 px-2 sm:px-6"
+                    >
+                        {/* Promotional Intro */}
+                        <div className="text-center max-w-4xl mx-auto mb-12">
+                            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+                                Advanced <span className="text-amber-400">Health Intelligence</span>
+                            </h2>
+                            <p className="text-slate-300 text-lg leading-relaxed">
+                                <span className="text-amber-200/80 font-semibold">Unlock advanced insights</span> from your health data, <span className="text-amber-200/80 font-semibold">predict potential risks</span>, and experience the future of personalized healthcare:
+                            </p>
+                        </div>
+
+                        {/* 1. The Card Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                            {[
+                                {
+                                    id: "ai",
+                                    label: "AI CONSULTANT",
+                                    titlePre: "Cure",
+                                    titleHighlight: "AI",
+                                    desc: "Your dedicated 24/7 health consultant. Get intelligent answers based on your history.",
+                                    icon: <Brain size={14} weight="fill" />,
+                                    color: "text-amber-400",
+                                    borderGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(251,191,36,0.3)]",
+                                    gradient: "from-amber-500/20 via-amber-500/5 to-transparent",
+                                    animClass: "animated-border",
+                                    route: "/cure-ai"
+                                },
+                                {
+                                    id: "analyzer",
+                                    label: "LAB ANALYSIS",
+                                    titlePre: "Cure",
+                                    titleHighlight: "Analyzer",
+                                    desc: "Instantly decodes complex lab reports into clear, actionable insights.",
+                                    icon: <ScanEye size={14} weight="fill" />,
+                                    color: "text-sky-400",
+                                    borderGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(56,189,248,0.3)]",
+                                    gradient: "from-sky-500/20 via-sky-500/5 to-transparent",
+                                    animClass: "animated-border animated-border-sky",
+                                    route: "/cure-analyzer"
+                                },
+                                {
+                                    id: "stat",
+                                    label: "NATIONAL STATS",
+                                    titlePre: "Cure",
+                                    titleHighlight: "Stat",
+                                    desc: "Visualizes real-time disease trends and epidemic data globally.",
+                                    icon: <Activity size={14} weight="fill" />,
+                                    color: "text-emerald-400",
+                                    borderGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.3)]",
+                                    gradient: "from-emerald-500/20 via-emerald-500/5 to-transparent",
+                                    animClass: "animated-border animated-border-emerald",
+                                    route: "/cure-stat"
+                                },
+                                {
+                                    id: "tracker",
+                                    label: "LIVE TRACKER",
+                                    titlePre: "Cure",
+                                    titleHighlight: "Tracker",
+                                    desc: "Track conditions, monitor vitals, and manage daily insights.",
+                                    icon: <TrendingUp size={14} weight="fill" />,
+                                    color: "text-purple-400",
+                                    borderGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]",
+                                    gradient: "from-purple-500/20 via-purple-500/5 to-transparent",
+                                    animClass: "animated-border animated-border-indigo",
+                                    route: "/cure-tracker"
+                                }
+                            ].map((feature, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`
+                                        relative p-8 rounded-[2rem] 
+                                        backdrop-blur-3xl bg-white/5 
+                                        border border-white/10
+                                        flex flex-col items-center text-center
+                                        group transition-all duration-300 hover:-translate-y-2
+                                        shadow-2xl overflow-hidden cursor-pointer
+                                        ${feature.borderGlow}
+                                        ${feature.animClass}
+                                    `}
+                                    onClick={() => onNavigate && onNavigate(feature.route)}
+                                >
+                                    {/* Ultra-Glass Shine Effect */}
+                                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                                    {/* Top Gradient Glow */}
+                                    <div className={`absolute inset-x-0 top-0 h-32 bg-gradient-to-b ${feature.gradient} opacity-50 rounded-t-[2rem] blur-xl`} />
+
+                                    {/* Pill Label - Floating Glass */}
+                                    <div className={`
+                                        relative z-10 flex items-center gap-2 px-4 py-1.5 rounded-full 
+                                        bg-black/40 border border-white/10 ${feature.color} mb-6
+                                        text-[10px] font-bold tracking-[0.2em] uppercase shadow-lg backdrop-blur-md
+                                        group-hover:bg-black/60 transition-colors
+                                    `}>
+                                        {feature.icon}
+                                        {feature.label}
+                                    </div>
+
+                                    {/* Title */}
+                                    <h3 className="relative z-10 text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-md">
+                                        {feature.titlePre} <span className={`${feature.color} drop-shadow-[0_0_15px_rgba(currentColor,0.3)]`}>{feature.titleHighlight}</span>
+                                    </h3>
+
+                                    {/* Description */}
+                                    <p className="relative z-10 text-sm text-slate-400 leading-relaxed max-w-[200px]">
+                                        {feature.desc.split(feature.titleHighlight).map((part, i, arr) => (
+                                            <span key={i}>
+                                                {part}
+                                                {i < arr.length - 1 && <span className="text-white font-medium">{feature.titleHighlight}</span>} {/* Simple highlight logic if needed, or just keep plain text */}
+                                            </span>
+                                        ))}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* 2. Bottom Functionality Badges */}
+                        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 opacity-70">
+                            {[
+                                { icon: <ShieldCheck size={14} />, text: "SECURE HIPAA ANALYTICS" },
+                                { icon: <Activity size={14} />, text: "REAL-TIME SYNTHESIS" },
+                                { icon: <FileText size={14} />, text: "MULTI-FORMAT SUPPORT" },
+                                { icon: <Brain size={14} />, text: "PREDICTIVE MODELING" },
+                            ].map((badge, i) => (
+                                <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 border border-white/5 text-[10px] sm:text-xs font-bold text-slate-300 tracking-wider uppercase shadow-sm">
+                                    <span className="text-amber-500">{badge.icon}</span>
+                                    {badge.text}
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
 
                     {/* Dashboard Overview Banner */}
                     <div className="mb-12 px-2 sm:px-6">
