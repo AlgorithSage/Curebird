@@ -182,7 +182,7 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                     const activities = snapshot.docs.map(doc => ({
                         id: doc.id,
                         date: doc.data().date || doc.data().createdAt, 
-                        type: doc.data().type,
+                        type: (doc.data().type === 'report' ? 'lab_report' : (doc.data().type === 'consultation' ? 'consultation_note' : doc.data().type)),
                         patientId: doc.data().patientId,
                         title: doc.data().title || '',
                         diagnosis: doc.data().diagnosis || '',
