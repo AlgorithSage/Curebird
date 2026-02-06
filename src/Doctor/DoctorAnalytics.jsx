@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    AreaChart, Area, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, PieChart, Pie, Cell
+    AreaChart, Area, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, PieChart, Pie, Cell, BarChart, Bar
 } from 'recharts';
 import { 
     TrendingUp, Users, Activity, AlertTriangle, Calendar,
@@ -35,21 +35,7 @@ const InsightCard = ({ insight }) => (
     </div>
 );
 
-const HeatmapCell = ({ intensity, day }) => {
-    const getColor = () => {
-        // Amber/Gold Theme
-        if (intensity === 'high') return 'bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.6)] border border-amber-400'; // High Activity
-        if (intensity === 'medium') return 'bg-amber-700/60 border border-amber-600/30'; // Medium
-        if (intensity === 'future') return 'bg-transparent border border-dashed border-stone-800/30 opacity-30 cursor-default'; // Future
-        return 'bg-stone-800/40 border border-stone-700/30'; // Low / Empty
-    };
-    return (
-        <div className={`w-full aspect-square rounded-lg ${getColor()} transition-all hover:scale-110 cursor-pointer relative group`}>
-            {/* Inner Glow */}
-            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg" />
-        </div>
-    );
-};
+
 
 // Reverted StatCard to use standard Global `glass-card` theme with optimized spacing
 // StatCard with Semantic Tinting + Amber Base
@@ -273,25 +259,8 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         scanAndCategorize(text, rec.patientId);
     });
 
-    // Simple Scaling: Normalize against total patients or fixed max
-    const getVal = (set) => {
-        const count = set.size;
-        if (totalPatients === 0) return 0;
-        // Display raw relative strength, boosted
-        return (count / (totalPatients || 1)) * 150 * 1.5; 
-    };
-
-    const derivedRadarData = [
-        { subject: 'Hypertension', A: getVal(riskSets['Hypertension']), fullMark: 150 },
-        { subject: 'Diabetes', A: getVal(riskSets['Diabetes']), fullMark: 150 },
-        { subject: 'Cardiac', A: getVal(riskSets['Cardiac']), fullMark: 150 },
-        { subject: 'Obesity', A: getVal(riskSets['Obesity']), fullMark: 150 },
-        { subject: 'Mobility', A: getVal(riskSets['Mobility']), fullMark: 150 },
-        { subject: 'Respiratory', A: getVal(riskSets['Respiratory']), fullMark: 150 },
-    ];
-
     const finalWatchlist = criticalList.length > 0 ? criticalList.slice(0, 3) : patients.slice(0, 3);
-    const healthScore = totalPatients > 0 ? Math.round(((totalPatients - riskCount) / totalPatients) * 100) : 100;
+    const healthScore = totalPatients > 0 ? Math.round(((totalPatients - criticalList.length) / totalPatients) * 100) : 100;
 
     // ... (Growth Trends logic remains same) ...
      const monthCounts = { 'Jan': 0, 'Feb': 0, 'Mar': 0, 'Apr': 0, 'May': 0, 'Jun': 0 };
@@ -314,65 +283,6 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
         projected: Math.round(runningTotal * 1.2) + 2 
         };
     });
-
-
-    // 3. Clinic Load Heatmap (Live from Medical Records ONLY)
-    // Grid: 7 cols (M, T, W, T, F, S, S) x 4 rows = 28 cells.
-    // To align columns, we must start on a Monday.
-    // Strategy: Show "Current Week" + "Previous 3 Weeks".
-    
-    const now = new Date();
-    const currentDay = now.getDay(); // 0=Sun, 1=Mon, ... 6=Sat
-    // Convert to Mon=0, ..., Sun=6
-    const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
-    
-    // Start of current week (Monday)
-    const startOfCurrentWeek = new Date(now);
-    startOfCurrentWeek.setDate(now.getDate() - daysSinceMonday);
-    startOfCurrentWeek.setHours(0, 0, 0, 0);
-
-    // Start of Grid (Monday, 3 weeks prior)
-    const gridStartDate = new Date(startOfCurrentWeek);
-    gridStartDate.setDate(gridStartDate.getDate() - 21); // Go back 3 weeks
-
-    const heatmapData = [];
-    const sourceData = clinicalActivity; // STRICT Live Data
-
-    for (let i = 0; i < 28; i++) {
-        // Calculate date for this cell
-        const cellDate = new Date(gridStartDate);
-        cellDate.setDate(gridStartDate.getDate() + i);
-        
-        // Define Day Boundaries
-        const startOfDay = new Date(cellDate); startOfDay.setHours(0,0,0,0);
-        const endOfDay = new Date(cellDate); endOfDay.setHours(23,59,59,999);
-        
-        // Check if future
-        const isFuture = startOfDay > now;
-
-        if (isFuture) {
-             heatmapData.push({ day: i, intensity: 'future', dateLabel: cellDate.toLocaleDateString() });
-        } else {
-            // Count records for this specific day
-            let count = 0;
-            sourceData.forEach(item => {
-                let d = null;
-                const rDate = item.date || item.createdAt;
-                if (rDate?.toDate) d = rDate.toDate();
-                else if (rDate?.seconds) d = new Date(rDate.seconds * 1000);
-                else if (rDate) d = new Date(rDate);
-
-                if (d && d >= startOfDay && d <= endOfDay) {
-                    count++;
-                }
-            });
-             heatmapData.push({ 
-                 day: i, 
-                 intensity: count >= 2 ? 'high' : count === 1 ? 'medium' : 'low',
-                 dateLabel: cellDate.toLocaleDateString()
-             });
-        }
-    }
 
 
 
@@ -602,30 +512,66 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                     })()}
                 </div>
 
-                {/* 2. Clinic Load Heatmap (Dark Olive/Gold Theme) */}
-                <div className="relative rounded-[2rem] p-6 border border-yellow-500/10 bg-gradient-to-br from-[#1a1c10] to-[#020617] shadow-[0_4px_20px_rgba(0,0,0,0.2)] overflow-hidden animated-border">
-                    {/* Subtle Internal Yellow Glow */}
-                    <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-yellow-500/5 blur-[50px] pointer-events-none" />
+                {/* 2. Clinical Workload Distribution (Horizontal Bar Chart) */}
+                <div className="relative rounded-[2rem] p-6 border border-amber-500/10 bg-gradient-to-br from-[#1a1c10] to-[#020617] shadow-[0_4px_20px_rgba(0,0,0,0.2)] overflow-hidden animated-border">
+                    <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-amber-500/5 blur-[50px] pointer-events-none" />
 
-                    <div className="flex justify-between items-center mb-6 relative z-10">
-                        <h3 className="font-bold text-white flex items-center gap-3">
-                            <Calendar className="text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]" size={24} />
-                            <span className="tracking-tight">Clinic Load Intensity</span>
-                        </h3>
-                        <div className="flex gap-3 text-[10px] uppercase font-bold text-stone-500">
-                            <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.6)]"></div> High</span>
-                            <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-stone-700"></div> Low</span>
-                        </div>
-                    </div>
+                    <h3 className="font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+                        <FileText className="text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]" size={24} />
+                        <span className="tracking-tight">Clinical Workload</span>
+                    </h3>
 
-                    <div className="grid grid-cols-7 gap-3 relative z-10">
-                        {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                            <div key={i} className="text-center text-xs font-bold text-stone-500 mb-1">{d}</div>
-                        ))}
-                        {heatmapData.map((d, i) => (
-                            <HeatmapCell key={i} day={d.day} intensity={d.intensity} />
-                        ))}
-                    </div>
+                    {/* Logic for Workload Counts */}
+                    {(() => {
+                        const typeCounts = {
+                            consultation_note: 0,
+                            prescription: 0,
+                            lab_report: 0,
+                            referral: 0
+                        };
+                        clinicalActivity.forEach(a => {
+                             const t = a.type || 'consultation_note';
+                             if (typeCounts[t] !== undefined) typeCounts[t]++;
+                             else typeCounts['consultation_note']++;
+                        });
+                        
+                        const workloadData = [
+                            { name: 'Consults', count: typeCounts.consultation_note, fill: '#3b82f6', full: 'Consultation Note' },
+                            { name: 'Rx', count: typeCounts.prescription, fill: '#f59e0b', full: 'Prescription' },
+                            { name: 'Labs', count: typeCounts.lab_report, fill: '#10b981', full: 'Lab Report' },
+                            { name: 'Referrals', count: typeCounts.referral, fill: '#8b5cf6', full: 'Referral' }
+                        ];
+
+                        return (
+                             <div className="h-[250px] w-full relative z-10">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={workloadData} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(255,255,255,0.05)" />
+                                        <XAxis type="number" hide />
+                                        <YAxis 
+                                            dataKey="name" 
+                                            type="category" 
+                                            tick={{ fill: '#a8a29e', fontSize: 11, fontWeight: 'bold' }} 
+                                            width={60}
+                                            axisLine={false}
+                                            tickLine={false}
+                                        />
+                                        <Tooltip 
+                                            cursor={{fill: 'transparent'}}
+                                            contentStyle={{ backgroundColor: '#0c0a09', borderColor: '#333', borderRadius: '12px' }}
+                                            itemStyle={{ color: '#fff' }}
+                                            formatter={(value, name, props) => [value, props.payload.full]}
+                                        />
+                                        <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={24} background={{ fill: 'rgba(255,255,255,0.02)' }}>
+                                            {workloadData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                             </div>
+                        );
+                    })()}
                 </div>
 
                 {/* 3. Critical Patients List (Dark Olive/Gold Theme) */}
