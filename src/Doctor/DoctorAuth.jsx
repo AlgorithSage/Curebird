@@ -287,41 +287,44 @@ export default function DoctorAuth({ initialUser }) {
         <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-950">
             <VideoBackground />
 
+
             <motion.div
                 initial={{ scale: 0.9, y: 20, opacity: 0 }}
                 animate={{ scale: 1, y: 0, opacity: 1 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="w-full max-w-md relative group z-10"
+                className="w-full max-w-[500px] relative group z-10"
             >
-                {/* Glow Effect */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl opacity-75 blur transition duration-1000 animate-pulse-slow"></div>
+                {/* 1. DEEP AMBER HALO (The large diffuse glow) */}
+                <div className="absolute -inset-4 bg-amber-600/40 rounded-[3rem] blur-3xl opacity-100 transition duration-1000 group-hover:bg-amber-600/50"></div>
 
-                <div className="relative w-full bg-[#0F172A] rounded-2xl p-1 overflow-hidden">
-                    <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-xl"></div>
-                    <div className="relative bg-[#0F172A]/80 rounded-xl p-8 overflow-hidden">
+                {/* 2. RIM GLOW (Defining the edges) */}
+                <div className="absolute -inset-[1px] bg-gradient-to-b from-amber-400 via-orange-500 to-amber-900 rounded-3xl opacity-100 blur-sm"></div>
 
-                        {/* Back Button */}
-                        <button
-                            onClick={() => window.location.href = '/'}
-                            className="absolute top-4 left-4 p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition-colors group z-20"
-                            title="Back to Patient Login"
-                        >
-                            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        </button>
+                {/* 3. GLASS CARD CONTAINER */}
+                <div className="relative bg-[#050505]/80 backdrop-blur-xl border border-amber-500/40 p-10 rounded-3xl shadow-2xl overflow-hidden">
+                    
+                    {/* Top Ambient Light (Orange tint from top) */}
+                    <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-amber-600/20 to-transparent pointer-events-none"></div>
 
-                        {/* Background Decor */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                    {/* Back Button */}
+                    <button
+                        onClick={() => window.location.href = '/'}
+                        className="absolute top-5 left-5 p-2 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors group z-20"
+                        title="Back to Patient Login"
+                    >
+                        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                    </button>
 
                         {/* Logo & Header */}
                         <div className="text-center mb-8">
-                            <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-slate-900 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-4 p-3 relative group">
+                            <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-slate-900 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-5 p-4 relative group">
                                 <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
                                 <img src="/assets/curebird_logo_gold.png" alt="Logo" className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
                             </div>
                             <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
                                 {authStep === 'login' ? 'Doctor Portal' : 'Doctor Profile'}
                             </h1>
-                            <p className="text-slate-400 text-sm font-medium">
+                            <p className="text-slate-400 text-base font-medium">
                                 {authStep === 'login' ? 'Secure access to clinical records.' : 'Set up your professional identity.'}
                             </p>
                         </div>
@@ -331,23 +334,23 @@ export default function DoctorAuth({ initialUser }) {
                             <div className="space-y-6">
                                 <button
                                     onClick={handleGoogleSignIn}
-                                    className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 py-3.5 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-lg shadow-white/5 border border-slate-200"
+                                    className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 py-4 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-lg shadow-white/5 border border-slate-200 text-base"
                                 >
                                     <svg className="w-5 h-5" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,36.218,44,30.668,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
                                     <span>Continue with Google</span>
                                 </button>
 
-                                <div className="relative">
-                                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-700/50"></div></div>
-                                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-[#0f172a] px-3 text-slate-500 font-semibold tracking-wider">Or Login using Phone</span></div>
+                                <div className="relative my-3">
+                                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+                                    <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-black/20 backdrop-blur-md px-3 py-1 text-slate-400 font-bold tracking-wider rounded border border-white/5">Or Login using Phone</span></div>
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="space-y-5">
                                     <div id="doctor-recaptcha-container"></div>
                                     {!isOtpSent ? (
-                                        <form onSubmit={handleSendOtp} className="space-y-4">
+                                        <form onSubmit={handleSendOtp} className="space-y-5">
                                             <div className="group relative">
-                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-500 transition-colors"><Phone size={18} /></div>
+                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-500 transition-colors"><Phone size={20} /></div>
                                                 <input
                                                     type="tel"
                                                     value={phoneNumber}
@@ -357,24 +360,24 @@ export default function DoctorAuth({ initialUser }) {
                                                         setPhoneNumber(val);
                                                     }}
                                                     placeholder="+91 99999 99999"
-                                                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3.5 pl-10 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-medium"
+                                                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-4 pl-12 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-bold text-lg"
                                                 />
                                             </div>
-                                            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-amber-500 border border-slate-600/50 py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 group disabled:opacity-50">
-                                                {loading ? <Loader2 size={20} className="animate-spin" /> : <>Get Verification Code <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>}
+                                            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border border-white/10 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 group disabled:opacity-50 shadow-lg shadow-amber-500/20 text-base">
+                                                {loading ? <Loader2 size={20} className="animate-spin" /> : <>Get Verification Code <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></>}
                                             </button>
                                         </form>
                                     ) : (
-                                        <form onSubmit={handleVerifyOtp} className="space-y-4">
-                                            <div className="text-center mb-2 p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                                        <form onSubmit={handleVerifyOtp} className="space-y-5">
+                                            <div className="text-center mb-2 p-3 bg-amber-500/10 rounded-xl border border-amber-500/20">
                                                 <p className="text-slate-300 text-sm">Code sent to <span className="text-amber-400 font-mono font-bold">{phoneNumber}</span></p>
                                                 <button type="button" onClick={() => setIsOtpSent(false)} className="text-xs text-slate-500 hover:text-white mt-1 underline decoration-dashed">Change Number</button>
                                             </div>
                                             <input
                                                 type="text" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="000000" maxLength={6}
-                                                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 font-mono font-bold"
+                                                className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-4 text-center text-3xl tracking-[0.5em] text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 font-mono font-bold"
                                             />
-                                            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50">
+                                            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-4 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 text-base">
                                                 {loading ? <Loader2 size={20} className="animate-spin" /> : "Verify & Login"}
                                             </button>
                                         </form>
@@ -385,62 +388,62 @@ export default function DoctorAuth({ initialUser }) {
 
                         {/* --- STEP 2: PROFILE --- */}
                         {authStep === 'profile' && (
-                            <form onSubmit={handleProfileSubmit} className="space-y-6">
+                            <form onSubmit={handleProfileSubmit} className="space-y-4">
                                 <div className="flex justify-center -mt-2">
-                                    <div className="relative w-28 h-28 rounded-full bg-slate-800 border-2 border-dashed border-slate-600 flex items-center justify-center cursor-pointer group hover:border-amber-500 transition-all" onClick={() => fileInputRef.current?.click()}>
-                                        {profilePreview ? <img src={profilePreview} alt="Profile" className="w-full h-full rounded-full object-cover" /> : <div className="flex flex-col items-center gap-1"><User size={32} className="text-slate-500 group-hover:text-amber-500" /><span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Upload</span></div>}
-                                        <div className="absolute bottom-1 right-1 bg-amber-500 text-slate-900 p-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"><Camera size={14} /></div>
+                                    <div className="relative w-24 h-24 rounded-full bg-slate-900 border-2 border-dashed border-slate-700 flex items-center justify-center cursor-pointer group hover:border-amber-500 transition-all" onClick={() => fileInputRef.current?.click()}>
+                                        {profilePreview ? <img src={profilePreview} alt="Profile" className="w-full h-full rounded-full object-cover" /> : <div className="flex flex-col items-center gap-1"><User size={24} className="text-slate-500 group-hover:text-amber-500" /><span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Upload</span></div>}
+                                        <div className="absolute bottom-1 right-1 bg-amber-500 text-slate-900 p-1 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"><Camera size={12} /></div>
                                     </div>
                                     <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageSelect(e, 'profile')} />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-1.5"><label className="text-xs font-bold text-slate-400 uppercase tracking-wider">First Name</label><input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" placeholder="John" /></div>
-                                    <div className="space-y-1.5"><label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Last Name</label><input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" placeholder="Doe" /></div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1"><label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">First Name</label><input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-xs" placeholder="John" /></div>
+                                    <div className="space-y-1"><label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Last Name</label><input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-xs" placeholder="Doe" /></div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-1.5"><label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Degree</label><input type="text" value={degree} onChange={(e) => setDegree(e.target.value)} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" placeholder="MBBS, MD" /></div>
-                                    <div className="space-y-1.5"><label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Specialization</label><input type="text" value={specialization} onChange={(e) => setSpecialization(e.target.value)} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" placeholder="Cardiology" /></div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1"><label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Degree</label><input type="text" value={degree} onChange={(e) => setDegree(e.target.value)} className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-xs" placeholder="MBBS" /></div>
+                                    <div className="space-y-1"><label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Specialization</label><input type="text" value={specialization} onChange={(e) => setSpecialization(e.target.value)} className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-xs" placeholder="Cardio" /></div>
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Secondary Email (Optional)</label>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Secondary Email</label>
                                     <div className="relative group">
-                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-500" size={18} />
-                                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 pl-10 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" placeholder="contact@clinic.com" />
+                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-500" size={14} />
+                                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 pl-9 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-xs" placeholder="contact@clinic.com" />
                                     </div>
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Medical License</label>
-                                    <div className="flex items-center gap-4 bg-slate-800/30 p-3 rounded-xl border border-slate-700/50 cursor-pointer hover:border-amber-500/50 transition-colors" onClick={() => licenseInputRef.current?.click()}>
-                                        <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
-                                            {licensePreview ? <img src={licensePreview} alt="License" className="w-full h-full object-cover rounded-lg" /> : <div className="text-amber-500"><Camera size={20} /></div>}
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Medical License</label>
+                                    <div className="flex items-center gap-3 bg-slate-950/30 p-2 rounded-lg border border-slate-800 cursor-pointer hover:border-amber-500/50 transition-colors" onClick={() => licenseInputRef.current?.click()}>
+                                        <div className="w-10 h-10 rounded bg-slate-900 flex items-center justify-center shrink-0">
+                                            {licensePreview ? <img src={licensePreview} alt="License" className="w-full h-full object-cover rounded" /> : <div className="text-amber-500"><Camera size={16} /></div>}
                                         </div>
                                         <div className="flex-1">
-                                            <p className="text-sm font-bold text-slate-300">{licenseImage ? licenseImage.name : "Upload License Photo"}</p>
-                                            <p className="text-xs text-slate-500">Required for verification</p>
+                                            <p className="text-xs font-bold text-slate-300">{licenseImage ? licenseImage.name.substring(0, 15) + '...' : "Upload Photo"}</p>
+                                            <p className="text-[10px] text-slate-500">Required</p>
                                         </div>
                                     </div>
                                     <input type="file" ref={licenseInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageSelect(e, 'license')} />
                                 </div>
 
-                                <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 mt-2">
-                                    {loading ? <Loader2 size={20} className="animate-spin" /> : "Submit Application"}
+                                <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 mt-1 text-sm">
+                                    {loading ? <Loader2 size={18} className="animate-spin" /> : "Submit Application"}
                                 </button>
                             </form>
                         )}
 
                         <AnimatePresence>
                             {error && (
-                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-6 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-3 text-rose-300 text-sm overflow-hidden">
-                                    <ShieldAlert size={18} className="shrink-0 text-rose-500" /><span className="font-medium">{error}</span>
+                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-4 p-2 bg-rose-500/10 border border-rose-500/20 rounded-lg flex items-center gap-2 text-rose-300 text-xs overflow-hidden">
+                                    <ShieldAlert size={14} className="shrink-0 text-rose-500" /><span className="font-medium">{error}</span>
                                 </motion.div>
                             )}
                         </AnimatePresence>
                     </div>
-                </div>
+
             </motion.div>
         </div>
     );
