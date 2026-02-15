@@ -15,6 +15,23 @@ import { auth, db, storage } from '../firebase';
 
 const googleProvider = new GoogleAuthProvider();
 
+// --- Video Background Component (Same as Researcher/Landing) ---
+const VideoBackground = () => (
+    <div className="fixed inset-0 overflow-hidden z-0">
+        <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover opacity-60 hidden md:block"
+        >
+            <source src="/medical-bg.mp4" type="video/mp4" />
+        </video>
+        <div className="w-full h-full bg-gradient-to-br from-slate-900 via-stone-900 to-amber-950 opacity-80 block md:hidden" />
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+    </div>
+);
+
 export default function DoctorAuth({ initialUser }) {
     // Auth State
     const [authStep, setAuthStep] = useState('login'); // 'login' | 'profile'
@@ -33,7 +50,6 @@ export default function DoctorAuth({ initialUser }) {
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [confirmationResult, setConfirmationResult] = useState(null);
 
-    // Profile Form State
     // Profile Form State
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -268,12 +284,14 @@ export default function DoctorAuth({ initialUser }) {
 
     // --- RENDER ---
     return (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-950">
+            <VideoBackground />
+
             <motion.div
                 initial={{ scale: 0.9, y: 20, opacity: 0 }}
                 animate={{ scale: 1, y: 0, opacity: 1 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="w-full max-w-md relative group"
+                className="w-full max-w-md relative group z-10"
             >
                 {/* Glow Effect */}
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl opacity-75 blur transition duration-1000 animate-pulse-slow"></div>
