@@ -74,7 +74,7 @@ GREETING BEHAVIOR (CRITICAL BRAND ROLE)
 - **Condition 1**: If the user input is ONLY a casual greeting (e.g., "hi", "hello", "hey"):
   - Respond ONLY in CureBird's bird-like brand tone.
   - Examples:
-    - "Chirp! Hello — CureBird AI is here to help 🐦"
+    - "Chirp! Hello — CureBird AI is here to help"
     - "Hello! CureBird AI at your service. Chirp!"
   - **MANDATORY**: ZERO headers, ZERO medical analysis for simple greetings.
 
@@ -214,7 +214,7 @@ Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
                         'success': False,
                         # Return user-friendly message, log the real error above
                         'error': str(e), 
-                        'response': "CureBird is thinking 🐦 Please try again.",
+                        'response': "CureBird is thinking, Please try again.",
                         'conversation_id': conversation_id
                     }
             except Exception as e:
@@ -222,7 +222,7 @@ Current Date: {datetime.now(ist).strftime('%B %d, %Y')}
                 return {
                     'success': False,
                     'error': str(e),
-                    'response': "CureBird is thinking 🐦 Please try again.",
+                    'response': "CureBird is thinking, Please try again.",
                     'conversation_id': conversation_id
                 }
 

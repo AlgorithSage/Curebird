@@ -11,7 +11,7 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 Curebird Cloud Run Deployment${NC}"
+echo -e "${BLUE} Curebird Cloud Run Deployment${NC}"
 echo "=================================="
 
 # Configuration
@@ -26,30 +26,30 @@ TIMEOUT=300
 
 # Check if gcloud is installed
 if ! command -v gcloud &> /dev/null; then
-    echo -e "${RED}❌ Google Cloud SDK not found. Please install it first:${NC}"
+    echo -e "${RED} Google Cloud SDK not found. Please install it first:${NC}"
     echo "   https://cloud.google.com/sdk/docs/install"
     exit 1
 fi
 
 # Check if user is authenticated
-echo -e "${BLUE}📋 Checking authentication...${NC}"
+echo -e "${BLUE} Checking authentication...${NC}"
 if ! gcloud auth list --filter=status:ACTIVE --format="value(account)" | grep -q .; then
-    echo -e "${RED}❌ Not authenticated. Running 'gcloud auth login'...${NC}"
+    echo -e "${RED} Not authenticated. Running 'gcloud auth login'...${NC}"
     gcloud auth login
 fi
 
 # Set project
-echo -e "${BLUE}📋 Setting project to ${PROJECT_ID}...${NC}"
+echo -e "${BLUE} Setting project to ${PROJECT_ID}...${NC}"
 gcloud config set project $PROJECT_ID
 
 # Enable required APIs
-echo -e "${BLUE}🔧 Enabling required APIs...${NC}"
+echo -e "${BLUE} Enabling required APIs...${NC}"
 gcloud services enable cloudbuild.googleapis.com
 gcloud services enable run.googleapis.com
 gcloud services enable artifactregistry.googleapis.com
 
 # Build and deploy
-echo -e "${BLUE}🏗️  Building and deploying to Cloud Run...${NC}"
+echo -e "${BLUE} Building and deploying to Cloud Run...${NC}"
 gcloud run deploy $SERVICE_NAME \
   --source . \
   --region $REGION \
@@ -65,12 +65,12 @@ gcloud run deploy $SERVICE_NAME \
 SERVICE_URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --format 'value(status.url)')
 
 echo ""
-echo -e "${GREEN}✅ Deployment successful!${NC}"
+echo -e "${GREEN} Deployment successful!${NC}"
 echo ""
-echo -e "${GREEN}🌐 Your backend is now live at:${NC}"
+echo -e "${GREEN} Your backend is now live at:${NC}"
 echo -e "${BLUE}   $SERVICE_URL${NC}"
 echo ""
-echo -e "${BLUE}📝 Next steps:${NC}"
+echo -e "${BLUE} Next steps:${NC}"
 echo "   1. Set environment variables in Cloud Run console:"
 echo "      - GROQ_API_KEY"
 echo "      - GEMINI_API_KEY"
@@ -83,4 +83,4 @@ echo ""
 echo "   3. Test your API:"
 echo "      curl $SERVICE_URL/api/disease-trends"
 echo ""
-echo -e "${GREEN}🎉 Deployment complete!${NC}"
+echo -e "${GREEN} Deployment complete!${NC}"
