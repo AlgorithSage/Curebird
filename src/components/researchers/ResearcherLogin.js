@@ -196,23 +196,23 @@ export default function ResearcherLogin() {
                     {/* Animated Gradient Border Glow */}
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl opacity-75 blur transition duration-1000 group-hover:duration-200 animate-pulse-slow"></div>
 
-                    <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl overflow-hidden">
+                    <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 p-6 rounded-2xl shadow-2xl overflow-hidden">
                         
-                        <div className="text-center mb-8">
-                            <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-slate-900 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.3)] mb-6 p-4 relative group">
+                        <div className="text-center mb-5">
+                            <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-slate-900 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.3)] mb-3 p-3 relative group">
                                 <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
-                                <Microscope size={40} className="text-amber-500" />
+                                <Microscope size={32} className="text-amber-500" />
                             </div>
-                            <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
+                            <h1 className="text-2xl font-black text-white mb-1 tracking-tight">
                                 Researcher <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Portal</span>
                             </h1>
-                            <p className="text-slate-400 font-medium">Secure access for authorized personnel only.</p>
+                            <p className="text-slate-400 font-medium text-sm">Secure access for authorized personnel only.</p>
                         </div>
 
                         <div id="researcher-recaptcha-container"></div>
 
                         {/* Method Switcher */}
-                        <div className="flex bg-black/40 p-1 rounded-lg mb-6 border border-white/10">
+                        <div className="flex bg-black/40 p-1 rounded-lg mb-4 border border-white/10">
                             <button
                                 onClick={() => setLoginMethod('email')}
                                 className={`flex-1 py-2 rounded-md text-sm font-bold transition-all ${loginMethod === 'email' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
@@ -228,7 +228,7 @@ export default function ResearcherLogin() {
                         </div>
 
                         {loginMethod === 'email' ? (
-                            <form onSubmit={handleEmailLogin} className="space-y-6">
+                            <form onSubmit={handleEmailLogin} className="space-y-4">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Email Access ID</label>
                                     <input
@@ -247,7 +247,7 @@ export default function ResearcherLogin() {
                                         type="password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-medium"
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-medium"
                                         placeholder="••••••••"
                                         required
                                     />
@@ -271,7 +271,7 @@ export default function ResearcherLogin() {
                                 </button>
                             </form>
                         ) : (
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 {!isOtpSent ? (
                                     <form onSubmit={handleSendOtp} className="space-y-4">
                                         <div className="space-y-2">
@@ -347,7 +347,7 @@ export default function ResearcherLogin() {
                             Continue with Google
                         </button>
 
-                        <div className="mt-8 pt-6 border-t border-slate-800 text-center">
+                        <div className="mt-4 pt-4 border-t border-slate-800 text-center">
                             <p className="text-xs text-slate-500 flex items-center justify-center gap-1">
                                 <Lock size={12} /> Encrypted Session • HIPAA Compliant
                             </p>
