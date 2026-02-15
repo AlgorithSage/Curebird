@@ -40,7 +40,7 @@ const InsightCard = ({ insight }) => (
 
 // Reverted StatCard to use standard Global `glass-card` theme with optimized spacing
 // StatCard with Semantic Tinting + Amber Base
-const StatCard = ({ label, value, sub, icon: Icon, colorClass, accentColor = 'amber' }) => {
+const StatCard = ({ label, value, sub, icon: Icon, colorClass, accentColor = 'amber', ...props }) => {
     // Dynamic color maps for subtle tints
     const borderMap = {
         emerald: 'border-emerald-500/20 group-hover:border-emerald-500/40',
@@ -57,6 +57,7 @@ const StatCard = ({ label, value, sub, icon: Icon, colorClass, accentColor = 'am
 
     return (
         <motion.div
+            {...props}
             whileHover={{ y: -5 }}
             className={`relative rounded-2xl p-6 flex flex-col justify-between min-h-[11rem] group overflow-hidden border transition-colors duration-300 bg-gradient-to-br from-[#1a1c10] to-[#020617] animated-border ${borderMap[accentColor] || borderMap.amber}`}
         >
@@ -358,21 +359,13 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ margin: "-50px", once: true }}
+                viewport={{ once: true }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             >
-                <motion.div variants={staggerScale}>
-                    <StatCard label="Total Patients" value={totalPatients} sub="+12%" icon={Users} accentColor="emerald" />
-                </motion.div>
-                <motion.div variants={staggerScale}>
-                    <StatCard label="Avg. Health Score" value={`${healthScore}%`} sub={healthScore > 80 ? 'Good' : 'Review'} icon={Activity} accentColor="emerald" />
-                </motion.div>
-                <motion.div variants={staggerScale}>
-                    <StatCard label="High Risk Cases" value={riskCount || criticalList.length} sub="Alert" icon={AlertTriangle} accentColor="rose" />
-                </motion.div>
-                <motion.div variants={staggerScale}>
-                    <StatCard label="Avg. Consult" value="18m" sub="~-1m" icon={Clock} accentColor="sky" />
-                </motion.div>
+                <StatCard variants={staggerScale} label="Total Patients" value={totalPatients} sub="+12%" icon={Users} accentColor="emerald" />
+                <StatCard variants={staggerScale} label="Avg. Health Score" value={`${healthScore}%`} sub={healthScore > 80 ? 'Good' : 'Review'} icon={Activity} accentColor="emerald" />
+                <StatCard variants={staggerScale} label="High Risk Cases" value={riskCount || criticalList.length} sub="Alert" icon={AlertTriangle} accentColor="rose" />
+                <StatCard variants={staggerScale} label="Avg. Consult" value="18m" sub="~-1m" icon={Clock} accentColor="sky" />
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
