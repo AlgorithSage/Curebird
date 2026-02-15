@@ -192,22 +192,22 @@ export default function ResearcherLogin() {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="w-full max-w-md relative z-10"
             >
-                <div className="text-center mb-8">
-                    <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-slate-900 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.3)] mb-6 p-4 relative group">
-                        <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
-                        <Microscope size={40} className="text-amber-500" />
-                    </div>
-                    <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
-                        Researcher <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Portal</span>
-                    </h1>
-                    <p className="text-slate-400 font-medium">Secure access for authorized personnel only.</p>
-                </div>
-
                 <div className="relative group">
                     {/* Animated Gradient Border Glow */}
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl opacity-75 blur transition duration-1000 group-hover:duration-200 animate-pulse-slow"></div>
 
                     <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl overflow-hidden">
+                        
+                        <div className="text-center mb-8">
+                            <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-slate-900 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.3)] mb-6 p-4 relative group">
+                                <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
+                                <Microscope size={40} className="text-amber-500" />
+                            </div>
+                            <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
+                                Researcher <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Portal</span>
+                            </h1>
+                            <p className="text-slate-400 font-medium">Secure access for authorized personnel only.</p>
+                        </div>
 
                         <div id="researcher-recaptcha-container"></div>
 
