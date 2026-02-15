@@ -161,10 +161,10 @@ export default function ResearcherLogin() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden text-slate-200 font-sans selection:bg-amber-500/30">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden bg-[#020617] text-slate-200 font-sans selection:bg-amber-500/30">
             {/* Background Effects */}
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-600/5 rounded-full blur-[100px] pointer-events-none"></div>
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
