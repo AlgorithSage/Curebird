@@ -5,6 +5,26 @@ import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import { Microscope, Loader2, ArrowRight, ShieldCheck, Lock, Phone } from '../Icons';
 import { motion } from 'framer-motion';
+// --- Video Background Component (Mobile Optimized) ---
+const VideoBackground = () => (
+    <div className="fixed inset-0 overflow-hidden z-0">
+        {/* Desktop Video - Hidden on mobile, visible on md+ */}
+        <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover opacity-60 hidden md:block"
+        >
+            <source src="/medical-bg.mp4" type="video/mp4" />
+        </video>
+
+        {/* Mobile Gradient - Visible on mobile, hidden on md+ */}
+        <div className="w-full h-full bg-gradient-to-br from-slate-900 via-stone-900 to-amber-950 opacity-80 block md:hidden" />
+
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+    </div>
+);
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -161,14 +181,15 @@ export default function ResearcherLogin() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden bg-[#020617] text-slate-200 font-sans selection:bg-amber-500/30">
-            {/* Background Effects */}
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none"></div>
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-600/5 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden bg-slate-950 text-slate-200 font-sans selection:bg-amber-500/30">
+            {/* Background Animation (Neurons) */}
+            <VideoBackground />
 
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                // ... rest of motion div
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
                 className="w-full max-w-md relative z-10"
             >
                 <div className="text-center mb-8">
