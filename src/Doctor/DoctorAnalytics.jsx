@@ -89,6 +89,40 @@ const StatCard = ({ label, value, sub, icon: Icon, colorClass, accentColor = 'am
 
 const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    
+    // Animation Logic (Replicating Patient Portal)
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    React.useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: isMobile ? 0.1 : 0.3,
+                delayChildren: isMobile ? 0.1 : 0.4
+            }
+        }
+    };
+
+    const staggerScale = {
+        hidden: { opacity: 0, scale: 0.8, y: 50 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                damping: 15,
+                stiffness: 100
+            }
+        }
+    };
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [selectedReport, setSelectedReport] = useState(null);
     const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
@@ -319,13 +353,27 @@ const DoctorAnalytics = ({ onNavigateToPatient, onNavigate, patients = [] }) => 
                 onAnalysisComplete={handleAnalysisComplete}
             />
 
-            {/* KPI Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard label="Total Patients" value={totalPatients} sub="+12%" icon={Users} accentColor="emerald" />
-                <StatCard label="Avg. Health Score" value={`${healthScore}%`} sub={healthScore > 80 ? 'Good' : 'Review'} icon={Activity} accentColor="emerald" />
-                <StatCard label="High Risk Cases" value={riskCount || criticalList.length} sub="Alert" icon={AlertTriangle} accentColor="rose" />
-                <StatCard label="Avg. Consult" value="18m" sub="~-1m" icon={Clock} accentColor="sky" />
-            </div>
+            {/* KPI Grid - Animated Pop-in */}
+            <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ margin: "-50px", once: true }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+                <motion.div variants={staggerScale}>
+                    <StatCard label="Total Patients" value={totalPatients} sub="+12%" icon={Users} accentColor="emerald" />
+                </motion.div>
+                <motion.div variants={staggerScale}>
+                    <StatCard label="Avg. Health Score" value={`${healthScore}%`} sub={healthScore > 80 ? 'Good' : 'Review'} icon={Activity} accentColor="emerald" />
+                </motion.div>
+                <motion.div variants={staggerScale}>
+                    <StatCard label="High Risk Cases" value={riskCount || criticalList.length} sub="Alert" icon={AlertTriangle} accentColor="rose" />
+                </motion.div>
+                <motion.div variants={staggerScale}>
+                    <StatCard label="Avg. Consult" value="18m" sub="~-1m" icon={Clock} accentColor="sky" />
+                </motion.div>
+            </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
