@@ -310,7 +310,7 @@ export default function DoctorAuth({ initialUser }) {
                 initial={{ scale: 0.9, y: 20, opacity: 0 }}
                 animate={{ scale: 1, y: 0, opacity: 1 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="w-full max-w-[500px] relative group z-10"
+                className="w-full max-w-[480px] relative group z-10"
             >
                 {/* 1. DEEP AMBER HALO (The large diffuse glow) */}
                 <div className="absolute -inset-4 bg-amber-600/40 rounded-[3rem] blur-3xl opacity-100 transition duration-1000 group-hover:bg-amber-600/50"></div>
@@ -319,7 +319,7 @@ export default function DoctorAuth({ initialUser }) {
                 <div className="absolute -inset-[1px] bg-gradient-to-b from-amber-400 via-orange-500 to-amber-900 rounded-3xl opacity-100 blur-sm"></div>
 
                 {/* 3. GLASS CARD CONTAINER */}
-                <div className="relative bg-[#050505]/80 backdrop-blur-xl border border-amber-500/40 p-10 rounded-3xl shadow-2xl overflow-hidden">
+                <div className="relative bg-[#050505]/80 backdrop-blur-xl border border-amber-500/40 p-8 rounded-3xl shadow-2xl overflow-hidden">
                     
                     {/* Top Ambient Light (Orange tint from top) */}
                     <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-amber-600/20 to-transparent pointer-events-none"></div>
@@ -334,41 +334,41 @@ export default function DoctorAuth({ initialUser }) {
                     </button>
 
                         {/* Logo & Header */}
-                        <div className="text-center mb-8">
-                            <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-slate-900 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-5 p-4 relative group">
+                        <div className="text-center mb-5">
+                            <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-slate-900 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-4 p-3 relative group">
                                 <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
                                 <img src="/assets/curebird_logo_gold.png" alt="Logo" className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
                             </div>
-                            <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
+                            <h1 className="text-2xl font-black text-white mb-1 tracking-tight">
                                 {authStep === 'login' ? 'Doctor Portal' : 'Doctor Profile'}
                             </h1>
-                            <p className="text-slate-400 text-base font-medium">
+                            <p className="text-slate-400 text-sm font-medium">
                                 {authStep === 'login' ? 'Secure access to clinical records.' : 'Set up your professional identity.'}
                             </p>
                         </div>
 
                         {/* --- STEP 1: LOGIN --- */}
                         {authStep === 'login' && (
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 
                                 {/* TAB SWITCHER */}
-                                <div className="flex bg-black/40 p-1 rounded-xl mb-4 border border-white/10">
+                                <div className="flex bg-black/40 p-1 rounded-xl mb-3 border border-white/10">
                                     <button
                                         onClick={() => setLoginMethod('email')}
-                                        className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${loginMethod === 'email' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-900 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                        className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${loginMethod === 'email' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-900 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
                                     >
                                         Email ID
                                     </button>
                                     <button
                                         onClick={() => setLoginMethod('phone')}
-                                        className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${loginMethod === 'phone' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-900 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                        className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${loginMethod === 'phone' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-900 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
                                     >
                                         Phone OTP
                                     </button>
                                 </div>
 
                                 {loginMethod === 'email' && (
-                                    <form onSubmit={handleEmailLogin} className="space-y-5">
+                                    <form onSubmit={handleEmailLogin} className="space-y-4">
                                         <div className="space-y-1">
                                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Email Access ID</label>
                                             <input
@@ -376,7 +376,7 @@ export default function DoctorAuth({ initialUser }) {
                                                 value={loginEmail}
                                                 onChange={(e) => setLoginEmail(e.target.value)}
                                                 placeholder="doctor@hospital.org"
-                                                className="w-full bg-[#0a0a0a] border border-slate-800 rounded-xl px-4 py-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-bold text-lg"
+                                                className="w-full bg-[#0a0a0a] border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-bold text-base"
                                             />
                                         </div>
                                         <div className="space-y-1">
@@ -386,13 +386,13 @@ export default function DoctorAuth({ initialUser }) {
                                                 value={loginPassword}
                                                 onChange={(e) => setLoginPassword(e.target.value)}
                                                 placeholder="••••••••"
-                                                className="w-full bg-[#0a0a0a] border border-slate-800 rounded-xl px-4 py-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-bold text-lg"
+                                                className="w-full bg-[#0a0a0a] border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-bold text-base"
                                             />
                                         </div>
                                         <button
                                             type="submit"
                                             disabled={loading}
-                                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border border-white/10 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 group disabled:opacity-50 shadow-lg shadow-amber-500/20 text-base"
+                                            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border border-white/10 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 group disabled:opacity-50 shadow-lg shadow-amber-500/20 text-base"
                                         >
                                             {loading ? <Loader2 size={20} className="animate-spin" /> : <>Authenticate <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></>}
                                         </button>
@@ -400,10 +400,10 @@ export default function DoctorAuth({ initialUser }) {
                                 )}
 
                                 {loginMethod === 'phone' && (
-                                    <div className="space-y-5">
+                                    <div className="space-y-4">
                                         <div id="doctor-recaptcha-container"></div>
                                         {!isOtpSent ? (
-                                            <form onSubmit={handleSendOtp} className="space-y-5">
+                                            <form onSubmit={handleSendOtp} className="space-y-4">
                                                 <div className="space-y-1">
                                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mobile Number</label>
                                                     <div className="group relative">
@@ -417,25 +417,26 @@ export default function DoctorAuth({ initialUser }) {
                                                                 setPhoneNumber(val);
                                                             }}
                                                             placeholder="+91 99999 99999"
-                                                            className="w-full bg-[#0a0a0a] border border-slate-800 rounded-xl px-4 py-4 pl-12 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-bold text-lg"
+                                                            className="w-full bg-[#0a0a0a] border border-slate-800 rounded-xl px-4 py-3 pl-12 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all font-bold text-base"
                                                         />
                                                     </div>
                                                 </div>
-                                                <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border border-white/10 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 group disabled:opacity-50 shadow-lg shadow-amber-500/20 text-base">
+                                                <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border border-white/10 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 group disabled:opacity-50 shadow-lg shadow-amber-500/20 text-base"
+                                                >
                                                     {loading ? <Loader2 size={20} className="animate-spin" /> : <>Get OTP <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></>}
                                                 </button>
                                             </form>
                                         ) : (
-                                            <form onSubmit={handleVerifyOtp} className="space-y-5">
+                                            <form onSubmit={handleVerifyOtp} className="space-y-4">
                                                 <div className="text-center mb-2 p-3 bg-amber-500/10 rounded-xl border border-amber-500/20">
                                                     <p className="text-slate-300 text-sm">Code sent to <span className="text-amber-400 font-mono font-bold">{phoneNumber}</span></p>
                                                     <button type="button" onClick={() => setIsOtpSent(false)} className="text-xs text-slate-500 hover:text-white mt-1 underline decoration-dashed">Change Number</button>
                                                 </div>
                                                 <input
                                                     type="text" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="000000" maxLength={6}
-                                                    className="w-full bg-[#0a0a0a] border border-slate-800 rounded-xl px-4 py-4 text-center text-3xl tracking-[0.5em] text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 font-mono font-bold"
+                                                    className="w-full bg-[#0a0a0a] border border-slate-800 rounded-xl px-4 py-3 text-center text-3xl tracking-[0.5em] text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 font-mono font-bold"
                                                 />
-                                                <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-4 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 text-base">
+                                                <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 text-base">
                                                     {loading ? <Loader2 size={20} className="animate-spin" /> : "Verify & Login"}
                                                 </button>
                                             </form>
@@ -443,20 +444,20 @@ export default function DoctorAuth({ initialUser }) {
                                     </div>
                                 )}
 
-                                <div className="relative my-3">
+                                <div className="relative my-2">
                                     <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
                                     <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-black/20 backdrop-blur-md px-3 py-1 text-slate-400 font-bold tracking-wider rounded border border-white/5">Or Continue With</span></div>
                                 </div>
 
                                 <button
                                     onClick={handleGoogleSignIn}
-                                    className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 py-4 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-lg shadow-white/5 border border-slate-200 text-base"
+                                    className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 py-3 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-lg shadow-white/5 border border-slate-200 text-base"
                                 >
                                     <svg className="w-5 h-5" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,36.218,44,30.668,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
                                     <span>Continue with Google</span>
                                 </button>
                                 
-                                <div className="mt-4 pt-4 border-t border-slate-800 text-center">
+                                <div className="mt-3 pt-3 border-t border-slate-800 text-center">
                                     <p className="text-[10px] text-slate-500 flex items-center justify-center gap-1">
                                         <Lock size={10} /> Encrypted Session • HIPAA Compliant
                                     </p>
