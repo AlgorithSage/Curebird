@@ -389,22 +389,23 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
                         </button>
 
                         {/* Researcher Card */}
+                        {/* Researcher Card */}
                         <button
                             onClick={() => window.location.href = '/research/login'}
-                            className="group relative flex items-center p-4 rounded-2xl border border-slate-700/50 bg-slate-800/20 hover:bg-slate-800/60 transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.1)]"
+                            className="group relative flex items-center p-4 rounded-2xl border border-slate-700/50 bg-slate-800/20 hover:bg-slate-800/60 transition-all duration-300 hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(245,158,11,0.1)]"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
 
-                            <div className="h-14 w-14 rounded-full bg-slate-900 border border-slate-700/80 group-hover:border-indigo-500/30 flex items-center justify-center mr-5 relative z-10 shadow-lg group-hover:shadow-indigo-500/20 transition-all">
-                                <Microscope className="text-slate-400 group-hover:text-indigo-400 transition-colors" size={24} />
+                            <div className="h-14 w-14 rounded-full bg-slate-900 border border-slate-700/80 group-hover:border-amber-500/30 flex items-center justify-center mr-5 relative z-10 shadow-lg group-hover:shadow-amber-500/20 transition-all">
+                                <Microscope className="text-slate-400 group-hover:text-amber-400 transition-colors" size={24} />
                             </div>
 
                             <div className="text-left flex-1 relative z-10">
                                 <h3 className="text-lg font-bold text-slate-200 group-hover:text-white transition-colors">Researcher Portal</h3>
-                                <p className="text-xs font-medium text-slate-500 group-hover:text-indigo-500/80 transition-colors">Data & Model Access</p>
+                                <p className="text-xs font-medium text-slate-500 group-hover:text-amber-500/80 transition-colors">Data & Model Access</p>
                             </div>
 
-                            <div className="h-10 w-10 rounded-full bg-slate-900/50 flex items-center justify-center text-slate-500 group-hover:text-indigo-500 group-hover:bg-indigo-500/10 transition-all border border-transparent group-hover:border-indigo-500/20">
+                            <div className="h-10 w-10 rounded-full bg-slate-900/50 flex items-center justify-center text-slate-500 group-hover:text-amber-500 group-hover:bg-amber-500/10 transition-all border border-transparent group-hover:border-amber-500/20">
                                 <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
                             </div>
                         </button>
