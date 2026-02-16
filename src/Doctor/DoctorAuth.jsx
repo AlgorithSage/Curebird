@@ -445,6 +445,13 @@ export default function DoctorAuth({ initialUser }) {
                     </div>
 
             </motion.div>
+
+            {/* Return to Homepage Footer */}
+            <div className="absolute bottom-8 left-0 right-0 text-center z-20">
+                <a href="/" className="text-slate-500 hover:text-white transition-colors text-sm font-medium tracking-wide">
+                    Return to Homepage
+                </a>
+            </div>
         </div>
     );
 }
