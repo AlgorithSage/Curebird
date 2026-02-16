@@ -284,7 +284,7 @@ export default function DoctorAuth({ initialUser }) {
 
     // --- RENDER ---
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-950">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden bg-slate-950">
             <VideoBackground />
 
 
@@ -447,7 +447,7 @@ export default function DoctorAuth({ initialUser }) {
             </motion.div>
 
             {/* Return to Homepage Footer */}
-            <div className="absolute bottom-8 left-0 right-0 text-center z-20">
+            <div className="mt-8 text-center z-20 relative">
                 <a href="/" className="text-slate-500 hover:text-white transition-colors text-sm font-medium tracking-wide">
                     Return to Homepage
                 </a>
