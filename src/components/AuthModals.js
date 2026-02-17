@@ -10,7 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, Stethoscope, Microscope } from './Icons';
+import { X, ShieldAlert, Phone, Loader2, ArrowRight, User, Camera, Mail, Stethoscope, Microscope, Lock } from './Icons';
 import CureBirdLogo from '../curebird_logo.png';
 
 // --- Initialize Providers ---
@@ -607,6 +607,14 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {/* Secure Footer - Added */}
+                <div className={`mt-8 pt-4 border-t flex justify-center items-center transition-colors ${authStep === 'login' ? 'border-amber-500/10' : 'border-white/5'}`}>
+                    <div className={`flex items-center gap-1.5 text-[10px] sm:text-xs font-medium uppercase tracking-widest select-none transition-colors ${authStep === 'login' ? 'text-amber-200/40' : 'text-slate-600'}`}>
+                        <Lock size={12} className="mb-0.5" />
+                        <span>Encrypted Session • HIPAA Compliant</span>
+                    </div>
+                </div>
             </div>
         </ModalWrapper>
     );
