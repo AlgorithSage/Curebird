@@ -610,9 +610,9 @@ const AuthModals = ({ onClose, db, storage, auth }) => {
 
                 {/* Secure Footer - Added */}
                 <div className={`mt-8 pt-4 border-t flex justify-center items-center transition-colors ${authStep === 'login' ? 'border-amber-400/20' : 'border-amber-500/15'}`}>
-                    <div className={`flex items-center gap-1.5 text-[10px] sm:text-xs font-medium uppercase tracking-widest select-none transition-colors ${authStep === 'login' ? 'text-amber-400/80' : 'text-amber-400/70'}`}>
+                    <div className={`flex items-center justify-center gap-1.5 text-[9px] sm:text-[10px] font-medium uppercase tracking-wider select-none text-center transition-colors ${authStep === 'login' ? 'text-amber-400/80' : 'text-amber-400/70'}`}>
                         <Lock size={12} className="mb-0.5" />
-                        <span>Encrypted Session • HIPAA Compliant</span>
+                        <span>Encrypted Session • HIPAA • DPDPA • DISHA Compliant</span>
                     </div>
                 </div>
             </div>
