@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { collection, onSnapshot, doc, deleteDoc, query, orderBy, getDocs, limit } from 'firebase/firestore';
+import { collection, onSnapshot, doc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BarChart2, Hash, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, X, ChevronUp, Bell, Activity, Crown, Volume2, VolumeX, Play, Pause, Maximize, ScanEye, TrendingUp, Brain } from './Icons';
-import { AnalysisService } from '../services/AnalysisService';
+import { BarChart2, Pill, Calendar, ShieldCheck, UserPlus, FileText, Stethoscope, Hospital, HeartPulse, ChevronUp, Activity, Crown, Volume2, VolumeX, Play, Pause, Maximize, ScanEye, TrendingUp, Brain } from './Icons';
+// import { AnalysisService } from '../services/AnalysisService';
 
 import Header from './Header';
 import StatCard from './StatCard';
 import RecordsChart from './RecordsChart';
 import RecordCard from './RecordCard';
-import { RecordFormModal, ShareModal, DeleteConfirmModal } from './Modals';
+import { ShareModal, DeleteConfirmModal } from './Modals';
 import { SkeletonDashboard, SkeletonCard } from './SkeletonLoaders';
 import DashboardOverview from './DashboardOverview';
 
@@ -63,15 +63,6 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
         }
     };
 
-    const blurReveal = {
-        hidden: { opacity: 0, filter: isMobile ? "blur(0px)" : "blur(20px)", scale: 0.95 },
-        visible: {
-            opacity: 1,
-            filter: "blur(0px)",
-            scale: 1,
-            transition: { duration: isMobile ? 0.5 : 1, ease: "easeOut" }
-        }
-    };
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -80,9 +71,6 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     const [activeTypeFilter, setActiveTypeFilter] = useState(null); // Default to null (collapsed)
 
     // Phase 8: Health Score & Alerts
-    const [healthScore, setHealthScore] = useState({ score: 100, grade: 'A', deductions: [] });
-    const [alerts, setAlerts] = useState([]);
-    const [isAlertOpen, setIsAlertOpen] = useState(false);
 
     // Video State
     const [isMuted, setIsMuted] = useState(true);
@@ -111,10 +99,6 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
 
     const dashboardRef = useRef(null);
     const medicalHistoryRef = useRef(null); // Ref for scrolling to history
-
-    const scrollToDashboard = () => {
-        dashboardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
 
     const userId = user ? user.uid : null;
 
@@ -181,6 +165,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     }, [recordsCollectionRef]);
 
     // Phase 8: Fetch Metrics & Run Analysis
+    /* 
     useEffect(() => {
         if (!userId) return;
 
@@ -191,7 +176,6 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                 const dSnap = await getDocs(diseasesRef);
                 const diseases = dSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-                // 2. Fetch Recent Metrics for each disease
                 // 2. Fetch Recent Metrics for each disease (PARALLEL)
                 const metricsPromises = diseases.map(d => {
                     const mRef = collection(db, 'users', userId, 'diseases', d.id, 'metrics');
@@ -202,21 +186,19 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                 });
 
                 const metricsArrays = await Promise.all(metricsPromises);
-                const allMetrics = metricsArrays.flat();
+                // const allMetrics = metricsArrays.flat(); // Kept for future use if AnalysisService is restored
 
                 // 3. Run Analysis
-                const result = AnalysisService.calculateHealthScore(allMetrics, diseases);
-                const newAlerts = AnalysisService.generateAlerts(allMetrics);
-
-                setHealthScore(result);
-                setAlerts(newAlerts);
+                // const result = AnalysisService.calculateHealthScore(allMetrics, diseases);
+                // const newAlerts = AnalysisService.generateAlerts(allMetrics);
             } catch (err) {
                 console.error("Analysis Failed:", err);
             }
         };
 
         runAnalysis();
-    }, [userId, db]);
+    }, [userId, db]); 
+    */
 
     const handleDeleteRecord = async () => {
         if (!recordToDelete || !userId) return;
@@ -245,7 +227,6 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     }, [records, capitalize]);
 
     const lastVisit = records.length > 0 ? formatDate(records[0].date) : 'N/A';
-    const totalPrescriptions = records.filter(r => r.type === 'prescription').length;
 
     // Filter records based on selection
     const displayedRecords = useMemo(() => {
@@ -293,7 +274,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                     onLoginClick={onLoginClick}
                     onToggleSidebar={onToggleSidebar}
                     onNavigate={onNavigate}
-                    alerts={alerts}
+                    // alerts={alerts} /* Removed unused alerts */
                 />
             </div>
 
@@ -346,8 +327,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     </h1>
 
                                     <p className="text-lg sm:text-xl text-slate-400 max-w-2xl leading-relaxed mt-4 sm:mt-0 relative z-10">
-                                        Revolutionizing and Digitizing Healthcare with <span className="text-amber-400 font-semibold">Clinical Precision</span>.
-                                        Secure file sharing, event management, and advanced protocol technology for your health.
+                                        Revolutionizing and Digitizing Healthcare with an <span className="text-amber-400 font-semibold">AI-Powered Ecosystem</span>. Seamlessly integrating intelligent health tracking, proactive insights, and a personalized health portfolio tailored just for you.
                                     </p>
 
                                     <div className="mt-8 sm:mt-10 flex flex-row flex-wrap gap-3 sm:gap-4">
