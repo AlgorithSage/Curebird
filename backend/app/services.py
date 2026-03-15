@@ -279,7 +279,7 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
                     "content": [
                         {
                             "type": "text", 
-                            "text": """Analyze this medical image with high precision.
+                            "text": """You are a Senior Chief Medical Officer and Document Digitization Expert. Analyze this medical image with extreme attention to detail and high precision.
                             Determine if it is a "prescription" or a "lab_report".
                             
                             Extract the following data into strict JSON format:
@@ -295,10 +295,16 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
                                 "test_results": [
                                     {"test_name": "Name (e.g. HbA1c)", "result_value": "Value", "unit": "Unit", "reference_range": "Range", "status": "Normal/High/Low"}
                                 ],
-                                "digital_copy": "Markdown text of document"
+                                "digital_copy": "A clean, professional Markdown representation of the ENTIRE document text as if it were typed out. Include ALL of the following: hospital/clinic name and address as a header, doctor name and qualifications, patient name, age, sex, date, all diagnoses and clinical findings, ALL medications with dosages in a formatted list or table, ALL test results in a markdown table with columns (Test Name | Result | Unit | Reference Range | Status), any remarks, follow-up instructions, and doctor signature line. Reproduce the FULL content of the document — do NOT summarize."
                             }
-                            If it is likely NOT a medical image, set is_medical: false.
-                            If date is not found, use null."""
+                            
+                            CRITICAL RULES:
+                            1. The digital_copy MUST be a complete reproduction of the document, NOT a summary. Include every detail visible in the image.
+                            2. Use proper Markdown formatting: headers (#, ##), bold (**text**), tables, and lists.
+                            3. For lab reports, ALWAYS format test results as a Markdown table in the digital_copy.
+                            4. If it is likely NOT a medical image, set is_medical: false.
+                            5. If date is not found, use null.
+                            6. Return ONLY valid JSON."""
                         },
                         {
                             "type": "image_url",
@@ -310,7 +316,7 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
                 }
             ],
             temperature=0.1,
-            max_tokens=2048,
+            max_tokens=4096,
             response_format={"type": "json_object"}
         )
         
