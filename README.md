@@ -1,164 +1,174 @@
-# Curebird 
-
-**Curebird** is an advanced digital health platform designed to bridge the gap between patients and healthcare providers. It leverages cutting-edge **Generative AI** and **Real-time Data Visualization** to provide actionable health insights, digitize medical records, and monitor epidemiological trends across India.
-
----
-
-## Project Architecture & Organization
-
-### 1. CureStat 
-**Purpose**: A comprehensive public health dashboard that visualizes epidemiological data to help users stay informed about disease outbreaks and environmental risks.
-
-*   **National Health Indices**: Displays critical health metrics (Diabetes, Cardiac, Respiratory, Renal, Mental) derived from national surveys (ICMR, IDSP), giving a quick snapshot of the country's health burden.
-*   **Regional Impact (Bar Chart)**: Visualizes the top affected states for current outbreaks, allowing users to identify high-risk zones.
-*   **Disease Distribution (Pie Chart)**: Break down of reported cases by disease type, helping to identify dominant health threats.
-*   **Live Heatmap**: An interactive Google Maps layer showing the density of disease clusters across the Indian subcontinent.
-*   **Environmental Health**: Tracks Air Quality Index (AQI) and other environmental factors that directly correlate with respiratory and cardiovascular health.
-*   **Resource Disparity**: Analyzes the gap between urban and rural healthcare infrastructure (bed density, doctor availability).
-
-### 2. Cure Analyzer 
-**Purpose**: A tool to digitize and interpret complex medical documents (prescriptions, lab reports).
-
-**The Two-Step AI Pipeline**:
-
-1.  **Step 1: Visual Language Model (VLM)**
-    *   **Model**: `meta-llama/llama-4-scout-17b-16e-instruct` (via Groq)
-    *   **Function**: Performs simultaneous OCR and Structure Extraction to identify medications, dosages, and clinical conditions in strict JSON format.
-2.  **Step 2: Intelligent Summarization**
-    *   The raw JSON data is fed into a **Llama 3.1 8B** model via Groq.
-    *   A specialized System Prompt acts as a "Medical Interpreter," translating technical jargon into a customized, empathetic summary for the patient (e.g., explaining that "Hypertension" means "High Blood Pressure").
-
-### 3. Cure Tracker 
-**Purpose**: A longitudinal health tracking system that visualizes disease progression markers over time.
-
-*   **Pathology Trend Analysis**: Upload multiple lab reports (dates apart) to automatically plot graphs for key biomarkers (e.g., HbA1c, Thyroid T3/T4, Lipid Profile).
-*   **Disease-Specific Modules**:
-    *   **Diabetes Tracker**: Plots Fasting/PP Glucose and HbA1c trends.
-    *   **Thyroid Tracker**: Monitors TSH, T3, and T4 fluctuations.
-    *   **Liver/Kidney Panels**: Tracks liver enzymes and creatinine levels for chronic patients.
-*   **Clinical Efficacy**: Helps doctors visualize whether a current treatment plan is working by showing the 'slope' of improvement or decline.
-
-### 4. Cure AI 
-**Purpose**: An intelligent, context-aware health assistant.
-
-*   **Context Injection**: The AI is fed real-time disease trend data (cached from CureStat) via a System Prompt. This allows it to give advice relevant to current outbreaks (e.g., advising on Dengue prevention during monsoon season if cases are high).
-*   **Hybrid Model Routing**:
-    *   **Llama 3.1 8B**: Handles casual greetings and simple interactions for low latency.
-    *   **Llama 3.3 70B**: Handles complex clinical queries to ensure high accuracy and reasoning capabilities.
+<p align="center">
+  <h1 align="center">🐦 Curebird</h1>
+  <p align="center"><strong>AI-Powered Digital Health Platform for India</strong></p>
+  <p align="center">
+    Bridging the gap between patients, doctors, and public health data — using Generative AI, real-time analytics, and a serverless cloud architecture.
+  </p>
+</p>
 
 ---
 
-## Key Features
+## 🧠 The Main Idea
 
-### For Patients (Active Module)
-*   **Medical Portfolio**: A central hub for health stats (BP, BMI, Heart Rate), upcoming appointments, and active prescriptions.
-*   **Digital Health Locker**: Securely upload, store, and categorize medical records (Lab Reports, Prescriptions, Imaging).
-*   **Cure Analyzer**: Instantly convert physical reports into digital, understandable summaries using the dual-core AI pipeline.
-*   **Cure AI Chatbot**: 24/7 access to a health assistant that knows the current disease landscape of India.
-*   **Medication Tracker**: Visual tracking of active medicines with dosage and frequency details extracted from your records.
-*   **Doctor Discovery**: Browse specialist profiles and book appointments.
+**Curebird** is an advanced digital health ecosystem that combines **Generative AI**, **real-time epidemiological data visualization**, and **cloud-native infrastructure** to make healthcare more accessible, understandable, and data-driven across India.
 
-### For Doctors (Active Module - Beta)
-*   **Premium Clinical Workspace**: A sophisticated, glassmorphic dashboard designed for high-performance clinical workflows.
-*   **Secure Authentication**: Role-based access via Email/Google Sign-In with strict Firestore security rules.
-*   **Patient Management**: 
-    *   **Live Roster**: Real-time view of assigned patients with status indicators.
-    *   **Digital Workspace**: Unified view for vitals monitoring, medical history, and clinical notes.
-*   **Telehealth Suite**:
-    *   **Smart Scheduler**: "Time Command" modal for rapid availability management.
-    *   **Live Consultation**: Integrated video room entry and queue management.
-    *   **Chat System**: Secure, real-time messaging with patients.
-*   **Clinical Tools**:
-    *   **Quick Actions**: Rapidly issue Prescriptions, Lab Requests, and Emergency Alerts.
-    *   **Vitals Monitoring**: Track patient health trends with interactive charts.
-*   **Dual Access Navigation**: Seamlessly switch between tools via the Sidebar or the Quick Access Header.
+At its core, Curebird aims to:
+
+- **Empower patients** with AI tools that translate complex medical jargon into simple, actionable insights.
+- **Equip doctors** with a modern clinical workspace for efficient patient management and telehealth.
+- **Inform the public** with live dashboards tracking disease outbreaks, air quality, and healthcare infrastructure gaps.
 
 ---
 
+## 🚨 The Problem We're Solving
 
-## Technology Stack
+India's healthcare system faces several critical challenges:
 
-### Frontend
-*   **Framework**: **React.js** (Create React App)
-*   **Styling**: **Tailwind CSS** + **Framer Motion** (Animations)
-*   **Icons**: **Lucide React**
-*   **Routing**: **React Router v6**
-*   **Hosting**: **Vercel** (Global CDN)
-
-### Backend
-*   **Language**: **Python 3.9+**
-*   **Framework**: **Flask** (REST API)
-*   **AI Engine**: **Groq API** (Llama 3.1 8B/70B, Llama 3.2 Vision)
-*   **Database**: **Google Firebase** (Firestore NoSQL, Auth, Storage)
-*   **OCR**: **Groq VLM** (Primary), **Tesseract** (Fallback)
-*   **Containerization**: **Docker**
-*   **Hosting**: **Google Cloud Run** (Serverless)
+1.  **Medical Literacy Gap** — Patients receive prescriptions and lab reports filled with complex medical terminology they can't understand, leading to confusion, non-compliance, and poor health outcomes.
+2.  **Fragmented Health Records** — Medical documents are scattered across clinics, hospitals, and paper files with no centralized, digital health locker accessible to the patient.
+3.  **Lack of Public Health Awareness** — Epidemiological data (disease outbreaks, AQI, resource distribution) exists in government databases but is not presented in a digestible, real-time format for the public.
+4.  **Urban-Rural Healthcare Disparity** — Significant gaps exist in healthcare infrastructure (bed density, doctor availability) between urban and rural regions, and this disparity is poorly visualized.
+5.  **Limited Access to Specialists** — Booking appointments, consulting doctors remotely, and getting timely health advice remains a friction-heavy process.
 
 ---
 
-## Deployment Infrastructure 
+## ✅ Our Solutions & Services
 
-The project utilizes a modern serverless architecture for high scalability and low maintenance.
+### 1. 📊 CureStat — Public Health Intelligence Dashboard
 
-### 1. Frontend Hosting: **Vercel**
-*   **Platform**: Deployed as a React Single Page Application (SPA).
-*   **Features**:
-    *   Global CDN for sub-second page loads.
-    *   **Vercel Analytics**: Real-time visitor tracking and performance metrics.
-    *   Automatic deployments from GitHub main branch.
+A comprehensive epidemiological dashboard that transforms raw government data into interactive, real-time visualizations.
 
-### 2. Backend Hosting: **Google Cloud Run**
-*   **Platform**: Fully managed serverless container service.
-*   **Configuration**:
-    *   **Auto-scaling**: Scales from 1 to 10 instances based on traffic.
-    *   **Min Instances**: Set to 1 to eliminate cold starts (always active).
-    *   **Memory/CPU**: 1GB RAM / 1 vCPU per instance.
-*   **Benefits**:
-    *   Handles concurrent requests (AI inference) efficiently with Gunicorn workers.
-    *   Integrated logging and monitoring via Google Cloud Console.
+| Feature | Description |
+| :--- | :--- |
+| **National Health Indices** | Displays key health metrics (Diabetes, Cardiac, Respiratory, Renal, Mental) sourced from ICMR, IDSP, and national surveys. |
+| **Regional Outbreak Tracker** | Bar charts showing the top affected states for current outbreaks. |
+| **Disease Distribution** | Pie chart breakdowns of reported cases by disease type. |
+| **Live Heatmap** | An interactive Google Maps layer showing disease cluster density across India. |
+| **Environmental Health** | Real-time Air Quality Index (AQI) via the WAQI API, including cigarette-equivalent exposure and life expectancy impact. |
+| **Resource Disparity Analysis** | Urban vs. Rural healthcare infrastructure comparison (beds, doctors). |
+
+> **Data Sources**: IDSP, NTEP, NCVBDC, ICMR-INDIAB, GBD Study, NMHS Survey, NFHS-5, ORDI, AQLI, and WAQI.
 
 ---
 
-## Storage & Database (Firebase)
+### 2. 🔬 Cure Analyzer — AI Medical Report Interpreter
 
-The project relies on a serverless **Firebase** architecture for security and scalability.
+Digitizes and interprets complex medical documents (prescriptions, lab reports) using a **dual-core AI pipeline**.
 
-### 1. Authentication (`Firebase Auth`)
-*   Handles user sign-up/login via Email/Password and Google OAuth.
-*   Manages Identity Tokens for securing API requests.
+| Step | Model | What It Does |
+| :--- | :--- | :--- |
+| **Phase 1: Extraction** | Llama-4-Scout (VLM via Groq) | Performs OCR + structured extraction — identifies medications, dosages, and conditions in strict JSON format. |
+| **Phase 2: Summarization** | Llama 3.1 8B (via Groq) | Acts as a "Medical Interpreter" — translates technical jargon into an empathetic, patient-friendly summary. |
 
-### 2. Database (`Cloud Firestore`)
-*   **Structure**: NoSQL Document-based.
-*   **Collections**:
-    *   `users/{uid}`: Stores user profile, roles, and health stats.
-    *   `users/{uid}/medical_records`: Stores metadata of uploaded files (file URL, doctor name, date).
-    *   `users/{uid}/appointments`: Tracks booking history.
-
-### 3. File Storage (`Cloud Storage`)
-*   Secure bucket for storing actual medical document files (Images/PDFs).
-*   Files are organized by User ID to enforce privacy and access control.
+> *Example*: The term "Hypertension" is explained as "High Blood Pressure — this means your heart is working harder than normal to pump blood."
 
 ---
 
-## API Setup & Endpoints
+### 3. 🤖 CureAI — Context-Aware Health Assistant
 
-The Flask backend exposes RESTful endpoints for the frontend React application.
+An intelligent chatbot that provides health guidance informed by **real-time disease trends**.
 
-### AI Endpoints
-*   `POST /api/health-assistant/chat`:
-    *   Accepts a message history.
-    *   Routes to **Groq Llama 3** (8B or 70B) based on complexity.
-    *   Returns a context-aware medical response.
-*   `POST /api/analyzer/process`:
-    *   Accepts a file upload (`FormData`).
-    *   Triggers the **Two-Step AI Pipeline** (VLM -> Summary).
-    *   Returns structured JSON (medications, diseases) and a plain-text summary.
+- **Context Injection** — Fed live outbreak data from CureStat, so advice is relevant to current conditions (e.g., dengue prevention during monsoon if cases spike).
+- **Hybrid Model Routing**:
+  - **Llama 3.1 8B** → Fast responses for casual greetings and simple queries.
+  - **Llama 3.3 70B** → Detailed, high-accuracy responses for complex clinical questions.
+- **Dual Persona** — Switches between a friendly "Bird" persona and a professional "Doctor" persona based on query complexity.
 
-### Data Endpoints
-*   `GET /api/disease-trends`:
-    *   Returns the top 10 outbreak trends from the local cache (`disease_data_cache.json`).
-*   `GET /api/resource-distribution`:
-    *   Returns comparative health infrastructure data (Urban vs Rural beds) for visualizations.
+---
 
-### Context Management
-*   `POST /api/health-assistant/clear`: Resets the conversation context for the AI.
+### 4. 🧑‍⚕️ Patient Portal
+
+The default experience for users, focused on accessibility, self-management, and complete health record ownership.
+
+- **Medical Portfolio** — Central hub displaying health stats (BP, BMI, Heart Rate), upcoming appointments, and active prescriptions at a glance.
+
+#### 📂 Medical Record Management
+- **Digital Health Locker** — Upload, store, and categorize medical records (Lab Reports, Prescriptions, Imaging scans) securely in Firebase Cloud Storage.
+- **Smart Categorization** — Records are organized by type (Lab Reports, Prescriptions, Imaging) with metadata tagging (doctor name, date, category).
+- **Secure Cloud Storage** — Files are stored in a Firebase Storage bucket organized by User ID, ensuring strict privacy and access control. Firestore stores the download URL + metadata for instant retrieval.
+
+#### 📅 Appointment Tracking
+- **Doctor Discovery** — Browse specialist profiles, view availability, and select preferred consultation slots.
+- **Booking System** — Schedule appointments directly through the platform, with booking data persisted to Firestore (`users/{uid}/appointments`).
+- **Appointment History** — Full tracking of past and upcoming consultations, so patients never lose sight of their care timeline.
+
+#### 💊 Medication Tracking (CureTracker)
+- **Active Medication Dashboard** — Visual tracking of all active medicines with dosage, frequency, and duration details.
+- **AI-Extracted Data** — Medication details are automatically extracted from uploaded prescriptions via the Cure Analyzer pipeline — no manual entry required.
+- **Adherence Monitoring** — Helps patients stay on top of their treatment plans with clear, organized medication schedules.
+
+---
+
+### 5. 👨‍⚕️ Doctor Portal (Beta)
+
+A premium, role-gated clinical workspace for healthcare professionals.
+
+- **Secure Access** — Requires Firebase Authentication + verified `doctor` role in Firestore.
+- **Patient Management** — Live roster of assigned patients with status indicators and a unified workspace for vitals, history, and notes.
+- **Telehealth Suite** — Smart scheduler, live video consultation entry, queue management, and real-time chat.
+- **Clinical Tools** — Quick-action modals for prescriptions, lab requests, and emergency alerts.
+- **Glassmorphic UI** — A modern, premium dashboard design using `backdrop-blur` and semi-transparent layers.
+
+---
+
+## 🏗️ Tech Stack
+
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Frontend** | React 19, Tailwind CSS, Framer Motion | Component-based SPA with premium animations |
+| **Routing** | React Router 7 | Client-side navigation |
+| **Backend** | Flask (Python), REST API | Lightweight AI orchestration layer |
+| **AI Engine** | Groq API (Llama 3 / Llama 4) | Ultra-low latency LLM inference (text + vision) |
+| **Database** | Firebase Cloud Firestore | NoSQL document store for users, records, appointments |
+| **Auth** | Firebase Authentication | Google OAuth & Email/Password sign-in |
+| **File Storage** | Firebase Cloud Storage | Secure medical document uploads (PDF/Images) |
+| **Email** | EmailJS | Serverless contact form submissions |
+| **Frontend Hosting** | Vercel | Global CDN, analytics, auto-deploy from GitHub |
+| **Backend Hosting** | Google Cloud Run | Auto-scaling serverless containers (1–10 instances) |
+| **Maps** | Google Maps JS API | Disease heatmap visualization |
+| **Air Quality** | WAQI API | Real-time AQI data feed |
+
+---
+
+## 📡 API Endpoints
+
+| Endpoint | Method | Description |
+| :--- | :--- | :--- |
+| `/api/health-assistant/chat` | `POST` | AI health assistant — routes to Llama 3 (8B or 70B) based on complexity |
+| `/api/analyzer/process` | `POST` | Dual-phase medical report analysis (VLM extraction → summary) |
+| `/api/disease-trends` | `GET` | Top 10 outbreak trends from cached epidemiological data |
+| `/api/resource-distribution` | `GET` | Urban vs. Rural healthcare infrastructure comparison |
+| `/api/health-assistant/clear` | `POST` | Resets AI conversation context |
+
+---
+
+## 🚀 Deployment Architecture
+
+```
+┌─────────────────┐        ┌──────────────────────┐
+│   Vercel (CDN)  │        │  Google Cloud Run     │
+│   React SPA     │───────▶│  Flask + Gunicorn     │
+│   Frontend      │  REST  │  AI Orchestration     │
+└─────────────────┘        └──────────┬───────────┘
+                                      │
+                           ┌──────────▼───────────┐
+                           │     Groq API          │
+                           │  Llama 3 / Llama 4    │
+                           │  (Text + Vision)      │
+                           └──────────────────────┘
+
+        ┌──────────────────────────────────────┐
+        │           Firebase (BaaS)            │
+        │  Auth  │  Firestore  │  Storage      │
+        └──────────────────────────────────────┘
+```
+
+- **Frontend** → Vercel with global CDN for sub-second loads and automatic GitHub deployments.
+- **Backend** → Google Cloud Run with auto-scaling (1–10 instances), 1 GB RAM / 1 vCPU per instance, and zero cold starts.
+- **Database & Storage** → Firebase for serverless, real-time data and secure file storage.
+
+---
+
+## 📜 License
+
+This project is proprietary. All rights reserved.

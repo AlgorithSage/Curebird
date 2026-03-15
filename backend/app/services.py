@@ -225,7 +225,7 @@ def analyze_clinical_groq(file_stream):
         """
         
         completion = client.chat.completions.create(
-            model="meta-llama/llama-4-maverick-17b-128e-instruct",
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             messages=[
                 {
                     "role": "user", 
@@ -272,7 +272,7 @@ def analyze_with_vlm(file_stream, custom_api_key=None):
         
         # 3. Call Groq VLM
         completion = client.chat.completions.create(
-            model="meta-llama/llama-4-maverick-17b-128e-instruct",
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             messages=[
                 {
                     "role": "user",

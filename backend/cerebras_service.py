@@ -100,7 +100,7 @@ def generate_medical_summary(texts=None, file_urls=None):
         client = Cerebras(api_key=CEREBRAS_API_KEY)
         
         response = client.chat.completions.create(
-            model="llama-3.3-70b",
+            model="llama-3.1-8b",
             messages=[
                 {"role": "system", "content": "You are a helpful medical assistant."},
                 {"role": "user", "content": prompt}
