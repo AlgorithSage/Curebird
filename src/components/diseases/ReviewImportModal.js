@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import {  X, Check, AlertCircle, Activity, Pill  } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { Button } from '../ui/button';
 // Note: Direct firestore usage for meds until MedService is created
 
 const ReviewImportModal = ({ userId, analysisData, db, onClose, onComplete }) => {
@@ -63,7 +64,7 @@ const ReviewImportModal = ({ userId, analysisData, db, onClose, onComplete }) =>
                         startDate: serverTimestamp(),
                         status: 'active',
                         source: 'CureAnalyzer'
-                    });
+                      });
                 }
             }
 
@@ -155,20 +156,23 @@ const ReviewImportModal = ({ userId, analysisData, db, onClose, onComplete }) =>
 
                 <div className="p-6 border-t border-slate-800 bg-slate-900/50">
                     {(hasDiseases && step === 1 && hasMeds) ? (
-                        <button
+                        <Button
                             onClick={() => setStep(2)}
-                            className="w-full py-3 bg-slate-800 text-white hover:bg-slate-700 rounded-xl font-bold transition-colors"
+                            variant="secondary"
+                            className="w-full"
                         >
                             Next: Review Medications ({activeMedsCount})
-                        </button>
+                        </Button>
                     ) : (
-                        <button
+                        <Button
                             onClick={handleImport}
-                            disabled={isSubmitting || (!hasDiseases && !hasMeds)}
-                            className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-colors shadow-lg shadow-blue-600/20"
+                            disabled={!hasDiseases && !hasMeds}
+                            loading={isSubmitting}
+                            variant="primary"
+                            className="w-full"
                         >
-                            {isSubmitting ? 'Importing...' : `Import Selected (${activeDiseasesCount + activeMedsCount} items)`}
-                        </button>
+                            Import Selected ({activeDiseasesCount + activeMedsCount} items)
+                        </Button>
                     )}
                 </div>
 

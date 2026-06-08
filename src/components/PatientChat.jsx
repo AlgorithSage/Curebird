@@ -10,8 +10,9 @@ import {
     addDoc, serverTimestamp, doc, updateDoc, getDocs, getDoc
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import Header from './Header';
 
-const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
+const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginClick, onToggleSidebar, onAddRecordClick }) => {
     // Premium Animation Variants
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -281,6 +282,20 @@ const PatientChat = ({ user, db, storage, appId, onNavigate }) => {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,158,11,0.08),_transparent_60%)] pointer-events-none" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(16,185,129,0.05),_transparent_60%)] pointer-events-none" />
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none mix-blend-overlay" />
+
+            {/* Header section */}
+            <div className="sticky top-4 z-50 px-4 sm:px-8 pt-4 mb-4">
+                <Header
+                    title="Messages"
+                    description="Consult with your connected doctors."
+                    user={user}
+                    onLogout={onLogout}
+                    onLoginClick={onLoginClick}
+                    onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
+                    onAddClick={() => onAddRecordClick && onAddRecordClick()}
+                />
+            </div>
 
             {/* MAIN SPLIT LAYOUT */}
             <div className="flex-1 flex overflow-hidden z-10">

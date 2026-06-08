@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, Check, AlertTriangle, Save, Edit2 } from '../Icons';
+import { X, Check, Save } from '../Icons';
+import { Button } from '../ui/button';
 
 const ReviewExtractionModal = ({ isOpen, onClose, onSave, extractedData, availableMetrics }) => {
     const [items, setItems] = useState([]);
@@ -191,18 +192,19 @@ const ReviewExtractionModal = ({ isOpen, onClose, onSave, extractedData, availab
                 </div>
 
                 <div className="p-6 border-t border-white/10 flex justify-end gap-3 bg-slate-900 rounded-b-2xl">
-                    <button
+                    <Button
                         onClick={onClose}
-                        className="px-6 py-2.5 rounded-xl font-bold text-slate-400 hover:bg-white/5 transition-colors"
+                        variant="secondary"
                     >
                         Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleSave}
-                        className="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-black rounded-xl font-bold transition-colors shadow-lg shadow-amber-500/20 flex items-center gap-2"
+                        variant="primary"
+                        icon={Save}
                     >
-                        <Save size={18} /> Confirm & Save
-                    </button>
+                        Confirm & Save
+                    </Button>
                 </div>
             </motion.div>
         </div>

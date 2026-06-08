@@ -7,6 +7,7 @@ import { Plus, MoreVertical, Edit, Trash2, Video } from './Icons';
 import Header from './Header';
 import { AppointmentFormModal, DeleteConfirmModal } from './Modals';
 import { SkeletonCard } from './SkeletonLoaders';
+import { Button } from './ui/button';
 
 const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -132,16 +133,21 @@ const Appointments = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar
     if (!user) {
         return (
             <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-                <Header
-                    title="Appointments"
-                    description="Log in to manage your appointments."
-                    user={null}
-                    onLoginClick={onLoginClick}
-                    onToggleSidebar={onToggleSidebar}
-                    onNavigate={onNavigate}
-                />
-                <div className="text-center py-20">
+                <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
+                    <Header
+                        title="Appointments"
+                        description="Log in to manage your appointments."
+                        user={null}
+                        onLoginClick={onLoginClick}
+                        onToggleSidebar={onToggleSidebar}
+                        onNavigate={onNavigate}
+                    />
+                </div>
+                <div className="text-center py-20 flex flex-col items-center justify-center gap-4">
                     <p className="text-slate-400">Please log in to view your appointments.</p>
+                    <Button onClick={onLoginClick} variant="primary" size="lg">
+                        Log In / Register
+                    </Button>
                 </div>
             </div>
         )
@@ -149,7 +155,7 @@ const Appointments = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+            <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
                 <Header
                     title="Appointments"
                     description="Manage your upcoming and past medical appointments."
@@ -162,13 +168,15 @@ const Appointments = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar
             </div>
 
             <main className="mt-8">
-                <button
+                <Button
                     onClick={() => { setEditingAppointment(null); setIsFormModalOpen(true); }}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-lg shadow-sm hover:bg-amber-400 transition-colors text-sm font-semibold mb-8"
+                    variant="primary"
+                    icon={Plus}
+                    iconPosition="left"
+                    className="mb-8 w-full sm:w-auto"
                 >
-                    <Plus size={16} />
                     Add New Appointment
-                </button>
+                </Button>
 
                 {isLoading ? (
                     <div className="space-y-4"><SkeletonCard /><SkeletonCard /></div>

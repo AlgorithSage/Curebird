@@ -7,6 +7,7 @@ import Header from './Header';
 import RecordCard from './RecordCard';
 import { RecordFormModal, DeleteConfirmModal } from './Modals';
 import { SkeletonCard } from './SkeletonLoaders';
+import { Button } from './ui/button';
 
 const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggleSidebar, onNavigate, onAddRecordClick }) => {
     // Premium Animation Variants
@@ -120,16 +121,21 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
         // This view is shown if the user is logged out
         return (
             <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-                <Header
-                    title="All Records"
-                    description="Log in to view your records."
-                    user={null}
-                    onLoginClick={onLoginClick}
-                    onToggleSidebar={onToggleSidebar}
-                    onNavigate={onNavigate}
-                />
-                <div className="text-center py-20">
+                <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
+                    <Header
+                        title="All Records"
+                        description="Log in to view your records."
+                        user={null}
+                        onLoginClick={onLoginClick}
+                        onToggleSidebar={onToggleSidebar}
+                        onNavigate={onNavigate}
+                    />
+                </div>
+                <div className="text-center py-20 flex flex-col items-center justify-center gap-4">
                     <p className="text-slate-400">Please log in to view your medical records.</p>
+                    <Button onClick={onLoginClick} variant="primary" size="lg">
+                        Log In / Register
+                    </Button>
                 </div>
             </div>
         )
@@ -144,7 +150,7 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
     return (
         <LayoutGroup>
             <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-                <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
                     <Header
                         title="All Records"
                         description="View and manage all your historical medical records."
@@ -233,14 +239,13 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
                                     <option value="admission">Hospital Admission</option>
                                     <option value="ecg">ECG</option>
                                 </motion.select>
-                                <motion.button
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
+                                <Button
                                     onClick={handleRetractSearch}
-                                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-colors border border-slate-700"
+                                    variant="secondary"
+                                    size="sm"
                                 >
                                     Retract
-                                </motion.button>
+                                </Button>
                             </div>
 
                             {isLoading ? (
@@ -277,12 +282,14 @@ const AllRecords = ({ user, db, storage, appId, onLogout, onLoginClick, onToggle
 
                                         {/* Bottom Retract Button for easy access */}
                                         <div className="flex justify-center mt-8">
-                                            <button
+                                            <Button
                                                 onClick={handleRetractSearch}
-                                                className="flex items-center gap-2 px-6 py-2 bg-slate-800/80 hover:bg-slate-700 text-amber-500 rounded-full text-sm font-bold border border-amber-500/20 transition-all hover:scale-105"
+                                                variant="secondary"
+                                                size="sm"
+                                                className="rounded-full text-amber-500 border-amber-500/25"
                                             >
                                                 Retract View
-                                            </button>
+                                            </Button>
                                         </div>
                                     </>
                                 ) : (

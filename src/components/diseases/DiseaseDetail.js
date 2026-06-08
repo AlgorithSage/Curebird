@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Plus, Activity, TrendingUp, FileText, Trash2, Printer, UploadCloud, Eye, Download, File, X } from '../Icons';
+import { ArrowLeft, Plus, Activity, TrendingUp, FileText, Trash2, Printer, UploadCloud, Eye, Download, X } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
+import { Button } from '../ui/button';
 
 import { DISEASE_CONFIG, calculateCHI } from '../../data/diseaseMetrics';
 import AddMetricModal from './AddMetricModal';
@@ -301,19 +302,22 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
 
                 {!isDoctorMode && (
                     <div className="flex gap-2 w-full sm:w-auto mt-4 sm:mt-0">
-                        <button
+                        <Button
                             onClick={handleDeleteAllMetrics}
-                            className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
+                            variant="danger"
+                            size="icon"
                             title="Delete Total Log (Reset)"
                         >
                             <Trash2 size={20} />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => setIsAddMetricOpen(true)}
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-xl font-bold transition-colors shadow-lg shadow-amber-500/20"
+                            variant="primary"
+                            icon={Plus}
+                            className="flex-1 sm:flex-none"
                         >
-                            <Plus size={18} /> Add Log
-                        </button>
+                            Add Log
+                        </Button>
                     </div>
                 )}
             </div>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Trash2, Brain, ShieldCheck } from './Icons';
+import { Bot, User, Brain, ShieldCheck } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { useLocation } from 'react-router-dom';
 import Header from './Header';
 import { API_BASE_URL } from '../config';
+import { PromptInputBox } from './PromptInputBox';
 
 // ... (ChatMessage and TypingIndicator components remain unchanged)
 
@@ -202,8 +203,9 @@ const CureAI = ({ user, onLogout, onLoginClick, onAddRecordClick, onToggleSideba
         }
     };
 
-    const sendMessage = async () => {
-        if (!inputMessage.trim() || isLoading) return;
+    const sendMessage = async (messageText) => {
+        const textToSend = typeof messageText === 'string' ? messageText : inputMessage;
+        if (!textToSend.trim() || isLoading) return;
 
         // FREE TIER LIMIT CHECK (50 messages/day)
         try {
@@ -247,7 +249,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onAddRecordClick, onToggleSideba
         }
 
         const userMessage = {
-            text: inputMessage,
+            text: textToSend,
             isUser: true,
             timestamp: new Date().toISOString()
         };
@@ -263,7 +265,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onAddRecordClick, onToggleSideba
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    message: inputMessage,
+                    message: textToSend,
                     conversation_id: conversationId,
                     medicalContext: medicalSummary // Pass the summary context to the chat
                 })
@@ -319,16 +321,9 @@ const CureAI = ({ user, onLogout, onLoginClick, onAddRecordClick, onToggleSideba
         setConversationId(null);
     };
 
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    };
-
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white scroll-smooth relative z-0">
-            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+            <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
                 <Header
                     title="Cure AI"
                     description="Powered by Llama 3.3 - Ask me about diseases, symptoms, treatments, and health trends in India"
@@ -336,6 +331,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onAddRecordClick, onToggleSideba
                     onLogout={onLogout}
                     onLoginClick={onLoginClick}
                     onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
                     onAddClick={() => onAddRecordClick && onAddRecordClick()}
                 />
             </div>
@@ -426,7 +422,7 @@ const CureAI = ({ user, onLogout, onLoginClick, onAddRecordClick, onToggleSideba
                 className="flex flex-col lg:flex-row gap-6 sm:gap-8 mt-2 min-h-0 relative z-10 pb-2"
             >
                 {/* Main Chat Area - Premium Glass Console */}
-                <div className="flex-1 flex flex-col glass-card p-0 h-[600px] sm:h-[800px]">
+                <div className="flex-1 flex flex-col glass-card !p-0 h-[600px] sm:h-[800px]">
                     {/* Subtle Grid - Professional */}
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
 
@@ -446,80 +442,14 @@ const CureAI = ({ user, onLogout, onLoginClick, onAddRecordClick, onToggleSideba
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Input Area - Responsive Control Panel */}
-                    <div className="p-3 sm:p-6 bg-[#090e1a]/95 border-t border-slate-800 backdrop-blur-xl relative z-20 rounded-b-[2rem]">
-                        <div className="flex items-center gap-2 sm:gap-3 max-w-5xl mx-auto">
-
-                            {/* Text Input */}
-                            <div className="flex-1 relative">
-                                <textarea
-                                    value={inputMessage}
-                                    onChange={(e) => setInputMessage(e.target.value)}
-                                    onKeyDown={handleKeyPress}
-                                    placeholder="Speak your heart out..."
-                                    rows={1}
-                                    disabled={isLoading}
-                                    className="
-                                        w-full
-                                        h-[52px] sm:h-[60px]
-                                        px-4 sm:px-5
-                                        py-3
-                                        bg-slate-900
-                                        border border-amber-500/30
-                                        rounded-xl
-                                        text-sm sm:text-base
-                                        text-slate-100
-                                        placeholder:text-slate-500
-                                        focus:outline-none
-                                        focus:border-amber-400
-                                        resize-none
-                                        flex items-center
-                                    "
-                                />
-                            </div>
-
-                            {/* Send Button */}
-                            <button
-                                onClick={sendMessage}
-                                disabled={isLoading || !inputMessage.trim()}
-                                className="
-                                    h-[52px] sm:h-[60px]
-                                    w-[52px] sm:w-[60px]
-                                    flex items-center justify-center
-                                    bg-amber-400
-                                    text-slate-950
-                                    rounded-xl
-                                    hover:bg-amber-300
-                                    disabled:opacity-50
-                                    transition-all
-                                    font-bold
-                                    shadow-lg
-                                "
-                            >
-                                <Send size={20} />
-                            </button>
-
-                            {/* Clear Button */}
-                            <button
-                                onClick={clearChat}
-                                title="Reset Session"
-                                className="
-                                    h-[52px] sm:h-[60px]
-                                    w-[52px] sm:w-[60px]
-                                    flex items-center justify-center
-                                    bg-slate-800
-                                    border border-amber-500
-                                    rounded-xl
-                                    text-amber-500
-                                    hover:bg-amber-500
-                                    hover:text-slate-950
-                                    transition-all
-                                "
-                            >
-                                <Trash2 size={20} />
-                            </button>
-
-                        </div>
+                    {/* Input Area */}
+                    <div className="px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8 w-full relative z-20">
+                        <PromptInputBox
+                            onSend={sendMessage}
+                            onClear={clearChat}
+                            isLoading={isLoading}
+                            placeholder="Speak your heart out..."
+                        />
                     </div>
                 </div>
             </motion.div>

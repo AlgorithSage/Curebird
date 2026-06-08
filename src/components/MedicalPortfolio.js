@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import LiquidButton from './ui/LiquidButton';
+import GradientCard from './ui/GradientCard';
 import { collection, onSnapshot, doc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -14,6 +16,7 @@ import { SkeletonDashboard, SkeletonCard } from './SkeletonLoaders';
 import DashboardOverview from './DashboardOverview';
 
 import RotatingText from './RotatingText';
+import { Button } from './ui/button';
 // import HeroSection from './HeroSection'; // Removed per refactor
 
 
@@ -250,14 +253,16 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
     if (!user) {
         return (
             <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto">
-                <Header onLoginClick={onLoginClick} user={null} />
+                <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
+                    <Header onLoginClick={onLoginClick} user={null} />
+                </div>
                 <div className="flex flex-col items-center justify-center h-4/5 text-center">
                     <UserPlus size={64} className="text-slate-500" />
                     <h1 className="text-3xl font-bold text-white mt-6">Welcome to Your Medical Portfolio</h1>
                     <p className="text-slate-400 mt-2 max-w-md">Please log in or create an account to securely access and manage your health records.</p>
-                    <button onClick={onLoginClick} className="mt-8 bg-amber-500 text-slate-900 py-3 px-8 rounded-lg hover:bg-amber-400 font-semibold transition-colors">
+                    <Button onClick={onLoginClick} variant="primary" size="lg" className="mt-8">
                         Login / Sign Up
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -265,7 +270,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto">
-            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+            <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
                 <Header
                     user={user}
                     onAddClick={() => onAddRecordClick && onAddRecordClick()}
@@ -331,18 +336,20 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     </p>
 
                                     <div className="mt-8 sm:mt-10 flex flex-row flex-wrap gap-3 sm:gap-4">
-                                        <button
+                                        <LiquidButton
                                             onClick={() => onAddRecordClick && onAddRecordClick()}
-                                            className="bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold py-2.5 px-5 sm:py-3 sm:px-8 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] hover:scale-105 transition-all text-sm sm:text-lg whitespace-nowrap flex-1 sm:flex-none justify-center flex items-center"
+                                            className="py-2.5 px-5 sm:py-3 sm:px-8 rounded-full text-sm sm:text-lg whitespace-nowrap flex-1 sm:flex-none"
                                         >
                                             Add Health Record
-                                        </button>
-                                        <button
-                                            onClick={onNavigate ? () => onNavigate('/cure-ai') : undefined}
-                                            className="bg-slate-800 text-white border border-slate-700 font-bold py-2.5 px-5 sm:py-3 sm:px-8 rounded-full hover:bg-slate-700 transition-all text-sm sm:text-lg whitespace-nowrap flex-1 sm:flex-none justify-center flex items-center"
+                                        </LiquidButton>
+                                        <Button
+                                            onClick={onNavigate ? () => onNavigate('Cure AI') : undefined}
+                                            variant="secondary"
+                                            size="lg"
+                                            className="rounded-full flex-1 sm:flex-none"
                                         >
                                             Ask AI Assistant
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             </motion.div>
@@ -618,7 +625,10 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     <p className="text-amber-100/80">Get AI-powered insights, full report analysis, and 24/7 health coaching.</p>
                                 </div>
                             </div>
-                            <button className="mt-4 md:mt-0 bg-white text-amber-900 px-6 py-2 rounded-full font-bold shadow-lg hover:bg-amber-50 transition-colors z-10">
+                            <button
+                                onClick={onSubscribeClick}
+                                className="mt-4 md:mt-0 z-10 px-6 py-2.5 font-bold rounded-full bg-amber-500 text-black hover:bg-amber-400 transition-all text-sm"
+                            >
                                 View Plans
                             </button>
                         </motion.div>
@@ -701,66 +711,18 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                         return (
                                             <motion.div
                                                 key={cat.id}
-                                                whileHover={{ scale: 1.02, translateY: -5 }}
-                                                whileTap={{ scale: 0.98 }}
-                                                onClick={() => handleCategoryClick(cat.id)}
-                                                className={`relative flex-shrink-0 w-[40vw] sm:w-auto aspect-[4/5] sm:aspect-square flex flex-col items-center justify-center p-6 rounded-3xl cursor-pointer transition-all duration-300 group overflow-visible snap-center ${activeTypeFilter === cat.id
-                                                    ? `ring-4 ring-amber-400/50 scale-105 z-10 shadow-2xl`
-                                                    : `shadow-xl hover:shadow-amber-500/40 border border-white/10`
-                                                    } isolate`}
+                                                variants={staggerScale}
+                                                className="snap-center"
+                                                whileTap={{ scale: 0.97 }}
                                             >
-                                                {/* Stack Backend Effect (Visual Depth) */}
-                                                {count > 0 && (
-                                                    <div className="absolute inset-0 bg-white/5 rounded-3xl transform rotate-3 scale-95 -z-10 group-hover:rotate-6 transition-transform duration-300 border border-white/5"></div>
-                                                )}
-                                                {count > 1 && (
-                                                    <div className="absolute inset-0 bg-white/5 rounded-3xl transform -rotate-2 scale-90 -z-20 group-hover:-rotate-4 transition-transform duration-300 border border-white/5"></div>
-                                                )}
-
-                                                {/* Card Background: Latest Image or Gradient */}
-                                                {/* PREMIUM MATTE DESIGN - Clean, Minimalist, Professional */}
-
-                                                {/* Card Container */}
-                                                <div className={`absolute inset-0 rounded-[1.5rem] -z-10 transition-all duration-300
-                                                    bg-slate-900
-                                                    border border-white/10
-                                                    group-hover:border-amber-500/50
-                                                    shadow-xl
-                                                `}></div>
-
-                                                {/* 2. Amber Gradient Bottom Fade (Subtle) */}
-                                                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-amber-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-b-[1.5rem]" />
-
-                                                {/* Icon Container - Clean & Sharp */}
-                                                <div className={`mb-5 p-4 rounded-xl relative
-                                                    bg-slate-800
-                                                    border border-white/5
-                                                    text-amber-500
-                                                    shadow-lg
-                                                    transition-all duration-300
-                                                    group-hover:scale-105 group-hover:bg-amber-500 group-hover:text-black group-hover:shadow-amber-500/20
-                                                `}>
-                                                    {React.cloneElement(cat.icon, { strokeWidth: 1.5 })}
-                                                </div>
-
-                                                {/* Typography - Inter/Clean */}
-                                                <div className="text-center z-10 flex flex-col items-center">
-                                                    <h3 className={`text-4xl sm:text-5xl font-bold mb-2 leading-none tracking-tight text-white group-hover:text-amber-100 transition-colors`}>
-                                                        {count}
-                                                    </h3>
-
-                                                    <p className={`text-[11px] font-semibold uppercase tracking-widest text-slate-400 group-hover:text-amber-400/80 transition-colors`}>
-                                                        {cat.label}
-                                                    </p>
-
-                                                    {latestRecord && (
-                                                        <div className="mt-4 opacity-100">
-                                                            <span className="text-[10px] font-medium text-slate-500 group-hover:text-slate-400 transition-colors">
-                                                                Last: {formatDate(latestRecord.date)}
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                <GradientCard
+                                                    icon={React.cloneElement(cat.icon, { strokeWidth: 1.5 })}
+                                                    count={count}
+                                                    label={cat.label}
+                                                    latestDate={latestRecord ? formatDate(latestRecord.date) : null}
+                                                    isActive={activeTypeFilter === cat.id}
+                                                    onClick={() => handleCategoryClick(cat.id)}
+                                                />
                                             </motion.div>
                                         );
                                     })}

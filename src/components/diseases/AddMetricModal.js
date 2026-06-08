@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Activity, AlertTriangle } from '../Icons';
+import { X, AlertTriangle } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import { DISEASE_CONFIG, getMetricStatus } from '../../data/diseaseMetrics';
+import { Button } from '../ui/button';
 
 const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
     const config = DISEASE_CONFIG[disease.configId];
@@ -161,13 +162,14 @@ const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
                         />
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
-                        disabled={isSubmitting}
-                        className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black rounded-xl font-bold transition-colors flex justify-center items-center mt-4"
+                        loading={isSubmitting}
+                        variant="primary"
+                        className="w-full mt-4"
                     >
-                        {isSubmitting ? <Activity className="animate-spin" /> : 'Log Entry'}
-                    </button>
+                        Log Entry
+                    </Button>
                 </form>
             </motion.div>
         </div>

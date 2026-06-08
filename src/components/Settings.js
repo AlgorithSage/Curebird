@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getAuth, updateProfile, updateEmail, updatePassword, deleteUser } from 'firebase/auth';
+import { getAuth, updateProfile, updateEmail, updatePassword, deleteUser, sendPasswordResetEmail } from 'firebase/auth';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Shield, Save, Camera, AlertTriangle, BadgeCheck, FileText, ArrowRight, Settings as SettingsIcon, Crown, HelpCircle } from './Icons';
@@ -7,6 +7,7 @@ import { User, Mail, Shield, Save, Camera, AlertTriangle, BadgeCheck, FileText, 
 import Header from './Header';
 import { DeleteAccountModal } from './Modals';
 import MedicalDisclaimerModal from './legal/MedicalDisclaimerModal';
+import { Button } from './ui/button';
 
 const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate }) => {
     const [displayName, setDisplayName] = useState(user?.displayName || '');
@@ -71,6 +72,21 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
         }
     };
 
+    const handlePasswordReset = async () => {
+        if (!user || !user.email) return;
+        setIsSaving(true);
+        try {
+            const auth = getAuth();
+            await sendPasswordResetEmail(auth, user.email);
+            alert(`Password reset email has been sent to ${user.email}`);
+        } catch (error) {
+            console.error("Error sending password reset email:", error);
+            alert("Failed to send password reset email. Please try again later.");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const handleCancelSubscription = async () => {
         if (window.confirm("Are you sure you want to cancel your Premium subscription? You will lose access to AI features immediately.")) {
             try {
@@ -97,14 +113,16 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
     if (!user) {
         return (
             <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto bg-slate-900 text-white selection:bg-amber-500/30">
-                <Header
-                    title="Settings"
-                    description="Log in to manage your account."
-                    user={null}
-                    onLoginClick={onLoginClick}
-                    onToggleSidebar={onToggleSidebar}
-                    onNavigate={onNavigate}
-                />
+                <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
+                    <Header
+                        title="Settings"
+                        description="Log in to manage your account."
+                        user={null}
+                        onLoginClick={onLoginClick}
+                        onToggleSidebar={onToggleSidebar}
+                        onNavigate={onNavigate}
+                    />
+                </div>
                 <div className="flex flex-col items-center justify-center h-[60vh] text-center">
                     <div className="p-6 rounded-full bg-slate-800/50 mb-6 animate-pulse-slow">
                         <SettingsIcon size={48} className="text-slate-600" />
@@ -123,7 +141,7 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
             <div className="fixed bottom-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-600/5 blur-[120px] pointer-events-none z-0" />
 
             <div className="relative z-10">
-                <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+                <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
                     <Header
                         title="Account Settings"
                         description="Manage your profile and security preferences."
@@ -220,17 +238,16 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
                                                 "Update your personal details here."
                                             )}
                                         </p>
-                                        <button
+                                        <Button
                                             type="submit"
                                             disabled={isSaving}
-                                            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-amber-500/20 transition-all transform hover:scale-105 disabled:opacity-50 disabled:scale-100 flex items-center gap-2"
+                                            loading={isSaving}
+                                            variant="primary"
+                                            icon={Save}
+                                            iconPosition="right"
                                         >
-                                            {isSaving ? (
-                                                <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Saving...</span>
-                                            ) : (
-                                                <>Save Changes <Save size={18} /></>
-                                            )}
-                                        </button>
+                                            Save Changes
+                                        </Button>
                                     </div>
                                 </form>
                             </div>
@@ -281,12 +298,13 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
                                                 <span className="text-amber-500 font-bold">Note:</span> If you have an active auto-pay mandate (UPI/Card), please ensure you also cancel it in your banking app to prevent future charges.
                                             </p>
                                         </div>
-                                        <button
+                                        <Button
                                             onClick={handleCancelSubscription}
-                                            className="w-full py-2.5 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white font-bold text-sm transition-all"
+                                            variant="danger"
+                                            size="full"
                                         >
                                             Cancel Subscription
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
@@ -295,67 +313,87 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
 
                     {/* Security & Danger Zone Grid */}
                     <div className="grid md:grid-cols-2 gap-8">
-                        {/* Security Placeholder */}
+                        {/* Security Card — uses global glass-card-indigo */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="p-8 rounded-3xl bg-slate-800/20 border border-slate-700/50 backdrop-blur-sm"
+                            className="glass-card-indigo relative overflow-hidden group"
                         >
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400">
-                                    <Shield size={24} />
-                                </div>
-                                <h3 className="text-xl font-bold text-white">Security</h3>
+                            {/* Decorative watermark */}
+                            <div className="absolute top-0 right-0 p-4 opacity-30 pointer-events-none">
+                                <Shield className="text-indigo-500/20 w-28 h-28 -mr-8 -mt-8" strokeWidth={1} />
                             </div>
-                            <p className="text-slate-400 text-sm mb-6">Manage password, 2FA, and connected devices.</p>
-                            <button className="w-full py-3 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 hover:text-white font-medium transition-colors text-sm">
-                                Change Password via Email
-                            </button>
+                             <div className="relative z-10">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
+                                        <Shield size={24} />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-white">Security</h3>
+                                </div>
+                                <p className="text-slate-400 text-sm mb-6 leading-relaxed">Manage password, 2FA, and connected devices.</p>
+                                <Button
+                                    onClick={handlePasswordReset}
+                                    variant="secondary"
+                                    size="full"
+                                    icon={Mail}
+                                    iconPosition="left"
+                                >
+                                    Change Password via Email
+                                </Button>
+                            </div>
                         </motion.div>
 
-                        {/* Danger Zone */}
+                        {/* Danger Zone Card — uses global glass-card-rose */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="p-8 rounded-3xl bg-rose-950/10 border border-rose-500/20 backdrop-blur-sm hover:bg-rose-950/20 transition-colors group"
+                            className="glass-card-rose relative overflow-hidden group"
                         >
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-500 group-hover:bg-rose-500/20 transition-colors">
-                                    <AlertTriangle size={24} />
+                            {/* Decorative watermark */}
+                            <div className="absolute top-0 right-0 p-4 opacity-30 pointer-events-none">
+                                <AlertTriangle className="text-rose-500/20 w-28 h-28 -mr-8 -mt-8" strokeWidth={1} />
+                            </div>                             <div className="relative z-10">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-500 group-hover:bg-rose-500/20 transition-colors">
+                                        <AlertTriangle size={24} />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-rose-400">Danger Zone</h3>
                                 </div>
-                                <h3 className="text-xl font-bold text-rose-400">Danger Zone</h3>
+                                <p className="text-rose-300/60 text-sm mb-6 leading-relaxed">Irreversible actions. Tread carefully.</p>
+                                <Button
+                                    onClick={() => setIsDeleteModalOpen(true)}
+                                    variant="danger"
+                                    size="full"
+                                    icon={AlertTriangle}
+                                    iconPosition="left"
+                                >
+                                    Delete Account
+                                </Button>
                             </div>
-                            <p className="text-rose-300/60 text-sm mb-6">Irreversible actions. Tread carefully.</p>
-                            <button
-                                onClick={() => setIsDeleteModalOpen(true)}
-                                className="w-full py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white font-bold transition-all text-sm flex items-center justify-center gap-2"
-                            >
-                                Delete Account
-                            </button>
                         </motion.div>
                     </div>
                     {/* Legal & Trust */}
-                    <section className="bg-white/50 backdrop-blur-md rounded-2xl p-6 border border-white/60 shadow-sm">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
-                            <Shield size={16} /> Legal & Compliance
+                    <section className="glass-card relative overflow-hidden">
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2 relative z-10">
+                            <Shield size={16} className="text-amber-500" /> Legal & Compliance
                         </h3>
-                        <div className="space-y-4">
+                        <div className="space-y-4 relative z-10">
                             <button
                                 onClick={() => setIsDisclaimerOpen(true)}
-                                className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition-all group"
+                                className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-amber-500/30 hover:shadow-[0_0_20px_rgba(245,158,11,0.1)] transition-all duration-300 group"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                    <div className="p-2 bg-amber-500/10 text-amber-500 rounded-xl group-hover:bg-amber-500 group-hover:text-black transition-colors">
                                         <FileText size={20} />
                                     </div>
                                     <div className="text-left">
-                                        <div className="font-bold text-slate-800">Medical Disclaimer</div>
-                                        <div className="text-xs text-slate-500">Read our liability and safety terms</div>
+                                        <div className="font-bold text-slate-200 group-hover:text-white transition-colors">Medical Disclaimer</div>
+                                        <div className="text-xs text-slate-400">Read our liability and safety terms</div>
                                     </div>
                                 </div>
-                                <ArrowRight size={18} className="text-slate-300 group-hover:text-indigo-500" />
+                                <ArrowRight size={18} className="text-slate-500 group-hover:text-amber-500 transition-colors" />
                             </button>
                         </div>
                     </section>

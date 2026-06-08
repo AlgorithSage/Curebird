@@ -11,6 +11,7 @@ import EnvironmentalHealth from './EnvironmentalHealth';
 import RareDisease from './RareDisease';
 import StateHealthProfile from './StateHealthProfile';
 import { API_BASE_URL } from '../config';
+import { Button } from './ui/button';
 
 
 // Add Google Maps Script
@@ -688,12 +689,13 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, o
                         <p className="text-slate-400 mb-8 leading-relaxed">
                             Upgrade to <span className="text-amber-400 font-bold">Premium</span> to access real-time disease tracking, predictive analytics, and national health indices.
                         </p>
-                        <button
-                            onClick={() => onNavigate('/dashboard')}
-                            className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg shadow-amber-500/20"
+                        <Button
+                            onClick={() => onNavigate('Dashboard')}
+                            variant="primary"
+                            size="lg"
                         >
                             Explore Premium Plans
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}

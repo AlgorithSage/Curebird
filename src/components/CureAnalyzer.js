@@ -419,7 +419,7 @@ const CureAnalyzer = ({
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-      <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+      <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
         <Header
           title="Cure Analyzer"
           description="Upload an image of a medical document to automatically identify key information."

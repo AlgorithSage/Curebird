@@ -51,7 +51,7 @@ const Contact = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigate
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white pb-24">
-            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+            <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
                 <Header
                     title="Contact Us"
                     description="We'd love to hear from you."

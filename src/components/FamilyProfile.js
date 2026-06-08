@@ -1,15 +1,30 @@
 import React from 'react';
 import {  Users  } from './Icons';
 import { motion } from 'framer-motion';
+import Header from './Header';
 
-const FamilyProfile = ({ onNavigate }) => {
+const FamilyProfile = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, onAddRecordClick }) => {
     return (
-        <div className="min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="max-w-2xl w-full text-center"
-            >
+        <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto">
+            <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
+                <Header
+                    title="Family Profile"
+                    description="Manage medical profiles for your family members."
+                    user={user}
+                    onLogout={onLogout}
+                    onLoginClick={onLoginClick}
+                    onToggleSidebar={onToggleSidebar}
+                    onNavigate={onNavigate}
+                    onAddClick={() => onAddRecordClick && onAddRecordClick()}
+                />
+            </div>
+
+            <div className="flex items-center justify-center min-h-[70vh]">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="max-w-2xl w-full text-center"
+                >
                 <div className="glass-card p-12 rounded-[3rem] border border-white/10 relative overflow-hidden group">
                     {/* Background Effects */}
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 z-0" />
@@ -53,6 +68,7 @@ const FamilyProfile = ({ onNavigate }) => {
                 </div>
             </motion.div>
         </div>
+    </div>
     );
 };
 

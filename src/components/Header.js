@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import LiquidButton from './ui/LiquidButton';
 import {
     Plus, Share2, Bell, LogIn, LogOut, Settings, Menu,
     LayoutDashboard, Bot, Activity, Mail, MessageSquare,
@@ -211,16 +212,13 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                     {isNotifOpen && <NotificationDropdown alerts={alerts} onClose={() => setIsNotifOpen(false)} />}
                                 </AnimatePresence>
                             </div>
-                            <button
-                                onClick={() => {
-                                    triggerHaptic('heavy');
-                                    onAddClick();
-                                }}
-                                className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-3 py-2 sm:px-4 sm:py-2 rounded-xl shadow-lg hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 text-xs sm:text-sm font-bold border border-white/10 whitespace-nowrap"
+                            <LiquidButton
+                                onClick={() => { triggerHaptic('heavy'); onAddClick(); }}
+                                className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 rounded-xl shadow-lg text-xs sm:text-sm whitespace-nowrap"
                             >
                                 <Plus size={18} />
                                 <span className="hidden lg:inline">Add Record</span>
-                            </button>
+                            </LiquidButton>
                         </>
                     )}
 

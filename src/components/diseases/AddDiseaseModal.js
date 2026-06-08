@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Calendar, Activity } from '../Icons';
+import { X, Calendar } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import { DISEASE_CONFIG } from '../../data/diseaseMetrics';
+import { Button } from '../ui/button';
 
 const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
     const [formData, setFormData] = useState({
@@ -152,21 +153,23 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
 
                     {/* Actions */}
                     <div className="flex gap-3 mt-6">
-                        <button
+                        <Button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition-colors"
+                            variant="secondary"
+                            className="flex-1"
                         >
                             Cancel
-                        </button>
+                        </Button>
 
-                        <button
+                        <Button
                             type="submit"
-                            disabled={isSubmitting}
-                            className="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black rounded-xl font-bold transition-colors flex justify-center items-center"
+                            loading={isSubmitting}
+                            variant="primary"
+                            className="flex-1"
                         >
-                            {isSubmitting ? <Activity className="animate-spin" /> : 'Save Condition'}
-                        </button>
+                            Save Condition
+                        </Button>
                     </div>
                 </form>
             </motion.div>

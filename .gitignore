@@ -35,6 +35,8 @@ __pycache__/
 *.pyc
 /client_secret.json
 backend/client_secret.json
+backend/serviceAccountKey.json
+**/serviceAccountKey.json
 
 # Cloud Run deployment files (contain API keys)
 backend/DEPLOY_QUICK_START.md

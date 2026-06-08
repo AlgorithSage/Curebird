@@ -8,12 +8,62 @@ import { deleteUser } from "firebase/auth";
 import { API_BASE_URL } from '../config';
 
 const ModalWrapper = ({ onClose, children }) => (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/70 backdrop-blur-md flex justify-center items-end sm:items-center z-50 p-0 sm:p-4" onClick={onClose}>
-        <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
-            className="glass-card w-full max-w-lg max-h-[92vh] sm:max-h-[90vh] flex flex-col overflow-hidden !p-0 rounded-t-2xl sm:rounded-2xl shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            {children}
-        </motion.div>
+    <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        className="fixed inset-0 bg-black/75 backdrop-blur-md flex justify-center items-end sm:items-center z-50 p-0 sm:p-4"
+        onClick={onClose}
+    >
+        {/* Animated ambient orbs in the backdrop */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <motion.div
+                className="absolute w-[28rem] h-[28rem] rounded-full"
+                style={{ background: "radial-gradient(circle, rgba(245,158,11,0.13) 0%, transparent 70%)", top: "10%", left: "5%" }}
+                animate={{ x: [0, 40, -20, 0], y: [0, -50, 25, 0] }}
+                transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+                className="absolute w-96 h-96 rounded-full"
+                style={{ background: "radial-gradient(circle, rgba(249,115,22,0.10) 0%, transparent 70%)", bottom: "10%", right: "5%" }}
+                animate={{ x: [0, -30, 20, 0], y: [0, 35, -20, 0] }}
+                transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            />
+            <motion.div
+                className="absolute w-72 h-72 rounded-full"
+                style={{ background: "radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%)", top: "40%", right: "20%" }}
+                animate={{ x: [0, 20, -35, 0], y: [0, -25, 30, 0] }}
+                transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+            />
+        </div>
+
+        {/* Modal + animated border wrapper */}
+        <div className="relative w-full max-w-lg sm:max-w-lg" onClick={(e) => e.stopPropagation()}>
+            {/* Rotating amber border ring */}
+            <div className="animated-border absolute -inset-[2px] rounded-t-2xl sm:rounded-2xl pointer-events-none" />
+
+            <motion.div
+                initial={{ y: 80, opacity: 0, scale: 0.96, filter: "blur(8px)" }}
+                animate={{ y: 0, opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ y: 60, opacity: 0, scale: 0.95, filter: "blur(4px)" }}
+                transition={{ type: "spring", damping: 26, stiffness: 320 }}
+                className="relative glass-card w-full max-h-[92vh] sm:max-h-[90vh] flex flex-col overflow-hidden !p-0 rounded-t-2xl sm:rounded-2xl shadow-2xl"
+            >
+                {/* Inner top shimmer sweep */}
+                <motion.div
+                    className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none z-50"
+                    style={{ background: "linear-gradient(90deg, transparent 0%, rgba(251,191,36,0.6) 50%, transparent 100%)" }}
+                    animate={{ opacity: [0.4, 1, 0.4], scaleX: [0.6, 1, 0.6] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                />
+                {/* Subtle inner amber glow at top */}
+                <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none"
+                    style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.08) 0%, transparent 70%)" }} />
+
+                {children}
+            </motion.div>
+        </div>
     </motion.div>
 );
 

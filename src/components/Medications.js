@@ -5,6 +5,7 @@ import { Pill, Plus, Stethoscope, Hospital } from './Icons';
 
 import Header from './Header';
 import { SkeletonCard } from './SkeletonLoaders';
+import { Button } from './ui/button';
 
 const MedicationCard = ({ med, records }) => (
     <motion.div
@@ -117,16 +118,21 @@ const Medications = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar,
     if (!user) {
         return (
             <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-                <Header
-                    title="Medications"
-                    description="Log in to manage your medication history."
-                    user={null}
-                    onLoginClick={onLoginClick}
-                    onToggleSidebar={onToggleSidebar}
-                    onNavigate={onNavigate}
-                />
-                <div className="text-center py-20">
+                <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
+                    <Header
+                        title="Medications"
+                        description="Log in to manage your medication history."
+                        user={null}
+                        onLoginClick={onLoginClick}
+                        onToggleSidebar={onToggleSidebar}
+                        onNavigate={onNavigate}
+                    />
+                </div>
+                <div className="text-center py-20 flex flex-col items-center justify-center gap-4">
                     <p className="text-slate-400">Please log in to view your medications.</p>
+                    <Button onClick={onLoginClick} variant="primary" size="lg">
+                        Log In / Register
+                    </Button>
                 </div>
             </div>
         )
@@ -134,7 +140,7 @@ const Medications = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar,
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white">
-            <div className="sticky top-4 z-30 px-2 sm:px-6 mb-8">
+            <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
                 <Header
                     title="Medications"
                     description="A summary of all your prescribed medications."
