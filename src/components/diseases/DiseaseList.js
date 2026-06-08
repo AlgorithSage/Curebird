@@ -85,9 +85,7 @@ const DiseaseList = ({ userId, user, onSelectDisease }) => {
                         }}
                         className={`px-8 py-4 text-base rounded-2xl flex items-center gap-2.5 font-black text-black ${user?.subscriptionTier === 'Free' && diseases.length >= 2 ? 'opacity-80 grayscale' : ''}`}
                     >
-                        <span className="p-1.5 bg-black/10 text-black rounded-lg flex items-center justify-center">
-                            {(user?.subscriptionTier === 'Free' && diseases.length >= 2) ? <span className="text-xs">🔒</span> : <Plus size={18} strokeWidth={3} className="text-black" />}
-                        </span>
+                        {(user?.subscriptionTier === 'Free' && diseases.length >= 2) ? <span className="text-xs">🔒</span> : <Plus size={18} strokeWidth={3} className="text-black" />}
                         <span>Add New Condition</span>
                     </LiquidButton>
                 </div>
