@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Plus, ChevronRight, Trash2 } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import AddDiseaseModal from './AddDiseaseModal';
-import { GlassButton } from '../ui/glass-button';
+import { Button } from '../ui/button';
 
 const DiseaseList = ({ userId, user, onSelectDisease }) => {
     const [diseases, setDiseases] = useState([]);
@@ -73,7 +73,8 @@ const DiseaseList = ({ userId, user, onSelectDisease }) => {
                     </p>
 
                     {/* Action Button */}
-                    <GlassButton
+                    <Button
+                        variant="primary"
                         onClick={() => {
                             const tier = user?.subscriptionTier || 'Free';
                             if (tier === 'Free' && diseases.length >= 2) {
@@ -83,13 +84,13 @@ const DiseaseList = ({ userId, user, onSelectDisease }) => {
                             setIsAddModalOpen(true);
                         }}
                         className={user?.subscriptionTier === 'Free' && diseases.length >= 2 ? 'opacity-80 grayscale' : ''}
-                        contentClassName="flex items-center gap-3 px-6 py-3 sm:px-8 sm:py-4"
+                        size="lg"
                     >
-                        <span className="p-1.5 bg-white/10 text-amber-400 rounded-lg">
+                        <span className="p-1.5 bg-white/10 text-amber-400 rounded-lg flex items-center justify-center">
                             {(user?.subscriptionTier === 'Free' && diseases.length >= 2) ? <span className="text-xs">🔒</span> : <Plus size={18} strokeWidth={3} />}
                         </span>
                         <span>Add New Condition</span>
-                    </GlassButton>
+                    </Button>
                 </div>
             </div>
 

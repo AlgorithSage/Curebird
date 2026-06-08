@@ -342,14 +342,27 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                         >
                                             Add Health Record
                                         </LiquidButton>
-                                        <Button
+                                        <button
                                             onClick={onNavigate ? () => onNavigate('Cure AI') : undefined}
-                                            variant="secondary"
-                                            size="lg"
-                                            className="rounded-full flex-1 sm:flex-none"
+                                            className="py-2.5 px-5 sm:py-3 sm:px-8 rounded-full text-sm sm:text-lg font-bold whitespace-nowrap flex-1 sm:flex-none text-amber-400 hover:text-amber-200 transition-all duration-300 active:scale-[0.97]"
+                                            style={{
+                                                background: "linear-gradient(135deg, rgba(245,158,11,0.12) 0%, rgba(10,10,10,0.80) 100%)",
+                                                border: "1px solid rgba(245,158,11,0.28)",
+                                                backdropFilter: "blur(12px)",
+                                                WebkitBackdropFilter: "blur(12px)",
+                                                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 6px -1px rgba(0,0,0,0.2)",
+                                            }}
+                                            onMouseEnter={e => {
+                                                e.currentTarget.style.borderColor = "rgba(245,158,11,0.55)";
+                                                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 25px -5px rgba(0,0,0,0.4), 0 0 20px -5px rgba(251,191,36,0.28)";
+                                            }}
+                                            onMouseLeave={e => {
+                                                e.currentTarget.style.borderColor = "rgba(245,158,11,0.28)";
+                                                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 6px -1px rgba(0,0,0,0.2)";
+                                            }}
                                         >
                                             Ask AI Assistant
-                                        </Button>
+                                        </button>
                                     </div>
                                 </div>
                             </motion.div>
@@ -625,12 +638,14 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     <p className="text-amber-100/80">Get AI-powered insights, full report analysis, and 24/7 health coaching.</p>
                                 </div>
                             </div>
-                            <button
+                            <Button
+                                variant="primary"
                                 onClick={onSubscribeClick}
-                                className="mt-4 md:mt-0 z-10 px-6 py-2.5 font-bold rounded-full bg-amber-500 text-black hover:bg-amber-400 transition-all text-sm"
+                                className="mt-4 md:mt-0 z-10"
+                                size="sm"
                             >
                                 View Plans
-                            </button>
+                            </Button>
                         </motion.div>
                     </div>
 
@@ -776,12 +791,13 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                                         </div>
                                                         <h3 className="text-xl font-bold text-white">No {activeTypeFilter.replace('_', ' ')} records found.</h3>
                                                         <p className="text-slate-400 mt-2">There are no uploaded records for this category yet.</p>
-                                                        <button
+                                                        <Button
+                                                            variant="primary"
                                                             onClick={() => onAddRecordClick && onAddRecordClick()}
-                                                            className="mt-6 px-6 py-2 bg-amber-500 hover:bg-amber-400 text-black rounded-lg font-semibold transition-colors"
+                                                            className="mt-6"
                                                         >
                                                             Add New Record
-                                                        </button>
+                                                        </Button>
                                                     </div>
                                                 )}
                                             </div>

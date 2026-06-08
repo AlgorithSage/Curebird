@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { UploadCloud, BarChart3, FileText, CheckCircle2 } from './Icons';
-import { GlassButton } from './ui/glass-button';
+import { Button } from './ui/button';
 
 const DashboardOverview = ({ user, onNavigateToHistory }) => {
     // Get first name safely
@@ -40,13 +40,14 @@ const DashboardOverview = ({ user, onNavigateToHistory }) => {
                     <span className="text-emerald-400 font-medium"> vital trends</span> in one secure, real-time dashboard.
                 </p>
 
-                <GlassButton
+                <Button
+                    variant="primary"
+                    size="lg"
                     onClick={onNavigateToHistory}
-                    contentClassName="flex items-center gap-2 px-8 py-3.5"
                 >
                     <FileText size={20} />
                     <span>View Medical History Categories</span>
-                </GlassButton>
+                </Button>
             </div>
         </motion.div>
     );

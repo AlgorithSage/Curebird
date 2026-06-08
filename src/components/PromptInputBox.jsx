@@ -5,7 +5,7 @@ import { ArrowUp, Paperclip, Square, X, StopCircle, Mic, Globe, BrainCog, Folder
 import { motion, AnimatePresence } from "framer-motion";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { GlassButton } from "./ui/glass-button";
+import { Button } from "./ui/button";
 
 // Utility function for className merging
 const cn = (...classes) => twMerge(clsx(classes));
@@ -114,35 +114,7 @@ const DialogTitle = forwardRef(({ className, ...props }, ref) => (
 ));
 DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
-// Button Component
-const Button = forwardRef(
-  ({ className, variant = "default", size = "default", ...props }, ref) => {
-    const variantClasses = {
-      default: "bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold",
-      outline: "border border-slate-700 bg-transparent hover:bg-slate-800 text-slate-100",
-      ghost: "bg-transparent hover:bg-slate-800 text-slate-300",
-    };
-    const sizeClasses = {
-      default: "h-10 px-4 py-2 rounded-xl",
-      sm: "h-8 px-3 text-sm rounded-lg",
-      lg: "h-12 px-6 rounded-2xl",
-      icon: "h-8 w-8 rounded-full aspect-[1/1]",
-    };
-    return (
-      <button
-        className={cn(
-          "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
-          variantClasses[variant],
-          sizeClasses[size],
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-Button.displayName = "Button";
+
 
 // VoiceRecorder Component
 const VoiceRecorder = ({
@@ -570,14 +542,14 @@ export const PromptInputBox = forwardRef((props, ref) => {
             <CustomDivider />
 
             <PromptInputAction tooltip="Reset Session">
-              <GlassButton
+              <Button
                 type="button"
                 onClick={onClear}
                 size="icon"
-                className="glass-button-red"
+                variant="danger"
               >
                 <Trash2 className="h-4 w-4" />
-              </GlassButton>
+              </Button>
             </PromptInputAction>
           </div>
 
@@ -592,15 +564,15 @@ export const PromptInputBox = forwardRef((props, ref) => {
                 : "Voice message"
             }
           >
-            <GlassButton
+            <Button
               size="icon"
-              className={cn(
+              variant={
                 isRecording
-                  ? "glass-button-red"
+                  ? "danger"
                   : hasContent
-                  ? ""
-                  : "glass-button-gray"
-              )}
+                  ? "primary"
+                  : "secondary"
+              }
               onClick={() => {
                 if (isRecording) setIsRecording(false);
                 else if (hasContent) handleSubmit();
@@ -617,7 +589,7 @@ export const PromptInputBox = forwardRef((props, ref) => {
               ) : (
                 <Mic className="h-5 w-5" />
               )}
-            </GlassButton>
+            </Button>
           </PromptInputAction>
         </PromptInputActions>
       </PromptInput>

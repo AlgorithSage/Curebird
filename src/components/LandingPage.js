@@ -2,7 +2,7 @@ import React from 'react';
 import { HeartPulse, LogIn, Dna, Pill, Activity, Globe, ShieldCheck, Zap, ArrowRight, Linkedin, Twitter, Instagram, Youtube, Facebook, Bot, MessageSquare, Microscope, Crown } from './Icons';
 import { motion } from 'framer-motion';
 import SEO from './SEO';
-import { GlassButton } from './ui/glass-button';
+import { Button } from './ui/button';
 
 import CureBirdLogo from '../curebird_logo.png';
 
@@ -164,14 +164,14 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                             <LogIn size={26} />
                             Get Started
                         </button>
-                        <GlassButton
+                        <Button
+                            variant="primary"
                             onClick={onSubscribeClick}
-                            className="w-full sm:w-auto"
-                            contentClassName="flex items-center justify-center gap-2 px-10 py-5 text-xl font-bold"
+                            className="w-full sm:w-auto text-xl font-bold px-10 py-5"
                         >
                             <Crown size={26} className="text-amber-500" />
                             <span>View Plans</span>
-                        </GlassButton>
+                        </Button>
                     </motion.div>
                 </motion.div>
             </header>

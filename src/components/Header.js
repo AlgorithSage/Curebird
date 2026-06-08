@@ -144,10 +144,35 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
     return (
 
         <div className="flex items-center w-full p-2 z-50 relative">
-            <header className="w-full rounded-full bg-slate-900/90 backdrop-blur-3xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.08)] flex flex-nowrap items-center justify-between px-6 xl:px-8 py-3 sm:px-6 sm:py-4 transition-all duration-500 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group relative xl:gap-4">
-                {/* Subtle sheen reflection for metallic/glass rim effect */}
-                <div className="absolute inset-0 rounded-full border border-white/5 pointer-events-none"></div>
-                <div className="absolute -inset-[1px] rounded-full border border-amber-500/10 opacity-50 blur-[1px] pointer-events-none"></div>
+            <header className="w-full rounded-full flex flex-nowrap items-center justify-between px-6 xl:px-8 py-3 sm:px-6 sm:py-4 transition-all duration-500 group relative xl:gap-4"
+                style={{
+                    background: "linear-gradient(135deg, rgba(15,12,6,0.55) 0%, rgba(10,9,18,0.45) 50%, rgba(8,10,20,0.50) 100%)",
+                    backdropFilter: "blur(28px) saturate(160%)",
+                    WebkitBackdropFilter: "blur(28px) saturate(160%)",
+                    border: "1px solid rgba(217,119,6,0.30)",
+                    boxShadow: [
+                        "0 0 0 1px rgba(255,255,255,0.04) inset",
+                        "0 0 30px rgba(180,83,9,0.12)",
+                        "0 8px 32px rgba(0,0,0,0.45)",
+                        "inset 0 1px 0 rgba(255,255,255,0.10)",
+                    ].join(", "),
+                }}
+            >
+                {/* Top-edge glass highlight (the bright line that makes it look glassy) */}
+                <div className="absolute top-0 left-[8%] right-[8%] h-[1px] rounded-full pointer-events-none"
+                    style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 35%, rgba(251,191,36,0.30) 50%, rgba(255,255,255,0.22) 65%, transparent 100%)" }} />
+
+                {/* Inner ambient amber glow — centre */}
+                <div className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{ background: "radial-gradient(ellipse at 50% 120%, rgba(180,83,9,0.12) 0%, transparent 65%)" }} />
+
+                {/* Frosted inner sheen — top-left */}
+                <div className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 45%)" }} />
+
+                {/* Outer amber glow ring (blurred, absolute) */}
+                <div className="absolute -inset-[2px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{ background: "transparent", boxShadow: "0 0 28px rgba(180,83,9,0.28), 0 0 60px rgba(180,83,9,0.12)" }} />
 
                 {/* Left Group: Menu, Logo - Always First */}
                 <div className="flex items-center gap-6 sm:gap-8 order-1 flex-none">
@@ -159,7 +184,8 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                         }}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        className="p-2 rounded-full border border-white/10 text-slate-300 hover:text-amber-400 hover:border-amber-400/50 transition-colors shadow-lg shadow-black/20 shrink-0"
+                        className="p-2 rounded-full text-slate-300 hover:text-amber-400 transition-colors shrink-0"
+                        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", backdropFilter: "blur(8px)" }}
                     >
                         <Menu size={20} className="w-[20px] h-[20px] sm:w-[22px] sm:h-[22px]" />
                     </motion.button>
@@ -184,14 +210,17 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                                     triggerHaptic('light');
                                     onNavigate && onNavigate(item.id || item.name);
                                 }}
-                                className={`text-[0.55rem] xl:text-[0.6rem] 2xl:text-xs font-black uppercase tracking-wider transition-all duration-300 relative group py-2 whitespace-nowrap ${isActive 
-                                    ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' 
-                                    : 'text-slate-300 hover:text-amber-400 hover:drop-shadow-[0_0_10px_rgba(245,158,11,0.8)]'
+                                className={`text-[0.55rem] xl:text-[0.6rem] 2xl:text-xs font-black uppercase tracking-wider transition-all duration-300 relative group/nav py-2 whitespace-nowrap ${isActive
+                                    ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]'
+                                    : 'text-slate-300/90 hover:text-amber-300 hover:drop-shadow-[0_0_10px_rgba(245,158,11,0.9)]'
                                     }`}
                             >
                                 {item.name}
-                                {/* Glow effect on hover */}
-                                <span className={`absolute inset-0 bg-amber-400/0 group-hover:bg-amber-400/5 rounded-lg transition-colors duration-300 -z-10 -mx-2`}></span>
+                                {/* Glass pill highlight on hover */}
+                                <span className="absolute inset-0 rounded-lg -mx-2 -z-10 opacity-0 group-hover/nav:opacity-100 transition-opacity duration-300"
+                                    style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(180,83,9,0.08) 100%)", border: "1px solid rgba(255,255,255,0.06)" }} />
+                                {/* Active underline dot */}
+                                {isActive && <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.8)]" />}
                             </button>
                         );
                     })}
@@ -200,11 +229,20 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                     {user && onAddClick && (
                         <>
                             {/* Hidden on very small screens if needed, or keep for access */}
-                            <button onClick={onShareClick} className="hidden sm:block p-2 rounded-xl border border-white/10 transition-all duration-300 text-slate-300 hover:text-amber-400 hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.6)] hover:bg-amber-500/10">
+                            <button onClick={onShareClick} className="hidden sm:block p-2 rounded-xl transition-all duration-300 text-slate-300 hover:text-amber-400"
+                                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", backdropFilter: "blur(8px)" }}
+                                onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 18px rgba(180,83,9,0.35)"}
+                                onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
+                            >
                                 <Share2 size={18} />
                             </button>
                             <div className="relative relative-notif-container">
-                                <button onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)} className="p-2 rounded-xl border border-white/10 transition-all duration-300 text-slate-300 relative hover:text-amber-400 hover:border-amber-500/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.6)] hover:bg-amber-500/10">
+                                <button onClick={() => onNotificationClick ? onNotificationClick() : setIsNotifOpen(!isNotifOpen)}
+                                    className="p-2 rounded-xl transition-all duration-300 text-slate-300 relative hover:text-amber-400"
+                                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", backdropFilter: "blur(8px)" }}
+                                    onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 18px rgba(180,83,9,0.35)"}
+                                    onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
+                                >
                                     <Bell size={18} />
                                     {alerts.length > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>}
                                 </button>

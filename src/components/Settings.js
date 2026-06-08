@@ -112,7 +112,7 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
 
     if (!user) {
         return (
-            <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto bg-slate-900 text-white selection:bg-amber-500/30">
+            <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white selection:bg-amber-500/30">
                 <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
                     <Header
                         title="Settings"
@@ -135,10 +135,7 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
     }
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto bg-slate-900 text-white selection:bg-amber-500/30">
-            {/* Background Effects */}
-            <div className="fixed top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-amber-500/5 blur-[120px] pointer-events-none z-0" />
-            <div className="fixed bottom-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-600/5 blur-[120px] pointer-events-none z-0" />
+        <div className="p-4 sm:p-6 lg:p-8 h-screen overflow-y-auto text-white selection:bg-amber-500/30">
 
             <div className="relative z-10">
                 <div className="sticky top-4 z-50 px-2 sm:px-6 mb-8">
