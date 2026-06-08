@@ -893,6 +893,11 @@ body {
   }
 }
 
+/* ─── Garet Font Utility ─────────────────────────────── */
+.font-garet {
+  font-family: 'Garet', 'Space Grotesk', sans-serif;
+}
+
 /* ─── Unified Button Shimmer Animation ──────────────── */
 
 @keyframes shimmer-sweep {

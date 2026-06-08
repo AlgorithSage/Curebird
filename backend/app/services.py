@@ -1,5 +1,3 @@
-import requests
-import pandas as pd
 import pytesseract
 from PIL import Image
 import re
@@ -559,46 +557,104 @@ def analyze_comprehensive(file_stream):
 
         if doc_type == 'lab_report':
             summary_prompt = f"""
-            You are a smart Medical Lab Assistant.
-            Analyze these Lab Results and explain them to the patient in simple terms.
+You are a senior medical AI that transforms complex lab reports into clear, actionable health insights any patient can instantly understand.
 
-            Patient Data:
-            Test Results: {json.dumps(extracted_data.get('test_results', []))}
-            Inferred Conditions: {', '.join(verified_data['diseases'])}
+PATIENT DATA:
+Test Results: {json.dumps(extracted_data.get('test_results', []))}
+Inferred Conditions: {', '.join(verified_data['diseases']) if verified_data['diseases'] else 'Not specified'}
+Warnings from AI Validator: {json.dumps(verified_data.get('warnings', []))}
 
-            Instructions:
-            - **Identify the abnormal results** (High/Low) and explain what they mean (e.g. "Your Cholesterol is high, which means...").
-            - **Decode Jargon**: Explain terms like 'HbA1c', 'TSH', 'Lipid Profile', 'CBC' in one sentence each.
-            - **Be Reassuring**: If values are normal, say "Everything looks good."
-            - **Format**:
-              * **Key Findings**: [Bullet points of abnormal values]
-              * **Understanding Your Report**: [Brief explanation of the test types]
-            - Keep it short (max 150 words).
-            """
+---
+
+STRICT RULES:
+- NEVER use emojis, emoticons, Unicode pictograms, or any decorative symbols (no stars, checkmarks, arrows as decoration, flags, faces, or any Unicode character above U+00FF).
+- Use plain Markdown only: ##, **, *, -, numbered lists, horizontal rules.
+- Mix short narrative sentences with bullet points — never bullets alone or prose alone.
+- Write as if explaining to a patient with no medical background. No jargon without an immediate plain-English explanation.
+- Be empathetic, clear, and actionable.
+- Do NOT mention internal AI system names or product branding inside the summary.
+
+---
+
+OUTPUT STRUCTURE (follow exactly, in this order):
+
+## Overview
+One clear sentence describing what type of report this is and what it was testing for.
+
+## Values That Need Attention
+For EACH result that is HIGH, LOW, or CRITICAL, write a block like this:
+- **[Test Name]** — Result: [value] [unit] | Normal Range: [reference_range]
+  → *What this means:* [1-2 plain-language sentences explaining the health implication.]
+  → Status: [HIGH] / [LOW] / [CRITICAL]
+
+If ALL results are within normal range, write: **"All values are within the healthy range. Your report looks good."** and skip this section.
+
+## Normal Results
+List all in-range tests as a brief bullet list:
+- **[Test Name]**: [value] [unit] — Normal
+
+## What This Means for You
+2-3 sentences summarizing the overall health picture in everyday language. Mention the biggest concern (if any) and whether the patient should see a doctor urgently or at their next routine visit.
+
+## Recommended Next Steps
+3-5 clear, numbered, specific action points. Be concrete (e.g., "Consult your doctor about your HbA1c of 8.2%", "Avoid high-sugar foods", "Repeat this blood test in 3 months").
+
+---
+*AI-assisted interpretation. Always verify findings with your treating physician before making health decisions.*
+"""
         else:
-            # Default Prescription Mode
             summary_prompt = f"""
-            You are a friendly medical interpreter for a patient.
-            Given the following medically verified data, provide a very crisp, short, and empathetic summary.
-            
-            Validated Data:
-            Diseases/Conditions: {', '.join(verified_data['diseases'])}
-            Medications: {json.dumps(verified_data['medications'])}
-            
-            Instructions:
-            - Explain clinical terms in simple language (e.g., 'Hypertension' -> 'High Blood Pressure').
-            - If corrections were made by the system (e.g. spelling fixed), mention that the AI verified the prescription.
-            - Be encouraging but professional.
-            - Maximum 3-4 bullet points.
-            - End with a small disclaimer.
-            - Reference the 'Alternatives' if available, saying 'Generic alternatives have been identified'.
-            """
-        
+You are a senior medical AI that decodes complex prescriptions into clear, simple, and immediately actionable information for patients.
+
+PATIENT DATA:
+Diagnosed Conditions: {', '.join(verified_data['diseases']) if verified_data['diseases'] else 'Not explicitly stated'}
+Verified Medications: {json.dumps(verified_data['medications'])}
+AI Validator Warnings: {json.dumps(verified_data.get('warnings', []))}
+
+---
+
+STRICT RULES:
+- NEVER use emojis, emoticons, Unicode pictograms, or any decorative symbols (no stars, checkmarks, arrows as decoration, flags, faces, or any Unicode character above U+00FF).
+- Use plain Markdown only: ##, **, *, -, numbered lists, horizontal rules.
+- Mix short narrative sentences with bullet points — never bullets alone or prose alone.
+- Write as if explaining to a patient with zero medical background. Use everyday language.
+- For every medical term, immediately provide the plain-English translation in parentheses.
+- Be empathetic, precise, and professional.
+- Do NOT mention internal AI system names or product branding inside the summary.
+
+---
+
+OUTPUT STRUCTURE (follow exactly, in this order):
+
+## Your Diagnosis
+Brief 1-sentence intro, then for each condition:
+- **[Medical Term]** — [Plain-English name]: [1 sentence explaining what this condition is and how it affects the body.]
+
+## Your Medications — Explained Simply
+For EACH medication, write this block:
+- **[Drug Name]** | [Dosage] | [Frequency]
+  → *Purpose:* [1 sentence on what this drug does and why it was prescribed.]
+  → *AI Status:* [Use one of: VERIFIED / CORRECTED BY AI / LOW CONFIDENCE - verify with doctor]
+  → *Affordable Alternatives:* [List 2-3 brand alternatives if available, e.g., "Amlokind, Amlopres — same active ingredient, different brand."]
+
+## Important Warnings
+If validator warnings exist, list each one in plain patient language:
+- [WARNING] [Rewritten warning, e.g., "This medicine combination may cause dizziness — avoid driving after the first dose."]
+
+If no warnings: **"No drug conflicts, interactions, or mismatches detected."**
+
+## Key Instructions for Taking Your Medicines
+4-6 numbered, practical, specific reminders tailored to the medicines detected (e.g., "Take [Drug X] with food to avoid stomach upset", "Do not stop [Drug Y] abruptly without consulting your doctor").
+
+---
+*AI-assisted prescription summary. Always follow your doctor's original instructions. This is not a substitute for professional medical advice.*
+"""
+
         summary_completion = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": summary_prompt}],
-            temperature=0.7,
-            max_tokens=512
+            temperature=0.4,
+            max_tokens=1200
         )
         
         summary_text = summary_completion.choices[0].message.content

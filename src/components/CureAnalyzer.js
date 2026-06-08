@@ -18,6 +18,10 @@ import {
   BrainCircuit,
   Sparkles,
   Activity,
+  RefreshCw,
+  Info,
+  Clock,
+  ShieldCheck,
 } from './Icons';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
@@ -869,57 +873,100 @@ const CureAnalyzer = ({
                   )}
 
                   <motion.div variants={fadeSlideUp} className="relative">
-                    <h4 className="flex items-center gap-2 text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-4 opacity-70">
-                      <Pill size={12} /> Pharmacy Data extract
-                    </h4>
-                    {(analysisResult.analysis?.medications || []).length >
-                      0 ? (
-                      <div className="space-y-3">
+                    {/* Section header */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="glass-button-wrap">
+                        <span className="glass-button !rounded-xl !w-7 !h-7 !p-0 flex items-center justify-center">
+                          <Pill size={13} />
+                        </span>
+                      </div>
+                      <span className="font-garet text-[11px] font-black text-amber-400/90 uppercase tracking-[0.25em]">
+                        Pharmacy Extract
+                      </span>
+                      <div className="flex-1 h-px bg-gradient-to-r from-amber-500/30 to-transparent" />
+                    </div>
+
+                    {(analysisResult.analysis?.medications || []).length > 0 ? (
+                      <div className="space-y-4">
                         {analysisResult.analysis.medications.map((med, i) => (
                           <div
                             key={i}
-                            className="flex flex-col text-slate-300 text-sm bg-slate-900 border border-slate-700 p-4 rounded-xl hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)] transition-all group/med"
+                            className="glass-card-amber !rounded-2xl !p-0 !hover:translate-y-0 group/med"
                           >
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="font-bold text-emerald-400 group-hover/med:text-emerald-300 flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                                {med.name || med.medicine_name || med.input || "Unknown Medicine"}
+                            <div className="p-4">
+                              {/* Medicine name + verified badge */}
+                              <div className="flex items-start justify-between gap-3 mb-3">
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <div className="glass-button-wrap shrink-0">
+                                    <span className="glass-button !rounded-xl !w-9 !h-9 !p-0 flex items-center justify-center">
+                                      <Pill size={15} />
+                                    </span>
+                                    <span className="glass-button-shadow" />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <p className="font-garet font-black text-white text-sm leading-tight tracking-tight truncate">
+                                      {med.name || med.medicine_name || med.input || "Unknown Medicine"}
+                                    </p>
+                                    <p className="font-mono text-[9px] text-amber-500/50 mt-0.5 uppercase tracking-widest">
+                                      Prescribed Medication
+                                    </p>
+                                  </div>
+                                </div>
                                 {med.is_corrected && (
-                                  <span className="flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                                    <Check size={10} /> Verified
-                                  </span>
+                                  <div className="flex items-center gap-1.5 shrink-0 px-2.5 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/10">
+                                    <ShieldCheck size={10} className="text-emerald-400" />
+                                    <span className="font-garet text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Verified</span>
+                                  </div>
                                 )}
                               </div>
-                              <div className="flex gap-4 text-slate-500 font-mono text-xs">
-                                <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
-                                  DSG: {med.dosage && typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : med.dosage || 'N/A'}
-                                </span>
-                                <span className="w-px h-full bg-slate-800"></span>
-                                <span className="opacity-70 group-hover/med:opacity-100 transition-opacity">
-                                  FRQ: {med.frequency}
-                                </span>
-                              </div>
-                            </div>
 
-                            {/* Alternative Medications Section */}
-                            {med.alternatives && med.alternatives.length > 0 && (
-                              <div className="mt-2 pl-4 border-l-2 border-slate-800">
-                                <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">
-                                  Approved Alternatives:
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                  {med.alternatives.map((alt, idx) => (
-                                    <span
-                                      key={idx}
-                                      className="text-xs bg-slate-800/50 text-slate-400 px-2 py-1 rounded hover:bg-slate-800 hover:text-sky-400 transition-colors cursor-help"
-                                      title="Generic/Alternative Option"
-                                    >
-                                      {alt}
-                                    </span>
-                                  ))}
+                              {/* Dosage + Frequency chips */}
+                              <div className="flex flex-wrap gap-2 mb-4">
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/[0.07] bg-white/[0.03]">
+                                  <Info size={10} className="text-amber-500/60 shrink-0" />
+                                  <span className="font-mono text-[11px] text-slate-300">
+                                    {med.dosage && typeof med.dosage === 'object'
+                                      ? (med.dosage.dosage || JSON.stringify(med.dosage))
+                                      : med.dosage || 'N/A'}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/[0.07] bg-white/[0.03]">
+                                  <Clock size={10} className="text-amber-500/60 shrink-0" />
+                                  <span className="font-mono text-[11px] text-slate-300">
+                                    {med.frequency || 'N/A'}
+                                  </span>
                                 </div>
                               </div>
-                            )}
+
+                              {/* Alternatives — primary focal section */}
+                              <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-black/40 overflow-hidden">
+                                <div className="flex items-center gap-2 px-3 pt-3 pb-2 border-b border-amber-500/10">
+                                  <RefreshCw size={11} className="text-amber-400 shrink-0" />
+                                  <span className="font-garet text-[10px] font-black uppercase tracking-[0.2em] text-amber-300/90">
+                                    Approved Brand Alternatives
+                                  </span>
+                                  <span className="ml-auto font-mono text-[9px] text-slate-600 italic">same active salt</span>
+                                </div>
+                                <div className="p-3">
+                                  {med.alternatives && med.alternatives.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2">
+                                      {med.alternatives.map((alt, idx) => (
+                                        <span key={idx} className="glass-button-wrap cursor-default">
+                                          <span className="glass-button !rounded-xl px-3 py-1.5 font-garet text-xs font-bold tracking-wide">
+                                            <span className="glass-button-text">{alt}</span>
+                                          </span>
+                                          <span className="glass-button-shadow" />
+                                        </span>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <p className="font-garet text-[10px] text-slate-600 italic text-center py-1">
+                                      No alternatives on record
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
