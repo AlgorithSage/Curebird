@@ -38,10 +38,8 @@ const ModalWrapper = ({ onClose, children }) => (
             />
         </div>
 
-        {/* Modal + animated border wrapper */}
+        {/* Modal wrapper */}
         <div className="relative w-full max-w-lg sm:max-w-lg" onClick={(e) => e.stopPropagation()}>
-            {/* Rotating amber border ring */}
-            <div className="animated-border absolute -inset-[2px] rounded-t-2xl sm:rounded-2xl pointer-events-none" />
 
             <motion.div
                 initial={{ y: 80, opacity: 0, scale: 0.96, filter: "blur(8px)" }}
@@ -50,13 +48,6 @@ const ModalWrapper = ({ onClose, children }) => (
                 transition={{ type: "spring", damping: 26, stiffness: 320 }}
                 className="relative glass-card w-full max-h-[92vh] sm:max-h-[90vh] flex flex-col overflow-hidden !p-0 rounded-t-2xl sm:rounded-2xl shadow-2xl"
             >
-                {/* Inner top shimmer sweep */}
-                <motion.div
-                    className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none z-50"
-                    style={{ background: "linear-gradient(90deg, transparent 0%, rgba(251,191,36,0.6) 50%, transparent 100%)" }}
-                    animate={{ opacity: [0.4, 1, 0.4], scaleX: [0.6, 1, 0.6] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                />
                 {/* Subtle inner amber glow at top */}
                 <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none"
                     style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.08) 0%, transparent 70%)" }} />
