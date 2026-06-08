@@ -88,113 +88,115 @@ const ReviewExtractionModal = ({ isOpen, onClose, onSave, extractedData, availab
     };
 
     if (!isOpen) return null;
-
+ 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-3xl flex flex-col max-h-[85vh]"
+                className="bg-[#0b1220]/95 border border-white/10 rounded-2xl w-full max-w-3xl flex flex-col max-h-[85vh] shadow-[0_0_50px_-12px_rgba(0,0,0,0.8)]"
             >
-                <div className="flex items-center justify-between p-6 border-b border-white/10">
+                <div className="flex items-center justify-between p-6 border-b border-white/5 bg-slate-900/30">
                     <div>
-                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                            <Check className="text-green-500" /> Verify Extracted Data
+                        <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+                            <Check className="text-emerald-400" size={18} /> Verify Extracted Data
                         </h2>
-                        <p className="text-sm text-slate-400">Please review the values before saving to your log.</p>
+                        <p className="text-xs text-slate-400 mt-0.5">Please review the values before saving to your log.</p>
                     </div>
-                    <button onClick={onClose} className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5">
-                        <X size={24} />
+                    <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                        <X size={20} />
                     </button>
                 </div>
-
+ 
                 <div className="flex-1 overflow-y-auto p-6">
                     {/* Date Selector */}
                     <div className="mb-6">
-                        <label className="block text-sm font-medium text-slate-400 mb-2">Report Date</label>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Report Date</label>
                         <input
                             type="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            className="bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-amber-500 w-full sm:w-auto"
+                            className="bg-slate-950/40 border border-white/10 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 w-full sm:w-auto [color-scheme:dark]"
                         />
                     </div>
-
+ 
                     {/* Items Table */}
                     <div className="space-y-4">
                         {items.map((item) => (
-                            <div key={item.id} className={`flex flex-col md:flex-row gap-4 p-4 rounded-xl border ${item.selected ? 'bg-slate-800/50 border-amber-500/30' : 'bg-slate-800/20 border-white/5 opacity-70'}`}>
-
+                            <div key={item.id} className={`flex flex-col md:flex-row gap-4 p-4 rounded-xl border transition-all duration-300 ${item.selected ? 'bg-slate-900/60 border-amber-500/30 shadow-inner' : 'bg-slate-900/10 border-white/5 opacity-50'}`}>
+ 
                                 {/* Checkbox & Name */}
                                 <div className="flex items-center gap-4 flex-1">
                                     <input
                                         type="checkbox"
                                         checked={item.selected}
                                         onChange={(e) => handleItemChange(item.id, 'selected', e.target.checked)}
-                                        className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-amber-500 focus:ring-offset-0 focus:ring-0"
+                                        className="w-4.5 h-4.5 rounded border-white/10 bg-slate-950 text-amber-500 focus:ring-offset-0 focus:ring-0 focus:ring-amber-500/20"
                                     />
                                     <div className="flex-1">
-                                        <div className="text-xs text-slate-500 uppercase font-bold mb-1">Test Name from Report</div>
+                                        <div className="text-[9px] text-slate-500 uppercase font-black tracking-wider mb-1">Test Name from Report</div>
                                         <input
                                             type="text"
                                             value={item.originalName}
                                             onChange={(e) => handleItemChange(item.id, 'originalName', e.target.value)}
-                                            className="w-full bg-transparent text-white font-medium border-none p-0 focus:ring-0"
+                                            className="w-full bg-transparent text-sm text-white font-bold border-none p-0 focus:ring-0 placeholder:text-slate-600"
+                                            placeholder="Test Name"
                                         />
                                     </div>
                                 </div>
-
+ 
                                 {/* Mapping Dropdown */}
                                 <div className="flex-1">
-                                    <div className="text-xs text-slate-500 uppercase font-bold mb-1">Map to Metric</div>
+                                    <div className="text-[9px] text-slate-500 uppercase font-black tracking-wider mb-1">Map to Metric</div>
                                     <select
                                         value={item.metricType}
                                         onChange={(e) => handleItemChange(item.id, 'metricType', e.target.value)}
-                                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
+                                        className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
                                     >
-                                        <option value="">-- Ignore --</option>
+                                        <option value="" className="bg-slate-900">-- Ignore --</option>
                                         {availableMetrics.map(m => (
-                                            <option key={m.id} value={m.id}>{m.label}</option>
+                                            <option key={m.id} value={m.id} className="bg-slate-900">{m.label}</option>
                                         ))}
                                     </select>
                                 </div>
-
+ 
                                 {/* Value & Unit */}
                                 <div className="flex gap-2 w-full md:w-auto">
                                     <div className="w-24">
-                                        <div className="text-xs text-slate-500 uppercase font-bold mb-1">Value</div>
+                                        <div className="text-[9px] text-slate-500 uppercase font-black tracking-wider mb-1">Value</div>
                                         <input
                                             type="text"
                                             value={item.value}
                                             onChange={(e) => handleItemChange(item.id, 'value', e.target.value)}
-                                            className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
+                                            className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50 text-center font-mono font-bold"
                                         />
                                     </div>
                                     <div className="w-20">
-                                        <div className="text-xs text-slate-500 uppercase font-bold mb-1">Unit</div>
+                                        <div className="text-[9px] text-slate-500 uppercase font-black tracking-wider mb-1">Unit</div>
                                         <input
                                             type="text"
                                             value={item.unit}
                                             onChange={(e) => handleItemChange(item.id, 'unit', e.target.value)}
-                                            className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
+                                            className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50 text-center font-semibold"
                                         />
                                     </div>
                                 </div>
                             </div>
                         ))}
-
+ 
                         {items.length === 0 && (
-                            <div className="text-center text-slate-500 py-8">
+                            <div className="text-center text-slate-500 py-8 text-sm">
                                 No data extracted. Please enter manually.
                             </div>
                         )}
                     </div>
                 </div>
-
-                <div className="p-6 border-t border-white/10 flex justify-end gap-3 bg-slate-900 rounded-b-2xl">
+ 
+                <div className="p-6 border-t border-white/5 flex justify-end gap-3 bg-slate-900/30 rounded-b-2xl">
                     <Button
                         onClick={onClose}
                         variant="secondary"
+                        className="h-10 rounded-xl text-xs font-bold uppercase tracking-wider"
                     >
                         Cancel
                     </Button>
@@ -202,6 +204,7 @@ const ReviewExtractionModal = ({ isOpen, onClose, onSave, extractedData, availab
                         onClick={handleSave}
                         variant="primary"
                         icon={Save}
+                        className="h-10 rounded-xl text-xs font-bold uppercase tracking-wider"
                     >
                         Confirm & Save
                     </Button>

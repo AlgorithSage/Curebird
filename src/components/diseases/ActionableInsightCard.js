@@ -31,11 +31,11 @@ const ActionableInsightCard = ({ disease, metrics, userId, onInsightLoaded }) =>
 
     if (!metrics || metrics.length < 2) {
         return (
-            <div className="bg-gradient-to-br from-indigo-900 to-slate-900 p-5 rounded-2xl border border-indigo-500/30">
-                <h3 className="text-indigo-300 font-bold mb-2 flex items-center gap-2">
-                    <AlertCircle size={16} /> Insight (Beta)
+            <div className="bg-gradient-to-r from-[#ff8f1c] to-[#ffb800] p-5 rounded-2xl border-none shadow-lg shadow-orange-500/5">
+                <h3 className="text-black font-black mb-1.5 flex items-center gap-2 text-sm sm:text-base tracking-tight">
+                    <AlertCircle size={16} className="text-black" /> Insight (Beta)
                 </h3>
-                <p className="text-sm text-indigo-100/80">
+                <p className="text-xs sm:text-sm text-black font-medium leading-relaxed">
                     Log at least 2 readings to unlock Personalized AI Insights.
                 </p>
             </div>

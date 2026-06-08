@@ -61,69 +61,70 @@ const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl"
+                className="glass-card w-full max-w-sm !p-0 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]"
             >
-                <div className="flex justify-between items-center p-5 border-b border-slate-800">
+                <div className="flex justify-between items-center p-5 border-b border-amber-500/10 bg-black/20">
                     <div>
-                        <h2 className="text-lg font-bold text-white">Add Log</h2>
-                        <p className="text-xs text-slate-400">{disease.name}</p>
+                        <h2 className="text-base font-black text-white tracking-tight">Add Log</h2>
+                        <p className="text-xs text-slate-400 mt-0.5">{disease.name}</p>
                     </div>
-                    <button onClick={onClose} className="text-slate-400 hover:text-white">
-                        <X size={24} />
+                    <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                        <X size={18} />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-5 space-y-4">
                     {/* Metric Type */}
                     <div>
-                        <label className="block text-sm font-medium text-slate-400 mb-1">Metric Type</label>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Metric Type</label>
                         <select
                             value={formData.type}
                             onChange={(e) =>
                                 setFormData({ ...formData, type: e.target.value, value: '' })
                             }
-                            className="w-full bg-slate-800 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500"
+                            className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all duration-200"
                         >
                             {availableMetrics.map(m => (
-                                <option key={m.id} value={m.id}>
+                                <option key={m.id} value={m.id} className="bg-slate-900">
                                     {m.label} ({m.unit})
                                 </option>
                             ))}
                             {availableMetrics.length === 0 && (
-                                <option value="generic">Note / Generic Value</option>
+                                <option value="generic" className="bg-slate-900">Note / Generic Value</option>
                             )}
                         </select>
                     </div>
 
                     {/* Value Input */}
                     <div>
-                        <label className="block text-sm font-medium text-slate-400 mb-1">Value</label>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Value</label>
                         <div className="relative">
                             <input
                                 type="number"
                                 step="0.01"
                                 value={formData.value}
                                 onChange={(e) => handleValueChange(e.target.value)}
-                                className="w-full bg-slate-800 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500 text-lg font-mono"
+                                className="w-full bg-slate-950/40 border border-white/10 rounded-xl pl-3.5 pr-12 py-2.5 text-base font-bold font-mono text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all duration-200"
                                 placeholder="0.00"
                                 required
                             />
-                            <span className="absolute right-4 top-4 text-slate-500 text-sm">
+                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs font-semibold">
                                 {availableMetrics.find(m => m.id === formData.type)?.unit}
                             </span>
                         </div>
 
                         {warning && (
                             <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="flex items-center gap-2 mt-2 text-red-400 text-xs"
+                                initial={{ opacity: 0, y: -4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="flex items-start gap-2 mt-2.5 p-2.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs leading-normal"
                             >
-                                <AlertTriangle size={12} /> {warning}
+                                <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+                                <span>{warning}</span>
                             </motion.div>
                         )}
                     </div>
@@ -131,45 +132,55 @@ const AddMetricModal = ({ onClose, userId, disease, onMetricAdded }) => {
                     {/* Date & Time */}
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">Date</label>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Date</label>
                             <input
                                 type="date"
                                 value={formData.date}
                                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                className="w-full bg-slate-800 border-none rounded-lg p-2 text-sm text-white"
+                                className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500/50 [color-scheme:dark]"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-400 mb-1">Time</label>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Time</label>
                             <input
                                 type="time"
                                 value={formData.time}
                                 onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                                className="w-full bg-slate-800 border-none rounded-lg p-2 text-sm text-white"
+                                className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500/50 [color-scheme:dark]"
                             />
                         </div>
                     </div>
 
                     {/* Notes */}
                     <div>
-                        <label className="block text-sm font-medium text-slate-400 mb-1">Notes (Optional)</label>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Notes (Optional)</label>
                         <textarea
                             rows={2}
                             value={formData.notes}
                             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                            className="w-full bg-slate-800 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500 text-sm"
+                            className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all duration-200 resize-none"
                             placeholder="e.g. After lunch"
                         />
                     </div>
 
-                    <Button
-                        type="submit"
-                        loading={isSubmitting}
-                        variant="primary"
-                        className="w-full mt-4"
-                    >
-                        Log Entry
-                    </Button>
+                    <div className="flex gap-2.5 pt-3 border-t border-white/5">
+                        <Button
+                            type="button"
+                            onClick={onClose}
+                            variant="secondary"
+                            className="flex-1 h-10 rounded-xl text-xs font-bold uppercase tracking-wider"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            loading={isSubmitting}
+                            variant="primary"
+                            className="flex-1 h-10 rounded-xl text-xs font-bold uppercase tracking-wider"
+                        >
+                            Log Entry
+                        </Button>
+                    </div>
                 </form>
             </motion.div>
         </div>

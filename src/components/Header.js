@@ -200,7 +200,7 @@ const Header = ({ title, description, user, onAddClick, onShareClick, onLoginCli
                 </div>
 
                 {/* Center Navigation: Text Links (Visible on Large Screens) */}
-                <div className="hidden xl:flex items-center gap-1 xl:gap-2 2xl:gap-6 order-2 flex-1 justify-center w-auto px-2">
+                <div className="hidden xl:flex items-center order-2 flex-1 justify-center w-auto px-2" style={{ gap: 'clamp(12px, 1.5vw, 24px)' }}>
                     {navItems.map((item) => {
                         const isActive = title === item.name;
                         return (

@@ -4,6 +4,7 @@ import { Activity, Plus, ChevronRight, Trash2 } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import AddDiseaseModal from './AddDiseaseModal';
 import { Button } from '../ui/button';
+import LiquidButton from '../ui/LiquidButton';
 
 const DiseaseList = ({ userId, user, onSelectDisease }) => {
     const [diseases, setDiseases] = useState([]);
@@ -73,8 +74,7 @@ const DiseaseList = ({ userId, user, onSelectDisease }) => {
                     </p>
 
                     {/* Action Button */}
-                    <Button
-                        variant="primary"
+                    <LiquidButton
                         onClick={() => {
                             const tier = user?.subscriptionTier || 'Free';
                             if (tier === 'Free' && diseases.length >= 2) {
@@ -83,14 +83,13 @@ const DiseaseList = ({ userId, user, onSelectDisease }) => {
                             }
                             setIsAddModalOpen(true);
                         }}
-                        className={user?.subscriptionTier === 'Free' && diseases.length >= 2 ? 'opacity-80 grayscale' : ''}
-                        size="lg"
+                        className={`px-8 py-4 text-base rounded-2xl flex items-center gap-2.5 font-black text-black ${user?.subscriptionTier === 'Free' && diseases.length >= 2 ? 'opacity-80 grayscale' : ''}`}
                     >
-                        <span className="p-1.5 bg-white/10 text-amber-400 rounded-lg flex items-center justify-center">
-                            {(user?.subscriptionTier === 'Free' && diseases.length >= 2) ? <span className="text-xs">🔒</span> : <Plus size={18} strokeWidth={3} />}
+                        <span className="p-1.5 bg-black/10 text-black rounded-lg flex items-center justify-center">
+                            {(user?.subscriptionTier === 'Free' && diseases.length >= 2) ? <span className="text-xs">🔒</span> : <Plus size={18} strokeWidth={3} className="text-black" />}
                         </span>
                         <span>Add New Condition</span>
-                    </Button>
+                    </LiquidButton>
                 </div>
             </div>
 
@@ -105,16 +104,31 @@ const DiseaseList = ({ userId, user, onSelectDisease }) => {
                             onClick={() => onSelectDisease && onSelectDisease(disease)}
                             className="glass-card cursor-pointer flex justify-between items-start group hover:scale-[1.02] active:scale-95"
                         >
-                            <div>
-                                <h3 className="text-lg font-bold text-white mb-1">{disease.name}</h3>
+                            <div className="flex-1 min-w-0 pr-2">
+                                <h3 className="text-lg font-bold text-white mb-1 truncate group-hover:text-amber-400 transition-colors">{disease.name}</h3>
                                 <p className="text-xs text-slate-400 mb-3">
                                     Diagnosed: {new Date(disease.diagnosisDate).toLocaleDateString()}
                                 </p>
-
-
+                                <div className="flex flex-wrap gap-1.5">
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border tracking-wider uppercase ${
+                                        disease.status === 'active' ? 'border-amber-500/30 bg-amber-500/5 text-amber-400' :
+                                        disease.status === 'resolved' ? 'border-emerald-500/30 bg-emerald-500/5 text-emerald-400' :
+                                        'border-sky-500/30 bg-sky-500/5 text-sky-400'
+                                    }`}>
+                                        {disease.status}
+                                    </span>
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border tracking-wider uppercase ${
+                                        disease.severity === 'critical' ? 'border-red-500/30 bg-red-500/5 text-red-400' :
+                                        disease.severity === 'high' ? 'border-orange-500/30 bg-orange-500/5 text-orange-400' :
+                                        disease.severity === 'moderate' ? 'border-amber-500/30 bg-amber-500/5 text-amber-400' :
+                                        'border-emerald-500/30 bg-emerald-500/5 text-emerald-400'
+                                    }`}>
+                                        {disease.severity}
+                                    </span>
+                                </div>
                             </div>
 
-                            <div className="flex flex-col items-end gap-2">
+                            <div className="flex flex-col items-end gap-3 shrink-0">
                                 <button
                                     onClick={(e) => handleDeleteDisease(e, disease.id)}
                                     className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-full transition-colors z-10"
@@ -123,8 +137,8 @@ const DiseaseList = ({ userId, user, onSelectDisease }) => {
                                     <Trash2 size={16} />
                                 </button>
 
-                                <div className="bg-slate-800/50 p-2 rounded-full text-slate-500 group-hover:text-amber-400 group-hover:bg-amber-400/10 transition-colors">
-                                    <ChevronRight size={20} />
+                                <div className="bg-slate-800/50 p-2 rounded-full text-slate-500 group-hover:text-amber-400 group-hover:bg-amber-400/10 transition-all duration-300">
+                                    <ChevronRight size={20} className="transform group-hover:translate-x-0.5 transition-transform" />
                                 </div>
                             </div>
                         </motion.div>

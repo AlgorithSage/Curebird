@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Plus, Activity, TrendingUp, FileText, Trash2, Printer, UploadCloud, Eye, Download, X } from '../Icons';
 import { DiseaseService } from '../../services/DiseaseService';
 import { Button } from '../ui/button';
+import LiquidButton from '../ui/LiquidButton';
 
 import { DISEASE_CONFIG, calculateCHI } from '../../data/diseaseMetrics';
 import AddMetricModal from './AddMetricModal';
@@ -22,6 +23,55 @@ import ActionableInsightCard from './ActionableInsightCard';
 import DoctorSummaryView from './DoctorSummaryView';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+
+const getMetricColor = (metricId) => {
+    switch (metricId) {
+        case 'blood_pressure':
+        case 'sys':
+        case 'dia':
+            return '#f43f5e'; // rose/red
+        case 'sugar':
+        case 'glucose':
+        case 'fasting_sugar':
+        case 'post_prandial':
+        case 'hba1c':
+            return '#f59e0b'; // amber
+        case 'weight':
+        case 'bmi':
+            return '#06b6d4'; // cyan
+        case 'heart_rate':
+        case 'pulse':
+            return '#ec4899'; // pink
+        default:
+            return '#10b981'; // emerald
+    }
+};
+
+const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+        const dataPoint = payload[0].payload;
+        return (
+            <div className="bg-slate-950/95 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-2xl">
+                <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-1">
+                    {dataPoint.date} • {dataPoint.time}
+                </p>
+                <div className="flex items-center gap-1.5">
+                    <span 
+                        className="w-2 h-2 rounded-full" 
+                        style={{ backgroundColor: payload[0].stroke || '#f59e0b' }}
+                    ></span>
+                    <span className="text-sm font-bold text-white">
+                        {payload[0].value}
+                    </span>
+                    <span className="text-xs text-slate-400 font-medium">
+                        {dataPoint.unit || ''}
+                    </span>
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
 
 const DiseaseDetail = ({ userId, disease, onBack }) => {
     const [metrics, setMetrics] = useState([]);
@@ -212,27 +262,27 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                 time: m.timestamp?.seconds
                     ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                     : '',
-                val: m.value
+                val: m.value,
+                unit: m.unit
             }))
             .sort((a, b) => a.timestamp - b.timestamp);
     }, [metrics]);
 
     return (
         <div className="glass-card min-h-full border border-white/5">
-
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                    <button onClick={onBack} className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 transition">
-                        <ArrowLeft size={20} className="text-white" />
+                    <button onClick={onBack} className="p-2.5 bg-slate-800/80 border border-white/5 rounded-full hover:bg-slate-700 transition-colors shadow-lg">
+                        <ArrowLeft size={18} className="text-white" />
                     </button>
 
                     <div>
-                        <div className="flex items-center gap-2 text-sm text-slate-400 mb-2">
+                        <div className="flex items-center gap-2 text-xs text-slate-400 mb-1">
                             <span
-                                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${disease.status === 'active'
-                                    ? 'border-amber-500/30 text-amber-500'
-                                    : 'border-green-500/30 text-green-500'
+                                className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase border ${disease.status === 'active'
+                                    ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
+                                    : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
                                     }`}
                             >
                                 {disease.status}
@@ -240,6 +290,10 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                             <span>•</span>
                             <span>Diagnosed {new Date(disease.diagnosisDate).toLocaleDateString()}</span>
                         </div>
+
+                        <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
+                            {disease.name}
+                        </h2>
 
                         {/* treating doctors */}
                         <div className="flex flex-wrap gap-2 mt-2">
@@ -253,7 +307,7 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                                         key={i}
                                         className="flex items-center gap-2 bg-slate-800/50 px-3 py-1 text-xs rounded-full border border-white/5"
                                     >
-                                        <div className="w-1 h-1 rounded-full bg-emerald-400"></div>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
                                         <span className="text-slate-300 font-medium">{doc}</span>
                                     </div>
                                 ))}
@@ -279,45 +333,48 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                 </div>
             </div>
 
-            <div className="flex items-center gap-3">
-                <button
-                    onClick={() => setIsDoctorMode(!isDoctorMode)}
-                    className={`px-3 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition-colors ${isDoctorMode
-                        ? 'bg-white text-slate-900'
-                        : 'bg-slate-800 text-slate-400 hover:text-white'
-                        }`}
-                >
-                    {isDoctorMode ? 'Exit Clinical View' : 'Doctor View'}
-                </button>
-
-                {isDoctorMode && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6 mb-6">
+                {/* Left side: Doctor Mode / Print */}
+                <div className="flex items-center gap-2">
                     <button
-                        onClick={() => window.print()}
-                        className="p-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-colors"
-                        title="Print Report"
+                        onClick={() => setIsDoctorMode(!isDoctorMode)}
+                        className={`px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 ${isDoctorMode
+                            ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/10'
+                            : 'bg-slate-800/80 border border-white/5 text-slate-300 hover:text-white hover:bg-slate-700/80'
+                            }`}
                     >
-                        <Printer size={20} />
+                        {isDoctorMode ? 'Exit Clinical View' : 'Doctor View'}
                     </button>
-                )}
 
+                    {isDoctorMode && (
+                        <button
+                            onClick={() => window.print()}
+                            className="p-2.5 bg-slate-800/80 border border-white/5 hover:bg-slate-700/80 text-white rounded-xl transition-all duration-300"
+                            title="Print Report"
+                        >
+                            <Printer size={16} />
+                        </button>
+                    )}
+                </div>
+
+                {/* Right side: Logs management */}
                 {!isDoctorMode && (
-                    <div className="flex gap-2 w-full sm:w-auto mt-4 sm:mt-0">
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
                         <Button
                             onClick={handleDeleteAllMetrics}
                             variant="danger"
-                            size="icon"
+                            className="flex items-center justify-center shrink-0 rounded-xl h-[44px] w-[44px]"
                             title="Delete Total Log (Reset)"
                         >
-                            <Trash2 size={20} />
+                            <Trash2 size={18} />
                         </Button>
-                        <Button
+                        <LiquidButton
                             onClick={() => setIsAddMetricOpen(true)}
-                            variant="primary"
-                            icon={Plus}
-                            className="flex-1 sm:flex-none"
+                            className="flex-1 sm:flex-none px-5 text-sm rounded-xl font-black text-black h-[44px]"
                         >
+                            <Plus size={18} strokeWidth={3} className="text-black" />
                             Add Log
-                        </Button>
+                        </LiquidButton>
                     </div>
                 )}
             </div>
@@ -338,21 +395,21 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
                         {/* Main Content Grid */}
 
                         {/* Tabs Navigation */}
-                        <div className="flex gap-4 mb-6 border-b border-white/10 pb-1">
+                        <div className="flex gap-1 mb-6 border-b border-white/5 pb-px">
                             <button
                                 onClick={() => setActiveTab('overview')}
-                                className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${activeTab === 'overview'
-                                    ? 'border-amber-500 text-white'
-                                    : 'border-transparent text-slate-400 hover:text-white'
+                                className={`px-4 py-2.5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all duration-300 ${activeTab === 'overview'
+                                    ? 'border-amber-500 text-amber-400'
+                                    : 'border-transparent text-slate-400 hover:text-slate-200'
                                     }`}
                             >
                                 Overview
                             </button>
                             <button
                                 onClick={() => setActiveTab('documents')}
-                                className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${activeTab === 'documents'
-                                    ? 'border-amber-500 text-white'
-                                    : 'border-transparent text-slate-400 hover:text-white'
+                                className={`px-4 py-2.5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all duration-300 ${activeTab === 'documents'
+                                    ? 'border-amber-500 text-amber-400'
+                                    : 'border-transparent text-slate-400 hover:text-slate-200'
                                     }`}
                             >
                                 Documents
@@ -367,79 +424,89 @@ const DiseaseDetail = ({ userId, disease, onBack }) => {
 
                                     {/* Metric Selector Tabs */}
                                     {availableMetrics.length > 0 && (
-                                        <div className="flex gap-2 overflow-x-auto pb-2">
-                                            {availableMetrics.map(m => (
-                                                <button
-                                                    key={m.id}
-                                                    onClick={() => setActiveMetricType(m.id)}
-                                                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${activeMetricType === m.id
-                                                        ? 'bg-white text-slate-900 shadow-md'
-                                                        : 'bg-slate-800 text-slate-400 hover:text-white'
-                                                        }`}
-                                                >
-                                                    {m.label}
-                                                </button>
-                                            ))}
+                                        <div className="flex gap-1.5 overflow-x-auto p-1 bg-slate-900/60 border border-white/5 rounded-xl scrollbar-none">
+                                            {availableMetrics.map(m => {
+                                                const isActive = activeMetricType === m.id;
+                                                return (
+                                                    <button
+                                                        key={m.id}
+                                                        onClick={() => setActiveMetricType(m.id)}
+                                                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all duration-200 ${isActive
+                                                            ? 'bg-slate-800 text-amber-400 border border-amber-500/20 shadow-[0_0_15px_-3px_rgba(251,191,36,0.15)]'
+                                                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 border border-transparent'
+                                                            }`}
+                                                    >
+                                                        {m.label}
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     )}
 
                                     {/* Chart Container */}
-                                    <div className="bg-slate-800/50 rounded-2xl p-4 sm:p-6 border border-white/5 h-[300px] sm:h-[350px] flex flex-col">
+                                    <div className="bg-slate-900/40 rounded-2xl p-4 sm:p-6 border border-white/5 h-[300px] sm:h-[350px] flex flex-col shadow-inner">
                                         <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
-                                            <TrendingUp size={18} className="text-blue-400" />
+                                            <TrendingUp size={18} className="text-amber-400" />
                                             {availableMetrics.find(m => m.id === activeMetricType)?.label || 'Trends'}
                                         </h3>
 
                                         {loading ? (
-                                            <div className="h-full flex items-center justify-center text-slate-500">
-                                                Loading data...
+                                            <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+                                                Loading analytics...
                                             </div>
                                         ) : chartData.length > 0 ? (
                                             <div className="flex-1 w-full min-h-0">
                                                 <ResponsiveContainer width="100%" height="100%">
                                                     <LineChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
-                                                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                                                        <CartesianGrid strokeDasharray="4 4" stroke="#ffffff0a" vertical={false} />
                                                         <XAxis
                                                             dataKey="date"
-                                                            stroke="#94a3b8"
-                                                            tick={{ fontSize: 10 }}
+                                                            stroke="#475569"
+                                                            tick={{ fontSize: 9, fill: '#64748b', fontWeight: 600 }}
                                                             interval="preserveStartEnd"
                                                             minTickGap={30}
+                                                            tickLine={false}
+                                                            axisLine={false}
+                                                            dy={8}
                                                         />
-                                                        <YAxis hide={window.innerWidth < 640} stroke="#94a3b8" tick={{ fontSize: 10 }} domain={['auto', 'auto']} />
+                                                        <YAxis 
+                                                            hide={window.innerWidth < 640} 
+                                                            stroke="#475569" 
+                                                            tick={{ fontSize: 9, fill: '#64748b', fontWeight: 600 }} 
+                                                            domain={['auto', 'auto']}
+                                                            tickLine={false}
+                                                            axisLine={false}
+                                                            dx={-8}
+                                                        />
                                                         <Tooltip
-                                                            contentStyle={{
-                                                                backgroundColor: '#1e293b',
-                                                                borderColor: '#334155',
-                                                                color: '#fff',
-                                                                fontSize: '12px'
-                                                            }}
-                                                            itemStyle={{ color: '#fff' }}
+                                                            content={<CustomTooltip />}
+                                                            cursor={{ stroke: '#ffffff10', strokeWidth: 1, strokeDasharray: '3 3' }}
                                                         />
                                                         {normalRange && (
                                                             <ReferenceArea
                                                                 y1={normalRange[0]}
                                                                 y2={normalRange[1]}
                                                                 strokeOpacity={0}
-                                                                fill="#10b981"
-                                                                fillOpacity={0.1}
+                                                                fill={getMetricColor(activeMetricType)}
+                                                                fillOpacity={0.05}
                                                             />
                                                         )}
                                                         <Line
                                                             type="monotone"
                                                             dataKey="val"
-                                                            stroke="#f59e0b"
+                                                            stroke={getMetricColor(activeMetricType)}
                                                             strokeWidth={3}
-                                                            dot={{ r: 3, fill: '#f59e0b' }}
-                                                            activeDot={{ r: 5 }}
+                                                            dot={{ r: 4, fill: getMetricColor(activeMetricType), strokeWidth: 0 }}
+                                                            activeDot={{ r: 6, fill: '#fff', stroke: getMetricColor(activeMetricType), strokeWidth: 2 }}
                                                         />
                                                     </LineChart>
                                                 </ResponsiveContainer>
                                             </div>
                                         ) : (
                                             <div className="flex-1 w-full box-border flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-700/50 rounded-xl p-4">
-                                                <Activity size={32} className="mb-2 opacity-50" />
-                                                No data logged yet.
+                                                <Activity size={32} className="mb-2 opacity-30 text-amber-500" />
+                                                <p className="text-sm font-semibold text-slate-400">No logs found</p>
+                                                <p className="text-xs text-slate-500 mt-1">Add a new log to see condition metrics</p>
                                             </div>
                                         )}
                                     </div>

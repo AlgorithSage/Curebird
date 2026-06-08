@@ -50,32 +50,32 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl"
+                className="glass-card w-full max-w-md !p-0 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]"
             >
-                <div className="flex justify-between items-center p-6 border-b border-slate-800">
-                    <h2 className="text-xl font-bold text-white">Add New Condition</h2>
-                    <button onClick={onClose} className="text-slate-400 hover:text-white">
-                        <X size={24} />
+                <div className="flex justify-between items-center p-6 border-b border-amber-500/10 bg-black/20">
+                    <h2 className="text-lg font-black text-white tracking-tight">Add New Condition</h2>
+                    <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                        <X size={20} />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="p-6 space-y-5">
                     {/* Disease Name Selection */}
                     <div>
-                        <label className="block text-sm font-medium text-slate-400 mb-1">Condition Name</label>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Condition Name</label>
                         <select
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full bg-slate-800 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500"
+                            className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all duration-200"
                             required
                         >
-                            <option value="" disabled>Select a condition</option>
+                            <option value="" disabled className="bg-slate-900">Select a condition</option>
                             {predefinedDiseases.map(d => (
-                                <option key={d.value} value={d.value}>{d.label}</option>
+                                <option key={d.value} value={d.value} className="bg-slate-900">{d.label}</option>
                             ))}
                         </select>
                     </div>
@@ -83,12 +83,12 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
                     {/* Custom Name Input if 'Other' selected */}
                     {formData.name === 'other' && (
                         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
-                            <label className="block text-sm font-medium text-slate-400 mb-1">Specify Condition Name</label>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Specify Condition Name</label>
                             <input
                                 type="text"
                                 value={formData.customName}
                                 onChange={(e) => setFormData({ ...formData, customName: e.target.value })}
-                                className="w-full bg-slate-800 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500"
+                                className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all duration-200"
                                 placeholder="e.g. Asthma"
                                 required
                             />
@@ -97,14 +97,14 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
 
                     {/* Diagnosis Date */}
                     <div>
-                        <label className="block text-sm font-medium text-slate-400 mb-1">Date of Diagnosis</label>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Date of Diagnosis</label>
                         <div className="relative">
-                            <Calendar className="absolute left-3 top-3 text-slate-500" size={18} />
+                            <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={16} />
                             <input
                                 type="date"
                                 value={formData.diagnosisDate}
                                 onChange={(e) => setFormData({ ...formData, diagnosisDate: e.target.value })}
-                                className="w-full bg-slate-800 border-none rounded-lg p-3 pl-10 text-white focus:ring-2 focus:ring-amber-500"
+                                className="w-full bg-slate-950/40 border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all duration-200 [color-scheme:dark]"
                                 required
                             />
                         </div>
@@ -113,51 +113,51 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
                     {/* Status & Severity Row */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-1">Current Status</label>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Current Status</label>
                             <select
                                 value={formData.status}
                                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                className="w-full bg-slate-800 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500"
+                                className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all duration-200"
                             >
-                                <option value="active">Active</option>
-                                <option value="resolved">Resolved</option>
-                                <option value="controlled">Controlled</option>
+                                <option value="active" className="bg-slate-900">Active</option>
+                                <option value="resolved" className="bg-slate-900">Resolved</option>
+                                <option value="controlled" className="bg-slate-900">Controlled</option>
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-1">Severity</label>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Severity</label>
                             <select
                                 value={formData.severity}
                                 onChange={(e) => setFormData({ ...formData, severity: e.target.value })}
-                                className="w-full bg-slate-800 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500"
+                                className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all duration-200"
                             >
-                                <option value="low">Low</option>
-                                <option value="moderate">Moderate</option>
-                                <option value="high">High</option>
-                                <option value="critical">Critical</option>
+                                <option value="low" className="bg-slate-900">Low</option>
+                                <option value="moderate" className="bg-slate-900">Moderate</option>
+                                <option value="high" className="bg-slate-900">High</option>
+                                <option value="critical" className="bg-slate-900">Critical</option>
                             </select>
                         </div>
                     </div>
 
                     {/* Primary Doctor (Optional) */}
                     <div>
-                        <label className="block text-sm font-medium text-slate-400 mb-1">Treating Doctor (Optional)</label>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Treating Doctor (Optional)</label>
                         <input
                             type="text"
                             value={formData.primaryDoctor}
                             onChange={(e) => setFormData({ ...formData, primaryDoctor: e.target.value })}
-                            className="w-full bg-slate-800 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500"
+                            className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all duration-200"
                             placeholder="Dr. Name"
                         />
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-3 mt-6">
+                    <div className="flex gap-3 pt-4 border-t border-white/5">
                         <Button
                             type="button"
                             onClick={onClose}
                             variant="secondary"
-                            className="flex-1"
+                            className="flex-1 h-10 rounded-xl font-bold"
                         >
                             Cancel
                         </Button>
@@ -166,7 +166,7 @@ const AddDiseaseModal = ({ onClose, userId, onDiseaseAdded }) => {
                             type="submit"
                             loading={isSubmitting}
                             variant="primary"
-                            className="flex-1"
+                            className="flex-1 h-10 rounded-xl font-bold"
                         >
                             Save Condition
                         </Button>

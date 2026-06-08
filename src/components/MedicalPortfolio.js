@@ -338,13 +338,13 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                     <div className="mt-8 sm:mt-10 flex flex-row flex-wrap gap-3 sm:gap-4">
                                         <LiquidButton
                                             onClick={() => onAddRecordClick && onAddRecordClick()}
-                                            className="py-2.5 px-5 sm:py-3 sm:px-8 rounded-full text-sm sm:text-lg whitespace-nowrap flex-1 sm:flex-none"
+                                            className="flex-1 sm:flex-none w-full sm:w-60 h-12 sm:h-14 px-5 sm:px-8 rounded-full text-sm sm:text-lg whitespace-nowrap flex items-center justify-center"
                                         >
                                             Add Health Record
                                         </LiquidButton>
                                         <button
                                             onClick={onNavigate ? () => onNavigate('Cure AI') : undefined}
-                                            className="py-2.5 px-5 sm:py-3 sm:px-8 rounded-full text-sm sm:text-lg font-bold whitespace-nowrap flex-1 sm:flex-none text-amber-400 hover:text-amber-200 transition-all duration-300 active:scale-[0.97]"
+                                            className="flex-1 sm:flex-none w-full sm:w-60 h-12 sm:h-14 px-5 sm:px-8 rounded-full text-sm sm:text-lg font-bold whitespace-nowrap text-amber-400 hover:text-amber-200 transition-all duration-300 active:scale-[0.97] flex items-center justify-center"
                                             style={{
                                                 background: "linear-gradient(135deg, rgba(245,158,11,0.12) 0%, rgba(10,10,10,0.80) 100%)",
                                                 border: "1px solid rgba(245,158,11,0.28)",
@@ -361,7 +361,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                                                 e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 6px -1px rgba(0,0,0,0.2)";
                                             }}
                                         >
-                                            Ask AI Assistant
+                                            Ask Cure AI
                                         </button>
                                     </div>
                                 </div>
