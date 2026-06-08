@@ -283,6 +283,47 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                 />
             </div>
 
+            {/* Testimonials & Stats Section */}
+            <div className="glass-card mb-6">
+                <div className="text-center mb-8">
+                    <span className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-3 block">CureBird Community</span>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">Empowering Health, One Record at a Time</h2>
+                    <p className="text-slate-400 max-w-xl mx-auto text-sm">Trusted by 500+ active members globally. Built to revolutionize digital health tracking, recognized by Google Solutions Challenge.</p>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-4 mb-8">
+                    {[
+                        { value: "500+", label: "Trusted Users" },
+                        { value: "Google", label: "Solutions Challenge" },
+                        { value: "4.9★", label: "User Rating" },
+                    ].map(({ value, label }) => (
+                        <div key={label} className="text-center p-4 rounded-2xl" style={{ background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.15)" }}>
+                            <div className="text-xl sm:text-2xl font-black text-amber-400">{value}</div>
+                            <div className="text-xs text-slate-400 mt-1 font-medium">{label}</div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Testimonials */}
+                <div className="grid sm:grid-cols-3 gap-4">
+                    {[
+                        { name: "Dr. Archisman Dey", title: "Primary Health Care Specialist", quote: "CureBird has completely streamlined how I track patient records. The AI Analyzer's capability to extract key metrics is incredibly accurate.", rating: 5.0 },
+                        { name: "Subhashish Roy", title: "Chronic Care Manager & Patient", quote: "Managing blood sugar levels and medications was a constant struggle until I started using CureBird's intelligent tracker. It is truly life-changing.", rating: 4.8 },
+                        { name: "Priya Sharma", title: "Wellness & Cardiovascular Tracker", quote: "The visual trends and dynamic metrics logs are beautifully designed. I can easily monitor my cardiovascular stats in real-time.", rating: 4.9 },
+                    ].map(({ name, title, quote, rating }) => (
+                        <div key={name} className="p-4 rounded-2xl flex flex-col gap-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                            <p className="text-slate-300 text-sm leading-relaxed flex-1">"{quote}"</p>
+                            <div>
+                                <div className="text-amber-400 text-xs mb-1">{"★".repeat(Math.floor(rating))} <span className="text-slate-500">{rating}</span></div>
+                                <div className="font-semibold text-white text-sm">{name}</div>
+                                <div className="text-slate-500 text-xs">{title}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             <main className="mt-8">
                 {/* Content Removed - Moved to Cure Tracker */}
                 <>
