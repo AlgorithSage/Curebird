@@ -60,6 +60,7 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
     // Saving Record State
     const [savingFile, setSavingFile] = useState(null); // Message ID being saved
     const [saveSuccess, setSaveSuccess] = useState(null); // Message ID saved successfully
+    const [isFileUploading, setIsFileUploading] = useState(false);
 
     const messagesEndRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -300,6 +301,42 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
         } catch (err) {
             console.error("Delete message failed", err);
             alert("Failed to delete message.");
+        }
+    };
+
+    // Handle File Selection and Upload
+    const handleFileSelect = async (e) => {
+        const file = e.target.files[0];
+        if (!file || !activeChat || !user) return;
+
+        setIsFileUploading(true);
+        try {
+            const targetChatId = activeChat.id;
+            const storageRef = ref(storage, `chat_attachments/${targetChatId}/${Date.now()}_${file.name}`);
+            await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(storageRef);
+
+            await addDoc(collection(db, `chats/${targetChatId}/messages`), {
+                text: 'Sent an attachment',
+                fileUrl: url,
+                fileName: file.name,
+                sender: 'patient',
+                senderId: user.uid,
+                createdAt: serverTimestamp(),
+                type: 'file'
+            });
+
+            await updateDoc(doc(db, 'chats', targetChatId), {
+                lastMsg: 'Sent an attachment',
+                updatedAt: serverTimestamp()
+            });
+
+        } catch (err) {
+            console.error("File upload failed", err);
+            alert("Failed to upload file. Please try again.");
+        } finally {
+            setIsFileUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 
@@ -634,15 +671,30 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                     <form onSubmit={handleSend} className="max-w-4xl mx-auto flex gap-4 items-end">
                                         <div className="flex-1 bg-slate-950/40 backdrop-blur-xl border border-amber-500/20 hover:border-amber-500/40 rounded-[2rem] flex items-center px-6 shadow-2xl focus-within:border-amber-500/60 focus-within:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300">
                                             <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleFileSelect}
+                                                className="hidden"
+                                            />
+                                            <input
                                                 type="text"
                                                 value={input}
                                                 onChange={(e) => setInput(e.target.value)}
                                                 className="flex-1 bg-transparent border-0 focus:border-0 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 text-white placeholder-slate-500 py-5 text-[15px] font-medium"
                                                 placeholder="Type your message..."
                                             />
-                                            {/* Optional Attachment Icon (Visual only for now if file input is hidden) */}
-                                            <button type="button" className="p-2 text-slate-500 hover:text-white transition-colors">
-                                                <Paperclip size={20} />
+                                            {/* Attachment Icon */}
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()}
+                                                disabled={isFileUploading}
+                                                className="p-2 text-slate-500 hover:text-white transition-colors disabled:opacity-50"
+                                            >
+                                                {isFileUploading ? (
+                                                    <Loader2 size={20} className="animate-spin text-amber-500" />
+                                                ) : (
+                                                    <Paperclip size={20} />
+                                                )}
                                             </button>
                                         </div>
                                         <button
