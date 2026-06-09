@@ -31,6 +31,7 @@ SCOPES = [
     'openid',
     'https://www.googleapis.com/auth/calendar.events', 
     'https://www.googleapis.com/auth/calendar'
+]
 REDIRECT_URI = os.environ.get("GOOGLE_REDIRECT_URI_1", "http://localhost:5001/auth/callback")
 
 # Helper to construct config from Env Vars
