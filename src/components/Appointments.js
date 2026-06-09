@@ -8,6 +8,7 @@ import Header from './Header';
 import { AppointmentFormModal, DeleteConfirmModal } from './Modals';
 import { SkeletonCard } from './SkeletonLoaders';
 import { Button } from './ui/button';
+import LiquidButton from './ui/LiquidButton';
 
 const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -168,15 +169,13 @@ const Appointments = ({ user, db, appId, onLogout, onLoginClick, onToggleSidebar
             </div>
 
             <main className="mt-8">
-                <Button
+                <LiquidButton
                     onClick={() => { setEditingAppointment(null); setIsFormModalOpen(true); }}
-                    variant="primary"
-                    icon={Plus}
-                    iconPosition="left"
-                    className="mb-8 w-full sm:w-auto"
+                    className="mb-8 w-full sm:w-auto px-6 py-3.5 rounded-xl font-black text-black shadow-lg flex items-center justify-center gap-2"
                 >
-                    Add New Appointment
-                </Button>
+                    <Plus size={16} strokeWidth={3} className="text-black" />
+                    <span>Add New Appointment</span>
+                </LiquidButton>
 
                 {isLoading ? (
                     <div className="space-y-4"><SkeletonCard /><SkeletonCard /></div>
