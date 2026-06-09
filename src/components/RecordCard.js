@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import curebirdLogo from '../curebird_logo.png';
+import { GlassButton } from './ui/glass-button';
+import LiquidButton from './ui/LiquidButton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Stethoscope, Hospital, Pill, HeartPulse, Trash2, Edit, ExternalLink, Printer, X, Eye, Check } from './Icons';
 import ReactMarkdown from 'react-markdown';
@@ -204,23 +206,21 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, user
 
                     {/* Right Side Actions */}
                     <div className="flex flex-col items-center sm:items-end gap-3 shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
-                        {/* Step 2: "Big Square" Action Buttons - Responsive resizing */}
+                        {/* Step 2: Action Buttons - Pill-shaped with responsive sizing */}
                         <div className="flex items-center gap-3 w-full justify-center sm:justify-end">
                             {record.fileUrl && (
-                                <button
+                                <GlassButton
                                     onClick={handleViewFile}
                                     disabled={isLoadingFile}
-                                    className="flex flex-col items-center justify-center w-full sm:w-20 h-14 sm:h-20 bg-gradient-to-br from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white rounded-xl shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40 transition-all disabled:opacity-50 transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden"
+                                    className="glass-button-blue w-full sm:w-[150px] h-12 [&>.glass-button]:w-full [&>.glass-button]:h-full"
+                                    contentClassName="!flex !flex-row items-center justify-center gap-2"
                                 >
-                                    {/* Shine effect */}
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity" />
-
-                                    {isLoadingFile ? <span className="animate-spin text-lg">⌛</span> : <ExternalLink className="w-5 h-5 sm:w-6 sm:h-6" />}
-                                    <span className="text-[10px] font-bold uppercase tracking-wider relative z-10">View Receipt</span>
-                                </button>
+                                    <span className="text-sm font-bold uppercase tracking-wider relative z-10">View</span>
+                                    {isLoadingFile ? <span className="animate-spin text-sm">⌛</span> : <ExternalLink className="w-4 h-4" />}
+                                </GlassButton>
                             )}
                             {record.digital_copy && (
-                                <button
+                                <LiquidButton
                                     onClick={() => {
                                         if (userTier === 'Free') {
                                             alert("View Digital Copy is a Premium Feature. Please upgrade.");
@@ -228,40 +228,44 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, user
                                         }
                                         setShowDigitalModal(true);
                                     }}
-                                    className={`flex flex-col items-center justify-center w-full sm:w-20 h-14 sm:h-20 rounded-xl shadow-lg transition-all transform hover:scale-[1.02] gap-1 group/btn relative overflow-hidden ${userTier === 'Free'
-                                        ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-70'
-                                        : 'bg-gradient-to-br from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black shadow-amber-500/20 hover:shadow-amber-500/40'
-                                        }`}
+                                    className={`${userTier === 'Free'
+                                            ? 'opacity-70 cursor-not-allowed'
+                                            : ''
+                                        } w-full sm:w-[150px] h-12 rounded-full group`}
                                 >
-                                    {/* Lock Overlay for Free Tier */}
                                     {userTier === 'Free' && (
-                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20 rounded-full">
                                             <span className="text-xs">🔒</span>
                                         </div>
                                     )}
 
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity" />
-                                    <Eye className="w-5 h-5 sm:w-6 sm:h-6" />
-                                    <span className="text-[10px] font-bold uppercase tracking-wider relative z-10">Digital</span>
-                                </button>
+                                    <div className="!flex !flex-row items-center justify-center gap-2 transition-transform duration-300 group-hover:scale-110">
+                                        <span className="text-sm font-bold uppercase tracking-wider relative z-10">Digital</span>
+                                        <Eye className="w-4 h-4" />
+                                    </div>
+                                </LiquidButton>
                             )}
                         </div>
 
                         {/* Step 6: Prominent Secondary Actions */}
                         {/* Always visible, no hover-to-reveal */}
-                        <div className="flex gap-2 justify-end w-full mt-1">
-                            <button
+                        <div className="flex gap-3 justify-center sm:justify-end w-full mt-1">
+                            <GlassButton
                                 onClick={onEdit}
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-white/5 hover:bg-amber-500/10 hover:border-amber-500/30 text-slate-400 hover:text-amber-400 transition-all text-[10px] font-bold uppercase tracking-wider backdrop-blur-md"
+                                className="glass-button-green w-full sm:w-[150px] h-12 [&>.glass-button]:w-full [&>.glass-button]:h-full"
+                                contentClassName="!flex !flex-row items-center justify-center gap-2"
                             >
-                                <Edit size={14} /> Edit
-                            </button>
-                            <button
+                                <span className="text-sm font-bold uppercase tracking-wider relative z-10">Edit</span>
+                                <Edit className="w-4 h-4" />
+                            </GlassButton>
+                            <GlassButton
                                 onClick={onDelete}
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-white/5 hover:bg-rose-500/10 hover:border-rose-500/30 text-slate-400 hover:text-rose-400 transition-all text-[10px] font-bold uppercase tracking-wider backdrop-blur-md"
+                                className="glass-button-red w-full sm:w-[150px] h-12 [&>.glass-button]:w-full [&>.glass-button]:h-full"
+                                contentClassName="!flex !flex-row items-center justify-center gap-2"
                             >
-                                <Trash2 size={14} /> Delete
-                            </button>
+                                <span className="text-sm font-bold uppercase tracking-wider relative z-10">Delete</span>
+                                <Trash2 className="w-4 h-4" />
+                            </GlassButton>
                         </div>
                     </div>
                 </div>

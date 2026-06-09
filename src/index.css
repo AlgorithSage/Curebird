@@ -820,6 +820,7 @@ body {
     --font-mono: var(--font-geist-mono);
     --color-destructive-foreground: var(--destructive-foreground);
   }
+
   :root {
     --background: oklch(0 0 0);
     --foreground: oklch(1 0 0);
@@ -857,6 +858,7 @@ body {
     --font-geist-sans: "Geist Sans", sans-serif;
     --font-geist-mono: "Geist Mono", monospace;
   }
+
   .dark {
     --background: oklch(0 0 0);
     --foreground: oklch(1 0 0);
@@ -901,8 +903,13 @@ body {
 /* ─── Unified Button Shimmer Animation ──────────────── */
 
 @keyframes shimmer-sweep {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 button:hover .hover-shimmer,
@@ -930,9 +937,9 @@ a:hover .hover-shimmer {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(251, 191, 36, 0.25);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
-    0 4px 6px -1px rgba(0, 0, 0, 0.2), 
+    0 4px 6px -1px rgba(0, 0, 0, 0.2),
     0 2px 4px -1px rgba(0, 0, 0, 0.1);
   color: #fbbf24;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -954,14 +961,12 @@ a:hover .hover-shimmer {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(251, 191, 36, 0.2) 20%,
-    rgba(255, 255, 255, 0.3) 50%,
-    rgba(251, 191, 36, 0.2) 80%,
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(251, 191, 36, 0.2) 20%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(251, 191, 36, 0.2) 80%,
+      transparent);
   transition: all 0.6s ease;
   z-index: 1;
 }
@@ -992,6 +997,11 @@ a:hover .hover-shimmer {
   display: block;
   user-select: none;
   letter-spacing: -0.02em;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-button-wrap:hover .glass-button-text {
+  transform: scale(1.10);
 }
 
 /* Glass button text size variants */
@@ -1039,20 +1049,18 @@ a:hover .hover-shimmer {
 
 /* Red / Destructive Glass Button Styles */
 .glass-button-red .glass-button {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(10, 10, 10, 0.75) 100%);
-  border-color: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  background: linear-gradient(135deg, #494949 0%, #363636 100%);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
 }
 
 .glass-button-red .glass-button::before {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(239, 68, 68, 0.15) 20%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(239, 68, 68, 0.15) 80%,
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(239, 68, 68, 0.15) 20%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(239, 68, 68, 0.15) 80%,
+      transparent);
 }
 
 .glass-button-red:hover .glass-button {
@@ -1078,14 +1086,12 @@ a:hover .hover-shimmer {
 }
 
 .glass-button-gray .glass-button::before {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(156, 163, 175, 0.1) 20%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(156, 163, 175, 0.1) 80%,
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(156, 163, 175, 0.1) 20%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(156, 163, 175, 0.1) 80%,
+      transparent);
 }
 
 .glass-button-gray:hover .glass-button {
@@ -1096,4 +1102,66 @@ a:hover .hover-shimmer {
 
 .glass-button-gray .glass-button-shadow {
   background: radial-gradient(circle, rgba(156, 163, 175, 0.15) 0%, transparent 70%);
+}
+
+/* Blue Glass Button Styles */
+.glass-button-blue .glass-button {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.glass-button-blue .glass-button::before {
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.15) 80%,
+      transparent);
+}
+
+.glass-button-blue:hover .glass-button {
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+}
+
+.glass-button-blue:active .glass-button {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.glass-button-blue .glass-button-shadow {
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.5) 0%, transparent 70%);
+}
+
+/* Green / Positive Glass Button Styles */
+.glass-button-green .glass-button {
+  background: linear-gradient(135deg, #494949 0%, #363636 100%);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.glass-button-green .glass-button::before {
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(16, 185, 129, 0.15) 20%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(16, 185, 129, 0.15) 80%,
+      transparent);
+}
+
+.glass-button-green:hover .glass-button {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(20, 20, 20, 0.8) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.glass-button-green:active .glass-button {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(10, 10, 10, 0.85) 100%);
+  border-color: rgba(16, 185, 129, 0.15);
+}
+
+.glass-button-green .glass-button-shadow {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);
 }

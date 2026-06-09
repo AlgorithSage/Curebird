@@ -25,13 +25,12 @@ const GlassButton = React.forwardRef(
     return (
       <div
         className={cn(
-          "glass-button-wrap",
+          "glass-button-wrap rounded-full",
           className
         )}
-        style={{ borderRadius: "9999px" }}
       >
         <button
-          className="glass-button"
+          className="glass-button rounded-full"
           ref={ref}
           style={sizeStyles[size] || {}}
           {...props}
@@ -46,7 +45,7 @@ const GlassButton = React.forwardRef(
             {children}
           </span>
         </button>
-        <div className="glass-button-shadow" style={{ borderRadius: "9999px" }}></div>
+        <div className="glass-button-shadow rounded-full"></div>
       </div>
     );
   }
