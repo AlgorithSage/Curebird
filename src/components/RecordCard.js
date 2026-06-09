@@ -7,6 +7,7 @@ import LiquidButton from './ui/LiquidButton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Stethoscope, Hospital, Pill, HeartPulse, Trash2, Edit, ExternalLink, Printer, X, Eye, Check } from './Icons';
 import ReactMarkdown from 'react-markdown';
+import { GlowCard } from './spotlight-card';
 import remarkGfm from 'remark-gfm';
 
 const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, userTier }) => {
@@ -133,10 +134,12 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, user
 
     return (
         <>
-            <motion.div layout initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
-                // Step 1: Global Theme Integration
-                // Used globally declared .glass-card-amber class
-                className="glass-card-amber p-0 group flex flex-col overflow-hidden isolate relative">
+            <motion.div layout initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}>
+                <GlowCard
+                    glowColor="orange"
+                    customSize={true}
+                    className="p-0 group flex flex-col isolate relative hover:-translate-y-1 transition-all duration-150"
+                >
 
                 {/* Main Content Area */}
                 <div className="p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5 items-center sm:items-center relative z-10">
@@ -270,6 +273,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, user
                     </div>
                 </div>
 
+                </GlowCard>
             </motion.div>
 
             {/* Print Helper */}

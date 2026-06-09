@@ -8,6 +8,7 @@ import Header from './Header';
 import { AppointmentFormModal, DeleteConfirmModal } from './Modals';
 import { SkeletonCard } from './SkeletonLoaders';
 import { Button } from './ui/button';
+import { GlowCard } from './spotlight-card';
 
 const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -31,52 +32,57 @@ const AppointmentCard = ({ appointment, onEdit, onDelete, formatDate }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`glass-card !p-5 !border-l-[6px] ${config.border} flex flex-col gap-4 group hover:-translate-y-1 relative`}
         >
-            <div className="flex justify-between items-start">
-                <div>
-                    <p className="text-xl font-bold text-white mb-1">{appointment.reason || 'General Checkup'}</p>
-                    <p className="text-sm font-semibold text-yellow-100/80">Dr. {appointment.doctorName}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{appointment.hospitalName}</p>
+            <GlowCard
+                glowColor="orange"
+                customSize={true}
+                className={`!p-5 !border-l-[6px] ${config.border} flex flex-col gap-4 group hover:-translate-y-1 relative`}
+            >
+                <div className="flex justify-between items-start">
+                    <div>
+                        <p className="text-xl font-bold text-white mb-1">{appointment.reason || 'General Checkup'}</p>
+                        <p className="text-sm font-semibold text-yellow-100/80">Dr. {appointment.doctorName}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{appointment.hospitalName}</p>
+                    </div>
+                    <div className="relative">
+                        <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 -mr-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors">
+                            <MoreVertical size={20} />
+                        </button>
+                        <AnimatePresence>
+                            {menuOpen && (
+                                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                                    className="absolute right-0 mt-2 w-32 bg-[#0B1121] border border-white/20 rounded-xl shadow-xl z-20 overflow-hidden backdrop-blur-xl">
+                                    <button onClick={() => { onEdit(); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-slate-200 hover:bg-white/10 hover:text-yellow-400 transition-colors">
+                                        <Edit size={14} /> Edit
+                                    </button>
+                                    <button onClick={() => { onDelete(); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-rose-400 hover:bg-rose-500/10 transition-colors">
+                                        <Trash2 size={14} /> Delete
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
-                <div className="relative">
-                    <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 -mr-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors">
-                        <MoreVertical size={20} />
-                    </button>
-                    <AnimatePresence>
-                        {menuOpen && (
-                            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                                className="absolute right-0 mt-2 w-32 bg-[#0B1121] border border-white/20 rounded-xl shadow-xl z-20 overflow-hidden backdrop-blur-xl">
-                                <button onClick={() => { onEdit(); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-slate-200 hover:bg-white/10 hover:text-yellow-400 transition-colors">
-                                    <Edit size={14} /> Edit
-                                </button>
-                                <button onClick={() => { onDelete(); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-rose-400 hover:bg-rose-500/10 transition-colors">
-                                    <Trash2 size={14} /> Delete
-                                </button>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+
+                <div className="pt-4 border-t border-white/10 flex justify-between items-center">
+                    <p className="text-sm text-white font-bold tracking-wide">
+                        {formatDate(appointment.date)}
+                    </p>
+
+                    {isActive ? (
+                        <button
+                            onClick={() => navigate(`/telehealth/${appointment.id}`)}
+                            className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500 text-black text-xs font-black uppercase tracking-widest hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 animate-pulse"
+                        >
+                            <Video size={14} /> Join Session
+                        </button>
+                    ) : (
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${config.badge}`}>
+                            {appointment.status}
+                        </span>
+                    )}
                 </div>
-            </div>
-
-            <div className="pt-4 border-t border-white/10 flex justify-between items-center">
-                <p className="text-sm text-white font-bold tracking-wide">
-                    {formatDate(appointment.date)}
-                </p>
-
-                {isActive ? (
-                    <button
-                        onClick={() => navigate(`/telehealth/${appointment.id}`)}
-                        className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500 text-black text-xs font-black uppercase tracking-widest hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 animate-pulse"
-                    >
-                        <Video size={14} /> Join Session
-                    </button>
-                ) : (
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${config.badge}`}>
-                        {appointment.status}
-                    </span>
-                )}
-            </div>
+            </GlowCard>
         </motion.div>
     )
 };
