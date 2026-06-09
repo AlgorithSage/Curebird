@@ -31,8 +31,7 @@ SCOPES = [
     'openid',
     'https://www.googleapis.com/auth/calendar.events', 
     'https://www.googleapis.com/auth/calendar'
-]
-REDIRECT_URI = 'http://localhost:5001/auth/callback' 
+REDIRECT_URI = os.environ.get("GOOGLE_REDIRECT_URI_1", "http://localhost:5001/auth/callback")
 
 # Helper to construct config from Env Vars
 def get_client_config():
@@ -95,7 +94,8 @@ def auth_callback():
             token.write(creds.to_json())
         
         # Redirect back to frontend
-        return redirect("http://localhost:3000/doctor/dashboard") 
+        frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+        return redirect(f"{frontend_url}/doctor/dashboard") 
         
     except Exception as e:
         print(f"Auth Callback Error: {e}")
