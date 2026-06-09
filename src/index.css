@@ -62,18 +62,25 @@ body {
   /* CRITICAL PERFORMANCE FIX: Remove backdrop-filter on mobile */
   .glass-card,
   .glass,
-  .glass-card-amber,
   .glass-card-indigo,
   .glass-card-sky,
   .glass-card-rose {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important;
-    background: rgba(15, 23, 42, 0.95) !important;
-    /* Fallback to solid dark color */
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(13, 11, 6, 0.96) !important;
+    /* Fallback to solid dark warm color */
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     transform: none !important;
-    /* Disable hover transforms on scroll */
+  }
+
+  .glass-card-amber {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important;
+    background: rgba(18, 14, 8, 0.97) !important;
+    border: 1px solid rgba(251, 191, 36, 0.2) !important;
+    transform: none !important;
   }
 
   /* Ensure smooth scrolling is enforced */

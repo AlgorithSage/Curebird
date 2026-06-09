@@ -6,6 +6,7 @@ import { Pill, Plus, Stethoscope, Hospital } from './Icons';
 import Header from './Header';
 import { SkeletonCard } from './SkeletonLoaders';
 import { Button } from './ui/button';
+import { GlowCard } from './spotlight-card';
 
 const MedicationCard = ({ med, records }) => (
     <motion.div
@@ -13,31 +14,37 @@ const MedicationCard = ({ med, records }) => (
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="glass-card flex flex-col justify-between h-full group hover:-translate-y-1"
+        className="h-full"
     >
-        <div className="flex items-start justify-between mb-4">
-            <div>
-                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-yellow-400 transition-colors">{med.name}</h3>
-                <p className="text-sm font-medium text-slate-300">{med.frequency}</p>
+        <GlowCard
+            glowColor="orange"
+            customSize={true}
+            className="flex flex-col justify-between h-full group hover:-translate-y-1 !p-6"
+        >
+            <div className="flex items-start justify-between mb-4">
+                <div>
+                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-yellow-400 transition-colors">{med.name}</h3>
+                    <p className="text-sm font-medium text-slate-300">{med.frequency}</p>
+                </div>
+                <div className="text-xs font-bold text-black bg-yellow-400 px-3 py-1 rounded-full shadow-lg shadow-yellow-400/20">
+                    {med.dosage && typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : (med.dosage || 'N/A')}
+                </div>
             </div>
-            <div className="text-xs font-bold text-black bg-yellow-400 px-3 py-1 rounded-full shadow-lg shadow-yellow-400/20">
-                {med.dosage && typeof med.dosage === 'object' ? (med.dosage.dosage || JSON.stringify(med.dosage)) : (med.dosage || 'N/A')}
-            </div>
-        </div>
 
-        <div className="mt-auto pt-4 border-t border-white/10 space-y-3 text-sm">
-            <p className="text-slate-400 flex justify-between">
-                Last Prescribed: <span className="font-bold text-white">{med.lastPrescribed}</span>
-            </p>
-            <div className="flex items-center gap-2 text-slate-400 group-hover:text-slate-300 transition-colors">
-                <Stethoscope size={14} className="text-yellow-400" />
-                <span>Dr. {records[0].doctorName}</span>
+            <div className="mt-auto pt-4 border-t border-white/10 space-y-3 text-sm">
+                <p className="text-slate-400 flex justify-between">
+                    Last Prescribed: <span className="font-bold text-white">{med.lastPrescribed}</span>
+                </p>
+                <div className="flex items-center gap-2 text-slate-400 group-hover:text-slate-300 transition-colors">
+                    <Stethoscope size={14} className="text-yellow-400" />
+                    <span>Dr. {records[0].doctorName}</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-400 group-hover:text-slate-300 transition-colors">
+                    <Hospital size={14} className="text-yellow-400" />
+                    <span>{records[0].hospitalName}</span>
+                </div>
             </div>
-            <div className="flex items-center gap-2 text-slate-400 group-hover:text-slate-300 transition-colors">
-                <Hospital size={14} className="text-yellow-400" />
-                <span>{records[0].hospitalName}</span>
-            </div>
-        </div>
+        </GlowCard>
     </motion.div>
 );
 

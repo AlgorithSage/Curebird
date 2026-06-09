@@ -198,6 +198,7 @@ export default function LiquidButton({
   onClick,
   className = "",
   colors = AMBER_COLORS,
+  ...props
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const uid = useId().replace(/:/g, "");
@@ -208,6 +209,7 @@ export default function LiquidButton({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={`relative overflow-hidden isolate font-bold text-black transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97] ${className}`}
+      {...props}
     >
       {/* Default state: static amber gradient */}
       <motion.div

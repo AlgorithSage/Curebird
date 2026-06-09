@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {  Share2, Link, QrCode, Clock, Copy, Check, ShieldCheck, UserCog, Timer  } from './Icons';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import Header from './Header';
+import LiquidButton from './ui/LiquidButton';
 
 const CircularTimer = ({ targetDate, totalDuration = 3600 }) => {
     const [timeLeft, setTimeLeft] = React.useState({ minutes: 0, seconds: 0, totalSeconds: 0 });
@@ -147,23 +148,20 @@ const ShareProfile = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNav
 
                     {!shareLink ? (
                         <div className="flex justify-center relative z-10">
-                            <button
+                            <LiquidButton
                                 onClick={generateLink}
                                 disabled={loading}
-                                className="group relative px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl font-bold text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                                className="px-8 py-4 rounded-xl font-black text-black shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                                <span className="relative flex items-center gap-3">
-                                    {loading ? (
-                                        <>Generating Secure Token...</>
-                                    ) : (
-                                        <>
-                                            <Share2 size={20} />
-                                            Generate 1-Hour Access Link
-                                        </>
-                                    )}
-                                </span>
-                            </button>
+                                {loading ? (
+                                    <>Generating Secure Token...</>
+                                ) : (
+                                    <>
+                                        <Share2 size={20} className="text-black" />
+                                        <span>Generate 1-Hour Access Link</span>
+                                    </>
+                                )}
+                            </LiquidButton>
                         </div>
                     ) : (
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 relative z-10">
