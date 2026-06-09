@@ -10,6 +10,7 @@ import SocialDeterminants from './SocialDeterminants';
 import EnvironmentalHealth from './EnvironmentalHealth';
 import RareDisease from './RareDisease';
 import StateHealthProfile from './StateHealthProfile';
+import NationalHealthNews from './NationalHealthNews';
 import { API_BASE_URL } from '../config';
 import { Button } from './ui/button';
 
@@ -742,7 +743,8 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, o
                     </div>
                 </motion.div>
 
-
+                {/* --- National Health News --- */}
+                <NationalHealthNews />
 
                 {/* --- NEW SECTION: National Health Indices --- */}
                 <motion.div

@@ -25,8 +25,9 @@ const CategoryBadge = ({ cat }) => {
   const cfg = CAT[cat] || CAT.UPDATE;
   const Icon = cfg.icon;
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-black uppercase tracking-widest ${cfg.color} ${cfg.bg} ${cfg.border}`}>
-      <Icon size={9} />{cat}
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[9px] font-black uppercase tracking-[0.14em] ${cfg.color} ${cfg.bg} ${cfg.border} backdrop-blur-sm shadow-[0_1px_4px_rgba(0,0,0,0.15)]`}>
+      <Icon size={10} className="shrink-0" />
+      {cat}
     </span>
   );
 };
@@ -194,9 +195,12 @@ function GlobeSection({ articles, onSelect }) {
             <SpinningGlobe markers={articles} />
 
             {/* Incident count badge */}
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 border border-amber-500/20 backdrop-blur-sm pointer-events-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-[10px] font-bold text-slate-300">{articles.length} live incidents</span>
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-950/50 border border-amber-500/30 backdrop-blur-md shadow-[0_0_20px_rgba(245,158,11,0.25)] pointer-events-none">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500 shadow-[0_0_8px_#f59e0b]"></span>
+              </span>
+              <span className="text-[9.5px] font-black text-amber-200/90 uppercase tracking-[0.15em]">Live News Feed</span>
             </div>
           </motion.div>
         </div>
@@ -251,12 +255,20 @@ function GlobeSection({ articles, onSelect }) {
                     className={`absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-r-full transition-opacity opacity-40 group-hover:opacity-90 ${cfg.dot}`}
                   />
 
-                  {/* Index + dot */}
-                  <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5" style={{ minWidth: 22 }}>
-                    <span className="text-[9.5px] font-black text-slate-500 tabular-nums leading-none">
+                  {/* Index indicator */}
+                  <div className="flex items-center gap-2 shrink-0 select-none pt-0.5" style={{ minWidth: 32 }}>
+                    <span className="text-[11px] font-black text-slate-400/80 tabular-nums">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot} ${n.urgent ? 'animate-pulse' : ''} opacity-75`} />
+                    <div className="w-[1px] h-3.5 bg-white/10" />
+                    <span className="relative flex h-1.5 w-1.5">
+                      {n.urgent && (
+                        <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${cfg.dot} opacity-75`}></span>
+                      )}
+                      <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${cfg.dot}`}
+                        style={{ boxShadow: `0 0 8px ${cfg.color.includes('red') ? '#f87171' : cfg.color.includes('sky') ? '#38bdf8' : cfg.color.includes('emerald') ? '#34d399' : '#a78bfa'}` }}
+                      />
+                    </span>
                   </div>
 
                   {/* Content */}
@@ -302,17 +314,22 @@ function GlobeSection({ articles, onSelect }) {
           </div>
 
           {/* Legend footer */}
-          <div className="flex items-center gap-5 px-5 py-3 shrink-0 border-t"
+          <div className="flex flex-wrap items-center gap-3 px-5 py-3.5 shrink-0 border-t"
             style={{
               borderColor: 'rgba(255,255,255,0.06)',
-              background: 'linear-gradient(135deg, rgba(251,191,36,0.04) 0%, rgba(14,165,233,0.04) 100%)',
+              background: 'linear-gradient(135deg, rgba(251,191,36,0.02) 0%, rgba(14,165,233,0.02) 100%)',
             }}>
-            {Object.entries(CAT).map(([key, cfg]) => (
-              <span key={key} className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-400">
-                <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                {key}
-              </span>
-            ))}
+            {Object.entries(CAT).map(([key, cfg]) => {
+              const glowColor = cfg.color.includes('red') ? '#f87171' : cfg.color.includes('sky') ? '#38bdf8' : cfg.color.includes('emerald') ? '#34d399' : '#a78bfa';
+              return (
+                <span key={key} className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-md border text-[9px] font-black uppercase tracking-wider ${cfg.color} ${cfg.bg} ${cfg.border} backdrop-blur-sm shadow-sm transition-all duration-300 hover:scale-105`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} 
+                    style={{ boxShadow: `0 0 6px ${glowColor}` }}
+                  />
+                  {key}
+                </span>
+              );
+            })}
           </div>
         </div>
 
@@ -393,7 +410,7 @@ function NewsCarousel({ articles, onSelect }) {
 
   return (
     <div 
-      className="relative mt-8 max-w-6xl mx-auto px-4"
+      className="relative mt-8 max-w-7xl mx-auto px-4 md:px-20"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -543,24 +560,25 @@ function NewsCarousel({ articles, onSelect }) {
           );
         })}
 
-        {/* Navigation Buttons */}
-        <button
-          disabled={index === 0}
-          onClick={(e) => { e.stopPropagation(); setIndex((i) => Math.max(0, i - 1)); }}
-          className={`absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full flex items-center justify-center bg-black/60 border border-white/10 text-slate-400 transition-all shadow-lg
-            ${index === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-black/85 hover:border-amber-500/30 hover:text-amber-400 hover:scale-105'}`}
-        >
-          <ChevronLeft size={18} />
-        </button>
-        <button
-          disabled={index === articles.length - 1}
-          onClick={(e) => { e.stopPropagation(); setIndex((i) => Math.min(articles.length - 1, i + 1)); }}
-          className={`absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full flex items-center justify-center bg-black/60 border border-white/10 text-slate-400 transition-all shadow-lg
-            ${index === articles.length - 1 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-black/85 hover:border-amber-500/30 hover:text-amber-400 hover:scale-105'}`}
-        >
-          <ChevronRight size={18} />
-        </button>
       </div>
+
+      {/* Navigation Buttons */}
+      <button
+        disabled={index === 0}
+        onClick={(e) => { e.stopPropagation(); setIndex((i) => Math.max(0, i - 1)); }}
+        className={`absolute -left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center bg-black/60 border border-white/10 text-slate-400 transition-all shadow-lg
+          ${index === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-black/85 hover:border-amber-500/30 hover:text-amber-400 hover:scale-105'}`}
+      >
+        <ChevronLeft size={isMobile ? 16 : 20} />
+      </button>
+      <button
+        disabled={index === articles.length - 1}
+        onClick={(e) => { e.stopPropagation(); setIndex((i) => Math.min(articles.length - 1, i + 1)); }}
+        className={`absolute -right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center bg-black/60 border border-white/10 text-slate-400 transition-all shadow-lg
+          ${index === articles.length - 1 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-black/85 hover:border-amber-500/30 hover:text-amber-400 hover:scale-105'}`}
+      >
+        <ChevronRight size={isMobile ? 16 : 20} />
+      </button>
 
       {/* Progress Indicator (Moved outside the card container, positioned cleanly below) */}
       <div className="flex justify-center mt-4">
@@ -851,7 +869,7 @@ export default function NationalHealthNews() {
                   <span className="w-1 h-1 rounded-full bg-red-400 animate-pulse inline-block" />LIVE
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
+              <p className="text-[11px] text-slate-400 mt-0.5">
                 Real-time health bulletins · Powered by News API
               </p>
             </div>
@@ -950,7 +968,7 @@ export default function NationalHealthNews() {
         }
 
         {/* Footer */}
-        <div className="mt-4 flex items-center justify-between text-[10px] text-slate-600">
+        <div className="mt-4 flex items-center justify-between text-[10px] text-slate-500">
           <span className="flex items-center gap-1.5">
             <ShieldCheck size={10} />
             Powered by News API · {articles.length} articles
