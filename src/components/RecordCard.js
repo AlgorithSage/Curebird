@@ -231,7 +231,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, user
                                     className={`${userTier === 'Free'
                                             ? 'opacity-70 cursor-not-allowed'
                                             : ''
-                                        } w-full sm:w-[150px] h-12 rounded-full group`}
+                                        } w-full sm:w-[150px] h-12 rounded-full digital-button`}
                                 >
                                     {userTier === 'Free' && (
                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20 rounded-full">
@@ -239,7 +239,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, user
                                         </div>
                                     )}
 
-                                    <div className="!flex !flex-row items-center justify-center gap-2 transition-transform duration-300 group-hover:scale-110">
+                                    <div className="!flex !flex-row items-center justify-center gap-2 transition-transform duration-300 digital-button-content">
                                         <span className="text-sm font-bold uppercase tracking-wider relative z-10">Digital</span>
                                         <Eye className="w-4 h-4" />
                                     </div>
