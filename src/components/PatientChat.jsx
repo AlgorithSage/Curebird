@@ -3,14 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Send, Paperclip, MoreVertical, Search, Bot,
     ArrowLeft, Plus, QrCode, ShieldCheck, FileText,
-    Download, CheckCircle, AlertCircle, Loader2, X
+    Download, CheckCircle, AlertCircle, Loader2, X, Trash2
 } from './Icons';
 import {
     collection, query, where, orderBy, onSnapshot,
-    addDoc, serverTimestamp, doc, updateDoc, getDocs, getDoc
+    addDoc, serverTimestamp, doc, updateDoc, getDocs, getDoc,
+    deleteDoc
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Header from './Header';
+import LiquidButton from './ui/LiquidButton';
 
 const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginClick, onToggleSidebar, onAddRecordClick }) => {
     // Premium Animation Variants
@@ -273,15 +275,39 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
         }
     };
 
+    // Delete Chat
+    const handleDeleteChat = async (chatId, e) => {
+        e.stopPropagation();
+        if (!window.confirm("Are you sure you want to delete this conversation?")) return;
+        try {
+            await deleteDoc(doc(db, 'chats', chatId));
+            if (activeChat?.id === chatId) {
+                setActiveChat(null);
+                setView('list');
+            }
+        } catch (err) {
+            console.error("Delete chat failed", err);
+            alert("Failed to delete chat.");
+        }
+    };
+
+    // Delete Message
+    const handleDeleteMessage = async (msgId) => {
+        if (!activeChat) return;
+        if (!window.confirm("Are you sure you want to delete this message?")) return;
+        try {
+            await deleteDoc(doc(db, `chats/${activeChat.id}/messages`, msgId));
+        } catch (err) {
+            console.error("Delete message failed", err);
+            alert("Failed to delete message.");
+        }
+    };
+
 
     // ... (Keep existing hooks up to handleSaveToRecords)
 
     return (
-        <div className="h-screen flex flex-col bg-[#0F172A] text-white overflow-hidden relative font-sans selection:bg-amber-500/30">
-            {/* AMBER THEME BACKGROUND LAYERS - More subtle and premium */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,158,11,0.08),_transparent_60%)] pointer-events-none" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(16,185,129,0.05),_transparent_60%)] pointer-events-none" />
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none mix-blend-overlay" />
+        <div className="h-screen flex flex-col bg-transparent text-white overflow-hidden relative font-sans selection:bg-amber-500/30">
 
             {/* Header section */}
             <div className="sticky top-4 z-50 px-4 sm:px-8 pt-4 mb-4">
@@ -303,7 +329,7 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                 {/* --- LEFT SIDEBAR (Doctor List) --- */}
                 <div className={`${view === 'list' ? 'flex' : 'hidden'} md:flex flex-col w-full md:w-80 lg:w-[26rem] border-r border-white/5 bg-[#0a0f1c]/80 backdrop-blur-xl transition-all duration-300`}>
                     {/* Sidebar Header */}
-                    <div className="p-6 pb-4 flex items-center justify-between">
+                    <div className="p-6 pb-4 flex items-center justify-between gap-4">
                         <div>
                             <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
                                 Messages <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
@@ -312,14 +338,14 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                 Patient Portal
                             </p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => { setView('connect'); if (window.innerWidth < 768) { } }}
-                                className="group p-2.5 bg-white/5 hover:bg-amber-500 rounded-xl border border-white/5 hover:border-amber-500 text-slate-300 hover:text-black transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]"
-                                title="Add New Doctor"
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                            <LiquidButton
+                                onClick={() => { setView('connect'); }}
+                                className="py-2.5 px-3.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 text-black shadow-lg"
                             >
-                                <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
-                            </button>
+                                <Plus size={14} strokeWidth={3} className="text-black" />
+                                <span>Add New Doctor</span>
+                            </LiquidButton>
                             <button
                                 onClick={() => onNavigate('Dashboard')}
                                 className="md:hidden p-2.5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-all"
@@ -344,9 +370,12 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                 <p className="text-sm font-medium text-slate-300">No conversations yet</p>
                                 <p className="text-xs text-slate-500 mt-1 mb-4 max-w-[150px]">Your medical charts and doctor chats will appear here.</p>
 
-                                <button onPress={() => setView('connect')} className="px-4 py-2 bg-amber-500/10 text-amber-500 text-xs font-bold uppercase tracking-wider rounded-lg border border-amber-500/20 hover:bg-amber-500 hover:text-black transition-all">
+                                <LiquidButton
+                                    onClick={() => setView('connect')}
+                                    className="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl text-black shadow-md"
+                                >
                                     Connect Doctor
-                                </button>
+                                </LiquidButton>
                             </div>
                         ) : (
                             chats.map(chat => (
@@ -366,6 +395,15 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                         <div className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-amber-500 rounded-r-full shadow-[0_0_10px_2px_rgba(245,158,11,0.5)]" />
                                     )}
 
+                                    {/* Delete Chat Button */}
+                                    <button
+                                        onClick={(e) => handleDeleteChat(chat.id, e)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-slate-950/90 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200 z-30 shadow-lg hover:scale-105"
+                                        title="Delete Conversation"
+                                    >
+                                        <Trash2 size={15} />
+                                    </button>
+
                                     <div className="flex items-center gap-4">
                                         <div className="relative">
                                             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold shadow-inner ${activeChat?.id === chat.id
@@ -375,17 +413,17 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                                 {chat.doctorName.charAt(0)}
                                             </div>
                                             {/* Online Status Dot */}
-                                            <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#0F172A] rounded-full flex items-center justify-center">
+                                            <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#0a0f1c] rounded-full flex items-center justify-center">
                                                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                                             </div>
                                         </div>
 
-                                        <div className="flex-1 min-w-0">
+                                        <div className="flex-1 min-w-0 transition-all duration-200 group-hover:pr-8">
                                             <div className="flex justify-between items-center mb-1">
                                                 <h4 className={`font-bold text-sm ${activeChat?.id === chat.id ? 'text-white' : 'text-slate-300'} truncate group-hover:text-amber-400 transition-colors`}>
                                                     {chat.doctorName}
                                                 </h4>
-                                                <span className={`text-[10px] font-mono tracking-tighter ${activeChat?.id === chat.id ? 'text-amber-500/70' : 'text-slate-600'}`}>
+                                                <span className={`text-xs font-semibold tracking-wide ${activeChat?.id === chat.id ? 'text-amber-400/90' : 'text-slate-400'} transition-opacity duration-200 group-hover:opacity-0`}>
                                                     {chat.time}
                                                 </span>
                                             </div>
@@ -395,7 +433,7 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                         </div>
 
                                         {chat.unread > 0 && (
-                                            <div className="px-2 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-extrabold shadow-[0_0_10px_rgba(245,158,11,0.3)]">
+                                            <div className="px-2 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-extrabold shadow-[0_0_10px_rgba(245,158,11,0.3)] transition-opacity duration-200 group-hover:opacity-0">
                                                 {chat.unread}
                                             </div>
                                         )}
@@ -422,7 +460,7 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
 
                     {/* Header - Floating Glass */}
                     {view !== 'connect' && activeChat && (
-                        <div className="absolute top-0 left-0 right-0 h-20 px-6 flex items-center justify-between z-20 bg-gradient-to-b from-[#0F172A] to-transparent pointer-events-none">
+                        <div className="absolute top-0 left-0 right-0 h-20 px-6 flex items-center justify-between z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">
                             <div className="flex items-center gap-4 pointer-events-auto mt-2">
                                 <button onClick={() => setView('list')} className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white bg-black/40 rounded-full backdrop-blur-md">
                                     <ArrowLeft size={20} />
@@ -455,8 +493,8 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                     <div className="absolute -top-20 -left-20 w-60 h-60 bg-amber-500/10 rounded-full blur-[80px]" />
                                     <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-orange-500/10 rounded-full blur-[80px]" />
 
-                                    <div className="relative bg-[#0d121f] border border-white/10 rounded-[2.5rem] p-10 shadow-[0_0_60px_rgba(0,0,0,0.5)] overflow-hidden">
-                                        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-50"></div>
+                                    <div className="relative bg-gradient-to-br from-[#1c1917]/95 via-[#0f0e0b]/98 to-[#080705]/99 border border-amber-500/30 rounded-[2.5rem] p-10 shadow-[0_0_60px_rgba(245,158,11,0.15)] overflow-hidden backdrop-blur-2xl">
+                                        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-60"></div>
 
                                         <div className="text-center mb-10">
                                             <div className="relative w-20 h-20 mx-auto mb-6">
@@ -520,11 +558,21 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                             <motion.div
                                                 variants={fadeSlideUp}
                                                 key={msg.id || idx}
-                                                className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
+                                                className={`flex items-center gap-3 group/msg ${isMe ? 'justify-end' : 'justify-start'}`}
                                             >
-                                                <div className={`max-w-[85%] sm:max-w-[65%] rounded-3xl p-5 relative group shadow-lg ${isMe
-                                                    ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-black rounded-tr-md shadow-amber-900/10'
-                                                    : 'bg-[#182030] text-slate-200 border border-white/5 rounded-tl-md shadow-black/20'
+                                                {isMe && (
+                                                    <button
+                                                        onClick={() => handleDeleteMessage(msg.id)}
+                                                        className="opacity-0 group-hover/msg:opacity-100 transition-all duration-200 p-2 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-xl hover:scale-105 flex-shrink-0"
+                                                        title="Delete Message"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                )}
+
+                                                <div className={`max-w-[85%] sm:max-w-[65%] rounded-2xl p-5 relative shadow-lg ${isMe
+                                                    ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-black shadow-amber-900/10'
+                                                    : 'bg-[#13110a]/70 border border-amber-500/25 shadow-none text-slate-100'
                                                     }`}>
                                                     {isFile ? (
                                                         <div className="space-y-3">
@@ -561,10 +609,20 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                                         <p className={`text-[15px] leading-relaxed whitespace-pre-wrap font-medium ${isMe ? 'text-black' : 'text-slate-300'}`}>{msg.text}</p>
                                                     )}
 
-                                                    <span className={`text-[10px] absolute -bottom-6 ${isMe ? 'right-2' : 'left-2'} text-slate-500 opacity-60 font-mono tracking-tight`}>
+                                                    <span className={`text-xs sm:text-sm absolute -bottom-6 ${isMe ? 'right-2' : 'left-2'} text-slate-400 font-semibold tracking-wide`}>
                                                         {msg.time}
                                                     </span>
                                                 </div>
+
+                                                {!isMe && (
+                                                    <button
+                                                        onClick={() => handleDeleteMessage(msg.id)}
+                                                        className="opacity-0 group-hover/msg:opacity-100 transition-all duration-200 p-2 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-xl hover:scale-105 flex-shrink-0"
+                                                        title="Delete Message"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                )}
                                             </motion.div>
                                         );
                                     })}
@@ -572,14 +630,14 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                                 </div>
 
                                 {/* Input Area - Floating sleek design */}
-                                <div className="p-6 bg-gradient-to-t from-[#0F172A] via-[#0F172A] to-transparent">
+                                <div className="p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
                                     <form onSubmit={handleSend} className="max-w-4xl mx-auto flex gap-4 items-end">
-                                        <div className="flex-1 bg-[#182030]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] flex items-center px-6 shadow-2xl focus-within:border-amber-500/50 focus-within:shadow-[0_0_30px_rgba(245,158,11,0.1)] transition-all duration-300">
+                                        <div className="flex-1 bg-slate-950/40 backdrop-blur-xl border border-amber-500/20 hover:border-amber-500/40 rounded-[2rem] flex items-center px-6 shadow-2xl focus-within:border-amber-500/60 focus-within:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all duration-300">
                                             <input
                                                 type="text"
                                                 value={input}
                                                 onChange={(e) => setInput(e.target.value)}
-                                                className="flex-1 bg-transparent border-none focus:ring-0 text-white placeholder-slate-500 py-5 text-[15px] font-medium"
+                                                className="flex-1 bg-transparent border-0 focus:border-0 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 text-white placeholder-slate-500 py-5 text-[15px] font-medium"
                                                 placeholder="Type your message..."
                                             />
                                             {/* Optional Attachment Icon (Visual only for now if file input is hidden) */}
@@ -606,7 +664,7 @@ const PatientChat = ({ user, db, storage, appId, onNavigate, onLogout, onLoginCl
                             /* --- EMPTY STATE - Enhanced --- */
                             <div className="absolute inset-0 flex flex-col items-center justify-center opacity-100">
                                 <div className="relative">
-                                    <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-[100px] animate-pulse" />
+                                    <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-[100px] animate-pulse" />
                                     <Bot size={80} className="text-slate-700 relative z-10 mb-8" />
                                 </div>
                                 <h3 className="text-2xl font-bold text-white mb-2">Welcome to Secure Messaging</h3>
