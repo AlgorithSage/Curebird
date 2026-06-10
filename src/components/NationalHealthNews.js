@@ -361,14 +361,14 @@ function NewsCarousel({ articles, onSelect }) {
 
   // Autoplay: auto-advance every 3 seconds, reset timer on hover or index change
   useEffect(() => {
-    if (articles.length <= 1 || isHovered) return;
+    if (articles.length <= 1 || (isHovered && !isMobile)) return;
 
     const interval = setInterval(() => {
       setIndex((i) => (i === articles.length - 1 ? 0 : i + 1));
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [articles.length, isHovered, index]);
+  }, [articles.length, isHovered, index, isMobile]);
 
   const getCardStyles = (diff, isMobile) => {
     if (diff === 0) {
@@ -411,8 +411,6 @@ function NewsCarousel({ articles, onSelect }) {
   return (
     <div 
       className="relative mt-8 max-w-7xl mx-auto px-4 md:px-20"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Cards Wrapper (Seamless stacked carousel design) */}
       <div 
@@ -472,7 +470,11 @@ function NewsCarousel({ articles, onSelect }) {
               }}
               className="shrink-0 h-[540px] md:h-[500px]"
             >
-              <div className="glass-card-amber opaque-carousel-card w-full h-full !p-0 overflow-hidden flex flex-col md:flex-row cursor-pointer group hover:scale-[1.005] transition-all duration-300 relative shadow-2xl">
+              <div 
+                onMouseEnter={() => diff === 0 && setIsHovered(true)}
+                onMouseLeave={() => diff === 0 && setIsHovered(false)}
+                className="glass-card-amber opaque-carousel-card w-full h-full !p-0 overflow-hidden flex flex-col md:flex-row cursor-pointer group hover:scale-[1.005] transition-all duration-300 relative shadow-2xl"
+              >
                 {/* Image panel (45% width on desktop) */}
                 <div className="relative w-full md:w-[45%] h-[200px] md:h-full shrink-0 overflow-hidden bg-black/40 border-b md:border-b-0 md:border-r border-white/5">
                   {n.imageUrl ? (
