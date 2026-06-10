@@ -603,8 +603,8 @@ const EnvironmentalHealth = () => {
 
             {/* Disclaimer */}
             <div className="text-center">
-                <p className="text-slate-400 text-sm font-medium flex items-center justify-center gap-1.5">
-                    <Info size={14} className="text-slate-400 shrink-0" />
+                <p className="text-slate-400/80 text-[10px] font-medium flex items-center justify-center gap-1">
+                    <Info size={10} className="text-slate-400/80 shrink-0" />
                     Methodology: Berkeley Earth (Cigarettes), AQLI (Life Expectancy), Standard Respiratory Volume (Mass). Estimates only.
                 </p>
             </div>
