@@ -953,7 +953,7 @@ export default function NationalHealthNews() {
         )}
 
         {/* ── Globe + Article feed ────────────────────────────────── */}
-        {articles.length >= 2 && (
+        {articles.length >= 1 && (
           <GlobeSection articles={articles} onSelect={setSelected} />
         )}
 
