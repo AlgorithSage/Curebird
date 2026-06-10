@@ -384,7 +384,7 @@ function NewsCarousel({ articles, onSelect }) {
       return {
         x: isMobile ? '-22%' : '-38%',
         scale: 0.82,
-        opacity: 0.45,
+        opacity: 0.75,
         zIndex: 5,
         pointerEvents: 'auto',
       };
@@ -393,7 +393,7 @@ function NewsCarousel({ articles, onSelect }) {
       return {
         x: isMobile ? '22%' : '38%',
         scale: 0.82,
-        opacity: 0.45,
+        opacity: 0.75,
         zIndex: 5,
         pointerEvents: 'auto',
       };
