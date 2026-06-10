@@ -1081,40 +1081,47 @@ const CureAnalyzer = ({
                 )}
               </GlassButton>
 
-            <div className={`glass-button-wrap flex-1 !rounded-xl ${!selectedFile || isSaving || !analysisResult ? "disabled" : ""}`}>
-              <LiquidButton
+            {isDocSaved ? (
+              <GlassButton
                 disabled={!selectedFile || isSaving || !analysisResult}
                 onClick={handleDocSave}
-                noScale={true}
-                className="w-full h-14 !rounded-xl z-10 text-black flex items-center justify-center"
+                className="flex-1 h-14 !rounded-xl [&>.glass-button]:w-full [&>.glass-button]:h-full [&>.glass-button]:!rounded-xl [&>.glass-button-shadow]:!rounded-xl z-10 glass-button-green"
+                contentClassName="!flex !flex-row items-center justify-center gap-2"
               >
-                <span className="glass-button-text !flex !flex-row items-center justify-center gap-2 text-sm font-bold uppercase tracking-wider">
-                  {isSaving ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                      <span>SAVING...</span>
-                    </>
-                  ) : isDocSaved ? (
-                    <>
-                      <FileCheck size={18} className="text-black" />
-                      <div className="flex flex-col items-center text-center leading-tight">
-                        <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Document</span>
-                        <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Uploaded</span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <UploadCloud size={18} className="text-black" />
-                      <div className="flex flex-col items-center text-center leading-tight">
-                        <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Save</span>
-                        <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Document</span>
-                      </div>
-                    </>
-                  )}
-                </span>
-              </LiquidButton>
-              <div className="glass-button-shadow !rounded-xl"></div>
-            </div>
+                <FileCheck size={18} className="relative z-10" />
+                <div className="flex flex-col items-center text-center leading-tight relative z-10">
+                  <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Document</span>
+                  <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Uploaded</span>
+                </div>
+              </GlassButton>
+            ) : (
+              <div className={`glass-button-wrap flex-1 !rounded-xl ${!selectedFile || isSaving || !analysisResult ? "disabled" : ""}`}>
+                <LiquidButton
+                  disabled={!selectedFile || isSaving || !analysisResult}
+                  onClick={handleDocSave}
+                  noScale={true}
+                  className="w-full h-14 !rounded-xl z-10 text-black flex items-center justify-center"
+                >
+                  <span className="glass-button-text !flex !flex-row items-center justify-center gap-2 text-sm font-bold uppercase tracking-wider">
+                    {isSaving ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                        <span>SAVING...</span>
+                      </>
+                    ) : (
+                      <>
+                        <UploadCloud size={18} className="text-black" />
+                        <div className="flex flex-col items-center text-center leading-tight">
+                          <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Save</span>
+                          <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Document</span>
+                        </div>
+                      </>
+                    )}
+                  </span>
+                </LiquidButton>
+                <div className="glass-button-shadow !rounded-xl"></div>
+              </div>
+            )}
             </div>
           </div>
         </motion.div>
