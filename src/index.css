@@ -132,8 +132,8 @@ body {
 
     /* Transparent Body with Amber Tint */
     background: linear-gradient(145deg,
-        rgba(251, 191, 36, 0.1) 0%,
-        rgba(10, 10, 10, 0.6) 100%) !important;
+        rgba(251, 191, 36, 0.15) 0%,
+        rgba(15, 15, 15, 0.88) 100%) !important;
 
     /* Subtle Border */
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -147,31 +147,31 @@ body {
   .glass-card-amber {
     @apply glass-card;
     background: linear-gradient(135deg,
-        rgba(251, 191, 36, 0.15) 0%,
-        rgba(10, 10, 10, 0.7) 100%) !important;
+        rgba(251, 191, 36, 0.22) 0%,
+        rgba(15, 15, 15, 0.9) 100%) !important;
     border: 1px solid rgba(251, 191, 36, 0.2);
   }
 
   .glass-card-indigo {
     @apply glass-card;
     background: linear-gradient(135deg,
-        rgba(99, 102, 241, 0.05) 0%,
-        rgba(15, 23, 42, 0.8) 100%) !important;
+        rgba(99, 102, 241, 0.12) 0%,
+        rgba(15, 23, 42, 0.92) 100%) !important;
     border: 1px solid rgba(99, 102, 241, 0.1);
   }
 
   .glass-card-sky {
     @apply glass-card;
     background: linear-gradient(135deg,
-        rgba(14, 165, 233, 0.08) 0%,
-        rgba(15, 23, 42, 0.8) 100%) !important;
+        rgba(14, 165, 233, 0.15) 0%,
+        rgba(15, 23, 42, 0.92) 100%) !important;
     border: 1px solid rgba(56, 189, 248, 0.15);
   }
 
   .glass-card-sky:hover {
     background: linear-gradient(135deg,
-        rgba(14, 165, 233, 0.12) 0%,
-        rgba(15, 23, 42, 0.9) 100%) !important;
+        rgba(14, 165, 233, 0.2) 0%,
+        rgba(15, 23, 42, 0.95) 100%) !important;
     border: 1px solid rgba(56, 189, 248, 0.3);
     box-shadow:
       0 20px 50px -10px rgba(0, 0, 0, 0.9),
@@ -316,8 +316,8 @@ body {
   .glass-card:hover {
     transform: translateY(-4px);
     background: linear-gradient(145deg,
-        rgba(250, 204, 21, 0.15) 0%,
-        rgba(10, 10, 10, 0.8) 100%) !important;
+        rgba(250, 204, 21, 0.22) 0%,
+        rgba(15, 15, 15, 0.94) 100%) !important;
     box-shadow:
       0 20px 50px -10px rgba(0, 0, 0, 0.9),
       0 0 40px -10px rgba(234, 179, 8, 0.3);
@@ -530,15 +530,15 @@ body {
 .glass-card-rose {
   @apply glass-card;
   background: linear-gradient(135deg,
-      rgba(225, 29, 72, 0.15) 0%,
-      rgba(10, 10, 10, 0.7) 100%) !important;
+      rgba(225, 29, 72, 0.22) 0%,
+      rgba(15, 15, 15, 0.9) 100%) !important;
   border: 1px solid rgba(225, 29, 72, 0.2);
 }
 
 .glass-card-rose:hover {
   background: linear-gradient(145deg,
-      rgba(225, 29, 72, 0.15) 0%,
-      rgba(10, 10, 10, 0.8) 100%) !important;
+      rgba(225, 29, 72, 0.22) 0%,
+      rgba(15, 15, 15, 0.95) 100%) !important;
   box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9), 0 0 40px -10px rgba(225, 29, 72, 0.3);
 }
 
@@ -725,15 +725,15 @@ body {
 .glass-card-rose {
   @apply glass-card;
   background: linear-gradient(135deg,
-      rgba(225, 29, 72, 0.15) 0%,
-      rgba(10, 10, 10, 0.7) 100%) !important;
+      rgba(225, 29, 72, 0.22) 0%,
+      rgba(15, 15, 15, 0.9) 100%) !important;
   border: 1px solid rgba(225, 29, 72, 0.2);
 }
 
 .glass-card-rose:hover {
   background: linear-gradient(145deg,
-      rgba(225, 29, 72, 0.15) 0%,
-      rgba(10, 10, 10, 0.8) 100%) !important;
+      rgba(225, 29, 72, 0.22) 0%,
+      rgba(15, 15, 15, 0.95) 100%) !important;
   box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9), 0 0 40px -10px rgba(225, 29, 72, 0.3);
 }
 
