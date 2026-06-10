@@ -75,7 +75,7 @@ const CountUp = ({ end, start = 1, decimals = 0, suffix = "", duration = 3500 })
 
 const trustStats = [
     { numericEnd: 500, start: 1, suffix: "+", label: "Trusted by Users", icon: <Users size={22} />, iconColor: "#fbbf24" },
-    { text: "Top 2%", label: "Google Solution Challenge 2026", icon: <img src="/assets/Badge.png" alt="Google Badge" style={{ width: 48, height: 48, objectFit: "contain", filter: "drop-shadow(0 0 8px rgba(251,191,36,0.8))" }} />, iconColor: "#facc15" },
+    { text: "Top 106", label: "Google Solution Challenge 2026", icon: <img src="/assets/Badge.png" alt="Google Badge" style={{ width: 48, height: 48, objectFit: "contain", filter: "drop-shadow(0 0 8px rgba(251,191,36,0.8))" }} />, iconColor: "#facc15" },
     { numericEnd: 4.8, start: 4.0, decimals: 1, label: "Avg. User Rating", icon: <Star size={22} />, iconColor: "#fde68a" },
 ];
 
@@ -170,9 +170,9 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                 {/* Floating decorative icons */}
                 {!isMobile && (
                     <>
-                        <FloatingIcon icon={<Dna size={120} />}       className="top-16 left-10"      duration={12} delay={0}   />
-                        <FloatingIcon icon={<HeartPulse size={100} />} className="bottom-20 right-16"  duration={10} delay={1}   />
-                        <FloatingIcon icon={<Pill size={80} />}        className="top-1/3 right-1/4"   duration={14} delay={0.5} />
+                        <FloatingIcon icon={<Dna size={120} />} className="top-16 left-10" duration={12} delay={0} />
+                        <FloatingIcon icon={<HeartPulse size={100} />} className="bottom-20 right-16" duration={10} delay={1} />
+                        <FloatingIcon icon={<Pill size={80} />} className="top-1/3 right-1/4" duration={14} delay={0.5} />
                         <FloatingIcon icon={<Stethoscope size={75} />} className="bottom-1/3 left-1/5" duration={11} delay={1.5} />
                     </>
                 )}
@@ -245,10 +245,10 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                 className="flex flex-wrap justify-center gap-3"
                             >
                                 {[
-                                    { icon: <Lock size={15} />,        label: "AES-256 Encrypted"  },
-                                    { icon: <FileText size={15} />,    label: "20+ Record Types"   },
-                                    { icon: <Bot size={15} />,         label: "Clinical AI Engine" },
-                                    { icon: <Stethoscope size={15} />, label: "Doctor Sharing"     },
+                                    { icon: <Lock size={15} />, label: "AES-256 Encrypted" },
+                                    { icon: <FileText size={15} />, label: "20+ Record Types" },
+                                    { icon: <Bot size={15} />, label: "Clinical AI Engine" },
+                                    { icon: <Stethoscope size={15} />, label: "Doctor Sharing" },
                                 ].map(({ icon, label }) => (
                                     <span key={label}
                                         className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-slate-300"
