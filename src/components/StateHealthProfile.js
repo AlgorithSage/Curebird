@@ -35,16 +35,16 @@ const StateHealthProfile = () => {
                 </div>
 
                 {/* DROPDOWN / SEARCH BAR */}
-                <div className="relative z-30 w-full max-w-md">
+                <div className="relative z-50 w-full max-w-md">
                     <button
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className={`w-full flex items-center justify-between px-6 py-4 bg-slate-800/80 hover:bg-slate-800 border text-lg transition-all rounded-2xl shadow-xl backdrop-blur-sm ${isDropdownOpen ? 'border-blue-500 ring-4 ring-blue-500/10' : 'border-white/10 hover:border-blue-500/50'}`}
+                        className={`w-full flex items-center justify-between px-6 py-4 bg-slate-800/80 hover:bg-slate-800 border text-lg transition-all rounded-2xl shadow-xl backdrop-blur-sm ${isDropdownOpen ? 'border-amber-500 ring-4 ring-amber-500/10' : 'border-white/10 hover:border-amber-500/50'}`}
                     >
                         <span className={`flex items-center gap-3 ${selectedState ? 'text-white font-medium' : 'text-slate-400'}`}>
-                            <MapPin size={20} className={selectedState ? "text-blue-400" : "text-slate-500"} />
+                            <MapPin size={20} className={selectedState ? "text-amber-400" : "text-slate-500"} />
                             {selectedState || "Select your State..."}
                         </span>
-                        <ChevronDown size={20} className={`text-slate-500 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-blue-400' : ''}`} />
+                        <ChevronDown size={20} className={`text-slate-500 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-amber-400' : ''}`} />
                     </button>
 
                     <AnimatePresence>
@@ -53,14 +53,14 @@ const StateHealthProfile = () => {
                                 initial={{ opacity: 0, y: -10, scale: 0.98 }}
                                 animate={{ opacity: 1, y: 4, scale: 1 }}
                                 exit={{ opacity: 0, y: -10, scale: 0.98 }}
-                                className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-80 overflow-y-auto z-40"
+                                className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-80 overflow-y-auto z-50"
                             >
                                 <div className="p-2 space-y-1">
                                     {states.map((state) => (
                                         <button
                                             key={state}
                                             onClick={() => { setSelectedState(state); setIsDropdownOpen(false); }}
-                                            className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between group ${selectedState === state ? 'bg-blue-500/20 text-blue-300 border border-blue-500/20' : 'text-slate-300 hover:bg-white/5'}`}
+                                            className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between group ${selectedState === state ? 'bg-amber-500/20 text-amber-300 border border-amber-500/20' : 'text-slate-300 hover:bg-white/5'}`}
                                         >
                                             <span className="font-medium">{state}</span>
                                             {selectedState === state && <ArrowRight size={16} />}

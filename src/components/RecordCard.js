@@ -231,6 +231,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, user
                                         }
                                         setShowDigitalModal(true);
                                     }}
+                                    noScale={true}
                                     className={`${userTier === 'Free'
                                             ? 'opacity-70 cursor-not-allowed'
                                             : ''
@@ -255,7 +256,7 @@ const RecordCard = ({ record, storage, db, userId, appId, onEdit, onDelete, user
                         <div className="flex gap-3 justify-center sm:justify-end w-full mt-1">
                             <GlassButton
                                 onClick={onEdit}
-                                className="glass-button-green w-full sm:w-[150px] h-12 [&>.glass-button]:w-full [&>.glass-button]:h-full"
+                                className="glass-button-green-muted w-full sm:w-[150px] h-12 [&>.glass-button]:w-full [&>.glass-button]:h-full"
                                 contentClassName="!flex !flex-row items-center justify-center gap-2"
                             >
                                 <span className="text-sm font-bold uppercase tracking-wider relative z-10">Edit</span>

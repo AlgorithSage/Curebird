@@ -839,16 +839,36 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, o
 
                 <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between glass-card p-4 sm:p-5 relative z-40 mx-2 sm:mx-0">
                     <div className="relative w-full md:w-96 group" ref={searchWrapperRef}>
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-sky-400 transition-colors" size={20} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-400 transition-colors" size={20} />
                         <input
                             type="text"
                             placeholder="Search diseases, symptoms..."
                             value={searchTerm}
                             onChange={handleSearchChange}
                             onFocus={() => { if (searchTerm) setShowSuggestions(true); }}
-                            className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-3 sm:py-2.5 pl-10 pr-4 text-white font-bold placeholder:text-slate-500 focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition-all shadow-inner text-sm"
+                            className="w-full bg-slate-900/50 border border-white/10 rounded-xl py-3 sm:py-2.5 pl-10 pr-4 text-white font-bold placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-inner text-sm"
                         />
-                        ...
+                        <AnimatePresence>
+                            {showSuggestions && suggestions.length > 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.15 }}
+                                    className="absolute top-full left-0 right-0 mt-2 bg-slate-950/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50 max-h-60 overflow-y-auto"
+                                >
+                                    {suggestions.map((suggestion, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => handleSuggestionClick(suggestion)}
+                                            className="w-full px-4 py-2.5 text-left text-sm hover:bg-white/5 text-slate-300 hover:text-white transition-colors border-b border-white/5 last:border-b-0"
+                                        >
+                                            {suggestion}
+                                        </button>
+                                    ))}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                     <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 sm:pb-0 custom-scrollbar">
                         {['all', 'high', 'medium', 'low'].map((level) => (
@@ -1177,7 +1197,7 @@ const CureStat = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavigate, o
                     whileInView="visible"
                     viewport={{ margin: "-100px" }}
                     variants={fadeSlideUp}
-                    className="mb-12"
+                    className="mb-12 relative z-30"
                 >
                     <StateHealthProfile />
                 </motion.div>

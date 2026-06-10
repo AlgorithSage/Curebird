@@ -198,17 +198,34 @@ export default function LiquidButton({
   onClick,
   className = "",
   colors = AMBER_COLORS,
+  disabled,
+  noScale,
   ...props
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const uid = useId().replace(/:/g, "");
 
+  const handleMouseEnter = () => {
+    if (!disabled) setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
   return (
     <button
-      onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`relative overflow-hidden isolate font-bold text-black transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97] ${className}`}
+      onClick={disabled ? undefined : onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      disabled={disabled}
+      className={`relative overflow-hidden isolate font-bold text-black transition-all duration-200 ${
+        disabled
+          ? "opacity-50 cursor-not-allowed"
+          : noScale
+          ? "hover:translate-y-[-1px] active:translate-y-[1px] cursor-pointer"
+          : "hover:scale-[1.03] active:scale-[0.97] cursor-pointer"
+      } ${className}`}
       {...props}
     >
       {/* Default state: static amber gradient */}

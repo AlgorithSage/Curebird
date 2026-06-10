@@ -983,18 +983,31 @@ a:hover .hover-shimmer {
   z-index: 1;
 }
 
-.glass-button-wrap:hover .glass-button::before {
+.glass-button-wrap.disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.glass-button-wrap.disabled .glass-button,
+.glass-button-wrap.disabled .glass-button::before,
+.glass-button-wrap.disabled .glass-button-text,
+.glass-button-wrap.disabled .glass-button-shadow {
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+.glass-button-wrap:not(.disabled):hover .glass-button::before {
   left: 100%;
 }
 
-.glass-button-wrap:hover .glass-button {
+.glass-button-wrap:not(.disabled):hover .glass-button {
   background: linear-gradient(135deg, rgba(251, 191, 36, 0.25) 0%, rgba(20, 20, 20, 0.8) 100%);
   border-color: rgba(251, 191, 36, 0.5);
   color: #fef08a;
   transform: translateY(-1px);
 }
 
-.glass-button-wrap:active .glass-button {
+.glass-button-wrap:not(.disabled):active .glass-button {
   transform: translateY(1px);
   background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(10, 10, 10, 0.85) 100%);
   border-color: rgba(251, 191, 36, 0.2);
@@ -1012,7 +1025,7 @@ a:hover .hover-shimmer {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.glass-button-wrap:hover .glass-button-text {
+.glass-button-wrap:not(.disabled):hover .glass-button-text {
   transform: scale(1.10);
 }
 
@@ -1053,7 +1066,7 @@ a:hover .hover-shimmer {
   pointer-events: none;
 }
 
-.glass-button-wrap:hover .glass-button-shadow {
+.glass-button-wrap:not(.disabled):hover .glass-button-shadow {
   filter: blur(12px);
   opacity: 0.8;
   transform: scale(1.15);
@@ -1075,13 +1088,13 @@ a:hover .hover-shimmer {
       transparent);
 }
 
-.glass-button-red:hover .glass-button {
+.glass-button-red:not(.disabled):hover .glass-button {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(20, 20, 20, 0.8) 100%);
   border-color: rgba(239, 68, 68, 0.4);
   color: #fca5a5;
 }
 
-.glass-button-red:active .glass-button {
+.glass-button-red:not(.disabled):active .glass-button {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(10, 10, 10, 0.85) 100%);
   border-color: rgba(239, 68, 68, 0.15);
 }
@@ -1106,7 +1119,7 @@ a:hover .hover-shimmer {
       transparent);
 }
 
-.glass-button-gray:hover .glass-button {
+.glass-button-gray:not(.disabled):hover .glass-button {
   background: linear-gradient(135deg, rgba(156, 163, 175, 0.1) 0%, rgba(20, 20, 20, 0.8) 100%);
   border-color: rgba(156, 163, 175, 0.25);
   color: #d1d5db;
@@ -1132,13 +1145,13 @@ a:hover .hover-shimmer {
       transparent);
 }
 
-.glass-button-blue:hover .glass-button {
+.glass-button-blue:not(.disabled):hover .glass-button {
   background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
   border-color: rgba(255, 255, 255, 0.4);
   color: #ffffff;
 }
 
-.glass-button-blue:active .glass-button {
+.glass-button-blue:not(.disabled):active .glass-button {
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
   border-color: rgba(255, 255, 255, 0.2);
 }
@@ -1149,12 +1162,128 @@ a:hover .hover-shimmer {
 
 /* Green / Positive Glass Button Styles */
 .glass-button-green .glass-button {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.glass-button-green .glass-button::before {
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.15) 80%,
+      transparent);
+}
+
+.glass-button-green:not(.disabled):hover .glass-button {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+}
+
+.glass-button-green:not(.disabled):active .glass-button {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.glass-button-green .glass-button-shadow {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.5) 0%, transparent 70%);
+}
+
+/* Purple Glass Button Styles */
+.glass-button-purple .glass-button {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.glass-button-purple .glass-button::before {
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.15) 80%,
+      transparent);
+}
+
+.glass-button-purple:not(.disabled):hover .glass-button {
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+}
+
+.glass-button-purple:not(.disabled):active .glass-button {
+  background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.glass-button-purple .glass-button-shadow {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, transparent 70%);
+}
+
+/* Pink/Rose Glass Button Styles */
+.glass-button-pink .glass-button {
+  background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.glass-button-pink .glass-button::before {
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.15) 80%,
+      transparent);
+}
+
+.glass-button-pink:not(.disabled):hover .glass-button {
+  background: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+}
+
+.glass-button-pink:not(.disabled):active .glass-button {
+  background: linear-gradient(135deg, #be123c 0%, #9f1239 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.glass-button-pink .glass-button-shadow {
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.5) 0%, transparent 70%);
+}
+
+/* Hybrid Liquid/Glass Button Styles */
+.glass-button-wrap button.relative.overflow-hidden.isolate::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.45) 50%,
+      rgba(255, 255, 255, 0.2) 80%,
+      transparent);
+  transition: all 0.6s ease;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.glass-button-wrap:not(.disabled):hover button.relative.overflow-hidden.isolate::before {
+  left: 100%;
+}
+
+/* Muted Green Glass Button Styles (for Edit Button) */
+.glass-button-green-muted .glass-button {
   background: linear-gradient(135deg, #494949 0%, #363636 100%);
   border-color: rgba(255, 255, 255, 0.15);
   color: #ffffff;
 }
 
-.glass-button-green .glass-button::before {
+.glass-button-green-muted .glass-button::before {
   background: linear-gradient(90deg,
       transparent,
       rgba(16, 185, 129, 0.15) 20%,
@@ -1163,17 +1292,17 @@ a:hover .hover-shimmer {
       transparent);
 }
 
-.glass-button-green:hover .glass-button {
+.glass-button-green-muted:not(.disabled):hover .glass-button {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(20, 20, 20, 0.8) 100%);
   border-color: rgba(16, 185, 129, 0.4);
   color: #34d399;
 }
 
-.glass-button-green:active .glass-button {
+.glass-button-green-muted:not(.disabled):active .glass-button {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(10, 10, 10, 0.85) 100%);
   border-color: rgba(16, 185, 129, 0.15);
 }
 
-.glass-button-green .glass-button-shadow {
+.glass-button-green-muted .glass-button-shadow {
   background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);
 }

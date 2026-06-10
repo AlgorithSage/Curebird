@@ -33,6 +33,8 @@ import curebirdLogo from '../curebird_logo.png';
 import Header from "./Header";
 import ReviewImportModal from "./diseases/ReviewImportModal";
 import { motion, AnimatePresence } from 'framer-motion';
+import { GlassButton } from "./ui/glass-button";
+import LiquidButton from "./ui/LiquidButton";
 
 const CureAnalyzer = ({
   user,
@@ -614,20 +616,26 @@ const CureAnalyzer = ({
               </div>
             )}
 
-            <button
-              onClick={handleAnalysis}
-              disabled={isLoading || !selectedFile}
-              className="mt-8 w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm"
-            >
-              {isLoading ? (
-                <>
-                  <Loader className="animate-spin" size={18} /> INITIALIZING
-                  SCAN...
-                </>
-              ) : (
-                "INITIATE ANALYSIS"
-              )}
-            </button>
+            <div className={`glass-button-wrap w-full mt-8 !rounded-xl ${isLoading || !selectedFile ? "disabled" : ""}`}>
+              <LiquidButton
+                onClick={handleAnalysis}
+                disabled={isLoading || !selectedFile}
+                noScale={true}
+                className="w-full h-14 !rounded-xl z-10 text-black flex items-center justify-center"
+              >
+                <span className="glass-button-text !flex !flex-row items-center justify-center gap-2 text-base font-bold uppercase tracking-wider">
+                  {isLoading ? (
+                    <>
+                      <Loader className="animate-spin text-black" size={18} />
+                      <span>INITIALIZING SCAN...</span>
+                    </>
+                  ) : (
+                    <span>INITIATE ANALYSIS</span>
+                  )}
+                </span>
+              </LiquidButton>
+              <div className="glass-button-shadow !rounded-xl"></div>
+            </div>
           </div>
         </motion.div>
 
@@ -1031,64 +1039,82 @@ const CureAnalyzer = ({
             )}
 
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <button
+              <GlassButton
                 disabled={!analysisResult?.analysis?.digital_copy}
                 onClick={() => setShowDigitalCopy(true)}
-                className="py-4 rounded-xl font-bold text-white bg-gradient-to-r from-violet-600 via-purple-600 to-violet-600 bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-[0_0_30px_rgba(124,58,237,0.3)] hover:shadow-[0_0_50px_rgba(124,58,237,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm"
+                className="w-full h-14 !rounded-xl [&>.glass-button]:w-full [&>.glass-button]:h-full [&>.glass-button]:!rounded-xl [&>.glass-button-shadow]:!rounded-xl z-10 glass-button-purple"
+                contentClassName="!flex !flex-row items-center justify-center gap-2"
               >
-                <FileText size={18} /> View Digital
-              </button>
+                <FileText size={27} className="relative z-10" />
+                <span className="text-sm font-bold uppercase tracking-wider relative z-10">View Digital</span>
+              </GlassButton>
 
-              <button
+              <GlassButton
                 disabled={!analysisResult}
                 onClick={handleAskAIClick}
-                className="py-4 rounded-xl font-bold text-white bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-[0_0_30px_rgba(244,63,94,0.3)] hover:shadow-[0_0_50px_rgba(244,63,94,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm"
+                className="w-full h-14 !rounded-xl [&>.glass-button]:w-full [&>.glass-button]:h-full [&>.glass-button]:!rounded-xl [&>.glass-button-shadow]:!rounded-xl z-10 glass-button-pink"
+                contentClassName="!flex !flex-row items-center justify-center gap-2"
               >
-                <Bot size={18} /> Ask Cure AI
-              </button>
+                <Bot size={18} className="relative z-10" />
+                <div className="flex flex-col items-center text-center leading-tight relative z-10">
+                  <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Ask</span>
+                  <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Cure AI</span>
+                </div>
+              </GlassButton>
 
-              <button
+              <GlassButton
                 disabled={!analysisResult}
                 onClick={handleSave}
-                className={`flex-1 py-4 rounded-xl font-bold text-white transition-all duration-500 shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_50px_rgba(14,165,233,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isSaved
-                  ? "bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500"
-                  : "bg-gradient-to-r from-sky-500 via-blue-600 to-sky-500 bg-[length:200%_auto] hover:bg-right"
-                  }`}
+                className={`flex-1 h-14 !rounded-xl [&>.glass-button]:w-full [&>.glass-button]:h-full [&>.glass-button]:!rounded-xl [&>.glass-button-shadow]:!rounded-xl z-10 ${isSaved ? "glass-button-green" : "glass-button-blue"}`}
+                contentClassName="!flex !flex-row items-center justify-center gap-2"
               >
                 {isSaved ? (
                   <>
-                    <Check size={18} /> RECORD SAVED
+                    <Check size={27} className="relative z-10" />
+                    <span className="text-sm font-bold uppercase tracking-wider relative z-10">RECORD SAVED</span>
                   </>
                 ) : (
                   <>
-                    <Save size={18} /> SAVE RECORD
+                    <Save size={27} className="relative z-10" />
+                    <span className="text-sm font-bold uppercase tracking-wider relative z-10">SAVE RECORD</span>
                   </>
                 )}
-              </button>
+              </GlassButton>
 
-              <button
+            <div className={`glass-button-wrap flex-1 !rounded-xl ${!selectedFile || isSaving || !analysisResult ? "disabled" : ""}`}>
+              <LiquidButton
                 disabled={!selectedFile || isSaving || !analysisResult}
                 onClick={handleDocSave}
-                className={`flex-1 py-4 rounded-xl font-bold text-black transition-all duration-500 shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_50px_rgba(245,158,11,0.5)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100 z-10 flex items-center justify-center gap-2 uppercase tracking-wider text-sm ${isDocSaved
-                  ? "bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500 text-white"
-                  : "bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-[length:200%_auto] hover:bg-right"
-                  }`}
+                noScale={true}
+                className="w-full h-14 !rounded-xl z-10 text-black flex items-center justify-center"
               >
-                {isSaving ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    SAVING...
-                  </>
-                ) : isDocSaved ? (
-                  <>
-                    <FileCheck size={18} /> DOCUMENT UPLOADED
-                  </>
-                ) : (
-                  <>
-                    <UploadCloud size={18} /> SAVE DOCUMENT
-                  </>
-                )}
-              </button>
+                <span className="glass-button-text !flex !flex-row items-center justify-center gap-2 text-sm font-bold uppercase tracking-wider">
+                  {isSaving ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                      <span>SAVING...</span>
+                    </>
+                  ) : isDocSaved ? (
+                    <>
+                      <FileCheck size={18} className="text-black" />
+                      <div className="flex flex-col items-center text-center leading-tight">
+                        <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Document</span>
+                        <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Uploaded</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <UploadCloud size={18} className="text-black" />
+                      <div className="flex flex-col items-center text-center leading-tight">
+                        <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Save</span>
+                        <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">Document</span>
+                      </div>
+                    </>
+                  )}
+                </span>
+              </LiquidButton>
+              <div className="glass-button-shadow !rounded-xl"></div>
+            </div>
             </div>
           </div>
         </motion.div>

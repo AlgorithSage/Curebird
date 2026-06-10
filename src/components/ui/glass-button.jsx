@@ -5,7 +5,7 @@ function cn(...inputs) {
 }
 
 const GlassButton = React.forwardRef(
-  ({ className, children, size = "default", contentClassName, ...props }, ref) => {
+  ({ className, children, size = "default", contentClassName, disabled, ...props }, ref) => {
     // Size-specific inline styles for the button
     const sizeStyles = {
       default: {},
@@ -26,12 +26,14 @@ const GlassButton = React.forwardRef(
       <div
         className={cn(
           "glass-button-wrap rounded-full",
+          disabled && "disabled",
           className
         )}
       >
         <button
           className="glass-button rounded-full"
           ref={ref}
+          disabled={disabled}
           style={sizeStyles[size] || {}}
           {...props}
         >
