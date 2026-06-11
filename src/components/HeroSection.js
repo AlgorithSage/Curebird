@@ -341,7 +341,7 @@ const HeroSection = ({ onOverviewClick, onAddClick, onNavigate, healthScore }) =
 
                         <div className="flex flex-wrap items-center justify-center gap-4 pt-8">
                             <div className="flex items-center gap-2 text-[10px] font-bold text-white uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
-                                <ShieldPlus size={12} className="text-emerald-500" /> Secure HIPAA Analytics
+                                <ShieldPlus size={12} className="text-emerald-500" /> HIPAA-Aligned Secure Analytics
                             </div>
                             <div className="flex items-center gap-2 text-[10px] font-bold text-white uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 hover:bg-white/10 transition-colors cursor-default">
                                 <Activity size={12} className="text-sky-500" /> Real-time Synthesis

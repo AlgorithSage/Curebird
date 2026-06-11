@@ -76,6 +76,9 @@ const TermsOfService = ({ user, onLogout, onLoginClick, onToggleSidebar, onNavig
                             <p>
                                 <strong className="text-amber-400">ALWAYS</strong> consult a qualified healthcare professional for any medical concerns. Never disregard professional medical advice based on information from this Platform. In emergencies, contact emergency services immediately.
                             </p>
+                            <p>
+                                <strong>Architecture Alignment Disclaimer:</strong> While Curebird's architecture and system design reflect and align with the guidelines of the Health Insurance Portability and Accountability Act (HIPAA), Ayushman Bharat Digital Mission (ABDM), Digital Personal Data Protection Act (DPDPA), and Digital Information Security in Healthcare Act (DISHA), the Platform is <strong>not formally audited, certified, or officially compliant</strong> with these or any other regulatory frameworks. Users should not use this platform if their requirements demand certified compliance.
+                            </p>
                         </div>
                     </section>
 

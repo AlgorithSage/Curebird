@@ -111,6 +111,7 @@ const trustTestimonials = [
 const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClick, onSubscribeClick, onRefundClick }) => {
     const [isMobile, setIsMobile] = React.useState(false);
     const [isHeroOpen, setIsHeroOpen] = useState(false);
+    const headerRef = React.useRef(null);
 
     React.useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -118,6 +119,12 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    React.useEffect(() => {
+        if (isHeroOpen && headerRef.current) {
+            headerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [isHeroOpen]);
 
     const sectionVariants = {
         hidden: { opacity: 0, y: isMobile ? 50 : 150, filter: isMobile ? "blur(0px)" : "blur(10px)" },
@@ -165,7 +172,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
             <VideoBackground />
 
             {/* ── HERO ─────────────────────────────────────── */}
-            <header className="relative flex flex-col items-center justify-start px-6 pt-24 pb-4 sm:px-10 sm:pt-28">
+            <header ref={headerRef} className="relative flex flex-col items-center justify-start px-6 pt-24 pb-4 sm:px-10 sm:pt-28">
 
                 {/* Floating decorative icons */}
                 {!isMobile && (
@@ -383,7 +390,8 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                                     <span className="text-slate-400">{badge}</span>
                                 </React.Fragment>
                             ))}
-                            <span className="ml-1 text-emerald-500">✓ Compliant</span>
+                            <span className="w-1 h-1 rounded-full bg-slate-600" />
+                            <span className="ml-1 text-emerald-500 normal-case">✓ Standards Aligned</span>
                         </motion.div>
 
                         {/* Badge */}
@@ -551,7 +559,7 @@ const LandingPage = ({ onLoginClick, onTermsClick, onPrivacyClick, onContactClic
                             {
                                 icon: <ShieldCheck size={48} className="text-emerald-400" />,
                                 title: "Enterprise-Grade Data Security",
-                                desc: "Your health privacy is paramount. We employ AES-256 end-to-end encryption and are fully compliant with Indian Digital Health (ABDM) and HIPAA standards. You retain absolute sovereignty over your data."
+                                desc: "Your health privacy is paramount. We employ AES-256 end-to-end encryption, with system architecture designed in alignment with Indian Digital Health (ABDM) and HIPAA standards. You retain absolute sovereignty over your data."
                             },
                             {
                                 icon: <Zap size={48} className="text-amber-400" />,

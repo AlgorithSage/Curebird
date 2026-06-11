@@ -374,7 +374,7 @@ const Settings = ({ user, db, onLogout, onLoginClick, onToggleSidebar, onNavigat
                     {/* Legal & Trust */}
                     <section className="glass-card relative overflow-hidden">
                         <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2 relative z-10">
-                            <Shield size={16} className="text-amber-500" /> Legal & Compliance
+                            <Shield size={16} className="text-amber-500" /> Legal & Standards
                         </h3>
                         <div className="space-y-4 relative z-10">
                             <button

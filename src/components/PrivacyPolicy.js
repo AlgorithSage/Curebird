@@ -139,10 +139,24 @@ const PrivacyPolicy = ({ user, onLogout, onLoginClick, onToggleSidebar, onNaviga
                     </section>
 
 
-                    {/* 4. Your Rights */}
+                    {/* 4. Regulatory Alignment & Certifications Disclaimer */}
                     <section>
                         <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
-                            <span className="w-8 h-8 rounded-lg bg-fuchsia-500/10 text-fuchsia-500 flex items-center justify-center text-sm">04</span>
+                            <span className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center text-sm">04</span>
+                            Regulatory Alignment Disclaimer
+                        </h2>
+                        <p className="text-slate-300 leading-relaxed mb-4">
+                            Our architecture, databases, and encryption workflows are designed to reflect and align with the security standards of major healthcare regulations, including the <strong>Health Insurance Portability and Accountability Act (HIPAA)</strong>, <strong>Ayushman Bharat Digital Mission (ABDM)</strong>, <strong>Digital Personal Data Protection Act (DPDPA)</strong>, and <strong>Digital Information Security in Healthcare Act (DISHA)</strong>.
+                        </p>
+                        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-200/80 text-sm leading-relaxed">
+                            <strong>Note on Compliance Status:</strong> Curebird provides a system built with the security best practices of these standards in mind. However, the platform has not undergone formal third-party regulatory audits and holds no official compliance certifications under HIPAA, ABDM, DPDPA, DISHA, or any other healthcare regulatory framework.
+                        </div>
+                    </section>
+
+                    {/* 5. Your Rights */}
+                    <section>
+                        <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                            <span className="w-8 h-8 rounded-lg bg-fuchsia-500/10 text-fuchsia-500 flex items-center justify-center text-sm">05</span>
                             Your Rights
                         </h2>
                         <p className="text-slate-300 leading-relaxed">

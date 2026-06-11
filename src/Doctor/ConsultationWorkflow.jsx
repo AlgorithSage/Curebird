@@ -493,7 +493,7 @@ const TelehealthSession = ({ user, patients = [] }) => {
                         <Shield size={16} />
                     </div>
                     <div>
-                        <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">HIPAA Compliant</p>
+                        <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">HIPAA-Aligned Architecture</p>
                         <p className="text-[9px] text-emerald-500/50 font-medium">Session ID: #8292-XJ</p>
                     </div>
                 </div>

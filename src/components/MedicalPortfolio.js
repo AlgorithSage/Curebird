@@ -600,7 +600,7 @@ const MedicalPortfolio = ({ user, db, storage, appId, formatDate, capitalize, on
                         {/* 2. Bottom Functionality Badges */}
                         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 opacity-70">
                             {[
-                                { icon: <ShieldCheck size={14} />, text: "SECURE HIPAA ANALYTICS" },
+                                { icon: <ShieldCheck size={14} />, text: "HIPAA-ALIGNED SECURE ANALYTICS" },
                                 { icon: <Activity size={14} />, text: "REAL-TIME SYNTHESIS" },
                                 { icon: <FileText size={14} />, text: "MULTI-FORMAT SUPPORT" },
                                 { icon: <Brain size={14} />, text: "PREDICTIVE MODELING" },

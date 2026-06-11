@@ -288,7 +288,7 @@ const AddPatientModal = ({ isOpen, onClose, onAddPatient }) => {
                         ) : (
                             <div className="flex items-center gap-2 text-stone-600 text-[10px] font-bold uppercase tracking-widest">
                                 <Shield size={12} />
-                                <span>HIPAA Compliant Form</span>
+                                <span>Designed to HIPAA Standards</span>
                             </div>
                         )}
 

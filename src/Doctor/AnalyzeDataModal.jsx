@@ -262,7 +262,7 @@ const AnalyzeDataModal = (props) => {
                                                 </h3>
                                                 <p className="text-sm text-stone-500 max-w-xs mx-auto">
                                                     {uploading
-                                                        ? "Encrypting files and transferring to HIPAA-compliant storage."
+                                                        ? "Encrypting files and transferring to secure, HIPAA-aligned storage."
                                                         : "Cross-referencing values with patient history and global baselines."}
                                                 </p>
                                             </div>

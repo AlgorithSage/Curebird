@@ -349,7 +349,7 @@ export default function ResearcherLogin() {
 
                         <div className="mt-4 pt-4 border-t border-slate-800 text-center">
                             <p className="text-xs text-slate-500 flex items-center justify-center gap-1">
-                                <Lock size={12} /> Encrypted Session • HIPAA Compliant
+                                <Lock size={12} /> Encrypted Session • HIPAA-Aligned
                             </p>
                         </div>
                     </div>

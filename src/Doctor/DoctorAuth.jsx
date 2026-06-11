@@ -459,7 +459,7 @@ export default function DoctorAuth({ initialUser }) {
                                 
                                 <div className="mt-3 pt-3 border-t border-slate-800 text-center">
                                     <p className="text-[10px] text-slate-500 flex items-center justify-center gap-1">
-                                        <Lock size={10} /> Encrypted Session • HIPAA Compliant
+                                        <Lock size={10} /> Encrypted Session • HIPAA-Aligned
                                     </p>
                                 </div>
                             </div>
