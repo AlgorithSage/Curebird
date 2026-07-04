@@ -161,11 +161,21 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
 
         setIsProcessing(true);
         try {
+            // Resolve the current user so the subscription is tied to their account.
+            const { getAuth } = await import('firebase/auth');
+            const currentUser = getAuth().currentUser;
+            if (!currentUser) {
+                alert("Please log in before subscribing.");
+                setIsProcessing(false);
+                return;
+            }
+            const uid = currentUser.uid;
+
             // 1. Create Subscription on Backend
             const response = await fetch(`${API_BASE_URL}/api/pay/create-subscription`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ plan: selectedTier })
+                body: JSON.stringify({ plan: selectedTier, uid })
             });
 
             const data = await response.json();
@@ -189,7 +199,8 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                             body: JSON.stringify({
                                 razorpay_payment_id: response.razorpay_payment_id,
                                 razorpay_subscription_id: response.razorpay_subscription_id,
-                                razorpay_signature: response.razorpay_signature
+                                razorpay_signature: response.razorpay_signature,
+                                uid
                             })
                         });
 
@@ -207,9 +218,9 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                     }
                 },
                 prefill: {
-                    name: "CureBird User", // Ideally pull from user context
-                    email: "user@example.com",
-                    contact: ""
+                    name: currentUser.displayName || "CureBird User",
+                    email: currentUser.email || "",
+                    contact: currentUser.phoneNumber || ""
                 },
                 theme: {
                     color: "#F59E0B" // Amber-500
@@ -360,7 +371,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }) => {
                     </div>
                     {selectedTier === 'Premium' && (
                         <p className="text-center text-slate-500 text-xs mt-2 pb-4">
-                            You won't be charged today. Auto-renewal starts after 14 days.
+                            A ₹2 verification charge confirms your UPI Autopay mandate today. Your ₹99/mo plan begins after the 14-day free trial.
                         </p>
                     )}
 
